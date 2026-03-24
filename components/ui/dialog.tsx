@@ -26,11 +26,10 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
 function DialogOverlay({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<typeof DialogPrimitive.Backdrop>) {
   return (
-    <div
+    <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
-      aria-hidden="true"
       className={cn(
         "fixed inset-0 z-50 bg-black/50",
         className
