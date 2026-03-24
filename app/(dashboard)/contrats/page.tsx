@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { ContractDialog } from "@/components/rh/ContractDialog";
 import { FileText, AlertTriangle } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: "Contrats — RH Manager CI" };
 
 export default async function ContratsPage() {

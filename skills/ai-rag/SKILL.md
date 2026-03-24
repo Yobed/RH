@@ -1,7 +1,25 @@
 # SKILL — Agent IA & RAG Juridique
-> Lis ce fichier avant de toucher à l'agent RAG ou au scoring CV.
+> Lis ce fichier avant de toucher à l'agent RAG, au scoring CV ou à l'orchestrateur IA.
 
-## Architecture RAG
+## Architecture Multi-Agent (mis à jour)
+
+```
+┌─────────────────────────────────────────────────────┐
+│              lib/ai/orchestrator.ts                 │
+│         (Point d'entrée unique pour toute IA)       │
+└───────┬──────────────┬──────────────┬───────────────┘
+        │ Promise.all  │              │
+        ▼              ▼              ▼
+  Gemini Flash    Claude Sonnet    n8n webhook
+  (extraction     (scoring &       (RAG pgvector
+   structurée,     juridique,       & embeddings)
+   multimodal)     synthèse)
+```
+
+**Règle :** Toujours passer par `lib/ai/orchestrator.ts` — ne jamais appeler
+Claude ou Gemini directement dans une route API métier.
+
+## Architecture RAG (inchangée)
 PDF (Code Travail CI, Conventions) → Chunking → Embedding → pgvector
 Question RH → Embedding → Recherche cosinus → Claude → Réponse sourcée
 

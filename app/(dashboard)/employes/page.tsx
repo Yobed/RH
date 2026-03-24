@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { EmployeeTable } from "@/components/rh/EmployeeTable";
 
+export const dynamic = 'force-dynamic';
 export const metadata = { title: "Employés — RH Manager CI" };
 
 const statutVariant: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
