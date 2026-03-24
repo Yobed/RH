@@ -402,6 +402,56 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
         )}
       </div>
 
+      {/* Checklist documents obligatoires */}
+      {(() => {
+        const DOCS_REQUIS = [
+          "CNI / Passeport",
+          "Extrait de naissance",
+          "Casier judiciaire",
+          "Contrat",
+          "CV",
+          "Diplômes",
+          "Médical",
+        ] as const;
+        const familles = new Set(documents?.map((d) => d.famille).filter(Boolean));
+        const manquants = DOCS_REQUIS.filter((d) => !familles.has(d));
+        const presents = DOCS_REQUIS.filter((d) => familles.has(d));
+        return (
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <FileText className="h-4 w-4 text-muted-foreground" />
+              <h2 className="text-lg font-semibold">Checklist documents</h2>
+              <span className="text-xs text-muted-foreground">
+                {presents.length}/{DOCS_REQUIS.length} fournis
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {DOCS_REQUIS.map((doc) => {
+                const ok = familles.has(doc);
+                return (
+                  <div
+                    key={doc}
+                    className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
+                      ok
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : "border-red-200 bg-red-50 text-red-700"
+                    }`}
+                  >
+                    <span className="text-base">{ok ? "✓" : "✗"}</span>
+                    <span className="font-medium">{doc}</span>
+                  </div>
+                );
+              })}
+            </div>
+            {manquants.length > 0 && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Documents manquants : {manquants.join(", ")}
+              </p>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Documents */}
       <div>
         <div className="flex items-center justify-between mb-3">

@@ -55,5 +55,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Auto-créer le contrat si type_contrat et salaire_brut sont renseignés
+  if (parsed.data.type_contrat && parsed.data.salaire_brut != null && parsed.data.salaire_brut > 0) {
+    await supabase.from("contracts").insert({
+      employee_id: data.id,
+      company_id: companyId as string,
+      type_contrat: parsed.data.type_contrat,
+      date_debut: parsed.data.date_embauche,
+      salaire_brut: parsed.data.salaire_brut,
+      renouvellement_count: 0,
+      statut: "actif",
+    });
+  }
+
   return NextResponse.json(data, { status: 201 });
 }
