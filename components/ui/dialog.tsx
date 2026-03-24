@@ -26,12 +26,13 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
 function DialogOverlay({
   className,
   ...props
-}: DialogPrimitive.Backdrop.Props) {
+}: React.ComponentProps<"div">) {
   return (
-    <DialogPrimitive.Backdrop
+    <div
       data-slot="dialog-overlay"
+      aria-hidden="true"
       className={cn(
-        "fixed inset-0 z-50 bg-black/50 duration-100 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 z-50 bg-black/50",
         className
       )}
       {...props}
