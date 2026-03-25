@@ -160,28 +160,28 @@ export function PaieDialog({ employees }: Props) {
                   <span className="font-medium">{fmt(preview.salaire_brut)}</span>
                 </div>
                 <div className="flex justify-between text-red-600">
-                  <span>CNPS salarié (4,4%)</span>
-                  <span>− {fmt(preview.cnps_salarie)}</span>
+                  <span>CNPS retraite (6,3%)</span>
+                  <span>− {fmt(preview.cnps_retraite)}</span>
                 </div>
                 <div className="flex justify-between text-red-600">
-                  <span>ITS (retenue à la source)</span>
+                  <span>CMU salariale (forfait)</span>
+                  <span>− {fmt(preview.cmu_salarie)}</span>
+                </div>
+                <div className="flex justify-between text-red-600">
+                  <span>ITS (barème progressif)</span>
                   <span>− {fmt(preview.its)}</span>
                 </div>
-                {preview.salaire_brut - preview.salaire_net_avant_retenues < preview.salaire_brut && (
-                  <>
-                    {Number(retenues) > 0 && (
-                      <div className="flex justify-between text-red-600">
-                        <span>Autres retenues</span>
-                        <span>− {fmt(Number(retenues))}</span>
-                      </div>
-                    )}
-                    {Number(avances) > 0 && (
-                      <div className="flex justify-between text-red-600">
-                        <span>Avances / Acomptes</span>
-                        <span>− {fmt(Number(avances))}</span>
-                      </div>
-                    )}
-                  </>
+                {Number(retenues) > 0 && (
+                  <div className="flex justify-between text-red-600">
+                    <span>Autres retenues</span>
+                    <span>− {fmt(Number(retenues))}</span>
+                  </div>
+                )}
+                {Number(avances) > 0 && (
+                  <div className="flex justify-between text-red-600">
+                    <span>Avances / Acomptes</span>
+                    <span>− {fmt(Number(avances))}</span>
+                  </div>
                 )}
                 <div className="border-t pt-2 flex justify-between font-bold text-emerald-700">
                   <span>Net à payer</span>
@@ -189,7 +189,7 @@ export function PaieDialog({ employees }: Props) {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
-                Base ITS imposable : {fmt(preview.base_imposable)}
+                Base imposable ITS : {fmt(preview.base_imposable)}
               </p>
             </div>
           )}

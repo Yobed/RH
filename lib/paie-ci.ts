@@ -4,29 +4,44 @@
  *   - Code du Travail CI (Loi n°2015-532 du 20 juillet 2015, mis à jour 2025)
  *   - Convention Collective Interprofessionnelle AICI-UGTCI
  *   - Décret n°2022-986 (SMIG 75 000 FCFA au 01/01/2023)
+ *   - CNPS CI — retraite salariale 6,30% / plafond 1 647 315 FCFA/mois
+ *   - CNAM — CMU forfait mensuel 1 600 FCFA (part salariale + part patronale)
  *
  * ⚠️  VÉRIFICATION ANNUELLE OBLIGATOIRE
  * - SMIG       : peut être révisé par décret ministériel
  * - Tranches ITS : peuvent être modifiées par la Loi de Finances annuelle
- * - Taux CNPS  : à confirmer auprès de la CNPS CI (non publiés dans le CT-CI 2025)
+ * - Taux CNPS  : à confirmer auprès de la CNPS CI
+ * - AT/MP      : taux variable selon secteur (3% = taux moyen indicatif)
  *
- * Dernière mise à jour : mars 2026 — SMIG 75 000 FCFA (Décret n°2022-986)
+ * Dernière mise à jour : mars 2026
  */
 
 // SMIG mensuel en vigueur depuis le 01/01/2023
 // Source : Décret n°2022-986 du Ministère de l'Emploi CI
 export const SMIG_MENSUEL = 75_000;
+export const SMIG_HORAIRE = Math.round(SMIG_MENSUEL / 173.33); // ≈ 433 FCFA/h
 
-// CNPS part salariale : taux non publiés dans le CT-CI 2025
-// Valeurs indicatives (à confirmer auprès de la CNPS CI) :
-// Retraite 3.2% + Prévoyance 1.2% = 4.4% total salarié
-// ⚠️ Ces taux ne figurent pas explicitement dans les textes fournis
-export const TAUX_CNPS_SALARIE = 0.044;
+// CNPS retraite salariale : 6,30% plafonné à 1 647 315 FCFA/mois
+export const TAUX_CNPS_RETRAITE_SALARIE = 0.063;
+export const PLAFOND_CNPS_MENSUEL = 1_647_315;
+// Alias compatibilité descendante
+export const TAUX_CNPS_SALARIE = TAUX_CNPS_RETRAITE_SALARIE;
+export const PLAFOND_CNPS = PLAFOND_CNPS_MENSUEL;
 
-// Plafond mensuel CNPS : non spécifié dans les textes fournis
-// Valeur indicative basée sur 45 × SMIG = 45 × 75 000 = 3 375 000 FCFA
-// ⚠️ À confirmer auprès de la CNPS CI
-export const PLAFOND_CNPS = 45 * SMIG_MENSUEL; // 3 375 000 FCFA
+// CMU (CNAM) — Couverture Maladie Universelle
+// Forfait mensuel 1 600 FCFA — part salariale = part patronale
+export const CMU_MENSUEL = 1_600;
+
+// Charges patronales CNPS CI
+export const CHARGES_PATRONALES_TAUX = {
+  familiales: 0.05,      // Prestations familiales (base plafonnée à 70 000 FCFA/mois)
+  maternite: 0.0075,     // Accidents maternité
+  retraite: 0.077,       // Retraite patronale (plafond PLAFOND_CNPS_MENSUEL)
+  at_mp: 0.03,           // Accidents travail / Maladies pro (taux moyen, variable)
+  fdfp: 0.01,            // Fonds Développement Formation Professionnelle
+} as const;
+
+export const PLAFOND_FAMILIALES = 70_000;
 
 /**
  * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI simplifié mensuel
@@ -65,7 +80,9 @@ export function calculerITS(salaireImposable: number): number {
 
 export interface ResultatPaie {
   salaire_brut: number;
-  cnps_salarie: number;
+  cnps_retraite: number;            // 6,3% plafonné
+  cmu_salarie: number;              // CMU forfait 1 600 FCFA
+  cnps_salarie: number;             // Total salarial : cnps_retraite + cmu_salarie
   base_imposable: number;
   its: number;
   salaire_net_avant_retenues: number;
@@ -77,13 +94,20 @@ export function calculerBulletin(
   autresRetenues = 0,
   avances = 0
 ): ResultatPaie {
-  const baseCNPS = Math.min(salaireBrut, PLAFOND_CNPS);
-  const cnps_salarie = Math.round(baseCNPS * TAUX_CNPS_SALARIE);
+  // CNPS retraite salariale (6,3% plafonné)
+  const baseCNPS = Math.min(salaireBrut, PLAFOND_CNPS_MENSUEL);
+  const cnps_retraite = Math.round(baseCNPS * TAUX_CNPS_RETRAITE_SALARIE);
 
-  // Base imposable ITS = brut - CNPS - abattement forfaitaire (CGI CI)
-  // ⚠️ Taux abattement à confirmer avec Loi de Finances en vigueur
+  // CMU salariale — forfait
+  const cmu_salarie = CMU_MENSUEL;
+
+  // Total retenu salarié
+  const cnps_salarie = cnps_retraite + cmu_salarie;
+
+  // Base imposable ITS = brut - CNPS retraite - abattement 15% (CGI CI Art. 116)
+  // ⚠️ Abattement à confirmer avec Loi de Finances en vigueur
   const abattement = Math.round(salaireBrut * 0.15);
-  const base_imposable = Math.max(0, salaireBrut - cnps_salarie - abattement);
+  const base_imposable = Math.max(0, salaireBrut - cnps_retraite - abattement);
   const its = calculerITS(base_imposable);
 
   const salaire_net_avant_retenues = salaireBrut - cnps_salarie - its;
@@ -91,12 +115,44 @@ export function calculerBulletin(
 
   return {
     salaire_brut: salaireBrut,
+    cnps_retraite,
+    cmu_salarie,
     cnps_salarie,
     base_imposable,
     its,
     salaire_net_avant_retenues,
     salaire_net: Math.max(0, salaire_net),
   };
+}
+
+export interface ChargesPatronales {
+  familiales: number;    // 5% base plafonnée
+  maternite: number;     // 0,75%
+  retraite: number;      // 7,7% plafonné
+  at_mp: number;         // 3% (taux moyen)
+  cmu: number;           // CMU patronale forfait
+  fdfp: number;          // FDFP 1%
+  total: number;
+}
+
+export function calculerChargesPatronales(salaireBrut: number): ChargesPatronales {
+  const baseFamiliales = Math.min(salaireBrut, PLAFOND_FAMILIALES);
+  const familiales = Math.round(baseFamiliales * CHARGES_PATRONALES_TAUX.familiales);
+
+  const maternite = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.maternite);
+
+  const baseRetraite = Math.min(salaireBrut, PLAFOND_CNPS_MENSUEL);
+  const retraite = Math.round(baseRetraite * CHARGES_PATRONALES_TAUX.retraite);
+
+  const at_mp = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.at_mp);
+
+  const cmu = CMU_MENSUEL;
+
+  const fdfp = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.fdfp);
+
+  const total = familiales + maternite + retraite + at_mp + cmu + fdfp;
+
+  return { familiales, maternite, retraite, at_mp, cmu, fdfp, total };
 }
 
 // ── Indemnité de licenciement — Art. 74 CT-CI ───────────────────────────

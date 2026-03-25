@@ -46,7 +46,7 @@ export default async function PaiePage() {
         <div>
           <h1 className="text-2xl font-bold">Bulletins de Paie</h1>
           <p className="text-sm text-muted-foreground">
-            Calcul automatique CNPS (4,4%) + ITS — Droit ivoirien
+            CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Droit ivoirien 2026
           </p>
         </div>
         <PaieDialog employees={employees ?? []} />
@@ -75,11 +75,14 @@ export default async function PaiePage() {
 
       {/* Rappel légal */}
       <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
-        <p className="font-medium mb-1">Calcul automatique — Références légales</p>
-        <div className="flex flex-wrap gap-4 text-xs">
-          <span>🏛 CNPS salarié : <strong>4,4%</strong> du brut (retraite 3,2% + prévoyance 1,2%)</span>
-          <span>💰 ITS : barème progressif (0% → 12% → 18% → 25% → 32%)</span>
-          <span>📋 Abattement ITS : <strong>15%</strong> charges professionnelles</span>
+        <p className="font-medium mb-2">Calcul automatique — Références légales 2026</p>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-3">
+          <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 1 647 315 FCFA/mois)</span>
+          <span>CMU (CNAM) salariale : <strong>1 600 FCFA</strong> forfait/mois</span>
+          <span>ITS : barème progressif (0% → 12% → 18% → 25% → 32%)</span>
+          <span>Abattement ITS : <strong>15%</strong> charges professionnelles</span>
+          <span>Charges patronales : <strong>~{Math.round((0.05 + 0.0075 + 0.077 + 0.03 + 0.01) * 100)}%</strong> + CMU 1 600 FCFA</span>
+          <span>FDFP : <strong>1%</strong> masse salariale</span>
         </div>
       </div>
 
