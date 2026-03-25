@@ -15,6 +15,12 @@ const updateSchema = z.object({
   type_contrat: z.enum(["CDI", "CDD", "Stage", "Apprentissage"]).nullable().optional(),
   salaire_brut: z.coerce.number().min(0).nullable().optional(),
   statut: z.enum(["actif", "inactif", "suspendu"]).optional(),
+  civilite: z.string().max(10).nullable().optional(),
+  nationalite: z.string().max(100).nullable().optional(),
+  etat_civil: z.string().max(30).nullable().optional(),
+  nb_enfants: z.coerce.number().int().min(0).nullable().optional(),
+  niveau_etude: z.string().max(50).nullable().optional(),
+  categorie: z.string().max(60).nullable().optional(),
 });
 
 export async function PUT(

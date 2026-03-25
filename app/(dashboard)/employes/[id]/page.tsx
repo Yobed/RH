@@ -36,6 +36,29 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+function formatAnciennete(dateEmbauche: string): string {
+  const debut = new Date(dateEmbauche);
+  const now = new Date();
+
+  let years = now.getFullYear() - debut.getFullYear();
+  let months = now.getMonth() - debut.getMonth();
+  let days = now.getDate() - debut.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  const y = String(years).padStart(2, "0");
+  const m = String(months).padStart(2, "0");
+  const d = String(days).padStart(2, "0");
+  return `${y} an${years > 1 ? "s" : ""} ${m} mois ${d} jour${days > 1 ? "s" : ""}`;
+}
+
 function scoreLabel(score: number | null): string {
   if (score === null) return "Non noté";
   if (score >= 90) return "Exceptionnel";
@@ -52,7 +75,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
     supabase
       .from("employees")
       .select(
-        "id, matricule, full_name, poste, departement, type_contrat, date_embauche, statut, genre, date_naissance, email, phone, salaire_brut, manager_id, company_id, created_at"
+        "id, matricule, full_name, poste, departement, type_contrat, date_embauche, statut, genre, date_naissance, email, phone, salaire_brut, manager_id, company_id, created_at, civilite, nationalite, etat_civil, nb_enfants, niveau_etude, categorie"
       )
       .eq("id", params.id)
       .single(),
@@ -88,9 +111,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
 
   if (!emp) notFound();
 
-  const anciennete = Math.floor(
-    (Date.now() - new Date(emp.date_embauche).getTime()) / (1000 * 60 * 60 * 24 * 365)
-  );
+  const anciennete = formatAnciennete(emp.date_embauche);
 
   return (
     <div className="p-6 space-y-6">
@@ -136,11 +157,35 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             <User className="h-4 w-4 text-muted-foreground" />
             Identité
           </div>
-          <InfoRow label="Matricule" value={<span className="font-mono text-xs">{emp.matricule}</span>} />
-          <InfoRow label="Genre" value={emp.genre === "M" ? "Masculin" : emp.genre === "F" ? "Féminin" : null} />
+          <InfoRow
+            label="Matricule"
+            value={<span className="font-mono text-xs">{emp.matricule}</span>}
+          />
+          <InfoRow
+            label="Civilité"
+            value={(emp as { civilite?: string | null }).civilite}
+          />
+          <InfoRow
+            label="Genre"
+            value={emp.genre === "M" ? "Masculin" : emp.genre === "F" ? "Féminin" : null}
+          />
           <InfoRow
             label="Date de naissance"
             value={emp.date_naissance ? new Date(emp.date_naissance).toLocaleDateString("fr-CI") : null}
+          />
+          <InfoRow
+            label="Nationalité"
+            value={(emp as { nationalite?: string | null }).nationalite}
+          />
+          <InfoRow
+            label="État civil"
+            value={(emp as { etat_civil?: string | null }).etat_civil}
+          />
+          <InfoRow
+            label="Enfants à charge"
+            value={(emp as { nb_enfants?: number | null }).nb_enfants != null
+              ? String((emp as { nb_enfants?: number | null }).nb_enfants)
+              : null}
           />
           <InfoRow
             label="Email"
@@ -173,6 +218,14 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           <InfoRow label="Poste" value={emp.poste} />
           <InfoRow label="Département" value={emp.departement} />
           <InfoRow
+            label="Catégorie"
+            value={(emp as { categorie?: string | null }).categorie}
+          />
+          <InfoRow
+            label="Niveau d'études"
+            value={(emp as { niveau_etude?: string | null }).niveau_etude}
+          />
+          <InfoRow
             label="Type de contrat"
             value={emp.type_contrat ? <Badge variant="outline">{emp.type_contrat}</Badge> : null}
           />
@@ -180,10 +233,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             label="Date d'embauche"
             value={new Date(emp.date_embauche).toLocaleDateString("fr-CI")}
           />
-          <InfoRow
-            label="Ancienneté"
-            value={`${anciennete} an${anciennete > 1 ? "s" : ""}`}
-          />
+          <InfoRow label="Ancienneté" value={anciennete} />
           <InfoRow
             label="Salaire brut"
             value={

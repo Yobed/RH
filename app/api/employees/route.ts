@@ -15,6 +15,13 @@ const createSchema = z.object({
   type_contrat: z.enum(["CDI", "CDD", "Stage", "Apprentissage"]).nullable().optional(),
   salaire_brut: z.coerce.number().min(0).nullable().optional(),
   statut: z.enum(["actif", "inactif", "suspendu"]).default("actif"),
+  civilite: z.string().max(10).nullable().optional(),
+  nationalite: z.string().max(100).nullable().optional(),
+  etat_civil: z.string().max(30).nullable().optional(),
+  nb_enfants: z.coerce.number().int().min(0).nullable().optional(),
+  niveau_etude: z.string().max(50).nullable().optional(),
+  categorie: z.string().max(60).nullable().optional(),
+  date_fin_contrat: z.string().nullable().optional(),
 });
 
 export async function POST(req: Request) {
@@ -62,6 +69,7 @@ export async function POST(req: Request) {
       company_id: companyId as string,
       type_contrat: parsed.data.type_contrat,
       date_debut: parsed.data.date_embauche,
+      date_fin: parsed.data.date_fin_contrat ?? null,
       salaire_brut: parsed.data.salaire_brut,
       renouvellement_count: 0,
       statut: "actif",

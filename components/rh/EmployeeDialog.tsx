@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlusIcon, PencilIcon } from "lucide-react";
+import { PlusIcon, PencilIcon, RefreshCw } from "lucide-react";
 
 import {
   Dialog,
@@ -22,44 +22,89 @@ import type { Tables } from "@/types/supabase";
 
 type Employee = Tables<"employees">;
 
-const schema = z.object({
-  full_name: z.string().min(2, "Minimum 2 caractères").max(100),
-  matricule: z.string().min(1, "Matricule obligatoire").max(20),
-  poste: z.string().min(2, "Poste obligatoire").max(100),
-  date_embauche: z.string().min(1, "Date d'embauche obligatoire"),
-  genre: z.enum(["M", "F", ""]).optional(),
-  date_naissance: z.string().optional(),
-  departement: z.string().max(100).optional(),
-  email: z
-    .string()
-    .optional()
-    .refine(
-      (val) => !val || val === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
-      { message: "Email invalide" }
-    ),
-  phone: z.string().max(20).optional(),
-  type_contrat: z.enum(["CDI", "CDD", "Stage", "Apprentissage", ""]).optional(),
-  salaire_brut: z.string().optional(),
-  statut: z.enum(["actif", "inactif", "suspendu"]),
-});
-
-type FormData = z.infer<typeof schema>;
-
 const selectClass =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
 
-function toFormDefaults(emp: Employee): FormData {
+const schema = z
+  .object({
+    civilite: z.enum(["M.", "Mme", "Mlle", ""]).optional(),
+    full_name: z.string().min(2, "Minimum 2 caractères").max(100),
+    matricule: z.string().max(20).optional(),
+    genre: z.enum(["M", "F", ""]).optional(),
+    date_naissance: z.string().optional(),
+    nationalite: z.string().max(100).optional(),
+    etat_civil: z.enum(["Célibataire", "Marié(e)", "Divorcé(e)", "Veuf/Veuve", "Pacsé(e)", ""]).optional(),
+    nb_enfants: z.string().optional(),
+    email: z
+      .string()
+      .optional()
+      .refine(
+        (val) => !val || val === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+        { message: "Email invalide" }
+      ),
+    phone: z.string().max(20).optional(),
+    poste: z.string().min(2, "Poste obligatoire").max(100),
+    departement: z.string().max(100).optional(),
+    niveau_etude: z.enum(["Primaire", "Secondaire/Collège", "BAC", "BTS / DUT", "Licence", "Master", "Doctorat", ""]).optional(),
+    categorie: z.enum(["Ouvrier / Employé", "Agent de maîtrise / Technicien", "Cadre / Ingénieur", "Cadre supérieur", ""]).optional(),
+    type_contrat: z.enum(["CDI", "CDD", "Stage", "Apprentissage", ""]).optional(),
+    date_embauche: z.string().min(1, "Date d'embauche obligatoire"),
+    date_fin_contrat: z.string().optional(),
+    salaire_brut: z.string().optional(),
+    statut: z.enum(["actif", "inactif", "suspendu"]),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      ["CDD", "Stage", "Apprentissage"].includes(data.type_contrat ?? "") &&
+      !data.date_fin_contrat
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Date de fin obligatoire pour CDD, Stage et Apprentissage",
+        path: ["date_fin_contrat"],
+      });
+    }
+    if (
+      data.date_fin_contrat &&
+      data.date_embauche &&
+      data.date_fin_contrat <= data.date_embauche
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message: "La date de fin doit être après la date d'embauche",
+        path: ["date_fin_contrat"],
+      });
+    }
+  });
+
+type FormData = z.infer<typeof schema>;
+
+function toFormDefaults(emp: Employee & {
+  civilite?: string | null;
+  nationalite?: string | null;
+  etat_civil?: string | null;
+  nb_enfants?: number | null;
+  niveau_etude?: string | null;
+  categorie?: string | null;
+}): FormData {
   return {
+    civilite: (emp.civilite as FormData["civilite"]) ?? "",
     full_name: emp.full_name,
     matricule: emp.matricule,
-    poste: emp.poste,
-    date_embauche: emp.date_embauche,
     genre: (emp.genre as "M" | "F" | "") ?? "",
     date_naissance: emp.date_naissance ?? "",
-    departement: emp.departement ?? "",
+    nationalite: emp.nationalite ?? "",
+    etat_civil: (emp.etat_civil as FormData["etat_civil"]) ?? "",
+    nb_enfants: emp.nb_enfants != null ? String(emp.nb_enfants) : "0",
     email: emp.email ?? "",
     phone: emp.phone ?? "",
-    type_contrat: (emp.type_contrat as "CDI" | "CDD" | "Stage" | "Apprentissage" | "") ?? "",
+    poste: emp.poste,
+    departement: emp.departement ?? "",
+    niveau_etude: (emp.niveau_etude as FormData["niveau_etude"]) ?? "",
+    categorie: (emp.categorie as FormData["categorie"]) ?? "",
+    type_contrat: (emp.type_contrat as FormData["type_contrat"]) ?? "",
+    date_embauche: emp.date_embauche,
+    date_fin_contrat: "",
     salaire_brut: emp.salaire_brut != null ? String(emp.salaire_brut) : "",
     statut: (emp.statut as "actif" | "inactif" | "suspendu") ?? "actif",
   };
@@ -70,30 +115,67 @@ function cleanPayload(data: FormData): Record<string, unknown> {
     Object.entries(data).map(([k, v]) => {
       if (v === "" || v === undefined) return [k, null];
       if (k === "salaire_brut") return [k, v ? Number(v) : null];
+      if (k === "nb_enfants") return [k, v ? Number(v) : 0];
       return [k, v];
     })
   );
 }
 
 interface Props {
-  employee?: Employee;
+  employee?: Employee & {
+    civilite?: string | null;
+    nationalite?: string | null;
+    etat_civil?: string | null;
+    nb_enfants?: number | null;
+    niveau_etude?: string | null;
+    categorie?: string | null;
+  };
 }
 
 export function EmployeeDialog({ employee }: Props) {
   const [open, setOpen] = useState(false);
+  const [suggestedMatricule, setSuggestedMatricule] = useState<string>("");
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: employee
       ? toFormDefaults(employee)
-      : { statut: "actif", genre: "", type_contrat: "" },
+      : {
+          statut: "actif",
+          civilite: "",
+          genre: "",
+          type_contrat: "",
+          etat_civil: "",
+          niveau_etude: "",
+          categorie: "",
+          nb_enfants: "0",
+        },
   });
+
+  const typeContrat = watch("type_contrat");
+  const needsDateFin = ["CDD", "Stage", "Apprentissage"].includes(typeContrat ?? "");
+
+  // Charger un matricule suggéré pour les nouveaux employés
+  useEffect(() => {
+    if (employee || !open) return;
+    fetch("/api/employees/next-matricule")
+      .then((r) => r.json())
+      .then((d: { matricule?: string }) => {
+        if (d.matricule) {
+          setSuggestedMatricule(d.matricule);
+          setValue("matricule", d.matricule);
+        }
+      })
+      .catch(() => {});
+  }, [open, employee, setValue]);
 
   async function onSubmit(data: FormData) {
     const url = employee ? `/api/employees/${employee.id}` : "/api/employees";
@@ -140,43 +222,72 @@ export function EmployeeDialog({ employee }: Props) {
 
       <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>
-            {employee ? "Modifier l'employé" : "Nouvel employé"}
-          </DialogTitle>
+          <DialogTitle>{employee ? "Modifier l'employé" : "Nouvel employé"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-2">
-          {/* Identité */}
+
+          {/* ── IDENTITÉ ─────────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
               Identité
             </p>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            {/* Civilité + Nom */}
+            <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
+              <div>
+                <label className="text-sm font-medium">Civilité</label>
+                <select {...register("civilite")} className={`mt-1 ${selectClass}`}>
+                  <option value="">—</option>
+                  <option value="M.">M.</option>
+                  <option value="Mme">Mme</option>
+                  <option value="Mlle">Mlle</option>
+                </select>
+              </div>
               <div>
                 <label className="text-sm font-medium">Nom complet *</label>
                 <Input
                   {...register("full_name")}
-                  placeholder="Kouassi Jean-Marc"
+                  placeholder="KOUASSI Jean-Marc"
                   className="mt-1"
                 />
                 {errors.full_name && (
                   <p className="mt-1 text-xs text-red-500">{errors.full_name.message}</p>
                 )}
               </div>
-              <div>
-                <label className="text-sm font-medium">Matricule *</label>
+            </div>
+
+            {/* Matricule */}
+            <div>
+              <label className="text-sm font-medium">
+                Matricule
+                {!employee && (
+                  <span className="ml-2 text-xs text-muted-foreground font-normal">
+                    (auto-généré si vide)
+                  </span>
+                )}
+              </label>
+              <div className="mt-1 flex gap-2">
                 <Input
                   {...register("matricule")}
-                  placeholder="CI-2024-001"
-                  className="mt-1"
+                  placeholder={suggestedMatricule || "CI-2026-001"}
+                  className="flex-1"
                 />
-                {errors.matricule && (
-                  <p className="mt-1 text-xs text-red-500">{errors.matricule.message}</p>
+                {!employee && suggestedMatricule && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setValue("matricule", suggestedMatricule)}
+                    title="Utiliser le matricule suggéré"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                  </Button>
                 )}
               </div>
             </div>
 
+            {/* Genre + Date naissance */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Genre</label>
@@ -192,7 +303,41 @@ export function EmployeeDialog({ employee }: Props) {
               </div>
             </div>
 
+            {/* Nationalité + État civil */}
             <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-sm font-medium">Nationalité</label>
+                <Input
+                  {...register("nationalite")}
+                  placeholder="Ivoirien(ne)"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">État civil</label>
+                <select {...register("etat_civil")} className={`mt-1 ${selectClass}`}>
+                  <option value="">— Choisir —</option>
+                  <option value="Célibataire">Célibataire</option>
+                  <option value="Marié(e)">Marié(e)</option>
+                  <option value="Divorcé(e)">Divorcé(e)</option>
+                  <option value="Veuf/Veuve">Veuf / Veuve</option>
+                  <option value="Pacsé(e)">Pacsé(e)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Nb enfants + Contact */}
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label className="text-sm font-medium">Enfants à charge</label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="20"
+                  {...register("nb_enfants")}
+                  className="mt-1"
+                />
+              </div>
               <div>
                 <label className="text-sm font-medium">Email</label>
                 <Input
@@ -209,19 +354,20 @@ export function EmployeeDialog({ employee }: Props) {
                 <label className="text-sm font-medium">Téléphone</label>
                 <Input
                   {...register("phone")}
-                  placeholder="+225 07 00 00 00 00"
+                  placeholder="+225 07 00 00 00"
                   className="mt-1"
                 />
               </div>
             </div>
           </section>
 
-          {/* Poste */}
+          {/* ── POSTE & CONTRAT ──────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
               Poste & Contrat
             </p>
 
+            {/* Poste + Département */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Intitulé du poste *</label>
@@ -244,6 +390,34 @@ export function EmployeeDialog({ employee }: Props) {
               </div>
             </div>
 
+            {/* Catégorie + Niveau étude */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-sm font-medium">Catégorie professionnelle</label>
+                <select {...register("categorie")} className={`mt-1 ${selectClass}`}>
+                  <option value="">— Choisir —</option>
+                  <option value="Ouvrier / Employé">Ouvrier / Employé</option>
+                  <option value="Agent de maîtrise / Technicien">Agent de maîtrise / Technicien</option>
+                  <option value="Cadre / Ingénieur">Cadre / Ingénieur</option>
+                  <option value="Cadre supérieur">Cadre supérieur</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Niveau d'études</label>
+                <select {...register("niveau_etude")} className={`mt-1 ${selectClass}`}>
+                  <option value="">— Choisir —</option>
+                  <option value="Primaire">Primaire</option>
+                  <option value="Secondaire/Collège">Secondaire / Collège</option>
+                  <option value="BAC">BAC</option>
+                  <option value="BTS / DUT">BTS / DUT</option>
+                  <option value="Licence">Licence</option>
+                  <option value="Master">Master</option>
+                  <option value="Doctorat">Doctorat</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Type contrat + Date embauche */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Type de contrat</label>
@@ -264,6 +438,31 @@ export function EmployeeDialog({ employee }: Props) {
               </div>
             </div>
 
+            {/* Date de fin — visible uniquement si non-CDI */}
+            {needsDateFin && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-medium">
+                    Date de fin du contrat *
+                  </label>
+                  <Input
+                    type="date"
+                    {...register("date_fin_contrat")}
+                    className="mt-1"
+                  />
+                  {errors.date_fin_contrat && (
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.date_fin_contrat.message}
+                    </p>
+                  )}
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Crée automatiquement dans la liste des contrats
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Salaire + Statut */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Salaire brut (FCFA)</label>
@@ -272,7 +471,7 @@ export function EmployeeDialog({ employee }: Props) {
                   min="0"
                   step="1000"
                   {...register("salaire_brut")}
-                  placeholder="150000"
+                  placeholder="150 000"
                   className="mt-1"
                 />
               </div>
