@@ -59,18 +59,35 @@ async function syncForCompany(
 
     const { data: contracts } = await supabase
       .from("contracts")
-      .select("id, type_contrat, renouvellement_count, employees(full_name, poste)")
+      .select("id, type_contrat, renouvellement_count, employees!inner(full_name, poste, manager_id)")
       .eq("company_id", companyId)
       .eq("statut", "actif")
       .eq("date_fin", dateStr);
 
+    // Récupérer les noms des N+1 en une seule requête
+    const managerIds = [
+      ...new Set(
+        contracts
+          ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
+          .filter((id): id is string => !!id)
+      ),
+    ];
+    const managerNames: Record<string, string> = {};
+    if (managerIds.length > 0) {
+      const { data: managers } = await supabase
+        .from("employees")
+        .select("id, full_name")
+        .in("id", managerIds);
+      managers?.forEach((m) => { managerNames[m.id] = m.full_name; });
+    }
+
     for (const c of contracts ?? []) {
-      const emp = c.employees as unknown as { full_name: string; poste: string } | null;
-      const key = `contrat_expiration_j${jours}_${c.id}`;
-      const typeNotif =
-        (c.renouvellement_count ?? 0) >= 2
-          ? "alerte_contrat"
-          : "alerte_contrat";
+      const emp = c.employees as unknown as {
+        full_name: string;
+        poste: string;
+        manager_id: string | null;
+      } | null;
+      const managerNom = emp?.manager_id ? managerNames[emp.manager_id] : null;
 
       // Éviter les doublons via le titre unique
       const titre = `Contrat J-${jours} : ${emp?.full_name ?? "Employé"}`;
@@ -84,14 +101,18 @@ async function syncForCompany(
 
       if (existing) continue;
 
-      const msg =
-        (c.renouvellement_count ?? 0) >= 2
-          ? `Le contrat ${c.type_contrat} de ${emp?.full_name} expire dans ${jours} jour(s). ATTENTION : 2 renouvellements atteints → conversion CDI obligatoire (droit ivoirien).`
-          : `Le contrat ${c.type_contrat} de ${emp?.full_name} (${emp?.poste}) expire dans ${jours} jour(s).`;
+      const isMaxRenouv = (c.renouvellement_count ?? 0) >= 2;
+      let msg = isMaxRenouv
+        ? `Le contrat ${c.type_contrat} de ${emp?.full_name} (${emp?.poste}) expire dans ${jours} jour(s). ATTENTION : 2 renouvellements atteints → conversion CDI obligatoire (Art. 15 CT-CI 2025).`
+        : `Le contrat ${c.type_contrat} de ${emp?.full_name} (${emp?.poste}) expire dans ${jours} jour(s).`;
+
+      if (managerNom) {
+        msg += ` · N+1 à informer : ${managerNom}.`;
+      }
 
       await supabase.from("notifications").insert({
         company_id: companyId,
-        type: typeNotif,
+        type: "alerte_contrat",
         titre,
         message: msg,
       });
