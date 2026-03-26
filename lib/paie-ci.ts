@@ -155,6 +155,23 @@ export function calculerChargesPatronales(salaireBrut: number): ChargesPatronale
   return { familiales, maternite, retraite, at_mp, cmu, fdfp, total };
 }
 
+// ── Prime d'ancienneté — CCI AINSI-UGTCI Art. 17 ────────────────────────
+// Taux : 1% du salaire catégoriel par année d'ancienneté révolue
+// Plafond : 25% (atteint après 25 ans de présence)
+// Source : Convention Collective Interprofessionnelle CI
+export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string): number {
+  const debut = new Date(dateEmbauche);
+  const now = new Date();
+  // Années complètes de service
+  let annees = now.getFullYear() - debut.getFullYear();
+  const moisPasse = now.getMonth() > debut.getMonth()
+    || (now.getMonth() === debut.getMonth() && now.getDate() >= debut.getDate());
+  if (!moisPasse) annees -= 1;
+  if (annees <= 0) return 0;
+  const taux = Math.min(annees * 0.01, 0.25); // plafond 25%
+  return Math.round(salaireCat * taux);
+}
+
 // ── Indemnité de licenciement — Art. 74 CT-CI ───────────────────────────
 // Source : Décret n°96-201 du 7 mars 1996 / CCI Art. 39
 // Base = salaire global mensuel moyen des 12 derniers mois (pas le salaire actuel)

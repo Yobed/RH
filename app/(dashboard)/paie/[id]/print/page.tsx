@@ -2,7 +2,6 @@ import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { PrintButton } from "@/components/rh/PrintButton";
 import {
-  calculerBulletin,
   calculerITS,
   TAUX_CNPS_RETRAITE_SALARIE,
   PLAFOND_CNPS_MENSUEL,
@@ -112,9 +111,11 @@ export default async function PrintBulletinPage({
     .from("bulletins_paie")
     .select(
       `id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
+       sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
+       prime_depassement, prime_fonction, prime_transport,
        employees!inner(
          id, full_name, poste, matricule, date_embauche, departement, type_contrat, company_id,
-         civilite, nb_enfants, etat_civil, categorie
+         civilite, nb_enfants, etat_civil, categorie, num_cnps
        )`
     )
     .eq("id", params.id)
@@ -135,6 +136,7 @@ export default async function PrintBulletinPage({
     nb_enfants: number | null;
     etat_civil: string | null;
     categorie: string | null;
+    num_cnps: string | null;
   } | null;
 
   const { data: company } = emp?.company_id
@@ -161,29 +163,43 @@ export default async function PrintBulletinPage({
     .eq("employee_id", emp?.id ?? "")
     .like("periode", `${annee}-%`);
 
-  // ── Calculs ────────────────────────────────────────────────────────────────
-  const brut = Number(bulletin.salaire_brut);
+  // ── Éléments de salaire (lignes 01-08) ────────────────────────────────────
+  const sal_cat       = Number(bulletin.salaire_brut);
+  const sursalaire    = Number((bulletin as Record<string, unknown>).sursalaire ?? 0);
+  const prime_anc     = Number((bulletin as Record<string, unknown>).prime_anciennete ?? 0);
+  const prime_excep   = Number((bulletin as Record<string, unknown>).prime_exceptionnelle ?? 0);
+  const prime_sal     = Number((bulletin as Record<string, unknown>).prime_salissure ?? 0);
+  const prime_dep     = Number((bulletin as Record<string, unknown>).prime_dep ?? 0) ||
+                        Number((bulletin as Record<string, unknown>).prime_depassement ?? 0);
+  const prime_fonc    = Number((bulletin as Record<string, unknown>).prime_fonction ?? 0);
+  const prime_transp  = Number((bulletin as Record<string, unknown>).prime_transport ?? 0);
   const autresRetenues = Number(bulletin.autres_retenues ?? 0);
   const avances = Number(bulletin.avances ?? 0);
 
+  // Total imposable (transport exclu)
+  const total_imposable = sal_cat + sursalaire + prime_anc + prime_excep + prime_sal + prime_dep + prime_fonc;
+  const total_gains = total_imposable + prime_transp;
+
   // Salariales
-  const baseCNPS = Math.min(brut, PLAFOND_CNPS_MENSUEL);
+  const baseCNPS = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
   const cnps_retraite_sal = Math.round(baseCNPS * TAUX_CNPS_RETRAITE_SALARIE);
   const cmu_sal = CMU_MENSUEL;
-  const abattement = Math.round(brut * 0.15);
-  const base_its = Math.max(0, brut - cnps_retraite_sal - abattement);
+  const abattement = Math.round(total_imposable * 0.15);
+  const base_its = Math.max(0, total_imposable - cnps_retraite_sal - abattement);
   const its = calculerITS(base_its);
   const total_retenues_sal = cnps_retraite_sal + cmu_sal + its + autresRetenues + avances;
-  const net_a_payer = Math.max(0, brut - total_retenues_sal);
+  const net_a_payer = Math.max(0, total_gains - total_retenues_sal);
+  // Alias pour backward compat (anciens bulletins sans primes → total_imposable = sal_cat)
+  const brut = total_imposable;
 
   // Patronales
-  const cnps_retraite_pat = Math.round(Math.min(brut, PLAFOND_CNPS_MENSUEL) * 0.077);
+  const cnps_retraite_pat = Math.round(Math.min(total_imposable, PLAFOND_CNPS_MENSUEL) * 0.077);
   const cnps_at_base = SMIG_MENSUEL; // 75 000
   const cnps_at_mp = Math.round(cnps_at_base * 0.03);
   const cnps_famil_base = SMIG_MENSUEL; // 75 000
   const cnps_famil_mat = Math.round(cnps_famil_base * 0.0575); // 5% + 0.75%
-  const fdfp_ta = Math.round(brut * 0.004);
-  const fdfp_tfc = Math.round(brut * 0.006);
+  const fdfp_ta = Math.round(total_imposable * 0.004);
+  const fdfp_tfc = Math.round(total_imposable * 0.006);
   const cmu_pat = CMU_MENSUEL;
   const total_retenues_pat =
     cnps_retraite_pat + cnps_at_mp + cnps_famil_mat + fdfp_ta + fdfp_tfc + cmu_pat;
@@ -232,14 +248,13 @@ export default async function PrintBulletinPage({
 
           {/* Filigrane */}
           <div className="text-right text-[8px] text-gray-400 mb-0.5">
-            LOGICPAIE, RH V1.0
+            FICHEPAIE, RH V1.0
           </div>
 
           {/* ── EN-TÊTE ─────────────────────────────────────────────────── */}
           <div className="flex justify-between items-start mb-2">
             <div className="space-y-0.5">
               <p className="text-[13px] font-bold uppercase tracking-wide">{companyNom}</p>
-              <p>{companyNom}</p>
               <p>{companyAdresse}</p>
               <p>N°CCM : {companyNccm} &nbsp;–&nbsp; N°CC : {companyNcc}</p>
               <p>N°CNPS : {companyCnps}</p>
@@ -256,7 +271,7 @@ export default async function PrintBulletinPage({
             <div className="flex-1 border border-gray-400 p-2 space-y-0.5">
               <div className="grid grid-cols-2 gap-x-4">
                 <p><span className="font-semibold">Matricule :</span> {emp?.matricule}</p>
-                <p><span className="font-semibold">N° CNPS :</span> {emp?.matricule}</p>
+                <p><span className="font-semibold">N° CNPS :</span> {emp?.num_cnps ?? ""}</p>
                 <p><span className="font-semibold">Direction :</span> {emp?.departement ?? "—"}</p>
                 <p><span className="font-semibold">Service :</span> {emp?.departement ?? "—"}</p>
                 <p><span className="font-semibold">Emploi :</span> {emp?.poste}</p>
@@ -342,20 +357,101 @@ export default async function PrintBulletinPage({
             </thead>
 
             <tbody>
-              {/* ── 01 — Salaire de base ── */}
+              {/* ── 01 — Salaire catégoriel ── */}
               <tr>
                 <Td className="text-center">01</Td>
                 <Td>Salaire Catégoriel</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(sal_cat)}</Td>
                 <Td right>{jours},00</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(sal_cat)}</Td>
                 <Td /><Td /><Td />
               </tr>
 
-              {/* Lignes vides pour primes supplémentaires */}
-              {[2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <EmptyRow key={i} />
-              ))}
+              {/* ── 02 — Sursalaire ── */}
+              {sursalaire > 0 ? (
+                <tr>
+                  <Td className="text-center">02</Td>
+                  <Td>Sursalaire</Td>
+                  <Td right>{n(sal_cat)}</Td>
+                  <Td />
+                  <Td right>{n(sursalaire)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── 03 — Prime d'ancienneté ── */}
+              {prime_anc > 0 ? (
+                <tr>
+                  <Td className="text-center">03</Td>
+                  <Td>Prime d&apos;Ancienneté</Td>
+                  <Td right>{n(sal_cat)}</Td>
+                  <Td right>
+                    {sal_cat > 0 ? taux((prime_anc / sal_cat) * 100) : "—"}
+                  </Td>
+                  <Td right>{n(prime_anc)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── 04 — Prime exceptionnelle ── */}
+              {prime_excep > 0 ? (
+                <tr>
+                  <Td className="text-center">04</Td>
+                  <Td>Prime Exceptionnelle</Td>
+                  <Td />
+                  <Td />
+                  <Td right>{n(prime_excep)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── 05 — Prime de salissure ── */}
+              {prime_sal > 0 ? (
+                <tr>
+                  <Td className="text-center">05</Td>
+                  <Td>Prime de Salissure</Td>
+                  <Td />
+                  <Td />
+                  <Td right>{n(prime_sal)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── 06 — Prime de dépassement ── */}
+              {prime_dep > 0 ? (
+                <tr>
+                  <Td className="text-center">06</Td>
+                  <Td>Prime de Dépassement</Td>
+                  <Td />
+                  <Td />
+                  <Td right>{n(prime_dep)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── 07 — Prime liée à la fonction ── */}
+              {prime_fonc > 0 ? (
+                <tr>
+                  <Td className="text-center">07</Td>
+                  <Td>Prime liée à la Fonction</Td>
+                  <Td />
+                  <Td />
+                  <Td right>{n(prime_fonc)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── 08 — Transport (non imposable) ── */}
+              {prime_transp > 0 ? (
+                <tr>
+                  <Td className="text-center">08</Td>
+                  <Td>Indemnité de Transport <span className="text-gray-400">(non impos.)</span></Td>
+                  <Td right>{n(prime_transp)}</Td>
+                  <Td right>{jours},00</Td>
+                  <Td right>{n(prime_transp)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
 
               {/* ── 30 — Total brut ── */}
               <tr className="border-t-2 border-gray-700">
@@ -363,7 +459,7 @@ export default async function PrintBulletinPage({
                 <Td bold>Total brut</Td>
                 <Td />
                 <Td />
-                <Td right bold>{n(brut)}</Td>
+                <Td right bold>{n(total_gains)}</Td>
                 <Td /><Td /><Td />
               </tr>
 
@@ -371,7 +467,7 @@ export default async function PrintBulletinPage({
               <tr>
                 <Td className="text-center">31</Td>
                 <Td>Brut fiscal employé</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(total_imposable)}</Td>
                 <Td /><Td /><Td /><Td /><Td />
               </tr>
 
@@ -379,7 +475,7 @@ export default async function PrintBulletinPage({
               <tr>
                 <Td className="text-center">32</Td>
                 <Td>Brut fiscal employeur</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(total_imposable)}</Td>
                 <Td /><Td /><Td /><Td /><Td />
               </tr>
 
@@ -387,7 +483,7 @@ export default async function PrintBulletinPage({
               <tr>
                 <Td className="text-center">33</Td>
                 <Td>Brut social</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(total_imposable)}</Td>
                 <Td /><Td /><Td /><Td /><Td />
               </tr>
 
@@ -398,7 +494,7 @@ export default async function PrintBulletinPage({
               <tr>
                 <Td className="text-center">34</Td>
                 <Td>ITS, Imp. sur Trait. et Sal.</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(total_imposable)}</Td>
                 <Td />
                 <Td />
                 <Td right>{n(its)}</Td>
@@ -442,7 +538,7 @@ export default async function PrintBulletinPage({
               <tr>
                 <Td className="text-center">38</Td>
                 <Td>FDFP, Taxe Apprentissage</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(total_imposable)}</Td>
                 <Td /><Td /><Td />
                 <Td right>0,40</Td>
                 <Td right>{n(fdfp_ta)}</Td>
@@ -452,7 +548,7 @@ export default async function PrintBulletinPage({
               <tr>
                 <Td className="text-center">39</Td>
                 <Td>FDFP, Taxe Form. Continue</Td>
-                <Td right>{n(brut)}</Td>
+                <Td right>{n(total_imposable)}</Td>
                 <Td /><Td /><Td />
                 <Td right>0,60</Td>
                 <Td right>{n(fdfp_tfc)}</Td>
@@ -503,7 +599,7 @@ export default async function PrintBulletinPage({
               <tr className="border-t-2 border-gray-700 bg-gray-50">
                 <Td /><Td /><Td />
                 <Td />
-                <Td right bold>{n(brut)}</Td>
+                <Td right bold>{n(total_gains)}</Td>
                 <Td right bold>{n(total_retenues_sal)}</Td>
                 <Td />
                 <Td right bold>{n(total_retenues_pat)}</Td>
