@@ -155,6 +155,16 @@ export function calculerChargesPatronales(salaireBrut: number): ChargesPatronale
   return { familiales, maternite, retraite, at_mp, cmu, fdfp, total };
 }
 
+// ── Provision 13e mois / Prime exceptionnelle — prorata temporis ────────
+// Base légale : usage courant CI + CCI interprofessionnelle
+// Calcul mensuel : 1/12 du salaire catégoriel par mois de présence
+// Le prorata est naturel : l'employé accumule 1/12 chaque mois travaillé,
+// donc un embauché en juillet obtient 6/12 à la fin de l'année.
+export function calculerProvision13e(salaireBrut: number): number {
+  if (salaireBrut <= 0) return 0;
+  return Math.round(salaireBrut / 12);
+}
+
 // ── Prime d'ancienneté — CCI AINSI-UGTCI Art. 17 ────────────────────────
 // Taux : 1% du salaire catégoriel par année d'ancienneté révolue
 // Plafond : 25% (atteint après 25 ans de présence)

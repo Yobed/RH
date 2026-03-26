@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PlusIcon } from "lucide-react";
-import { calculerPrimeAnciennete, calculerITS, TAUX_CNPS_RETRAITE_SALARIE, PLAFOND_CNPS_MENSUEL, CMU_MENSUEL } from "@/lib/paie-ci";
+import { calculerPrimeAnciennete, calculerProvision13e, calculerITS, TAUX_CNPS_RETRAITE_SALARIE, PLAFOND_CNPS_MENSUEL, CMU_MENSUEL } from "@/lib/paie-ci";
 
 import {
   Dialog,
@@ -151,26 +151,30 @@ export function PaieDialog({ employees, bulletin }: Props) {
     if (isEdit || !empId) return;
     const emp = employees.find((e) => e.id === empId);
     if (!emp) return;
+    const brut = Number(emp.salaire_brut ?? 0);
     if (emp.salaire_brut) setValue("salaire_brut", String(emp.salaire_brut));
     setValue("sursalaire",           String(emp.sursalaire ?? 0));
-    setValue("prime_exceptionnelle", String(emp.prime_exceptionnelle ?? 0));
+    setValue("prime_exceptionnelle", String(calculerProvision13e(brut)));
     setValue("prime_salissure",      String(emp.prime_salissure ?? 0));
     setValue("prime_depassement",    String(emp.prime_depassement ?? 0));
     setValue("prime_fonction",       String(emp.prime_fonction ?? 0));
     setValue("prime_transport",      String(emp.prime_transport ?? 0));
     if (emp.date_embauche) {
-      const pa = calculerPrimeAnciennete(Number(emp.salaire_brut ?? 0), emp.date_embauche);
+      const pa = calculerPrimeAnciennete(brut, emp.date_embauche);
       setValue("prime_anciennete", String(pa));
     }
   }, [empId, employees, setValue, isEdit]);
 
-  // Recalcul prime ancienneté si le salaire catégoriel change (création seulement)
+  // Recalcul primes auto si le salaire catégoriel change (création seulement)
   useEffect(() => {
     if (isEdit) return;
     const emp = employees.find((e) => e.id === empId);
-    if (!emp?.date_embauche) return;
-    const pa = calculerPrimeAnciennete(Number(brut) || 0, emp.date_embauche);
-    setValue("prime_anciennete", String(pa));
+    const brutNum = Number(brut) || 0;
+    setValue("prime_exceptionnelle", String(calculerProvision13e(brutNum)));
+    if (emp?.date_embauche) {
+      const pa = calculerPrimeAnciennete(brutNum, emp.date_embauche);
+      setValue("prime_anciennete", String(pa));
+    }
   }, [brut, empId, employees, setValue, isEdit]);
 
   // Aperçu calculé en temps réel
@@ -317,7 +321,12 @@ export function PaieDialog({ employees, bulletin }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">04</span> Prime exceptionnelle / 13e mois
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_exceptionnelle")} className="mt-1" />
+                <Input type="number" min="0" step="100" {...register("prime_exceptionnelle")} className="mt-1" />
+                {!isEdit && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    Auto = salaire / 12 (prorata temporis mensuel)
+                  </p>
+                )}
               </div>
 
               {/* 05 */}
