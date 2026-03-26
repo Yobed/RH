@@ -31,7 +31,7 @@ export default async function PaiePage() {
       .order("created_at", { ascending: false }),
     supabase
       .from("employees")
-      .select("id, full_name, matricule, salaire_brut, date_embauche")
+      .select("id, full_name, matricule, salaire_brut, date_embauche, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
       .eq("statut", "actif")
       .order("full_name"),
   ]);

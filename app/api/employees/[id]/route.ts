@@ -21,6 +21,12 @@ const updateSchema = z.object({
   nb_enfants: z.coerce.number().int().min(0).nullable().optional(),
   niveau_etude: z.string().max(50).nullable().optional(),
   categorie: z.string().max(60).nullable().optional(),
+  sursalaire:           z.coerce.number().min(0).nullable().optional(),
+  prime_exceptionnelle: z.coerce.number().min(0).nullable().optional(),
+  prime_salissure:      z.coerce.number().min(0).nullable().optional(),
+  prime_depassement:    z.coerce.number().min(0).nullable().optional(),
+  prime_fonction:       z.coerce.number().min(0).nullable().optional(),
+  prime_transport:      z.coerce.number().min(0).nullable().optional(),
 });
 
 export async function PUT(

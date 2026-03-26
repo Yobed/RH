@@ -22,6 +22,12 @@ const createSchema = z.object({
   niveau_etude: z.string().max(50).nullable().optional(),
   categorie: z.string().max(60).nullable().optional(),
   date_fin_contrat: z.string().nullable().optional(),
+  sursalaire:           z.coerce.number().min(0).nullable().optional(),
+  prime_exceptionnelle: z.coerce.number().min(0).nullable().optional(),
+  prime_salissure:      z.coerce.number().min(0).nullable().optional(),
+  prime_depassement:    z.coerce.number().min(0).nullable().optional(),
+  prime_fonction:       z.coerce.number().min(0).nullable().optional(),
+  prime_transport:      z.coerce.number().min(0).nullable().optional(),
 });
 
 export async function POST(req: Request) {

@@ -24,6 +24,12 @@ import type { Tables } from "@/types/supabase";
 
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule" | "salaire_brut"> & {
   date_embauche: string;
+  sursalaire?: number | null;
+  prime_exceptionnelle?: number | null;
+  prime_salissure?: number | null;
+  prime_depassement?: number | null;
+  prime_fonction?: number | null;
+  prime_transport?: number | null;
 };
 
 export interface BulletinEditable {
@@ -140,12 +146,18 @@ export function PaieDialog({ employees, bulletin }: Props) {
   const empId = watch("employee_id");
   const brut  = watch("salaire_brut");
 
-  // Auto-remplir salaire + prime ancienneté selon l'employé sélectionné (création seulement)
+  // Auto-remplir salaire + primes selon l'employé sélectionné (création seulement)
   useEffect(() => {
     if (isEdit || !empId) return;
     const emp = employees.find((e) => e.id === empId);
     if (!emp) return;
     if (emp.salaire_brut) setValue("salaire_brut", String(emp.salaire_brut));
+    setValue("sursalaire",           String(emp.sursalaire ?? 0));
+    setValue("prime_exceptionnelle", String(emp.prime_exceptionnelle ?? 0));
+    setValue("prime_salissure",      String(emp.prime_salissure ?? 0));
+    setValue("prime_depassement",    String(emp.prime_depassement ?? 0));
+    setValue("prime_fonction",       String(emp.prime_fonction ?? 0));
+    setValue("prime_transport",      String(emp.prime_transport ?? 0));
     if (emp.date_embauche) {
       const pa = calculerPrimeAnciennete(Number(emp.salaire_brut ?? 0), emp.date_embauche);
       setValue("prime_anciennete", String(pa));
@@ -408,7 +420,7 @@ export function PaieDialog({ employees, bulletin }: Props) {
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-              {isSubmitting ? "Création..." : "Créer le bulletin"}
+              {isSubmitting ? (isEdit ? "Enregistrement..." : "Création...") : (isEdit ? "Enregistrer" : "Créer le bulletin")}
             </Button>
           </DialogFooter>
         </form>
