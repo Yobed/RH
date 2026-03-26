@@ -324,7 +324,7 @@ export function PaieDialog({ employees, bulletin }: Props) {
                 <Input type="number" min="0" step="100" {...register("prime_exceptionnelle")} className="mt-1" />
                 {!isEdit && (
                   <p className="text-[10px] text-muted-foreground mt-0.5">
-                    Auto = salaire / 12 (prorata temporis mensuel)
+                    Auto = salaire × 75% / 12 (prorata temporis mensuel)
                   </p>
                 )}
               </div>

@@ -162,7 +162,8 @@ export function calculerChargesPatronales(salaireBrut: number): ChargesPatronale
 // donc un embauché en juillet obtient 6/12 à la fin de l'année.
 export function calculerProvision13e(salaireBrut: number): number {
   if (salaireBrut <= 0) return 0;
-  return Math.round(salaireBrut / 12);
+  // 13e mois annuel = 75% du salaire de base → provision mensuelle = 75% / 12
+  return Math.round(salaireBrut * 0.75 / 12);
 }
 
 // ── Prime d'ancienneté — CCI AINSI-UGTCI Art. 17 ────────────────────────
