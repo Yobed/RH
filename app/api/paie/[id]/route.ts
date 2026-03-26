@@ -1,9 +1,23 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { calculerITS, TAUX_CNPS_RETRAITE_SALARIE, PLAFOND_CNPS_MENSUEL, CMU_MENSUEL } from "@/lib/paie-ci";
 
-const schema = z.object({
+const statutSchema = z.object({
   statut: z.enum(["brouillon", "validé", "payé"]),
+});
+
+const editSchema = z.object({
+  salaire_brut:         z.number().positive(),
+  sursalaire:           z.number().min(0).default(0),
+  prime_anciennete:     z.number().min(0).default(0),
+  prime_exceptionnelle: z.number().min(0).default(0),
+  prime_salissure:      z.number().min(0).default(0),
+  prime_depassement:    z.number().min(0).default(0),
+  prime_fonction:       z.number().min(0).default(0),
+  prime_transport:      z.number().min(0).default(0),
+  autres_retenues:      z.number().min(0).default(0),
+  avances:              z.number().min(0).default(0),
 });
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
@@ -16,13 +30,74 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     return NextResponse.json({ error: "Corps invalide" }, { status: 400 });
   }
 
-  const parsed = schema.safeParse(body);
+  const parsed = statutSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
 
   const { data, error } = await supabase
     .from("bulletins_paie")
     .update({ statut: parsed.data.statut })
     .eq("id", params.id)
+    .select()
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
+}
+
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const supabase = createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  // Seuls les brouillons sont modifiables
+  const { data: existing } = await supabase
+    .from("bulletins_paie")
+    .select("statut, company_id")
+    .eq("id", params.id)
+    .single();
+
+  if (!existing) return NextResponse.json({ error: "Bulletin introuvable" }, { status: 404 });
+  if (existing.statut !== "brouillon")
+    return NextResponse.json({ error: "Seuls les bulletins en brouillon peuvent être modifiés" }, { status: 403 });
+
+  let body: unknown;
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: "Corps invalide" }, { status: 400 });
+  }
+
+  const parsed = editSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
+
+  const d = parsed.data;
+  const total_imposable = d.salaire_brut + d.sursalaire + d.prime_anciennete +
+    d.prime_exceptionnelle + d.prime_salissure + d.prime_depassement + d.prime_fonction;
+  const total_gains = total_imposable + d.prime_transport;
+  const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
+  const cnps_retraite = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
+  const cnps_salarie = cnps_retraite + CMU_MENSUEL;
+  const abattement = Math.round(total_imposable * 0.15);
+  const its = calculerITS(Math.max(0, total_imposable - cnps_retraite - abattement));
+  const salaire_net = Math.max(0, total_gains - cnps_salarie - its - d.autres_retenues - d.avances);
+
+  const { data, error } = await supabase
+    .from("bulletins_paie")
+    .update({
+      salaire_brut: d.salaire_brut,
+      sursalaire: d.sursalaire,
+      prime_anciennete: d.prime_anciennete,
+      prime_exceptionnelle: d.prime_exceptionnelle,
+      prime_salissure: d.prime_salissure,
+      prime_depassement: d.prime_depassement,
+      prime_fonction: d.prime_fonction,
+      prime_transport: d.prime_transport,
+      cnps_salarie,
+      its,
+      autres_retenues: d.autres_retenues,
+      avances: d.avances,
+      salaire_net,
+    })
+    .eq("id", params.id)
+    .eq("company_id", existing.company_id)
     .select()
     .single();
 

@@ -24,7 +24,9 @@ export default async function PaiePage() {
     supabase
       .from("bulletins_paie")
       .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
-               employees(full_name, poste, matricule)`)
+               sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
+               prime_depassement, prime_fonction, prime_transport,
+               employee_id, employees(full_name, poste, matricule)`)
       .order("periode", { ascending: false })
       .order("created_at", { ascending: false }),
     supabase
@@ -135,7 +137,30 @@ export default async function PaiePage() {
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-center hidden md:table-cell">
-                        <PaieStatusButton bulletinId={b.id} currentStatut={b.statut ?? "brouillon"} />
+                        <div className="flex items-center justify-center gap-1">
+                          {b.statut === "brouillon" && (
+                            <PaieDialog
+                              employees={employees ?? []}
+                              bulletin={{
+                                id: b.id,
+                                periode: b.periode,
+                                employee_id: (b as Record<string, unknown>).employee_id as string,
+                                employee_name: emp?.full_name ?? "—",
+                                salaire_brut: Number(b.salaire_brut),
+                                sursalaire: Number((b as Record<string, unknown>).sursalaire ?? 0),
+                                prime_anciennete: Number((b as Record<string, unknown>).prime_anciennete ?? 0),
+                                prime_exceptionnelle: Number((b as Record<string, unknown>).prime_exceptionnelle ?? 0),
+                                prime_salissure: Number((b as Record<string, unknown>).prime_salissure ?? 0),
+                                prime_depassement: Number((b as Record<string, unknown>).prime_depassement ?? 0),
+                                prime_fonction: Number((b as Record<string, unknown>).prime_fonction ?? 0),
+                                prime_transport: Number((b as Record<string, unknown>).prime_transport ?? 0),
+                                autres_retenues: Number(b.autres_retenues ?? 0),
+                                avances: Number(b.avances ?? 0),
+                              }}
+                            />
+                          )}
+                          <PaieStatusButton bulletinId={b.id} currentStatut={b.statut ?? "brouillon"} />
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-center hidden lg:table-cell">
                         <Link

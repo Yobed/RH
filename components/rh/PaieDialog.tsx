@@ -19,11 +19,29 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pencil } from "lucide-react";
 import type { Tables } from "@/types/supabase";
 
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule" | "salaire_brut"> & {
   date_embauche: string;
 };
+
+export interface BulletinEditable {
+  id: string;
+  periode: string;
+  salaire_brut: number;
+  sursalaire?: number | null;
+  prime_anciennete?: number | null;
+  prime_exceptionnelle?: number | null;
+  prime_salissure?: number | null;
+  prime_depassement?: number | null;
+  prime_fonction?: number | null;
+  prime_transport?: number | null;
+  autres_retenues?: number | null;
+  avances?: number | null;
+  employee_id: string;
+  employee_name: string;
+}
 
 const schema = z.object({
   employee_id: z.string().uuid("Sélectionnez un employé"),
@@ -53,7 +71,10 @@ function currentPeriode() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
-interface Props { employees: Employee[] }
+interface Props {
+  employees: Employee[];
+  bulletin?: BulletinEditable; // mode édition si fourni
+}
 
 /** Calcul synthétique preview sans appeler l'API */
 function previewCalc(vals: {
@@ -87,14 +108,28 @@ function previewCalc(vals: {
   return { total_imposable, total_gains, cnps_retraite, cmu_sal, its, salaire_net };
 }
 
-export function PaieDialog({ employees }: Props) {
+export function PaieDialog({ employees, bulletin }: Props) {
+  const isEdit = !!bulletin;
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } =
     useForm<FormData>({
       resolver: zodResolver(schema),
-      defaultValues: {
+      defaultValues: isEdit ? {
+        employee_id:         bulletin.employee_id,
+        periode:             bulletin.periode,
+        salaire_brut:        String(bulletin.salaire_brut),
+        sursalaire:          String(bulletin.sursalaire ?? 0),
+        prime_anciennete:    String(bulletin.prime_anciennete ?? 0),
+        prime_exceptionnelle: String(bulletin.prime_exceptionnelle ?? 0),
+        prime_salissure:     String(bulletin.prime_salissure ?? 0),
+        prime_depassement:   String(bulletin.prime_depassement ?? 0),
+        prime_fonction:      String(bulletin.prime_fonction ?? 0),
+        prime_transport:     String(bulletin.prime_transport ?? 0),
+        autres_retenues:     String(bulletin.autres_retenues ?? 0),
+        avances:             String(bulletin.avances ?? 0),
+      } : {
         periode: currentPeriode(),
         sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
         prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
@@ -105,9 +140,9 @@ export function PaieDialog({ employees }: Props) {
   const empId = watch("employee_id");
   const brut  = watch("salaire_brut");
 
-  // Auto-remplir salaire + prime ancienneté selon l'employé sélectionné
+  // Auto-remplir salaire + prime ancienneté selon l'employé sélectionné (création seulement)
   useEffect(() => {
-    if (!empId) return;
+    if (isEdit || !empId) return;
     const emp = employees.find((e) => e.id === empId);
     if (!emp) return;
     if (emp.salaire_brut) setValue("salaire_brut", String(emp.salaire_brut));
@@ -115,15 +150,16 @@ export function PaieDialog({ employees }: Props) {
       const pa = calculerPrimeAnciennete(Number(emp.salaire_brut ?? 0), emp.date_embauche);
       setValue("prime_anciennete", String(pa));
     }
-  }, [empId, employees, setValue]);
+  }, [empId, employees, setValue, isEdit]);
 
-  // Recalcul prime ancienneté si le salaire catégoriel change
+  // Recalcul prime ancienneté si le salaire catégoriel change (création seulement)
   useEffect(() => {
+    if (isEdit) return;
     const emp = employees.find((e) => e.id === empId);
     if (!emp?.date_embauche) return;
     const pa = calculerPrimeAnciennete(Number(brut) || 0, emp.date_embauche);
     setValue("prime_anciennete", String(pa));
-  }, [brut, empId, employees, setValue]);
+  }, [brut, empId, employees, setValue, isEdit]);
 
   // Aperçu calculé en temps réel
   const nums = {
@@ -141,24 +177,30 @@ export function PaieDialog({ employees }: Props) {
   const preview = nums.salaire_brut > 0 ? previewCalc(nums) : null;
 
   async function onSubmit(data: FormData) {
-    const res = await fetch("/api/paie", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        employee_id:         data.employee_id,
-        periode:             data.periode,
-        salaire_brut:        Number(data.salaire_brut),
-        sursalaire:          Number(data.sursalaire) || 0,
-        prime_anciennete:    Number(data.prime_anciennete) || 0,
-        prime_exceptionnelle: Number(data.prime_exceptionnelle) || 0,
-        prime_salissure:     Number(data.prime_salissure) || 0,
-        prime_depassement:   Number(data.prime_depassement) || 0,
-        prime_fonction:      Number(data.prime_fonction) || 0,
-        prime_transport:     Number(data.prime_transport) || 0,
-        autres_retenues:     Number(data.autres_retenues) || 0,
-        avances:             Number(data.avances) || 0,
-      }),
-    });
+    const payload = {
+      salaire_brut:         Number(data.salaire_brut),
+      sursalaire:           Number(data.sursalaire) || 0,
+      prime_anciennete:     Number(data.prime_anciennete) || 0,
+      prime_exceptionnelle: Number(data.prime_exceptionnelle) || 0,
+      prime_salissure:      Number(data.prime_salissure) || 0,
+      prime_depassement:    Number(data.prime_depassement) || 0,
+      prime_fonction:       Number(data.prime_fonction) || 0,
+      prime_transport:      Number(data.prime_transport) || 0,
+      autres_retenues:      Number(data.autres_retenues) || 0,
+      avances:              Number(data.avances) || 0,
+    };
+
+    const res = isEdit
+      ? await fetch(`/api/paie/${bulletin!.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+      : await fetch("/api/paie", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ employee_id: data.employee_id, periode: data.periode, ...payload }),
+        });
 
     if (!res.ok) {
       const err = (await res.json()) as { error?: string };
@@ -166,9 +208,9 @@ export function PaieDialog({ employees }: Props) {
       return;
     }
 
-    toast.success("Bulletin de paie créé");
+    toast.success(isEdit ? "Bulletin mis à jour" : "Bulletin de paie créé");
     setOpen(false);
-    reset({
+    if (!isEdit) reset({
       periode: currentPeriode(),
       sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
       prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
@@ -179,36 +221,49 @@ export function PaieDialog({ employees }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>
-        <PlusIcon className="mr-2 h-4 w-4" />
-        Nouveau bulletin
-      </DialogTrigger>
+      {isEdit ? (
+        <DialogTrigger render={<Button variant="ghost" size="sm" />}>
+          <Pencil className="h-3.5 w-3.5" />
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger render={<Button />}>
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Nouveau bulletin
+        </DialogTrigger>
+      )}
 
       <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>Nouveau bulletin de paie</DialogTitle>
+          <DialogTitle>
+            {isEdit ? `Modifier le bulletin — ${bulletin!.periode}` : "Nouveau bulletin de paie"}
+          </DialogTitle>
+          {isEdit && (
+            <p className="text-sm text-muted-foreground">{bulletin!.employee_name}</p>
+          )}
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
 
           {/* Employé + Période */}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-sm font-medium">Employé *</label>
-              <select {...register("employee_id")} className={`mt-1 ${selectClass}`}>
-                <option value="">— Sélectionner —</option>
-                {employees.map((e) => (
-                  <option key={e.id} value={e.id}>{e.full_name} ({e.matricule})</option>
-                ))}
-              </select>
-              {errors.employee_id && <p className="mt-1 text-xs text-red-500">{errors.employee_id.message}</p>}
+          {!isEdit && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-sm font-medium">Employé *</label>
+                <select {...register("employee_id")} className={`mt-1 ${selectClass}`}>
+                  <option value="">— Sélectionner —</option>
+                  {employees.map((e) => (
+                    <option key={e.id} value={e.id}>{e.full_name} ({e.matricule})</option>
+                  ))}
+                </select>
+                {errors.employee_id && <p className="mt-1 text-xs text-red-500">{errors.employee_id.message}</p>}
+              </div>
+              <div>
+                <label className="text-sm font-medium">Période *</label>
+                <Input type="month" {...register("periode")} className="mt-1" />
+                {errors.periode && <p className="mt-1 text-xs text-red-500">{errors.periode.message}</p>}
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">Période *</label>
-              <Input type="month" {...register("periode")} className="mt-1" />
-              {errors.periode && <p className="mt-1 text-xs text-red-500">{errors.periode.message}</p>}
-            </div>
-          </div>
+          )}
 
           {/* ── ÉLÉMENTS DE SALAIRE ─────────────────────────────────── */}
           <div className="rounded-lg border bg-slate-50 p-3 space-y-2">
