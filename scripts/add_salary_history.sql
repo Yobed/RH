@@ -22,6 +22,4 @@ ALTER TABLE employee_salary_history ENABLE ROW LEVEL SECURITY;
 
 -- Isolation par entreprise (multi-tenant)
 CREATE POLICY "company_isolation" ON employee_salary_history
-  USING (company_id = (
-    SELECT company_id FROM company_users WHERE user_id = auth.uid()
-  ));
+  USING (company_id = get_user_company_id());
