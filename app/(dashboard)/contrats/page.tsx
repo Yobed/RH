@@ -33,13 +33,10 @@ export default async function ContratsPage() {
     .order("date_fin", { ascending: true });
 
   // Récupérer les noms des N+1
-  const managerIds = [
-    ...new Set(
-      contratsExpirants
-        ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
-        .filter((id): id is string => !!id)
-    ),
-  ];
+  const allManagerIds = contratsExpirants
+    ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
+    .filter((id): id is string => !!id) ?? [];
+  const managerIds = Array.from(new Set(allManagerIds));
   const managerNames: Record<string, string> = {};
   if (managerIds.length > 0) {
     const { data: managers } = await supabase

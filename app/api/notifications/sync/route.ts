@@ -65,13 +65,10 @@ async function syncForCompany(
       .eq("date_fin", dateStr);
 
     // Récupérer les noms des N+1 en une seule requête
-    const managerIds = [
-      ...new Set(
-        contracts
-          ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
-          .filter((id): id is string => !!id)
-      ),
-    ];
+    const allMgrIds = contracts
+      ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
+      .filter((id): id is string => !!id) ?? [];
+    const managerIds = Array.from(new Set(allMgrIds));
     const managerNames: Record<string, string> = {};
     if (managerIds.length > 0) {
       const { data: managers } = await supabase
