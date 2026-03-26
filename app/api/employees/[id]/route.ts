@@ -27,7 +27,24 @@ const updateSchema = z.object({
   prime_depassement:    z.coerce.number().min(0).nullable().optional(),
   prime_fonction:       z.coerce.number().min(0).nullable().optional(),
   prime_transport:      z.coerce.number().min(0).nullable().optional(),
+  motif_modification:   z.string().max(255).nullable().optional(),
 });
+
+const SALARY_FIELDS = [
+  "salaire_brut", "sursalaire", "prime_exceptionnelle",
+  "prime_salissure", "prime_depassement", "prime_fonction", "prime_transport",
+] as const;
+
+type SalarySnapshot = {
+  company_id: string;
+  salaire_brut: number | null;
+  sursalaire: number | null;
+  prime_exceptionnelle: number | null;
+  prime_salissure: number | null;
+  prime_depassement: number | null;
+  prime_fonction: number | null;
+  prime_transport: number | null;
+};
 
 export async function PUT(
   req: Request,
@@ -55,9 +72,44 @@ export async function PUT(
     );
   }
 
+  // Lire les valeurs salariales actuelles avant mise à jour
+  const { data: current } = await supabase
+    .from("employees")
+    .select("company_id, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
+    .eq("id", params.id)
+    .single();
+
+  // Si au moins un champ salaire a changé → archiver l'ancienne situation
+  if (current) {
+    const snap = current as unknown as SalarySnapshot;
+    const changed = SALARY_FIELDS.some(
+      (f) => parsed.data[f] !== undefined && Number(parsed.data[f]) !== Number(snap[f] ?? 0)
+    );
+    if (changed) {
+      await (supabase.from as (t: string) => ReturnType<typeof supabase.from>)(
+        "employee_salary_history"
+      ).insert({
+        company_id: snap.company_id,
+        employee_id: params.id,
+        date_effet: new Date().toISOString().slice(0, 10),
+        salaire_brut: snap.salaire_brut,
+        sursalaire: snap.sursalaire ?? 0,
+        prime_exceptionnelle: snap.prime_exceptionnelle ?? 0,
+        prime_salissure: snap.prime_salissure ?? 0,
+        prime_depassement: snap.prime_depassement ?? 0,
+        prime_fonction: snap.prime_fonction ?? 0,
+        prime_transport: snap.prime_transport ?? 0,
+        motif: parsed.data.motif_modification ?? "Modification manuelle",
+      });
+    }
+  }
+
+  // Ne pas stocker motif_modification dans la table employees
+  const { motif_modification: _motif, ...updateData } = parsed.data;
+
   const { data, error } = await supabase
     .from("employees")
-    .update(parsed.data)
+    .update(updateData)
     .eq("id", params.id)
     .select()
     .single();

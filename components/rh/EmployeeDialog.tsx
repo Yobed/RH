@@ -51,6 +51,13 @@ const schema = z
     date_embauche: z.string().min(1, "Date d'embauche obligatoire"),
     date_fin_contrat: z.string().optional(),
     salaire_brut: z.string().optional(),
+    sursalaire: z.string().optional(),
+    prime_exceptionnelle: z.string().optional(),
+    prime_salissure: z.string().optional(),
+    prime_depassement: z.string().optional(),
+    prime_fonction: z.string().optional(),
+    prime_transport: z.string().optional(),
+    motif_modification: z.string().max(255).optional(),
     statut: z.enum(["actif", "inactif", "suspendu"]),
   })
   .superRefine((data, ctx) => {
@@ -79,14 +86,22 @@ const schema = z
 
 type FormData = z.infer<typeof schema>;
 
-function toFormDefaults(emp: Employee & {
+type EmployeeWithPrimes = Employee & {
   civilite?: string | null;
   nationalite?: string | null;
   etat_civil?: string | null;
   nb_enfants?: number | null;
   niveau_etude?: string | null;
   categorie?: string | null;
-}): FormData {
+  sursalaire?: number | null;
+  prime_exceptionnelle?: number | null;
+  prime_salissure?: number | null;
+  prime_depassement?: number | null;
+  prime_fonction?: number | null;
+  prime_transport?: number | null;
+};
+
+function toFormDefaults(emp: EmployeeWithPrimes): FormData {
   return {
     civilite: (emp.civilite as FormData["civilite"]) ?? "",
     full_name: emp.full_name,
@@ -106,6 +121,13 @@ function toFormDefaults(emp: Employee & {
     date_embauche: emp.date_embauche,
     date_fin_contrat: "",
     salaire_brut: emp.salaire_brut != null ? String(emp.salaire_brut) : "",
+    sursalaire: String(emp.sursalaire ?? 0),
+    prime_exceptionnelle: String(emp.prime_exceptionnelle ?? 0),
+    prime_salissure: String(emp.prime_salissure ?? 0),
+    prime_depassement: String(emp.prime_depassement ?? 0),
+    prime_fonction: String(emp.prime_fonction ?? 0),
+    prime_transport: String(emp.prime_transport ?? 0),
+    motif_modification: "",
     statut: (emp.statut as "actif" | "inactif" | "suspendu") ?? "actif",
   };
 }
@@ -116,20 +138,15 @@ function cleanPayload(data: FormData): Record<string, unknown> {
       if (v === "" || v === undefined) return [k, null];
       if (k === "salaire_brut") return [k, v ? Number(v) : null];
       if (k === "nb_enfants") return [k, v ? Number(v) : 0];
+      if (["sursalaire","prime_exceptionnelle","prime_salissure","prime_depassement","prime_fonction","prime_transport"].includes(k))
+        return [k, Number(v) || 0];
       return [k, v];
     })
   );
 }
 
 interface Props {
-  employee?: Employee & {
-    civilite?: string | null;
-    nationalite?: string | null;
-    etat_civil?: string | null;
-    nb_enfants?: number | null;
-    niveau_etude?: string | null;
-    categorie?: string | null;
-  };
+  employee?: EmployeeWithPrimes;
 }
 
 export function EmployeeDialog({ employee }: Props) {
@@ -462,10 +479,13 @@ export function EmployeeDialog({ employee }: Props) {
               </div>
             )}
 
-            {/* Salaire + Statut */}
+            {/* Salaire catégoriel + Statut */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Salaire brut (FCFA)</label>
+                <label className="text-sm font-medium">
+                  <span className="font-mono text-muted-foreground text-xs mr-1">01</span>
+                  Salaire catégoriel (FCFA)
+                </label>
                 <Input
                   type="number"
                   min="0"
@@ -485,6 +505,82 @@ export function EmployeeDialog({ employee }: Props) {
               </div>
             </div>
           </section>
+
+          {/* ── PRIMES & INDEMNITÉS ──────────────────────────────── */}
+          <section className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+              Primes & Indemnités habituelles
+              <span className="ml-2 font-normal normal-case text-muted-foreground/70">
+                (reprises automatiquement à chaque bulletin)
+              </span>
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">02</span> Sursalaire (FCFA)
+                </label>
+                <Input type="number" min="0" step="1000" {...register("sursalaire")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">03</span> Prime d&apos;ancienneté
+                  <span className="ml-1 text-[10px] text-blue-500 font-normal">(auto — 1%/an)</span>
+                </label>
+                <Input disabled value="Calculée automatiquement" className="mt-1 bg-muted text-muted-foreground text-xs" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">04</span> Prime exceptionnelle / 13e mois
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_exceptionnelle")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">05</span> Prime de salissure
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_salissure")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">06</span> Prime de dépassement
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_depassement")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">07</span> Prime liée à la fonction
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_fonction")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">08</span> Indemnité de transport
+                  <span className="ml-1 text-[10px] text-emerald-600 font-normal">(non imposable)</span>
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_transport")} className="mt-1" />
+              </div>
+            </div>
+          </section>
+
+          {/* ── MOTIF MODIFICATION (édition uniquement) ──────────── */}
+          {employee && (
+            <section className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+                Motif de modification
+              </p>
+              <div>
+                <label className="text-sm font-medium text-slate-700">
+                  Raison de la modification salariale
+                  <span className="ml-1 font-normal text-muted-foreground text-xs">(optionnel — ex. Augmentation annuelle 2026)</span>
+                </label>
+                <Input
+                  {...register("motif_modification")}
+                  placeholder="Augmentation annuelle, avenant au contrat…"
+                  className="mt-1"
+                />
+              </div>
+            </section>
+          )}
 
           <DialogFooter>
             <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">

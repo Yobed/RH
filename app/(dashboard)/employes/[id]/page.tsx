@@ -71,11 +71,11 @@ function scoreLabel(score: number | null): string {
 export default async function EmployeeDetailPage({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
 
-  const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }] = await Promise.all([
+  const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }, { data: salaryHistory }] = await Promise.all([
     supabase
       .from("employees")
       .select(
-        "id, matricule, full_name, poste, departement, type_contrat, date_embauche, statut, genre, date_naissance, email, phone, salaire_brut, manager_id, company_id, created_at, civilite, nationalite, etat_civil, nb_enfants, niveau_etude, categorie"
+        "id, matricule, full_name, poste, departement, type_contrat, date_embauche, statut, genre, date_naissance, email, phone, salaire_brut, manager_id, company_id, created_at, civilite, nationalite, etat_civil, nb_enfants, niveau_etude, categorie, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport"
       )
       .eq("id", params.id)
       .single(),
@@ -107,6 +107,12 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
       .eq("employee_id", params.id)
       .order("periode", { ascending: false })
       .limit(6),
+    (supabase.from as (t: string) => ReturnType<typeof supabase.from>)(
+      "employee_salary_history"
+    )
+      .select("id, date_effet, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, motif, created_at")
+      .eq("employee_id", params.id)
+      .order("date_effet", { ascending: false }),
   ]);
 
   if (!emp) notFound();
@@ -246,6 +252,37 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                 : null
             }
           />
+          {/* Primes habituelles */}
+          {(() => {
+            const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
+            const empPrimes = emp as unknown as {
+              sursalaire?: number | null;
+              prime_exceptionnelle?: number | null;
+              prime_salissure?: number | null;
+              prime_depassement?: number | null;
+              prime_fonction?: number | null;
+              prime_transport?: number | null;
+            };
+            const primes = [
+              { label: "02 Sursalaire", val: empPrimes.sursalaire },
+              { label: "04 Prime exceptionnelle", val: empPrimes.prime_exceptionnelle },
+              { label: "05 Prime de salissure", val: empPrimes.prime_salissure },
+              { label: "06 Prime de dépassement", val: empPrimes.prime_depassement },
+              { label: "07 Prime de fonction", val: empPrimes.prime_fonction },
+              { label: "08 Indemnité transport", val: empPrimes.prime_transport },
+            ].filter((p) => p.val != null && Number(p.val) > 0);
+            if (primes.length === 0) return null;
+            return (
+              <>
+                <div className="pt-1 border-t mt-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Primes habituelles</p>
+                  {primes.map((p) => (
+                    <InfoRow key={p.label} label={p.label} value={fmtXOF(Number(p.val))} />
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
       </div>
 
@@ -306,6 +343,65 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Historique des éléments de salaire */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <Banknote className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-lg font-semibold">Historique des éléments de salaire</h2>
+        </div>
+        {!salaryHistory || (salaryHistory as unknown[]).length === 0 ? (
+          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+            Aucun historique — les modifications salariales apparaîtront ici.
+          </div>
+        ) : (
+          <div className="rounded-lg border bg-white overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="border-b bg-muted/50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Date d&apos;effet</th>
+                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">Salaire brut</th>
+                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden lg:table-cell">Total primes</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Motif</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {(salaryHistory as unknown as Array<{
+                  id: string;
+                  date_effet: string;
+                  salaire_brut: number | null;
+                  sursalaire: number | null;
+                  prime_exceptionnelle: number | null;
+                  prime_salissure: number | null;
+                  prime_depassement: number | null;
+                  prime_fonction: number | null;
+                  prime_transport: number | null;
+                  motif: string | null;
+                }>).map((h) => {
+                  const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
+                  const totalPrimes = (h.sursalaire ?? 0) + (h.prime_exceptionnelle ?? 0) + (h.prime_salissure ?? 0) + (h.prime_depassement ?? 0) + (h.prime_fonction ?? 0) + (h.prime_transport ?? 0);
+                  return (
+                    <tr key={h.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 font-mono text-sm">
+                        {new Date(h.date_effet).toLocaleDateString("fr-CI")}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium">
+                        {h.salaire_brut != null ? fmtXOF(h.salaire_brut) : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-right text-muted-foreground hidden lg:table-cell">
+                        {totalPrimes > 0 ? fmtXOF(totalPrimes) : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
+                        {h.motif ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
