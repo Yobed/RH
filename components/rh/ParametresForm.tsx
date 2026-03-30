@@ -7,7 +7,15 @@ import { Input } from "@/components/ui/input";
 
 interface Props {
   profile: { full_name: string; email: string; role: string };
-  company: { name: string; convention_collective: string };
+  company: {
+    name: string;
+    convention_collective: string;
+    raison_sociale?: string | null;
+    adresse?: string | null;
+    cnps_matricule?: string | null;
+    nccm?: string | null;
+    ncc?: string | null;
+  };
 }
 
 const CONVENTIONS = [
@@ -28,6 +36,11 @@ export function ParametresForm({ profile, company }: Props) {
   const [fullName, setFullName] = useState(profile.full_name);
   const [companyName, setCompanyName] = useState(company.name);
   const [convention, setConvention] = useState(company.convention_collective);
+  const [raisonSociale, setRaisonSociale] = useState(company.raison_sociale ?? "");
+  const [adresse, setAdresse] = useState(company.adresse ?? "");
+  const [cnpsMatricule, setCnpsMatricule] = useState(company.cnps_matricule ?? "");
+  const [nccm, setNccm] = useState(company.nccm ?? "");
+  const [ncc, setNcc] = useState(company.ncc ?? "");
   const [savingProfil, setSavingProfil] = useState(false);
   const [savingEntreprise, setSavingEntreprise] = useState(false);
 
@@ -61,6 +74,11 @@ export function ParametresForm({ profile, company }: Props) {
         body: JSON.stringify({
           name: companyName.trim(),
           convention_collective: convention || null,
+          raison_sociale: raisonSociale || null,
+          adresse: adresse || null,
+          cnps_matricule: cnpsMatricule || null,
+          nccm: nccm || null,
+          ncc: ncc || null,
         }),
       });
       if (!res.ok) {
@@ -140,6 +158,70 @@ export function ParametresForm({ profile, company }: Props) {
           </p>
         </div>
 
+        {/* Informations légales pour le bulletin de paie */}
+        <div className="border-t pt-4 space-y-4">
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+            Informations légales (bulletin de paie)
+          </h3>
+
+          <div>
+            <label className="text-sm font-medium">Raison sociale</label>
+            <Input
+              value={raisonSociale}
+              onChange={(e) => setRaisonSociale(e.target.value)}
+              placeholder="ex: SARL GRAVEL IVOIRE"
+              className="mt-1"
+              maxLength={200}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Dénomination légale affichée sur le bulletin de paie.
+            </p>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Adresse du siège</label>
+            <Input
+              value={adresse}
+              onChange={(e) => setAdresse(e.target.value)}
+              placeholder="ex: Abidjan, Plateau, Rue des Jardins"
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Matricule CNPS employeur</label>
+            <Input
+              value={cnpsMatricule}
+              onChange={(e) => setCnpsMatricule(e.target.value)}
+              placeholder="ex: 123456789"
+              className="mt-1"
+              maxLength={30}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">N° Compte Cotisant Maladie</label>
+            <Input
+              value={nccm}
+              onChange={(e) => setNccm(e.target.value)}
+              placeholder="ex: 0012345"
+              className="mt-1"
+              maxLength={30}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">N° Compte Contribuable</label>
+            <Input
+              value={ncc}
+              onChange={(e) => setNcc(e.target.value)}
+              placeholder="ex: CI-ABJ-2025-000123"
+              className="mt-1"
+              maxLength={30}
+            />
+          </div>
+        </div>
+
         <Button
           onClick={saveEntreprise}
           disabled={savingEntreprise || !companyName.trim()}
@@ -148,7 +230,7 @@ export function ParametresForm({ profile, company }: Props) {
         </Button>
       </div>
 
-      {/* Informations légales */}
+      {/* Droit applicable */}
       <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
         <p className="font-medium mb-1">Droit applicable</p>
         <p>

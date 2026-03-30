@@ -140,20 +140,18 @@ export default async function PrintBulletinPage({
   } | null;
 
   const { data: company } = emp?.company_id
-    ? await supabase.from("companies").select("*").eq("id", emp.company_id).single()
+    ? await supabase
+        .from("companies")
+        .select("id, name, raison_sociale, adresse, cnps_matricule, nccm, ncc, convention_collective")
+        .eq("id", emp.company_id)
+        .single()
     : { data: null };
 
-  const companyNom =
-    (company as Record<string, string> | null)?.raison_sociale ??
-    (company as Record<string, string> | null)?.name ??
-    "VOTRE ENTREPRISE";
-  const companyAdresse =
-    (company as Record<string, string> | null)?.adresse ??
-    (company as Record<string, string> | null)?.address ??
-    "Abidjan, Côte d'Ivoire";
-  const companyCnps = (company as Record<string, string> | null)?.cnps_matricule ?? "—";
-  const companyNccm = (company as Record<string, string> | null)?.nccm ?? "—";
-  const companyNcc = (company as Record<string, string> | null)?.ncc ?? "—";
+  const companyNom = company?.raison_sociale ?? company?.name ?? "VOTRE ENTREPRISE";
+  const companyAdresse = company?.adresse ?? "Abidjan, Côte d'Ivoire";
+  const companyCnps = company?.cnps_matricule ?? "—";
+  const companyNccm = company?.nccm ?? "—";
+  const companyNcc = company?.ncc ?? "—";
 
   // Cumuls annuels
   const annee = bulletin.periode.slice(0, 4);

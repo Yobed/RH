@@ -23,7 +23,7 @@ export default async function ParametresPage() {
   const { data: company } = companyId
     ? await supabase
         .from("companies")
-        .select("name, convention_collective")
+        .select("name, convention_collective, raison_sociale, adresse, cnps_matricule, nccm, ncc")
         .eq("id", companyId as string)
         .single()
     : { data: null };
@@ -49,6 +49,11 @@ export default async function ParametresPage() {
         company={{
           name: company?.name ?? "",
           convention_collective: company?.convention_collective ?? "",
+          raison_sociale: company?.raison_sociale ?? null,
+          adresse: company?.adresse ?? null,
+          cnps_matricule: company?.cnps_matricule ?? null,
+          nccm: company?.nccm ?? null,
+          ncc: company?.ncc ?? null,
         }}
       />
     </div>
