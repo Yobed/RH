@@ -110,5 +110,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Audit : création d'un bulletin de paie (non bloquant)
+  if (data?.id) {
+    await supabase.from("audit_logs").insert({
+      action: "CREATE_BULLETIN",
+      company_id: profile.company_id as string,
+      user_id: user.id,
+      resource: `bulletins_paie:${data.id}`,
+    });
+  }
+
   return NextResponse.json(data, { status: 201 });
 }

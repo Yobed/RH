@@ -102,5 +102,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Audit : modification d'un bulletin de paie (non bloquant)
+  await supabase.from("audit_logs").insert({
+    action: "UPDATE_BULLETIN_STATUT",
+    company_id: existing.company_id as string,
+    user_id: user.id,
+    resource: `bulletins_paie:${params.id}`,
+  });
+
   return NextResponse.json(data);
 }

@@ -31,6 +31,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
+  // Vérification rôle admin — seuls les admins peuvent alimenter la base RAG partagée
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    return NextResponse.json(
+      { error: "Accès réservé aux administrateurs" },
+      { status: 403 }
+    );
+  }
+
   let formData: FormData;
   try {
     formData = await req.formData();
@@ -99,19 +113,38 @@ export async function POST(req: Request) {
 
   // ── 3. Découpage en chunks + insertion dans legal_documents ─
   const chunks = chunkText(extractedText);
+  let lastInsertedId: string | null = null;
 
   for (let i = 0; i < chunks.length; i++) {
     const chunkTitre =
       chunks.length === 1 ? titre : `${titre} (partie ${i + 1}/${chunks.length})`;
 
-    const { error: insertError } = await supabase.from("legal_documents").insert({
+    const { data: insertedChunk, error: insertError } = await supabase.from("legal_documents").insert({
       source,
       titre: chunkTitre,
       contenu: chunks[i],
       company_id: null, // partagé entre tous les tenants
-    });
+    }).select("id").single();
 
-    if (!insertError) chunksInserted++;
+    if (!insertError) {
+      chunksInserted++;
+      if (i === 0 && insertedChunk?.id) lastInsertedId = insertedChunk.id as string;
+    }
+  }
+
+  // ── 4. Log d'audit après upload RAG réussi ──────────────────
+  if (chunksInserted > 0) {
+    const { data: companyData } = await supabase.rpc("get_user_company_id");
+    const companyId = companyData as string | null;
+    if (companyId) {
+      // Audit non bloquant — on ignore l'erreur si l'insert échoue
+      await supabase.from("audit_logs").insert({
+        action: "RAG_UPLOAD",
+        company_id: companyId,
+        user_id: user.id,
+        resource: `legal_documents:${lastInsertedId ?? "unknown"}`,
+      });
+    }
   }
 
   return NextResponse.json({
