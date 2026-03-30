@@ -26,12 +26,13 @@
 **Goal:** La base de code est fiable — types TypeScript synchronisés, calcul de paie centralisé sans duplication, données entreprise complètes sur le bulletin, tests de non-régression sur les fonctions fiscales.
 **Depends on:** Rien (priorité absolue avant tout développement)
 **Covers:** SOC-01, SOC-02, SOC-03, SOC-04
-**Plans:**
-- [ ] 01-01: Régénérer `types/supabase.ts` — appliquer les 5 migrations `scripts/` en production, régénérer via Supabase CLI, supprimer tous les `as unknown as` (38 occurrences dans 15 fichiers)
-- [ ] 01-02: Migration SQL `companies` + formulaire Paramètres — ajouter `raison_sociale`, `adresse`, `cnps_matricule`, `nccm`, `ncc` sur la table `companies` ; mettre à jour `ParametresForm.tsx` et `app/api/entreprise/route.ts`
-- [ ] 01-03: Centraliser le calcul de paie dans `lib/paie-ci.ts` — supprimer `previewCalc` dans `PaieDialog.tsx`, extraire `formatAnciennete` et `scoreLabel`/`scoreVariant` en utilitaires partagés, corriger `PUT /api/paie/[id]` sans filtre `company_id`
-- [ ] 01-04: Vitest — configurer `vitest`, écrire les tests de `calculerITS`, `calculerBulletin`, `calculerChargesPatronales`, `calculerPrimeAnciennete`, `calculerProvision13e`, `calculerIndemniteLicenciement` avec cas limites et valeurs LF 2026
-- [ ] 01-05: Sécurité & migrations formelles — vérification rôle `admin` sur `POST /api/rag/upload`, alimentation de la table `audit_logs` sur les opérations critiques, migration vers `supabase/migrations/` versionnées
+**Plans:** 5 plans
+Plans:
+- [ ] 01-01-PLAN.md — Régénérer types/supabase.ts + supprimer les 38 as unknown as
+- [ ] 01-02-PLAN.md — Migration SQL companies + formulaire Paramètres + bulletin imprimé conforme
+- [ ] 01-03-PLAN.md — Centraliser calcul paie dans lib/paie-ci.ts + corriger PUT + EmployeeDialog
+- [ ] 01-04-PLAN.md — Configurer Vitest + suite de tests des 7 fonctions fiscales LF 2026
+- [ ] 01-05-PLAN.md — Sécurité POST /api/rag/upload + audit_logs + migrations versionnées
 
 **Success Criteria** (what must be TRUE):
 1. Le bulletin imprimé affiche le nom légal, l'adresse, le numéro CNPS et les numéros CCM/NCC de l'entreprise sans aucun "—"
@@ -39,7 +40,6 @@
 3. La suite de tests Vitest passe à 100% sur toutes les fonctions de `lib/paie-ci.ts`, y compris les taux LF 2026
 4. Un changement de taux dans `lib/paie-ci.ts` se répercute immédiatement dans la preview `PaieDialog` sans autre modification
 5. Tout upload dans la base RAG échoue avec 403 si l'utilisateur n'a pas le rôle `admin`
-**Plans:** TBD
 **UI hint**: yes
 
 ---
@@ -171,7 +171,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Stabilisation | 0/5 | Not started | - |
+| 1. Stabilisation | 0/5 | Planned | - |
 | 2. Paie Avancée | 0/5 | Not started | - |
 | 3. Congés & Absences | 0/5 | Not started | - |
 | 4. Dossier Personnel & Cycle Contractuel | 0/4 | Not started | - |
@@ -185,10 +185,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SOC-01 | Phase 1 | Pending |
-| SOC-02 | Phase 1 | Pending |
-| SOC-03 | Phase 1 | Pending |
-| SOC-04 | Phase 1 | Pending |
+| SOC-01 | Phase 1 | Planned |
+| SOC-02 | Phase 1 | Planned |
+| SOC-03 | Phase 1 | Planned |
+| SOC-04 | Phase 1 | Planned |
 | PAI-01 | Phase 2 | Pending |
 | PAI-02 | Phase 2 | Pending |
 | PAI-03 | Phase 2 | Pending |
@@ -237,4 +237,4 @@
 ---
 
 *Roadmap créée : 30 mars 2026*
-*Prochaine étape : `/gsd:plan-phase 1`*
+*Phase 1 planifiée : 30 mars 2026 — 5 plans créés (01-01 à 01-05)*
