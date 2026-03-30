@@ -16,6 +16,8 @@ import {
   Banknote,
 } from "lucide-react";
 import Link from "next/link";
+import { formatAnciennete } from "@/lib/paie-ci";
+import { scoreLabel } from "@/lib/utils-rh";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -36,37 +38,7 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-function formatAnciennete(dateEmbauche: string): string {
-  const debut = new Date(dateEmbauche);
-  const now = new Date();
 
-  let years = now.getFullYear() - debut.getFullYear();
-  let months = now.getMonth() - debut.getMonth();
-  let days = now.getDate() - debut.getDate();
-
-  if (days < 0) {
-    months -= 1;
-    days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
-  }
-  if (months < 0) {
-    years -= 1;
-    months += 12;
-  }
-
-  const y = String(years).padStart(2, "0");
-  const m = String(months).padStart(2, "0");
-  const d = String(days).padStart(2, "0");
-  return `${y} an${years > 1 ? "s" : ""} ${m} mois ${d} jour${days > 1 ? "s" : ""}`;
-}
-
-function scoreLabel(score: number | null): string {
-  if (score === null) return "Non noté";
-  if (score >= 90) return "Exceptionnel";
-  if (score >= 75) return "Très satisfaisant";
-  if (score >= 60) return "Satisfaisant";
-  if (score >= 40) return "À améliorer";
-  return "Insuffisant";
-}
 
 export default async function EmployeeDetailPage({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -74,9 +46,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
   const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }, { data: salaryHistory }] = await Promise.all([
     supabase
       .from("employees")
-      .select(
-        "id, matricule, full_name, poste, departement, type_contrat, date_embauche, statut, genre, date_naissance, email, phone, salaire_brut, manager_id, company_id, created_at, civilite, nationalite, etat_civil, nb_enfants, niveau_etude, categorie, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport"
-      )
+      .select("*")
       .eq("id", params.id)
       .single(),
     supabase
@@ -107,9 +77,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
       .eq("employee_id", params.id)
       .order("periode", { ascending: false })
       .limit(6),
-    (supabase.from as (t: string) => ReturnType<typeof supabase.from>)(
-      "employee_salary_history"
-    )
+    supabase.from("employee_salary_history")
       .select("id, date_effet, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, motif, created_at")
       .eq("employee_id", params.id)
       .order("date_effet", { ascending: false }),
@@ -255,21 +223,13 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           {/* Primes habituelles */}
           {(() => {
             const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
-            const empPrimes = emp as unknown as {
-              sursalaire?: number | null;
-              prime_exceptionnelle?: number | null;
-              prime_salissure?: number | null;
-              prime_depassement?: number | null;
-              prime_fonction?: number | null;
-              prime_transport?: number | null;
-            };
             const primes = [
-              { label: "02 Sursalaire", val: empPrimes.sursalaire },
-              { label: "04 Prime exceptionnelle", val: empPrimes.prime_exceptionnelle },
-              { label: "05 Prime de salissure", val: empPrimes.prime_salissure },
-              { label: "06 Prime de dépassement", val: empPrimes.prime_depassement },
-              { label: "07 Prime de fonction", val: empPrimes.prime_fonction },
-              { label: "08 Indemnité transport", val: empPrimes.prime_transport },
+              { label: "02 Sursalaire", val: emp.sursalaire },
+              { label: "04 Prime exceptionnelle", val: emp.prime_exceptionnelle },
+              { label: "05 Prime de salissure", val: emp.prime_salissure },
+              { label: "06 Prime de dépassement", val: emp.prime_depassement },
+              { label: "07 Prime de fonction", val: emp.prime_fonction },
+              { label: "08 Indemnité transport", val: emp.prime_transport },
             ].filter((p) => p.val != null && Number(p.val) > 0);
             if (primes.length === 0) return null;
             return (
@@ -371,18 +331,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {(salaryHistory as unknown as Array<{
-                  id: string;
-                  date_effet: string;
-                  salaire_brut: number | null;
-                  sursalaire: number | null;
-                  prime_exceptionnelle: number | null;
-                  prime_salissure: number | null;
-                  prime_depassement: number | null;
-                  prime_fonction: number | null;
-                  prime_transport: number | null;
-                  motif: string | null;
-                }>).map((h) => {
+                {salaryHistory?.map((h) => {
                   const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
                   const totalPrimes = (h.sursalaire ?? 0) + (h.prime_exceptionnelle ?? 0) + (h.prime_salissure ?? 0) + (h.prime_depassement ?? 0) + (h.prime_fonction ?? 0) + (h.prime_transport ?? 0);
                   return (

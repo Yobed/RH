@@ -187,7 +187,8 @@ export default async function RhPage() {
           ) : (
             <div className="space-y-2">
               {congesEnAttente.map((c) => {
-                const emp = c.employees as unknown as { full_name: string } | null;
+                const empRaw = c.employees;
+                const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
                 return (
                   <div key={c.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
                     <div>

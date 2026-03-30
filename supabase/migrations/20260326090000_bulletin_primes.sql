@@ -1,5 +1,5 @@
 -- Migration versionnée depuis scripts/add_bulletin_primes.sql
--- Appliquée manuellement en production (date approximative : 2026-03-26)
+-- Appliquée manuellement en production (date approximative : 20260326090000)
 -- NE PAS réexécuter si les colonnes/tables existent déjà (scripts avec IF NOT EXISTS)
 
 -- Migration : lignes de salaire 02-08 sur le bulletin de paie

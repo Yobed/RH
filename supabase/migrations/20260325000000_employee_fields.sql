@@ -1,5 +1,5 @@
 -- Migration versionnée depuis scripts/add_employee_fields.sql
--- Appliquée manuellement en production (date approximative : 2026-03-25)
+-- Appliquée manuellement en production (date approximative : 20260325000000)
 -- NE PAS réexécuter si les colonnes/tables existent déjà (scripts avec IF NOT EXISTS)
 
 -- ================================================================

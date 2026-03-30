@@ -117,7 +117,8 @@ export default async function RecrutementPage() {
               </thead>
               <tbody className="divide-y">
                 {candidats.map((c) => {
-                  const poste = c.job_postings as unknown as { titre: string } | null;
+                  const rawPoste = c.job_postings;
+                  const poste = Array.isArray(rawPoste) ? rawPoste[0] : rawPoste;
                   return (
                     <tr key={c.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3">

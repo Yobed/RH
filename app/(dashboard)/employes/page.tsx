@@ -16,9 +16,7 @@ export default async function EmployesPage() {
 
   const { data: employees } = await supabase
     .from("employees")
-    .select(
-      "id, matricule, full_name, poste, departement, type_contrat, date_embauche, statut, genre, date_naissance, email, phone, salaire_brut, manager_id, company_id, created_at"
-    )
+      .select("*")
     .order("full_name", { ascending: true });
 
   const total = employees?.length ?? 0;

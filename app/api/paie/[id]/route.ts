@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { calculerITS, TAUX_CNPS_RETRAITE_SALARIE, PLAFOND_CNPS_MENSUEL, CMU_MENSUEL } from "@/lib/paie-ci";
+import { calculerBulletinComplet } from "@/lib/paie-ci";
 
 const statutSchema = z.object({
   statut: z.enum(["brouillon", "validé", "payé"]),
@@ -25,6 +25,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
+  const { data: profile } = await supabase
+    .from("profiles").select("company_id").eq("id", user.id).single();
+  if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 403 });
+
   let body: unknown;
   try { body = await req.json(); } catch {
     return NextResponse.json({ error: "Corps invalide" }, { status: 400 });
@@ -37,6 +41,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     .from("bulletins_paie")
     .update({ statut: parsed.data.statut })
     .eq("id", params.id)
+    .eq("company_id", profile.company_id)
     .select()
     .single();
 
@@ -69,15 +74,18 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (!parsed.success) return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
 
   const d = parsed.data;
-  const total_imposable = d.salaire_brut + d.sursalaire + d.prime_anciennete +
-    d.prime_exceptionnelle + d.prime_salissure + d.prime_depassement + d.prime_fonction;
-  const total_gains = total_imposable + d.prime_transport;
-  const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
-  const cnps_retraite = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
-  const cnps_salarie = cnps_retraite + CMU_MENSUEL;
-  const abattement = Math.round(total_imposable * 0.15);
-  const its = calculerITS(Math.max(0, total_imposable - cnps_retraite - abattement));
-  const salaire_net = Math.max(0, total_gains - cnps_salarie - its - d.autres_retenues - d.avances);
+  const calc = calculerBulletinComplet({
+    salaire_brut: d.salaire_brut,
+    sursalaire: d.sursalaire,
+    prime_anciennete: d.prime_anciennete,
+    prime_exceptionnelle: d.prime_exceptionnelle,
+    prime_salissure: d.prime_salissure,
+    prime_depassement: d.prime_depassement,
+    prime_fonction: d.prime_fonction,
+    prime_transport: d.prime_transport,
+    autres_retenues: d.autres_retenues,
+    avances: d.avances,
+  });
 
   const { data, error } = await supabase
     .from("bulletins_paie")
@@ -90,11 +98,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       prime_depassement: d.prime_depassement,
       prime_fonction: d.prime_fonction,
       prime_transport: d.prime_transport,
-      cnps_salarie,
-      its,
+      cnps_salarie: calc.cnps_salarie + calc.cmu,
+      its: calc.its,
       autres_retenues: d.autres_retenues,
       avances: d.avances,
-      salaire_net,
+      salaire_net: calc.salaire_net,
     })
     .eq("id", params.id)
     .eq("company_id", existing.company_id)

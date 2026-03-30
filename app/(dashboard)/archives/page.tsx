@@ -109,7 +109,7 @@ export default async function ArchivesPage() {
               </thead>
               <tbody className="divide-y">
                 {documents.map((doc) => {
-                  const employee = doc.employees as unknown as { full_name: string } | null;
+                  const employee = Array.isArray(doc.employees) ? doc.employees[0] : doc.employees;
                   return (
                     <tr key={doc.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3">

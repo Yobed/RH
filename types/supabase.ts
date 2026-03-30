@@ -41,6 +41,87 @@ export type Database = {
         }
         Relationships: []
       }
+      bulletins_paie: {
+        Row: {
+          autres_retenues: number
+          avances: number
+          cnps_salarie: number
+          company_id: string
+          created_at: string | null
+          employee_id: string
+          id: string
+          its: number
+          periode: string
+          prime_anciennete: number | null
+          prime_depassement: number | null
+          prime_exceptionnelle: number | null
+          prime_fonction: number | null
+          prime_salissure: number | null
+          prime_transport: number | null
+          salaire_brut: number
+          salaire_net: number
+          statut: string | null
+          sursalaire: number | null
+        }
+        Insert: {
+          autres_retenues?: number
+          avances?: number
+          cnps_salarie?: number
+          company_id: string
+          created_at?: string | null
+          employee_id: string
+          id?: string
+          its?: number
+          periode: string
+          prime_anciennete?: number | null
+          prime_depassement?: number | null
+          prime_exceptionnelle?: number | null
+          prime_fonction?: number | null
+          prime_salissure?: number | null
+          prime_transport?: number | null
+          salaire_brut: number
+          salaire_net: number
+          statut?: string | null
+          sursalaire?: number | null
+        }
+        Update: {
+          autres_retenues?: number
+          avances?: number
+          cnps_salarie?: number
+          company_id?: string
+          created_at?: string | null
+          employee_id?: string
+          id?: string
+          its?: number
+          periode?: string
+          prime_anciennete?: number | null
+          prime_depassement?: number | null
+          prime_exceptionnelle?: number | null
+          prime_fonction?: number | null
+          prime_salissure?: number | null
+          prime_transport?: number | null
+          salaire_brut?: number
+          salaire_net?: number
+          statut?: string | null
+          sursalaire?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bulletins_paie_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bulletins_paie_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidates: {
         Row: {
           company_id: string
@@ -111,6 +192,7 @@ export type Database = {
           name: string
           ncc: string | null
           nccm: string | null
+          nif: string | null
           raison_sociale: string | null
         }
         Insert: {
@@ -122,6 +204,7 @@ export type Database = {
           name: string
           ncc?: string | null
           nccm?: string | null
+          nif?: string | null
           raison_sociale?: string | null
         }
         Update: {
@@ -133,9 +216,64 @@ export type Database = {
           name?: string
           ncc?: string | null
           nccm?: string | null
+          nif?: string | null
           raison_sociale?: string | null
         }
         Relationships: []
+      }
+      conges: {
+        Row: {
+          commentaire: string | null
+          company_id: string
+          created_at: string | null
+          date_debut: string
+          date_fin: string
+          employee_id: string
+          id: string
+          nb_jours: number
+          statut: string | null
+          type: string
+        }
+        Insert: {
+          commentaire?: string | null
+          company_id: string
+          created_at?: string | null
+          date_debut: string
+          date_fin: string
+          employee_id: string
+          id?: string
+          nb_jours: number
+          statut?: string | null
+          type: string
+        }
+        Update: {
+          commentaire?: string | null
+          company_id?: string
+          created_at?: string | null
+          date_debut?: string
+          date_fin?: string
+          employee_id?: string
+          id?: string
+          nb_jours?: number
+          statut?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conges_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conges_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contracts: {
         Row: {
@@ -248,59 +386,154 @@ export type Database = {
           },
         ]
       }
+      employee_salary_history: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          date_effet: string
+          employee_id: string
+          id: string
+          motif: string | null
+          prime_depassement: number | null
+          prime_exceptionnelle: number | null
+          prime_fonction: number | null
+          prime_salissure: number | null
+          prime_transport: number | null
+          salaire_brut: number | null
+          sursalaire: number | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          date_effet?: string
+          employee_id: string
+          id?: string
+          motif?: string | null
+          prime_depassement?: number | null
+          prime_exceptionnelle?: number | null
+          prime_fonction?: number | null
+          prime_salissure?: number | null
+          prime_transport?: number | null
+          salaire_brut?: number | null
+          sursalaire?: number | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          date_effet?: string
+          employee_id?: string
+          id?: string
+          motif?: string | null
+          prime_depassement?: number | null
+          prime_exceptionnelle?: number | null
+          prime_fonction?: number | null
+          prime_salissure?: number | null
+          prime_transport?: number | null
+          salaire_brut?: number | null
+          sursalaire?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_salary_history_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employees: {
         Row: {
+          categorie: string | null
+          civilite: string | null
           company_id: string
           created_at: string | null
           date_embauche: string
           date_naissance: string | null
           departement: string | null
           email: string | null
+          etat_civil: string | null
           full_name: string
           genre: string | null
           id: string
           manager_id: string | null
           matricule: string
+          nationalite: string | null
+          nb_enfants: number | null
+          niveau_etude: string | null
+          num_cnps: string | null
           phone: string | null
           poste: string
+          prime_depassement: number | null
+          prime_exceptionnelle: number | null
+          prime_fonction: number | null
+          prime_salissure: number | null
+          prime_transport: number | null
           salaire_brut: number | null
           statut: string | null
+          sursalaire: number | null
           type_contrat: string | null
         }
         Insert: {
+          categorie?: string | null
+          civilite?: string | null
           company_id: string
           created_at?: string | null
           date_embauche: string
           date_naissance?: string | null
           departement?: string | null
           email?: string | null
+          etat_civil?: string | null
           full_name: string
           genre?: string | null
           id?: string
           manager_id?: string | null
           matricule: string
+          nationalite?: string | null
+          nb_enfants?: number | null
+          niveau_etude?: string | null
+          num_cnps?: string | null
           phone?: string | null
           poste: string
+          prime_depassement?: number | null
+          prime_exceptionnelle?: number | null
+          prime_fonction?: number | null
+          prime_salissure?: number | null
+          prime_transport?: number | null
           salaire_brut?: number | null
           statut?: string | null
+          sursalaire?: number | null
           type_contrat?: string | null
         }
         Update: {
+          categorie?: string | null
+          civilite?: string | null
           company_id?: string
           created_at?: string | null
           date_embauche?: string
           date_naissance?: string | null
           departement?: string | null
           email?: string | null
+          etat_civil?: string | null
           full_name?: string
           genre?: string | null
           id?: string
           manager_id?: string | null
           matricule?: string
+          nationalite?: string | null
+          nb_enfants?: number | null
+          niveau_etude?: string | null
+          num_cnps?: string | null
           phone?: string | null
           poste?: string
+          prime_depassement?: number | null
+          prime_exceptionnelle?: number | null
+          prime_fonction?: number | null
+          prime_salissure?: number | null
+          prime_transport?: number | null
           salaire_brut?: number | null
           statut?: string | null
+          sursalaire?: number | null
           type_contrat?: string | null
         }
         Relationships: [

@@ -81,14 +81,12 @@ export async function PUT(
 
   // Si au moins un champ salaire a changé → archiver l'ancienne situation
   if (current) {
-    const snap = current as unknown as SalarySnapshot;
+    const snap = current as SalarySnapshot;
     const changed = SALARY_FIELDS.some(
       (f) => parsed.data[f] !== undefined && Number(parsed.data[f]) !== Number(snap[f] ?? 0)
     );
     if (changed) {
-      await (supabase.from as (t: string) => ReturnType<typeof supabase.from>)(
-        "employee_salary_history"
-      ).insert({
+      await supabase.from("employee_salary_history").insert({
         company_id: snap.company_id,
         employee_id: params.id,
         date_effet: new Date().toISOString().slice(0, 10),

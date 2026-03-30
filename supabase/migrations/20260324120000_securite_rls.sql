@@ -1,5 +1,5 @@
 -- Migration versionnée depuis scripts/migration_securite.sql
--- Appliquée manuellement en production (date approximative : 2026-03-24)
+-- Appliquée manuellement en production (date approximative : 20260324120000)
 -- NE PAS réexécuter si les colonnes/tables existent déjà (scripts avec IF NOT EXISTS)
 
 -- ============================================================

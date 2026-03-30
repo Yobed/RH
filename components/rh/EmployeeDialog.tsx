@@ -99,6 +99,7 @@ type EmployeeWithPrimes = Employee & {
   prime_depassement?: number | null;
   prime_fonction?: number | null;
   prime_transport?: number | null;
+  date_fin_contrat?: string | null;
 };
 
 function toFormDefaults(emp: EmployeeWithPrimes): FormData {
@@ -119,7 +120,7 @@ function toFormDefaults(emp: EmployeeWithPrimes): FormData {
     categorie: (emp.categorie as FormData["categorie"]) ?? "",
     type_contrat: (emp.type_contrat as FormData["type_contrat"]) ?? "",
     date_embauche: emp.date_embauche,
-    date_fin_contrat: "",
+    date_fin_contrat: emp.date_fin_contrat ?? "",
     salaire_brut: emp.salaire_brut != null ? String(emp.salaire_brut) : "",
     sursalaire: String(emp.sursalaire ?? 0),
     prime_exceptionnelle: String(emp.prime_exceptionnelle ?? 0),

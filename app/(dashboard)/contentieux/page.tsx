@@ -79,7 +79,7 @@ export default async function ContentieuxPage() {
         ) : (
           <div className="space-y-3">
             {ouverts.map((c) => {
-              const employee = c.employees as unknown as { full_name: string } | null;
+              const employee = Array.isArray(c.employees) ? c.employees[0] : c.employees;
               return (
                 <div key={c.id} className="rounded-lg border bg-white p-4">
                   <div className="flex items-start justify-between gap-2 flex-wrap">

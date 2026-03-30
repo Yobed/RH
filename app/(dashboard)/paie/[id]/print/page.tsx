@@ -123,21 +123,8 @@ export default async function PrintBulletinPage({
 
   if (!bulletin) notFound();
 
-  const emp = bulletin.employees as unknown as {
-    id: string;
-    full_name: string;
-    poste: string;
-    matricule: string;
-    date_embauche: string;
-    departement: string | null;
-    type_contrat: string | null;
-    company_id: string;
-    civilite: string | null;
-    nb_enfants: number | null;
-    etat_civil: string | null;
-    categorie: string | null;
-    num_cnps: string | null;
-  } | null;
+  const empRaw = bulletin.employees;
+  const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
 
   const { data: company } = emp?.company_id
     ? await supabase

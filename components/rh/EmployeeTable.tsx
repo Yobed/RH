@@ -7,24 +7,9 @@ import { Input } from "@/components/ui/input";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { Search, Users } from "lucide-react";
 
-type Employee = {
-  id: string;
-  matricule: string;
-  full_name: string;
-  poste: string;
-  departement: string | null;
-  type_contrat: string | null;
-  date_embauche: string;
-  statut: string | null;
-  genre: string | null;
-  date_naissance: string | null;
-  email: string | null;
-  phone: string | null;
-  salaire_brut: number | null;
-  manager_id: string | null;
-  company_id: string;
-  created_at: string | null;
-};
+import { Tables } from "@/types/supabase";
+
+type Employee = Tables<"employees">;
 
 const statutVariant: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
   actif: "default",

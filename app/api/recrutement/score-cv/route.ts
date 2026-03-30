@@ -54,13 +54,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Candidat introuvable" }, { status: 404 });
   }
 
-  const job = (candidate.job_postings as unknown) as {
-    titre: string;
-    description: string;
-    competences: string[] | null;
-    experience_min: number | null;
-    type_contrat: string | null;
-  } | null;
+  const jobRaw = candidate.job_postings;
+  const job = Array.isArray(jobRaw) ? jobRaw[0] : jobRaw;
 
   if (!job) {
     return NextResponse.json(
@@ -188,7 +183,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
     .from("candidates")
     .update({
       score_ia: scoreDetail.score_global,
-      score_detail: scoreDetail as unknown as import("@/types/supabase").Json,
+      score_detail: scoreDetail as Record<string, any>,
       statut: statutMap[scoreDetail.recommandation] ?? "en_cours",
     })
     .eq("id", parsed.data.candidate_id)

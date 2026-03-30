@@ -95,7 +95,7 @@ export default async function CongesPage() {
               </thead>
               <tbody className="divide-y">
                 {enAttente.map((c) => {
-                  const emp = c.employees as unknown as { full_name: string; matricule: string } | null;
+                  const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
                   return (
                     <tr key={c.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3">
@@ -140,7 +140,7 @@ export default async function CongesPage() {
               </thead>
               <tbody className="divide-y">
                 {historique.map((c) => {
-                  const emp = c.employees as unknown as { full_name: string; matricule: string } | null;
+                  const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
                   return (
                     <tr key={c.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3 font-medium">{emp?.full_name ?? "—"}</td>

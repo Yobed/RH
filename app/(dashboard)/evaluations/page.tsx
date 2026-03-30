@@ -4,24 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { EvaluationDialog } from "@/components/rh/EvaluationDialog";
 import { EvaluationStatusButton } from "@/components/rh/EvaluationStatusButton";
 import { BarChart2 } from "lucide-react";
+import { scoreLabel, scoreVariant } from "@/lib/utils-rh";
 
 export const metadata = { title: "Évaluations — RH Manager CI" };
 
-function scoreLabel(score: number | null): string {
-  if (score === null) return "Non noté";
-  if (score >= 90) return "Exceptionnel";
-  if (score >= 75) return "Très satisfaisant";
-  if (score >= 60) return "Satisfaisant";
-  if (score >= 40) return "À améliorer";
-  return "Insuffisant";
-}
 
-function scoreVariant(score: number | null): "default" | "secondary" | "outline" | "destructive" {
-  if (score === null) return "outline";
-  if (score >= 75) return "default";
-  if (score >= 40) return "secondary";
-  return "destructive";
-}
 
 export default async function EvaluationsPage() {
   const supabase = createServerClient();
@@ -107,7 +94,8 @@ export default async function EvaluationsPage() {
               </thead>
               <tbody className="divide-y">
                 {evaluations.map((ev) => {
-                  const employee = ev.employees as unknown as { full_name: string; poste: string };
+                  const employee = Array.isArray(ev.employees) ? ev.employees[0] : ev.employees;
+                  if (!employee) return null;
                   return (
                     <tr key={ev.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3">

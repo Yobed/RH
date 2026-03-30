@@ -119,7 +119,8 @@ export default async function PaiePage() {
               </thead>
               <tbody className="divide-y">
                 {bulletins.map((b) => {
-                  const emp = b.employees as unknown as { full_name: string; poste: string; matricule: string } | null;
+                  const empRaw = b.employees;
+                  const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
                   return (
                     <tr key={b.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3">

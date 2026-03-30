@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PlusIcon } from "lucide-react";
-import { calculerPrimeAnciennete, calculerProvision13e, calculerITS, TAUX_CNPS_RETRAITE_SALARIE, PLAFOND_CNPS_MENSUEL, CMU_MENSUEL } from "@/lib/paie-ci";
+import { calculerPrimeAnciennete, calculerProvision13e, calculerBulletinComplet } from "@/lib/paie-ci";
 
 import {
   Dialog,
@@ -82,37 +82,7 @@ interface Props {
   bulletin?: BulletinEditable; // mode édition si fourni
 }
 
-/** Calcul synthétique preview sans appeler l'API */
-function previewCalc(vals: {
-  salaire_brut: number;
-  sursalaire: number;
-  prime_anciennete: number;
-  prime_exceptionnelle: number;
-  prime_salissure: number;
-  prime_depassement: number;
-  prime_fonction: number;
-  prime_transport: number;
-  autres_retenues: number;
-  avances: number;
-}) {
-  const total_imposable =
-    vals.salaire_brut + vals.sursalaire + vals.prime_anciennete +
-    vals.prime_exceptionnelle + vals.prime_salissure +
-    vals.prime_depassement + vals.prime_fonction;
-  const total_gains = total_imposable + vals.prime_transport;
-  const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
-  const cnps_retraite = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
-  const cmu_sal = CMU_MENSUEL;
-  const cnps_salarie = cnps_retraite + cmu_sal;
-  const abattement = Math.round(total_imposable * 0.15);
-  const base_its = Math.max(0, total_imposable - cnps_retraite - abattement);
-  const its = calculerITS(base_its);
-  const salaire_net = Math.max(
-    0,
-    total_gains - cnps_salarie - its - vals.autres_retenues - vals.avances
-  );
-  return { total_imposable, total_gains, cnps_retraite, cmu_sal, its, salaire_net };
-}
+
 
 export function PaieDialog({ employees, bulletin }: Props) {
   const isEdit = !!bulletin;
@@ -190,7 +160,7 @@ export function PaieDialog({ employees, bulletin }: Props) {
     autres_retenues:      Number(watch("autres_retenues")) || 0,
     avances:              Number(watch("avances")) || 0,
   };
-  const preview = nums.salaire_brut > 0 ? previewCalc(nums) : null;
+  const preview = nums.salaire_brut > 0 ? calculerBulletinComplet(nums) : null;
 
   async function onSubmit(data: FormData) {
     const payload = {
@@ -394,15 +364,15 @@ export function PaieDialog({ employees, bulletin }: Props) {
               )}
               <div className="flex justify-between font-semibold">
                 <span>Total gains</span>
-                <span>{fmt(preview.total_gains)}</span>
+                <span>{fmt(preview.total_brut)}</span>
               </div>
               <div className="flex justify-between text-red-600">
                 <span>− CNPS retraite (6,3%)</span>
-                <span>{fmt(preview.cnps_retraite)}</span>
+                <span>{fmt(preview.cnps_salarie)}</span>
               </div>
               <div className="flex justify-between text-red-600">
                 <span>− CMU salariale (forfait)</span>
-                <span>{fmt(preview.cmu_sal)}</span>
+                <span>{fmt(preview.cmu)}</span>
               </div>
               <div className="flex justify-between text-red-600">
                 <span>− ITS (barème progressif)</span>

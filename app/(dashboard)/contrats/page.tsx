@@ -34,7 +34,8 @@ export default async function ContratsPage() {
 
   // Récupérer les noms des N+1
   const allManagerIds = contratsExpirants
-    ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
+    ?.flatMap((c) => Array.isArray(c.employees) ? c.employees : [c.employees])
+    .map((emp) => emp?.manager_id)
     .filter((id): id is string => !!id) ?? [];
   const managerIds = Array.from(new Set(allManagerIds));
   const managerNames: Record<string, string> = {};
@@ -89,12 +90,8 @@ export default async function ContratsPage() {
           </div>
           <div className="space-y-2">
             {contratsExpirants.map((c) => {
-              const emp = c.employees as unknown as {
-                id: string;
-                full_name: string;
-                poste: string;
-                manager_id: string | null;
-              };
+              const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
+              if (!emp) return null;
               const jours = joursRestants(c.date_fin!);
               const managerNom = emp.manager_id ? managerNames[emp.manager_id] : null;
               return (
@@ -155,7 +152,8 @@ export default async function ContratsPage() {
               </thead>
               <tbody className="divide-y">
                 {tousContrats.map((c) => {
-                  const employee = c.employees as unknown as { full_name: string; poste: string };
+                  const employee = Array.isArray(c.employees) ? c.employees[0] : c.employees;
+                  if (!employee) return null;
                   const editContract: ExistingContract = {
                     id: c.id,
                     employee_id: c.employee_id,

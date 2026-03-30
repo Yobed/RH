@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { calculerITS, TAUX_CNPS_RETRAITE_SALARIE, PLAFOND_CNPS_MENSUEL, CMU_MENSUEL } from "@/lib/paie-ci";
+import { calculerBulletinComplet } from "@/lib/paie-ci";
 
 const schema = z.object({
   employee_id: z.string().uuid("Employé requis"),
@@ -51,36 +51,18 @@ export async function POST(req: Request) {
 
   const d = parsed.data;
 
-  // Total imposable (transport exclu — non assujetti ITS/CNPS)
-  const total_imposable =
-    d.salaire_brut +
-    d.sursalaire +
-    d.prime_anciennete +
-    d.prime_exceptionnelle +
-    d.prime_salissure +
-    d.prime_depassement +
-    d.prime_fonction;
-
-  // Total gains = imposable + transport
-  const total_gains = total_imposable + d.prime_transport;
-
-  // CNPS salariale
-  const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
-  const cnps_retraite = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
-  const cmu_sal = CMU_MENSUEL;
-  const cnps_salarie = cnps_retraite + cmu_sal;
-
-  // ITS
-  const abattement = Math.round(total_imposable * 0.15);
-  const base_its = Math.max(0, total_imposable - cnps_retraite - abattement);
-  const its = calculerITS(base_its);
-
-  // Net à payer
-  const salaire_net = Math.max(
-    0,
-    total_gains - cnps_salarie - its - d.autres_retenues - d.avances
-  );
-
+  const calc = calculerBulletinComplet({
+    salaire_brut: d.salaire_brut,
+    sursalaire: d.sursalaire,
+    prime_anciennete: d.prime_anciennete,
+    prime_exceptionnelle: d.prime_exceptionnelle,
+    prime_salissure: d.prime_salissure,
+    prime_depassement: d.prime_depassement,
+    prime_fonction: d.prime_fonction,
+    prime_transport: d.prime_transport,
+    autres_retenues: d.autres_retenues,
+    avances: d.avances,
+  });
   const { data, error } = await supabase
     .from("bulletins_paie")
     .insert({
@@ -95,11 +77,11 @@ export async function POST(req: Request) {
       prime_depassement: d.prime_depassement,
       prime_fonction: d.prime_fonction,
       prime_transport: d.prime_transport,
-      cnps_salarie,
-      its,
+      cnps_salarie: calc.cnps_salarie + calc.cmu,
+      its: calc.its,
       autres_retenues: d.autres_retenues,
       avances: d.avances,
-      salaire_net,
+      salaire_net: calc.salaire_net,
     })
     .select()
     .single();

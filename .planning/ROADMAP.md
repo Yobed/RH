@@ -10,7 +10,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Stabilisation** — Corriger la dette technique critique avant d'ajouter des fonctionnalités
+- [x] **Phase 1: Stabilisation** — Corriger la dette technique critique avant d'ajouter des fonctionnalités
 - [ ] **Phase 2: Paie Avancée** — Compléter le moteur de paie CI (heures sup, fins de contrat, masse salariale, export)
 - [ ] **Phase 3: Congés & Absences** — Module congés complet avec solde légal CI et impact sur le bulletin
 - [ ] **Phase 4: Dossier Personnel & Cycle Contractuel** — GED légère, attestations automatiques, suivi carrière, alertes avenants
@@ -28,11 +28,11 @@
 **Covers:** SOC-01, SOC-02, SOC-03, SOC-04
 **Plans:** 5 plans
 Plans:
-- [ ] 01-01-PLAN.md — Régénérer types/supabase.ts + supprimer les 38 as unknown as
-- [ ] 01-02-PLAN.md — Migration SQL companies + formulaire Paramètres + bulletin imprimé conforme
-- [ ] 01-03-PLAN.md — Centraliser calcul paie dans lib/paie-ci.ts + corriger PUT + EmployeeDialog
-- [ ] 01-04-PLAN.md — Configurer Vitest + suite de tests des 7 fonctions fiscales LF 2026
-- [ ] 01-05-PLAN.md — Sécurité POST /api/rag/upload + audit_logs + migrations versionnées
+- [x] 01-01-PLAN.md — Régénérer types/supabase.ts + supprimer les 38 as unknown as
+- [x] 01-02-PLAN.md — Migration SQL companies + formulaire Paramètres + bulletin imprimé conforme
+- [x] 01-03-PLAN.md — Centraliser calcul paie dans lib/paie-ci.ts + corriger PUT + EmployeeDialog
+- [x] 01-04-PLAN.md — Configurer Vitest + suite de tests des 7 fonctions fiscales LF 2026
+- [x] 01-05-PLAN.md — Sécurité POST /api/rag/upload + audit_logs + migrations versionnées
 
 **Success Criteria** (what must be TRUE):
 1. Le bulletin imprimé affiche le nom légal, l'adresse, le numéro CNPS et les numéros CCM/NCC de l'entreprise sans aucun "—"

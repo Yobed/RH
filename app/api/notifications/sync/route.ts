@@ -66,7 +66,8 @@ async function syncForCompany(
 
     // Récupérer les noms des N+1 en une seule requête
     const allMgrIds = contracts
-      ?.map((c) => (c.employees as unknown as { manager_id: string | null }).manager_id)
+      ?.flatMap((c) => Array.isArray(c.employees) ? c.employees : [c.employees])
+      .map((emp) => emp?.manager_id)
       .filter((id): id is string => !!id) ?? [];
     const managerIds = Array.from(new Set(allMgrIds));
     const managerNames: Record<string, string> = {};
@@ -79,11 +80,7 @@ async function syncForCompany(
     }
 
     for (const c of contracts ?? []) {
-      const emp = c.employees as unknown as {
-        full_name: string;
-        poste: string;
-        manager_id: string | null;
-      } | null;
+      const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
       const managerNom = emp?.manager_id ? managerNames[emp.manager_id] : null;
 
       // Éviter les doublons via le titre unique
@@ -129,7 +126,7 @@ async function syncForCompany(
     .lte("created_at", sevenDaysAgo.toISOString());
 
   for (const ev of evalsBrouillon ?? []) {
-    const emp = ev.employees as unknown as { full_name: string } | null;
+    const emp = Array.isArray(ev.employees) ? ev.employees[0] : ev.employees;
     const titre = `Évaluation en attente : ${emp?.full_name ?? "Employé"} — ${ev.periode}`;
 
     const { data: existing } = await supabase

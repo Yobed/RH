@@ -32,6 +32,8 @@ export const PLAFOND_CNPS = PLAFOND_CNPS_MENSUEL;
 // Forfait mensuel 1 600 FCFA — part salariale = part patronale
 export const CMU_MENSUEL = 1_600;
 
+export const TAUX_ABATTEMENT_ITS = 0.15;
+
 // Charges patronales CNPS CI
 export const CHARGES_PATRONALES_TAUX = {
   familiales: 0.05,      // Prestations familiales (base plafonnée à 70 000 FCFA/mois)
@@ -106,7 +108,7 @@ export function calculerBulletin(
 
   // Base imposable ITS = brut - CNPS retraite - abattement 15% (CGI CI Art. 116)
   // ⚠️ Abattement à confirmer avec Loi de Finances en vigueur
-  const abattement = Math.round(salaireBrut * 0.15);
+  const abattement = Math.round(salaireBrut * TAUX_ABATTEMENT_ITS);
   const base_imposable = Math.max(0, salaireBrut - cnps_retraite - abattement);
   const its = calculerITS(base_imposable);
 
@@ -189,6 +191,8 @@ export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string
 // Tranches : 30% (1–5 ans) · 35% (6–10 ans) · 40% (11 ans et +)
 // Plafond : pas de plafond pour le licenciement (départ retraite : 25 × SMIG annuel)
 export function calculerIndemniteLicenciement(salaireMoyen12Mois: number, annees: number): number {
+  if (annees < 1) return 0;
+  
   let indemnite = 0;
   const anneesEntiere = Math.floor(annees);
 
@@ -243,3 +247,79 @@ export const CONGES_FAMILIAUX = [
   { type: "Baptême ou première communion d'un enfant", jours: 1 },
   { type: "Déménagement", jours: 1 },
 ] as const;
+
+export interface LignesBulletin {
+  salaire_brut: number;
+  sursalaire?: number;
+  prime_anciennete?: number;
+  prime_exceptionnelle?: number;
+  prime_salissure?: number;
+  prime_depassement?: number;
+  prime_fonction?: number;
+  prime_transport?: number;
+  autres_retenues?: number;
+  avances?: number;
+}
+
+export interface ResultatPaieComplet {
+  total_brut: number;
+  total_imposable: number;
+  cnps_salarie: number;
+  cmu: number;
+  its: number;
+  total_retenues: number;
+  salaire_net: number;
+}
+
+export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieComplet {
+  const primeTransport = lignes.prime_transport ?? 0;
+  const total_brut = (lignes.salaire_brut ?? 0)
+    + (lignes.sursalaire ?? 0)
+    + (lignes.prime_anciennete ?? 0)
+    + (lignes.prime_exceptionnelle ?? 0)
+    + (lignes.prime_salissure ?? 0)
+    + (lignes.prime_depassement ?? 0)
+    + (lignes.prime_fonction ?? 0)
+    + primeTransport;
+
+  // Prime transport non soumise à ITS
+  const total_imposable = Math.max(0, total_brut - primeTransport);
+
+  // CNPS plafonné
+  const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
+  const cnps_salarie = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
+
+  // CMU forfait
+  const cmu = CMU_MENSUEL;
+
+  // ITS : abattement sur base imposable après CNPS
+  const base_its = Math.max(0, total_imposable - cnps_salarie);
+  const base_its_apres_abattement = Math.max(0, Math.round(base_its * (1 - TAUX_ABATTEMENT_ITS)));
+  const its = calculerITS(base_its_apres_abattement);
+
+  const total_retenues = cnps_salarie + cmu + its
+    + (lignes.autres_retenues ?? 0)
+    + (lignes.avances ?? 0);
+
+  const salaire_net = Math.max(0, total_brut - total_retenues);
+
+  return { total_brut, total_imposable, cnps_salarie, cmu, its, total_retenues, salaire_net };
+}
+
+export function formatAnciennete(dateEmbauche: string): string {
+  const debut = new Date(dateEmbauche);
+  const now = new Date();
+  let years = now.getFullYear() - debut.getFullYear();
+  let months = now.getMonth() - debut.getMonth();
+  let days = now.getDate() - debut.getDate();
+  if (days < 0) {
+    months -= 1;
+    days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+  }
+  if (months < 0) { years -= 1; months += 12; }
+  if (years === 0 && months === 0) return `${days} jour${days > 1 ? "s" : ""}`;
+  const y = String(years).padStart(2, "0");
+  const m = String(months).padStart(2, "0");
+  const d = String(days).padStart(2, "0");
+  return `${y} an${years > 1 ? "s" : ""} ${m} mois ${d} jour${days > 1 ? "s" : ""}`;
+}
