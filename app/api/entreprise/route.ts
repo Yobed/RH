@@ -5,6 +5,16 @@ import { z } from "zod";
 const entrepriseSchema = z.object({
   name: z.string().min(2, "Nom obligatoire").max(200),
   convention_collective: z.string().max(200).nullable().optional(),
+  raison_sociale: z.string().max(200).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
+  adresse: z.string().nullable().optional()
+    .transform(v => (v === "" ? null : v)),
+  cnps_matricule: z.string().max(30).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
+  nccm: z.string().max(30).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
+  ncc: z.string().max(30).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
 });
 
 export async function PUT(req: Request) {
@@ -39,7 +49,15 @@ export async function PUT(req: Request) {
 
   const { data, error } = await supabase
     .from("companies")
-    .update(parsed.data)
+    .update({
+      name: parsed.data.name,
+      convention_collective: parsed.data.convention_collective,
+      raison_sociale: parsed.data.raison_sociale,
+      adresse: parsed.data.adresse,
+      cnps_matricule: parsed.data.cnps_matricule,
+      nccm: parsed.data.nccm,
+      ncc: parsed.data.ncc,
+    })
     .eq("id", companyId as string)
     .select()
     .single();

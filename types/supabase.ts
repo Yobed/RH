@@ -103,22 +103,37 @@ export type Database = {
       }
       companies: {
         Row: {
+          adresse: string | null
+          cnps_matricule: string | null
           convention_collective: string | null
           created_at: string | null
           id: string
           name: string
+          ncc: string | null
+          nccm: string | null
+          raison_sociale: string | null
         }
         Insert: {
+          adresse?: string | null
+          cnps_matricule?: string | null
           convention_collective?: string | null
           created_at?: string | null
           id?: string
           name: string
+          ncc?: string | null
+          nccm?: string | null
+          raison_sociale?: string | null
         }
         Update: {
+          adresse?: string | null
+          cnps_matricule?: string | null
           convention_collective?: string | null
           created_at?: string | null
           id?: string
           name?: string
+          ncc?: string | null
+          nccm?: string | null
+          raison_sociale?: string | null
         }
         Relationships: []
       }
