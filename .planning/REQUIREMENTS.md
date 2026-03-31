@@ -16,7 +16,7 @@
 
 ### Paie & Bulletins
 
-- [ ] **PAI-01** : Calcul des heures supplémentaires (décret CI n°96-203 : +15%/+50%/+75%)
+- [x] **PAI-01** : Calcul des heures supplémentaires (décret CI n°96-203 : +15%/+50%/+75%)
 - [ ] **PAI-02** : Calcul de solde de tout compte (préavis + indemnité licenciement + congés restants)
 - [ ] **PAI-03** : Calcul de fin de contrat CDD (indemnité de précarité 3% si non renouvellement)
 - [ ] **PAI-04** : Tableau masse salariale mensuelle (bruts, charges patronales, net total)
