@@ -72,12 +72,13 @@ Plans:
 **Goal:** Les employés peuvent demander des congés, les managers les valider, et le bulletin de paie reflète automatiquement les absences et le solde légal CI (2,5 j/mois travaillé).
 **Depends on:** Phase 1
 **Covers:** CON-01, CON-02, CON-03, CON-04, CON-05, CON-06
-**Plans:**
-- [ ] 03-01: Solde congés légaux CI — migration SQL : table `leave_balances` (company_id, employee_id, annee, jours_acquis, jours_pris, solde) ; calcul automatique à l'embauche et chaque 1er du mois ; affichage solde sur la fiche employé et dans `CongesDialog`
-- [ ] 03-02: Workflow de validation multi-niveaux — étendre le statut `conges` (en_attente → validé_manager → validé_rh / refusé) ; composants `CongesApprovalButton` mis à jour ; notifications automatiques à chaque étape
-- [ ] 03-03: Calendrier des absences — page `/conges/calendrier` avec vue mensuelle par équipe/département (composant calendrier shadcn/ui) ; filtre par département
-- [ ] 03-04: Impact bulletin — `calculerRetenuAbsence(nbJoursAbsence, salaireBrut)` dans `lib/paie-ci.ts` ; ligne de retenue automatique dans le bulletin si des absences non justifiées existent sur la période
-- [ ] 03-05: Arrêt maladie & accident de travail — formulaire de déclaration d'arrêt maladie (durée, justificatif) ; liaison avec QHS-01 (AT) ; statut spécifique dans le workflow congés ; impact bulletin distinct (sans retenue si AT reconnu)
+**Plans:** 5 plans
+Plans:
+- [ ] 03-01-PLAN.md — Table leave_balances + lib/conges-ci.ts (calculerJoursAcquis 2,5j/mois) + widget solde fiche employé
+- [ ] 03-02-PLAN.md — Workflow multi-niveaux (en_attente → valide_manager → approuve|refuse) + CongesApprovalButton + colonnes audit
+- [ ] 03-03-PLAN.md — Page /conges/calendrier — grille mensuelle par employé avec filtre département
+- [ ] 03-04-PLAN.md — calculerRetenuAbsence dans lib/paie-ci.ts + champ absence PaieDialog + preview retenue
+- [ ] 03-05-PLAN.md — ArretMaladieDialog avec upload justificatif + colonnes est_justifie/est_at + badges liste congés
 
 **Success Criteria** (what must be TRUE):
 1. La fiche d'un employé embauché il y a 6 mois affiche 15 jours de congés acquis (6 × 2,5 j) et le solde restant après ses prises
@@ -85,7 +86,6 @@ Plans:
 3. Le calendrier affiche en couleur les absences de tous les membres d'un département pour le mois sélectionné
 4. Un bulletin généré pour un employé ayant 3 jours d'absence non justifiée affiche une retenue proportionnelle calculée correctement
 5. Une déclaration d'arrêt maladie ne génère pas de retenue salariale si le document justificatif est joint et validé
-**Plans:** TBD
 **UI hint**: yes
 
 ---
@@ -175,7 +175,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Stabilisation | 5/5 | Completed | - |
 | 2. Paie Avancée | 2/5 | In Progress|  |
-| 3. Congés & Absences | 0/5 | Not started | - |
+| 3. Congés & Absences | 0/5 | Planned | - |
 | 4. Dossier Personnel & Cycle Contractuel | 0/4 | Not started | - |
 | 5. Evaluations & Discipline | 0/4 | Not started | - |
 | 6. QHSE & Sécurité au Travail | 0/3 | Not started | - |
@@ -240,3 +240,4 @@ Plans:
 
 *Roadmap créée : 30 mars 2026*
 *Phase 1 planifiée : 30 mars 2026 — 5 plans créés (01-01 à 01-05)*
+*Phase 3 planifiée : 31 mars 2026 — 5 plans créés (03-01 à 03-05)*
