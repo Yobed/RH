@@ -49,7 +49,8 @@ Plans:
 **Depends on:** Phase 1
 **Covers:** PAI-01, PAI-02, PAI-03, PAI-04, PAI-05, PAI-06, PAI-07
 **Plans:**
-2/5 plans executed
+3/5 plans executed
+- [x] 02-01: Heures supplémentaires CI — calculerHeuresSup (3 paliers +15%/+50%/+75%), PaieDialog UI, POST + PATCH API
 - [x] 02-02: Fins de contrat — ajouter `calculerSoldeDeCompte(employee)` (préavis + indemnité + congés restants) et `calculerIndemnitePrécarité(salaireBrut)` (3% CDD non renouvelé) dans `lib/paie-ci.ts` ; page dédiée `/paie/fin-de-contrat`
 - [x] 02-03: Masse salariale mensuelle — page `/paie/masse-salariale` avec tableau bruts + charges patronales + net total par période ; fiche coût réel salarié (brut + charges patronales détaillées) accessible depuis la fiche employé
 - [x] 02-04: Export journal de paie — endpoint `GET /api/paie/export?periode=YYYY-MM` retournant CSV/Excel pour le comptable ; bouton export sur la page `/paie`
