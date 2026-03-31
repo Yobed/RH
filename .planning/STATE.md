@@ -5,13 +5,13 @@
 Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Valeur principale :** Éditer un bulletin conforme CI, gérer le dossier salarié complet, obtenir une réponse juridique fiable — sans formation technique.
-**Focus actuel :** Phase 1 — Stabilisation (01-05 complété — phase terminée)
+**Focus actuel :** Phase 2 — Paie Avancée (02-01 complété — heures supplémentaires)
 
 ## Current Status
 
 **Milestone :** v1.0 — SaaS RH Ivoirien Complet
-**Phase en cours :** Aucune (initialisation terminée — lancer `/gsd:plan-phase 1`)
-**Dernière action :** Phase 1 complète — 01-05 terminé (sécurité RAG + audit_logs + migrations versionnées)
+**Phase en cours :** Phase 2 — Paie Avancée
+**Dernière action :** 02-01 terminé — moteur heures supplémentaires CI (calculerHeuresSup + UI + API POST + PATCH)
 
 ## Progress
 
@@ -20,7 +20,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - [x] REQUIREMENTS.md — 42 exigences v1 définies
 - [x] ROADMAP.md — 7 phases créées
 - [x] Phase 1 : Stabilisation (01-01 à 01-05 complétés)
-- [ ] Phase 2 : Paie Avancée
+- [ ] Phase 2 : Paie Avancée (02-01 complété — heures sup)
 - [ ] Phase 3 : Congés & Absences
 - [ ] Phase 4 : Dossier Personnel
 - [ ] Phase 5 : Évaluations & Discipline
@@ -50,6 +50,9 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - *01-04 : tests automatisés calculs fiscaux*
 - *01-05 : sécurité RAG + audit_logs + migrations versionnées*
 
+*31 mars 2026 — Phase 2 Paie Avancée démarrée :*
+- *02-01 : calculerHeuresSup (3 paliers +15%/+50%/+75%), PaieDialog UI, POST + PATCH API*
+
 ## Key Decisions
 
 | Décision | Plan | Justification |
@@ -57,6 +60,9 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | Audit non bloquant dans audit_logs | 01-05 | Erreurs d'insert audit ignorées pour ne pas bloquer les opérations métier |
 | Scripts scripts/ conservés comme référence | 01-05 | Ne pas supprimer la source originale des migrations |
 | company_id RAG_UPLOAD via get_user_company_id() | 01-05 | Admin upload = context entreprise admin pour tracabilité |
+| Heures sup incluses dans base imposable CNPS + ITS | 02-01 | Décret n°96-203 ne prévoit pas d'exonération explicite |
+| Taux horaire = (brut + sursalaire) / 173.33 si absent | 02-01 | Évite blocage saisie — calculé automatiquement |
+| HS stockées en JSONB details { heures_sup, heures_sup_montant } | 02-01 | Historique et réimpression du bulletin |
 
 ## Plan 01-02 Completion Note
 

@@ -49,11 +49,11 @@ Plans:
 **Depends on:** Phase 1
 **Covers:** PAI-01, PAI-02, PAI-03, PAI-04, PAI-05, PAI-06, PAI-07
 **Plans:**
-- [ ] 02-01: Heures supplémentaires CI — ajouter `calculerHeuresSup(nbH, tauxHoraire, typeJour)` dans `lib/paie-ci.ts` (décret CI n°96-203 : +15%/+50%/+75%), intégrer dans `PaieDialog` et `app/api/paie/route.ts`
-- [ ] 02-02: Fins de contrat — ajouter `calculerSoldeDeCompte(employee)` (préavis + indemnité + congés restants) et `calculerIndemnitePrécarité(salaireBrut)` (3% CDD non renouvelé) dans `lib/paie-ci.ts` ; page dédiée `/paie/fin-de-contrat`
-- [ ] 02-03: Masse salariale mensuelle — page `/paie/masse-salariale` avec tableau bruts + charges patronales + net total par période ; fiche coût réel salarié (brut + charges patronales détaillées) accessible depuis la fiche employé
-- [ ] 02-04: Export journal de paie — endpoint `GET /api/paie/export?periode=YYYY-MM` retournant CSV/Excel pour le comptable ; bouton export sur la page `/paie`
-- [ ] 02-05: Multi-convention collective — table `fiscal_params` en base pour paramétrer les règles variables par convention (CCI, BTP, Commerce) ; `ParametresForm` permet de sélectionner la convention et visualiser les taux appliqués
+2/5 plans executed
+- [x] 02-02: Fins de contrat — ajouter `calculerSoldeDeCompte(employee)` (préavis + indemnité + congés restants) et `calculerIndemnitePrécarité(salaireBrut)` (3% CDD non renouvelé) dans `lib/paie-ci.ts` ; page dédiée `/paie/fin-de-contrat`
+- [x] 02-03: Masse salariale mensuelle — page `/paie/masse-salariale` avec tableau bruts + charges patronales + net total par période ; fiche coût réel salarié (brut + charges patronales détaillées) accessible depuis la fiche employé
+- [x] 02-04: Export journal de paie — endpoint `GET /api/paie/export?periode=YYYY-MM` retournant CSV/Excel pour le comptable ; bouton export sur la page `/paie`
+- [x] 02-05: Multi-convention collective — table `fiscal_params` en base pour paramétrer les règles variables par convention (CCI, BTP, Commerce) ; `ParametresForm` permet de sélectionner la convention et visualiser les taux appliqués
 
 **Success Criteria** (what must be TRUE):
 1. Un RH peut saisir les heures supplémentaires d'un employé et voir le montant calculé selon les trois majorations CI directement dans la preview du bulletin
@@ -61,7 +61,8 @@ Plans:
 3. La page masse salariale affiche le total bruts, charges patronales et net pour le mois en cours avec les données de tous les employés actifs
 4. Le fichier CSV/Excel exporté est importable directement dans un logiciel comptable (colonnes : matricule, nom, brut, CNPS, ITS, CMU, charges patronales, net)
 5. Changer la convention collective dans les paramètres modifie les règles de calcul appliquées aux nouveaux bulletins
-**Plans:** TBD
+**Plans:** 5 plans
+
 **UI hint**: yes
 
 ---
@@ -171,8 +172,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Stabilisation | 0/5 | Planned | - |
-| 2. Paie Avancée | 0/5 | Not started | - |
+| 1. Stabilisation | 5/5 | Completed | - |
+| 2. Paie Avancée | 2/5 | In Progress|  |
 | 3. Congés & Absences | 0/5 | Not started | - |
 | 4. Dossier Personnel & Cycle Contractuel | 0/4 | Not started | - |
 | 5. Evaluations & Discipline | 0/4 | Not started | - |
