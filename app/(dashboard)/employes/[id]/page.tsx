@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { formatAnciennete, calculerPrimeAnciennete } from "@/lib/paie-ci";
+import { calculerJoursAcquis, calculerSoldeConges } from "@/lib/conges-ci";
 import { scoreLabel } from "@/lib/utils-rh";
 import { EmployeeCostSheet } from "@/components/employees/EmployeeCostSheet";
 
@@ -45,7 +46,9 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 export default async function EmployeeDetailPage({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
 
-  const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }, { data: salaryHistory }] = await Promise.all([
+  const anneeEnCours = new Date().getFullYear();
+
+  const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }, { data: salaryHistory }, { data: leaveBalance }, { data: congesAnnuelsApprouves }] = await Promise.all([
     supabase
       .from("employees")
       .select("*")
@@ -83,11 +86,31 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
       .select("id, date_effet, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, motif, created_at")
       .eq("employee_id", params.id)
       .order("date_effet", { ascending: false }),
+    supabase
+      .from("leave_balances")
+      .select("jours_acquis, jours_pris, solde, annee")
+      .eq("employee_id", params.id)
+      .eq("annee", anneeEnCours)
+      .single(),
+    supabase
+      .from("conges")
+      .select("nb_jours")
+      .eq("employee_id", params.id)
+      .eq("type", "annuel")
+      .eq("statut", "approuve")
+      .gte("date_debut", `${anneeEnCours}-01-01`)
+      .lte("date_debut", `${anneeEnCours}-12-31`),
   ]);
 
   if (!emp) notFound();
 
   const anciennete = formatAnciennete(emp.date_embauche);
+
+  // Calcul du solde congés — utilise les données en base si disponibles, sinon calcule à la volée
+  const joursPrisAnnee = (congesAnnuelsApprouves ?? []).reduce((acc, c) => acc + c.nb_jours, 0);
+  const joursAcquisCalc = leaveBalance?.jours_acquis ?? calculerJoursAcquis(emp.date_embauche, anneeEnCours);
+  const jours_pris_final = leaveBalance?.jours_pris ?? joursPrisAnnee;
+  const soldeCalc = leaveBalance?.solde ?? calculerSoldeConges(joursAcquisCalc, jours_pris_final);
 
   return (
     <div className="p-6 space-y-6">
@@ -431,6 +454,43 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             ))}
           </div>
         )}
+      </div>
+
+      {/* Solde congés — widget légal CI */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <CalendarDays className="h-4 w-4 text-muted-foreground" />
+          <h2 className="text-lg font-semibold">Solde congés {anneeEnCours}</h2>
+          <span className="text-xs text-muted-foreground">(Art. 25 CT-CI — 2,5 j/mois)</span>
+        </div>
+        <div className="rounded-lg border bg-white p-4">
+          <div className="flex flex-wrap gap-6">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Acquis</span>
+              <span className="text-2xl font-bold">{joursAcquisCalc.toFixed(1)} j</span>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Pris</span>
+              <span className="text-2xl font-bold text-amber-600">{jours_pris_final.toFixed(1)} j</span>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Restant</span>
+              <div className="flex items-center gap-2">
+                <span className={`text-2xl font-bold ${
+                  soldeCalc > 5 ? "text-emerald-600" : soldeCalc >= 1 ? "text-amber-600" : "text-red-500"
+                }`}>
+                  {soldeCalc.toFixed(1)} j
+                </span>
+                <Badge
+                  variant={soldeCalc > 5 ? "default" : soldeCalc >= 1 ? "secondary" : "destructive"}
+                  className={soldeCalc > 5 ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-100" : ""}
+                >
+                  {soldeCalc > 5 ? "Disponible" : soldeCalc >= 1 ? "Faible" : "Épuisé"}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Congés */}

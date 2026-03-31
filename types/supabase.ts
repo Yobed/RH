@@ -275,6 +275,48 @@ export type Database = {
           },
         ]
       }
+      leave_balances: {
+        Row: {
+          id: string
+          company_id: string
+          employee_id: string
+          annee: number
+          jours_acquis: number
+          jours_pris: number
+          solde: number
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          employee_id: string
+          annee: number
+          jours_acquis: number
+          jours_pris: number
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          jours_acquis?: number
+          jours_pris?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leave_balances_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leave_balances_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           company_id: string
