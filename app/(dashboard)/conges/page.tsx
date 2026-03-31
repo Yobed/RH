@@ -51,7 +51,7 @@ export default async function CongesPage() {
         <div>
           <h1 className="text-2xl font-bold">Gestion des Congés</h1>
           <p className="text-sm text-muted-foreground">
-            Droit : 2,2 jours/mois (Art. 25 Code du Travail CI)
+            Droit : 2,5 jours/mois (Art. 25 CT-CI)
           </p>
         </div>
         <CongesDialog employees={employees ?? []} />
@@ -61,7 +61,7 @@ export default async function CongesPage() {
       <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
         <p className="font-medium mb-1">Droits légaux — Code du Travail ivoirien</p>
         <div className="flex flex-wrap gap-4 text-xs">
-          <span>📅 Annuel : <strong>26,4 jours/an</strong> (2,2j × 12 mois)</span>
+          <span>📅 Annuel : <strong>30 jours/an max</strong> (2,5j × 12 mois)</span>
           <span>🤱 Maternité : <strong>14 semaines</strong></span>
           <span>👶 Paternité : <strong>10 jours</strong></span>
         </div>
