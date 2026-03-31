@@ -17,6 +17,7 @@ import {
   CalendarDays,
   Banknote,
   Bell,
+  TrendingUp,
 } from "lucide-react";
 
 const navItems = [
@@ -24,7 +25,9 @@ const navItems = [
   { href: "/employes", label: "Employés", icon: Users, exact: false },
   { href: "/contrats", label: "Contrats", icon: FileText, exact: false },
   { href: "/conges", label: "Congés", icon: CalendarDays, exact: false },
-  { href: "/paie", label: "Paie", icon: Banknote, exact: false },
+  { href: "/paie", label: "Paie", icon: Banknote, exact: true },
+  { href: "/paie/masse-salariale", label: "Masse salariale", icon: TrendingUp, exact: false },
+  { href: "/paie/fin-de-contrat", label: "Fin de contrat", icon: FileText, exact: false },
   { href: "/recrutement", label: "Recrutement", icon: UserPlus, exact: false },
   { href: "/evaluations", label: "Évaluations", icon: BarChart2, exact: false },
   { href: "/contentieux", label: "Contentieux", icon: Scale, exact: false },
