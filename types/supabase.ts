@@ -231,8 +231,13 @@ export type Database = {
           employee_id: string
           id: string
           nb_jours: number
+          refus_motif: string | null
           statut: string | null
           type: string
+          validated_by_manager_at: string | null
+          validated_by_manager_id: string | null
+          validated_by_rh_at: string | null
+          validated_by_rh_id: string | null
         }
         Insert: {
           commentaire?: string | null
@@ -243,8 +248,13 @@ export type Database = {
           employee_id: string
           id?: string
           nb_jours: number
+          refus_motif?: string | null
           statut?: string | null
           type: string
+          validated_by_manager_at?: string | null
+          validated_by_manager_id?: string | null
+          validated_by_rh_at?: string | null
+          validated_by_rh_id?: string | null
         }
         Update: {
           commentaire?: string | null
@@ -255,8 +265,13 @@ export type Database = {
           employee_id?: string
           id?: string
           nb_jours?: number
+          refus_motif?: string | null
           statut?: string | null
           type?: string
+          validated_by_manager_at?: string | null
+          validated_by_manager_id?: string | null
+          validated_by_rh_at?: string | null
+          validated_by_rh_id?: string | null
         }
         Relationships: [
           {
