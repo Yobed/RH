@@ -16,6 +16,9 @@ const editSchema = z.object({
   prime_depassement:    z.number().min(0).default(0),
   prime_fonction:       z.number().min(0).default(0),
   prime_transport:      z.number().min(0).default(0),
+  heures_sup_h15:       z.number().min(0).default(0),
+  heures_sup_h50:       z.number().min(0).default(0),
+  heures_sup_h75:       z.number().min(0).default(0),
   autres_retenues:      z.number().min(0).default(0),
   avances:              z.number().min(0).default(0),
 });
@@ -83,6 +86,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     prime_depassement: d.prime_depassement,
     prime_fonction: d.prime_fonction,
     prime_transport: d.prime_transport,
+    heures_sup: {
+      h15: d.heures_sup_h15,
+      h50: d.heures_sup_h50,
+      h75: d.heures_sup_h75,
+    },
     autres_retenues: d.autres_retenues,
     avances: d.avances,
   });
@@ -103,6 +111,14 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       autres_retenues: d.autres_retenues,
       avances: d.avances,
       salaire_net: calc.salaire_net,
+      details: {
+        heures_sup: {
+          h15: d.heures_sup_h15,
+          h50: d.heures_sup_h50,
+          h75: d.heures_sup_h75,
+        },
+        heures_sup_montant: calc.heures_sup_montant,
+      },
     })
     .eq("id", params.id)
     .eq("company_id", existing.company_id)

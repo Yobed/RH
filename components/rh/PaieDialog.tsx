@@ -43,6 +43,9 @@ export interface BulletinEditable {
   prime_depassement?: number | null;
   prime_fonction?: number | null;
   prime_transport?: number | null;
+  heures_sup_h15?: number | null;
+  heures_sup_h50?: number | null;
+  heures_sup_h75?: number | null;
   autres_retenues?: number | null;
   avances?: number | null;
   employee_id: string;
@@ -60,6 +63,9 @@ const schema = z.object({
   prime_depassement:     z.string().optional(),
   prime_fonction:        z.string().optional(),
   prime_transport:       z.string().optional(),
+  heures_sup_h15:        z.string().optional(),
+  heures_sup_h50:        z.string().optional(),
+  heures_sup_h75:        z.string().optional(),
   autres_retenues:       z.string().optional(),
   avances:               z.string().optional(),
 });
@@ -103,13 +109,16 @@ export function PaieDialog({ employees, bulletin }: Props) {
         prime_depassement:   String(bulletin.prime_depassement ?? 0),
         prime_fonction:      String(bulletin.prime_fonction ?? 0),
         prime_transport:     String(bulletin.prime_transport ?? 0),
+        heures_sup_h15:      String(bulletin.heures_sup_h15 ?? 0),
+        heures_sup_h50:      String(bulletin.heures_sup_h50 ?? 0),
+        heures_sup_h75:      String(bulletin.heures_sup_h75 ?? 0),
         autres_retenues:     String(bulletin.autres_retenues ?? 0),
         avances:             String(bulletin.avances ?? 0),
       } : {
         periode: currentPeriode(),
         sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
         prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
-        prime_transport: "0", autres_retenues: "0", avances: "0",
+        prime_transport: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
       },
     });
 
@@ -157,6 +166,11 @@ export function PaieDialog({ employees, bulletin }: Props) {
     prime_depassement:    Number(watch("prime_depassement")) || 0,
     prime_fonction:       Number(watch("prime_fonction")) || 0,
     prime_transport:      Number(watch("prime_transport")) || 0,
+    heures_sup:           {
+      h15: Number(watch("heures_sup_h15")) || 0,
+      h50: Number(watch("heures_sup_h50")) || 0,
+      h75: Number(watch("heures_sup_h75")) || 0,
+    },
     autres_retenues:      Number(watch("autres_retenues")) || 0,
     avances:              Number(watch("avances")) || 0,
   };
@@ -172,6 +186,9 @@ export function PaieDialog({ employees, bulletin }: Props) {
       prime_depassement:    Number(data.prime_depassement) || 0,
       prime_fonction:       Number(data.prime_fonction) || 0,
       prime_transport:      Number(data.prime_transport) || 0,
+      heures_sup_h15:       Number(data.heures_sup_h15) || 0,
+      heures_sup_h50:       Number(data.heures_sup_h50) || 0,
+      heures_sup_h75:       Number(data.heures_sup_h75) || 0,
       autres_retenues:      Number(data.autres_retenues) || 0,
       avances:              Number(data.avances) || 0,
     };
@@ -200,7 +217,7 @@ export function PaieDialog({ employees, bulletin }: Props) {
       periode: currentPeriode(),
       sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
       prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
-      prime_transport: "0", autres_retenues: "0", avances: "0",
+      prime_transport: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
     });
     router.refresh();
   }
@@ -334,6 +351,30 @@ export function PaieDialog({ employees, bulletin }: Props) {
             </div>
           </div>
 
+          {/* ── HEURES SUPPLÉMENTAIRES ───────────────────────────────── */}
+          <div className="rounded-lg border bg-slate-50 p-3 space-y-2">
+            <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">
+              Heures Supplémentaires
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label className="text-xs font-medium text-slate-700">HS 15% (Jours ouvrables)</label>
+                <Input type="number" min="0" step="1" {...register("heures_sup_h15")} className="mt-1" />
+                <p className="text-[10px] text-muted-foreground mt-0.5">De 41h à 48h</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">HS 50% (Au-delà / Nuit)</label>
+                <Input type="number" min="0" step="1" {...register("heures_sup_h50")} className="mt-1" />
+                <p className="text-[10px] text-muted-foreground mt-0.5">&gt; 48h ou Nuit</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">HS 75% (Dimanche / Férié)</label>
+                <Input type="number" min="0" step="1" {...register("heures_sup_h75")} className="mt-1" />
+                <p className="text-[10px] text-muted-foreground mt-0.5">Jours de repos/fériés</p>
+              </div>
+            </div>
+          </div>
+
           {/* ── RETENUES DIVERSES ────────────────────────────────────── */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
@@ -356,6 +397,12 @@ export function PaieDialog({ employees, bulletin }: Props) {
                 <span className="text-muted-foreground">Total brut imposable</span>
                 <span className="font-medium">{fmt(preview.total_imposable)}</span>
               </div>
+              {(preview.heures_sup_montant ?? 0) > 0 && (
+                <div className="flex justify-between text-slate-700">
+                  <span>+ Heures Supplémentaires</span>
+                  <span>{fmt(preview.heures_sup_montant!)}</span>
+                </div>
+              )}
               {nums.prime_transport > 0 && (
                 <div className="flex justify-between text-emerald-600">
                   <span>+ Transport (non imposable)</span>
