@@ -222,6 +222,13 @@ export const MAJORATIONS_HEURES_SUP = {
   // Samedi : non spécifié dans les textes — à vérifier avec convention collective
 } as const;
 
+export function calculerHeuresSup(nbH15: number, nbH50: number, nbH75: number, tauxHoraire: number): number {
+  const h15 = nbH15 * tauxHoraire * 1.15;
+  const h50 = nbH50 * tauxHoraire * 1.50;
+  const h75 = nbH75 * tauxHoraire * 1.75;
+  return Math.round(h15 + h50 + h75);
+}
+
 // ── Préavis CDI — Décret n°96-200 / CCI Art. 34 ───────────────────────
 // Ouvriers/employés : 8 jours minimum — 4 mois maximum
 // Agents de maîtrise (cat. 6+) : 3 mois minimum — 4 mois maximum
@@ -257,6 +264,12 @@ export interface LignesBulletin {
   prime_depassement?: number;
   prime_fonction?: number;
   prime_transport?: number;
+  heures_sup?: {
+    h15: number;
+    h50: number;
+    h75: number;
+  };
+  taux_horaire?: number;
   autres_retenues?: number;
   avances?: number;
 }
@@ -269,10 +282,17 @@ export interface ResultatPaieComplet {
   its: number;
   total_retenues: number;
   salaire_net: number;
+  heures_sup_montant: number;
 }
 
 export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieComplet {
   const primeTransport = lignes.prime_transport ?? 0;
+  
+  const taux_horaire = lignes.taux_horaire ?? Math.round(((lignes.salaire_brut ?? 0) + (lignes.sursalaire ?? 0)) / 173.33);
+  const heures_sup_montant = lignes.heures_sup
+    ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, taux_horaire)
+    : 0;
+
   const total_brut = (lignes.salaire_brut ?? 0)
     + (lignes.sursalaire ?? 0)
     + (lignes.prime_anciennete ?? 0)
@@ -280,6 +300,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     + (lignes.prime_salissure ?? 0)
     + (lignes.prime_depassement ?? 0)
     + (lignes.prime_fonction ?? 0)
+    + heures_sup_montant
     + primeTransport;
 
   // Prime transport non soumise à ITS
@@ -303,7 +324,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
 
   const salaire_net = Math.max(0, total_brut - total_retenues);
 
-  return { total_brut, total_imposable, cnps_salarie, cmu, its, total_retenues, salaire_net };
+  return { total_brut, total_imposable, cnps_salarie, cmu, its, total_retenues, salaire_net, heures_sup_montant };
 }
 
 export function formatAnciennete(dateEmbauche: string): string {
@@ -322,4 +343,68 @@ export function formatAnciennete(dateEmbauche: string): string {
   const m = String(months).padStart(2, "0");
   const d = String(days).padStart(2, "0");
   return `${y} an${years > 1 ? "s" : ""} ${m} mois ${d} jour${days > 1 ? "s" : ""}`;
+}
+
+// ── Indemnité de précarité (CDD) — Art. 14.8 CT-CI ──────────────────────
+// Source : Code du Travail de Côte d'Ivoire (taux légal : 3% de la somme brute perçue)
+export function calculerIndemnitePrecarite(sommeSalairesBruts: number): number {
+  if (sommeSalairesBruts <= 0) return 0;
+  return Math.round(sommeSalairesBruts * 0.03);
+}
+
+export interface ParametresSoldeDeCompte {
+  type_contrat: 'CDD' | 'CDI';
+  salaire_moyen_12_mois: number;
+  somme_salaires_bruts_cdd?: number; // Requis si CDD
+  anciennete_annees: number;
+  jours_conges_restants: number;
+  jours_preavis_non_effectues: number;
+  salaire_mensuel_actuel: number; 
+}
+
+export interface ResultatSoldeDeCompte {
+  indemnite_licenciement: number;
+  indemnite_precarite: number;
+  indemnite_compensatrice_conges: number;
+  indemnite_preavis: number;
+  total_brut_stc: number;
+}
+
+export function calculerSoldeDeCompte(params: ParametresSoldeDeCompte): ResultatSoldeDeCompte {
+  let indemnite_licenciement = 0;
+  let indemnite_precarite = 0;
+
+  if (params.type_contrat === 'CDI') {
+    indemnite_licenciement = calculerIndemniteLicenciement(
+      params.salaire_moyen_12_mois, 
+      params.anciennete_annees
+    );
+  } else if (params.type_contrat === 'CDD') {
+    indemnite_precarite = calculerIndemnitePrecarite(
+      params.somme_salaires_bruts_cdd || 0
+    );
+  }
+
+  // ICCP (Indemnité Compensatrice de Congés Payés)
+  // Usuellement 1/30ème du salaire mensuel brut par jour ou 1/26 selon mois calendaire/ouvrable
+  const tauxJournalierConges = params.salaire_mensuel_actuel / 30;
+  const indemnite_compensatrice_conges = Math.round(tauxJournalierConges * params.jours_conges_restants);
+
+  // Indemnité de préavis
+  const tauxJournalierPreavis = params.salaire_mensuel_actuel / 30;
+  const indemnite_preavis = Math.round(tauxJournalierPreavis * params.jours_preavis_non_effectues);
+
+  const total_brut_stc = 
+    indemnite_licenciement + 
+    indemnite_precarite + 
+    indemnite_compensatrice_conges + 
+    indemnite_preavis;
+
+  return {
+    indemnite_licenciement,
+    indemnite_precarite,
+    indemnite_compensatrice_conges,
+    indemnite_preavis,
+    total_brut_stc
+  };
 }
