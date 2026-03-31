@@ -3,27 +3,42 @@ import { createServerClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, CheckCircle, Clock } from "lucide-react";
 
-export const metadata = { title: "Congés — RH Manager CI" };
+export const metadata = { title: "Conges — RH Manager CI" };
 
 const TYPE_LABELS: Record<string, string> = {
-  annuel: "Congé annuel",
+  annuel: "Conge annuel",
   maladie: "Maladie",
-  maternite: "Maternité",
-  paternite: "Paternité",
+  maternite: "Maternite",
+  paternite: "Paternite",
   sans_solde: "Sans solde",
   exceptionnel: "Exceptionnel",
 };
 
-const STATUT_VARIANT: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  demande: "outline",
+const STATUT_VARIANT: Record<
+  string,
+  "default" | "secondary" | "outline" | "destructive"
+> = {
+  en_attente: "outline",
+  valide_manager: "secondary",
   approuve: "default",
   refuse: "destructive",
 };
 
+const STATUT_LABEL: Record<string, string> = {
+  en_attente: "En attente",
+  valide_manager: "Valide manager",
+  approuve: "Approuve",
+  refuse: "Refuse",
+};
+
 function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("fr-CI", { day: "2-digit", month: "short", year: "numeric" });
+  return new Date(d).toLocaleDateString("fr-CI", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 export default async function CongesPage() {
@@ -32,8 +47,10 @@ export default async function CongesPage() {
   const [{ data: conges }, { data: employees }] = await Promise.all([
     supabase
       .from("conges")
-      .select(`id, type, date_debut, date_fin, nb_jours, statut, commentaire, created_at,
-               employees(full_name, matricule)`)
+      .select(
+        `id, type, date_debut, date_fin, nb_jours, statut, commentaire, refus_motif, created_at,
+         employees(full_name, matricule)`
+      )
       .order("created_at", { ascending: false }),
     supabase
       .from("employees")
@@ -42,14 +59,24 @@ export default async function CongesPage() {
       .order("full_name"),
   ]);
 
-  const enAttente = conges?.filter((c) => c.statut === "demande") ?? [];
-  const historique = conges?.filter((c) => c.statut !== "demande") ?? [];
+  // V1 : tous les utilisateurs connectes ont les droits manager ET RH
+  const canManagerApprove = true;
+  const canRhApprove = true;
+
+  const enAttenteManager =
+    conges?.filter((c) => c.statut === "en_attente") ?? [];
+  const enAttenteRh =
+    conges?.filter((c) => c.statut === "valide_manager") ?? [];
+  const historique =
+    conges?.filter(
+      (c) => c.statut === "approuve" || c.statut === "refuse"
+    ) ?? [];
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Gestion des Congés</h1>
+          <h1 className="text-2xl font-bold">Gestion des Conges</h1>
           <p className="text-sm text-muted-foreground">
             Droit : 2,5 jours/mois (Art. 25 CT-CI)
           </p>
@@ -57,58 +84,172 @@ export default async function CongesPage() {
         <CongesDialog employees={employees ?? []} />
       </div>
 
-      {/* Rappel légal */}
+      {/* Rappel legal */}
       <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
-        <p className="font-medium mb-1">Droits légaux — Code du Travail ivoirien</p>
+        <p className="font-medium mb-1">Droits legaux — Code du Travail ivoirien</p>
         <div className="flex flex-wrap gap-4 text-xs">
-          <span>📅 Annuel : <strong>30 jours/an max</strong> (2,5j × 12 mois)</span>
-          <span>🤱 Maternité : <strong>14 semaines</strong></span>
-          <span>👶 Paternité : <strong>10 jours</strong></span>
+          <span>
+            Annuel : <strong>30 jours/an max</strong> (2,5j x 12 mois)
+          </span>
+          <span>
+            Maternite : <strong>14 semaines</strong>
+          </span>
+          <span>
+            Paternite : <strong>10 jours</strong>
+          </span>
         </div>
       </div>
 
-      {/* Demandes en attente */}
+      {/* Section 1 : En attente de validation manager */}
       <div>
         <h2 className="mb-3 text-lg font-semibold flex items-center gap-2">
-          <CalendarDays className="h-5 w-5 text-amber-500" />
-          Demandes en attente
-          {enAttente.length > 0 && (
-            <Badge variant="outline" className="ml-1">{enAttente.length}</Badge>
+          <Clock className="h-5 w-5 text-amber-500" />
+          En attente de validation manager
+          {enAttenteManager.length > 0 && (
+            <Badge variant="outline" className="ml-1">
+              {enAttenteManager.length}
+            </Badge>
           )}
         </h2>
 
-        {enAttente.length === 0 ? (
+        {enAttenteManager.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Aucune demande en attente.
+            Aucune demande en attente de validation manager.
           </div>
         ) : (
           <div className="rounded-lg border bg-white overflow-hidden">
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Employé</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Période</th>
-                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">Jours</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Actions</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Employe
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Type
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">
+                    Periode
+                  </th>
+                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">
+                    Jours
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {enAttente.map((c) => {
-                  const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
+                {enAttenteManager.map((c) => {
+                  const emp = Array.isArray(c.employees)
+                    ? c.employees[0]
+                    : c.employees;
                   return (
-                    <tr key={c.id} className="hover:bg-muted/30 transition-colors">
+                    <tr
+                      key={c.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
                       <td className="px-4 py-3">
                         <p className="font-medium">{emp?.full_name ?? "—"}</p>
-                        <p className="text-xs text-muted-foreground">{emp?.matricule}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {emp?.matricule}
+                        </p>
                       </td>
-                      <td className="px-4 py-3">{TYPE_LABELS[c.type] ?? c.type}</td>
-                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell text-xs">
-                        {formatDate(c.date_debut)} → {formatDate(c.date_fin)}
-                      </td>
-                      <td className="px-4 py-3 text-center font-bold">{c.nb_jours}j</td>
                       <td className="px-4 py-3">
-                        <CongesApprovalButton congeId={c.id} />
+                        {TYPE_LABELS[c.type] ?? c.type}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell text-xs">
+                        {formatDate(c.date_debut)} {"->"} {formatDate(c.date_fin)}
+                      </td>
+                      <td className="px-4 py-3 text-center font-bold">
+                        {c.nb_jours}j
+                      </td>
+                      <td className="px-4 py-3">
+                        <CongesApprovalButton
+                          congeId={c.id}
+                          statut={c.statut ?? "en_attente"}
+                          canManagerApprove={canManagerApprove}
+                          canRhApprove={canRhApprove}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Section 2 : En attente de validation RH */}
+      <div>
+        <h2 className="mb-3 text-lg font-semibold flex items-center gap-2">
+          <CalendarDays className="h-5 w-5 text-blue-500" />
+          En attente de validation RH
+          {enAttenteRh.length > 0 && (
+            <Badge variant="outline" className="ml-1">
+              {enAttenteRh.length}
+            </Badge>
+          )}
+        </h2>
+
+        {enAttenteRh.length === 0 ? (
+          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+            Aucune demande en attente de validation RH.
+          </div>
+        ) : (
+          <div className="rounded-lg border bg-white overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="border-b bg-muted/50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Employe
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Type
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">
+                    Periode
+                  </th>
+                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">
+                    Jours
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {enAttenteRh.map((c) => {
+                  const emp = Array.isArray(c.employees)
+                    ? c.employees[0]
+                    : c.employees;
+                  return (
+                    <tr
+                      key={c.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="px-4 py-3">
+                        <p className="font-medium">{emp?.full_name ?? "—"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {emp?.matricule}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3">
+                        {TYPE_LABELS[c.type] ?? c.type}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell text-xs">
+                        {formatDate(c.date_debut)} {"->"} {formatDate(c.date_fin)}
+                      </td>
+                      <td className="px-4 py-3 text-center font-bold">
+                        {c.nb_jours}j
+                      </td>
+                      <td className="px-4 py-3">
+                        <CongesApprovalButton
+                          congeId={c.id}
+                          statut={c.statut ?? "valide_manager"}
+                          canManagerApprove={canManagerApprove}
+                          canRhApprove={canRhApprove}
+                        />
                       </td>
                     </tr>
                   );
@@ -121,38 +262,74 @@ export default async function CongesPage() {
 
       {/* Historique */}
       <div>
-        <h2 className="mb-3 text-lg font-semibold">Historique</h2>
+        <h2 className="mb-3 text-lg font-semibold flex items-center gap-2">
+          <CheckCircle className="h-5 w-5 text-muted-foreground" />
+          Historique
+        </h2>
         {historique.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-            Aucun congé traité.
+            Aucun conge traite.
           </div>
         ) : (
           <div className="rounded-lg border bg-white overflow-hidden">
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Employé</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Période</th>
-                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">Jours</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Statut</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Employe
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Type
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">
+                    Periode
+                  </th>
+                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">
+                    Jours
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Statut
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {historique.map((c) => {
-                  const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
+                  const emp = Array.isArray(c.employees)
+                    ? c.employees[0]
+                    : c.employees;
                   return (
-                    <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 font-medium">{emp?.full_name ?? "—"}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{TYPE_LABELS[c.type] ?? c.type}</td>
-                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell text-xs">
-                        {formatDate(c.date_debut)} → {formatDate(c.date_fin)}
+                    <tr
+                      key={c.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-medium">
+                        {emp?.full_name ?? "—"}
                       </td>
-                      <td className="px-4 py-3 text-center font-bold">{c.nb_jours}j</td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {TYPE_LABELS[c.type] ?? c.type}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell text-xs">
+                        {formatDate(c.date_debut)} {"->"} {formatDate(c.date_fin)}
+                      </td>
+                      <td className="px-4 py-3 text-center font-bold">
+                        {c.nb_jours}j
+                      </td>
                       <td className="px-4 py-3">
-                        <Badge variant={STATUT_VARIANT[c.statut ?? "demande"] ?? "outline"}>
-                          {c.statut === "approuve" ? "Approuvé" : c.statut === "refuse" ? "Refusé" : c.statut}
-                        </Badge>
+                        <div className="flex flex-col gap-1">
+                          <Badge
+                            variant={
+                              STATUT_VARIANT[c.statut ?? "en_attente"] ??
+                              "outline"
+                            }
+                          >
+                            {STATUT_LABEL[c.statut ?? ""] ?? c.statut}
+                          </Badge>
+                          {c.statut === "refuse" && c.refus_motif && (
+                            <p className="text-xs text-muted-foreground italic">
+                              {c.refus_motif}
+                            </p>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
