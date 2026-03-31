@@ -1,3 +1,16 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: unknown
+last_updated: "2026-03-31T10:24:41.460Z"
+progress:
+  total_phases: 7
+  completed_phases: 1
+  total_plans: 10
+  completed_plans: 9
+---
+
 # STATE.md — FichePaie RH
 
 ## Project Reference
@@ -34,6 +47,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 **Droit applicable :** Code du Travail CI 2026 — SMIG 75 000 FCFA, CNPS 6,3%, CMU 1 600 FCFA
 
 **Problèmes critiques à traiter en Phase 1 :**
+
 1. `types/supabase.ts` désynchronisé (4 migrations non reflétées)
 2. Calcul de paie dupliqué 3× (centraliser dans `lib/paie-ci.ts`)
 3. Colonnes `companies` manquantes (bulletin imprimé non conforme)
@@ -44,6 +58,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 *Initialisation : 30 mars 2026*
 *Codebase map créée avant l'initialisation via `/gsd:map-codebase`*
 *30 mars 2026 — Phase 1 Stabilisation complétée (5 plans) :*
+
 - *01-01 : types/supabase.ts synchronisé*
 - *01-02 : champs légaux companies + bulletin conforme*
 - *01-03 : lib/paie-ci.ts centralisé (calculs CI)*
@@ -51,6 +66,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - *01-05 : sécurité RAG + audit_logs + migrations versionnées*
 
 *31 mars 2026 — Phase 2 Paie Avancée démarrée :*
+
 - *02-01 : calculerHeuresSup (3 paliers +15%/+50%/+75%), PaieDialog UI, POST + PATCH API*
 - *02-03 : MasseSalarialeDashboard (/paie/masse-salariale) + EmployeeCostSheet (coût réel par salarié)*
 - *02-04 : Export journal de paie CSV — endpoint GET /api/paie/export + bouton PaieExportButton*
@@ -76,6 +92,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 ## Plan 01-02 Completion Note
 
 *2026-03-30 — Plan 01-02 complété (champs légaux companies + bulletin conforme)*
+
 - Migration SQL : `supabase/migrations/20260330120000_companies_legal_fields.sql`
 - 5 colonnes ajoutées sur companies : raison_sociale, adresse, cnps_matricule, nccm, ncc
 - SOC-03 satisfait : bulletin de paie conforme droit CI avec données légales entreprise
