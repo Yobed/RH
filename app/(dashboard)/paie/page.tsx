@@ -5,6 +5,7 @@ import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
 import { Banknote, Printer } from "lucide-react";
 import Link from "next/link";
+import { PaieExportButton } from "@/components/rh/PaieExportButton";
 
 export const metadata = { title: "Paie — RH Manager CI" };
 
@@ -25,7 +26,7 @@ export default async function PaiePage() {
       .from("bulletins_paie")
       .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
                sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
-               prime_depassement, prime_fonction, prime_transport,
+               prime_depassement, prime_fonction, prime_transport, details,
                employee_id, employees(full_name, poste, matricule)`)
       .order("periode", { ascending: false })
       .order("created_at", { ascending: false }),
@@ -51,7 +52,10 @@ export default async function PaiePage() {
             CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Droit ivoirien 2026
           </p>
         </div>
-        <PaieDialog employees={employees ?? []} />
+        <div className="flex items-center gap-2">
+          <PaieExportButton periode={currentPeriode} />
+          <PaieDialog employees={employees ?? []} />
+        </div>
       </div>
 
       {/* KPI mois courant */}
@@ -121,6 +125,7 @@ export default async function PaiePage() {
                 {bulletins.map((b) => {
                   const empRaw = b.employees;
                   const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
+                  const detailsObj = b.details as { heures_sup?: { h15: number, h50: number, h75: number } } | null;
                   return (
                     <tr key={b.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3">
@@ -155,6 +160,9 @@ export default async function PaiePage() {
                                 prime_depassement: Number((b as Record<string, unknown>).prime_depassement ?? 0),
                                 prime_fonction: Number((b as Record<string, unknown>).prime_fonction ?? 0),
                                 prime_transport: Number((b as Record<string, unknown>).prime_transport ?? 0),
+                                heures_sup_h15: detailsObj?.heures_sup?.h15 ?? 0,
+                                heures_sup_h50: detailsObj?.heures_sup?.h50 ?? 0,
+                                heures_sup_h75: detailsObj?.heures_sup?.h75 ?? 0,
                                 autres_retenues: Number(b.autres_retenues ?? 0),
                                 avances: Number(b.avances ?? 0),
                               }}
