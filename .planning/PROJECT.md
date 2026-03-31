@@ -30,13 +30,14 @@ Un RH ivoirien doit pouvoir éditer un bulletin de paie 100 % conforme au droit 
 
 ### Active
 
-#### Module Paie
-- [ ] Calcul des heures supplémentaires (décret CI n°96-203 : +15% à +75%)
-- [ ] Calcul de solde de tout compte (indemnités légales à la rupture)
-- [ ] Calcul de fin de contrat CDD (indemnité de précarité 3% si applicable)
-- [ ] Masse salariale mensuelle — tableau de bord coûts salariaux
-- [ ] Coût réel d'un salarié (salaire brut + toutes charges patronales)
-- [ ] Export comptable / journal de paie
+#### Module Paie — Validé en Phase 02 (2026-03-31)
+- ✓ Calcul des heures supplémentaires (décret CI n°96-203 : +15% à +75%)
+- ✓ Calcul de solde de tout compte (indemnités légales à la rupture)
+- ✓ Calcul de fin de contrat CDD (indemnité de précarité 3% si applicable)
+- ✓ Masse salariale mensuelle — tableau de bord coûts salariaux
+- ✓ Coût réel d'un salarié (salaire brut + toutes charges patronales)
+- ✓ Export comptable / journal de paie
+- ✓ Configuration conventions collectives (CCI, BTP, Commerce…)
 
 #### Module Congés & Absences
 - [ ] Solde congés légaux CI (2,5 j/mois travaillé)
