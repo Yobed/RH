@@ -75,7 +75,7 @@ Plans:
 **Plans:** 5 plans
 Plans:
 - [x] 03-01-PLAN.md — Table leave_balances + lib/conges-ci.ts (calculerJoursAcquis 2,5j/mois) + widget solde fiche employé
-- [ ] 03-02-PLAN.md — Workflow multi-niveaux (en_attente → valide_manager → approuve|refuse) + CongesApprovalButton + colonnes audit
+- [x] 03-02-PLAN.md — Workflow multi-niveaux (en_attente → valide_manager → approuve|refuse) + CongesApprovalButton + colonnes audit
 - [ ] 03-03-PLAN.md — Page /conges/calendrier — grille mensuelle par employé avec filtre département
 - [ ] 03-04-PLAN.md — calculerRetenuAbsence dans lib/paie-ci.ts + champ absence PaieDialog + preview retenue
 - [ ] 03-05-PLAN.md — ArretMaladieDialog avec upload justificatif + colonnes est_justifie/est_at + badges liste congés

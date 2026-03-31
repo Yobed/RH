@@ -18,13 +18,13 @@ progress:
 Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Valeur principale :** Éditer un bulletin conforme CI, gérer le dossier salarié complet, obtenir une réponse juridique fiable — sans formation technique.
-**Focus actuel :** Phase 3 — Congés & Absences (03-01 complété — solde légal CI)
+**Focus actuel :** Phase 3 — Congés & Absences (03-02 complété — workflow validation multi-niveaux)
 
 ## Current Status
 
 **Milestone :** v1.0 — SaaS RH Ivoirien Complet
 **Phase en cours :** Phase 3 — Congés & Absences
-**Dernière action :** 03-01 terminé — solde congés légaux CI : table leave_balances + lib/conges-ci.ts + API GET/POST /api/conges/balance + widget fiche employé
+**Dernière action :** 03-02 terminé — workflow validation multi-niveaux congés : machine à états (en_attente → valide_manager → approuve/refuse) + colonnes audit + CongesApprovalButton multi-rôle + page /conges deux sections
 
 ## Progress
 
@@ -34,7 +34,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - [x] ROADMAP.md — 7 phases créées
 - [x] Phase 1 : Stabilisation (01-01 à 01-05 complétés)
 - [ ] Phase 2 : Paie Avancée (02-01, 02-03, 02-04, 02-05 complétés — heures sup + masse salariale + export CSV + multi-convention collective)
-- [ ] Phase 3 : Congés & Absences (03-01 complété — solde légal CI)
+- [ ] Phase 3 : Congés & Absences (03-01 complété — solde légal CI, 03-02 complété — workflow validation)
 - [ ] Phase 4 : Dossier Personnel
 - [ ] Phase 5 : Évaluations & Discipline
 - [ ] Phase 6 : QHSE
@@ -75,6 +75,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 *31 mars 2026 — Phase 3 Congés & Absences démarrée :*
 
 - *03-01 : leave_balances migration + lib/conges-ci.ts (2,5j/mois Art. 25) + API GET/POST /api/conges/balance + widget solde fiche employé (8 tests TDD)*
+- *03-02 : machine à états workflow congés (en_attente→valide_manager→approuve/refuse) + colonnes audit + API PUT /api/conges/[id] + CongesApprovalButton multi-rôle + page /conges deux files d'attente*
 
 ## Key Decisions
 
@@ -95,6 +96,8 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | Colonne solde GENERATED ALWAYS AS STORED | 03-01 | Base de données garantit la cohérence sans calcul applicatif |
 | Mois complet = embauché le 1er du mois | 03-01 | Art. 25 CT-CI — présent dès le premier jour du mois |
 | Calcul à la volée sans upsert au rendu | 03-01 | Écriture uniquement via API — pas d'effet de bord au rendu serveur |
+| canManagerApprove=true et canRhApprove=true hardcodés en V1 | 03-02 | RBAC simplifié — tous les RH voient les deux files en v1 |
+| leave_balances upsert (insert si absent) | 03-02 | Robustesse si row manquant — évite 404 silencieux |
 
 ## Plan 01-02 Completion Note
 
