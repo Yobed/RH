@@ -14,10 +14,12 @@ import {
   ArrowLeft,
   CalendarDays,
   Banknote,
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
-import { formatAnciennete } from "@/lib/paie-ci";
+import { formatAnciennete, calculerPrimeAnciennete } from "@/lib/paie-ci";
 import { scoreLabel } from "@/lib/utils-rh";
+import { EmployeeCostSheet } from "@/components/employees/EmployeeCostSheet";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -356,6 +358,29 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           </div>
         )}
       </div>
+
+      {/* Coût Réel Employeur */}
+      {emp.salaire_brut != null && emp.salaire_brut > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-lg font-semibold">Coût Réel Employeur</h2>
+            <span className="text-xs text-muted-foreground">
+              Toutes charges patronales CNPS CI incluses
+            </span>
+          </div>
+          <EmployeeCostSheet
+            salaireBrut={emp.salaire_brut}
+            sursalaire={emp.sursalaire}
+            primeExceptionnelle={emp.prime_exceptionnelle}
+            primeSalissure={emp.prime_salissure}
+            primeDepassement={emp.prime_depassement}
+            primeFonction={emp.prime_fonction}
+            primeTransport={emp.prime_transport}
+            primeAnciennete={calculerPrimeAnciennete(emp.salaire_brut, emp.date_embauche)}
+          />
+        </div>
+      )}
 
       {/* Évaluations */}
       <div>
