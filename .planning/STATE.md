@@ -11,7 +11,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Milestone :** v1.0 — SaaS RH Ivoirien Complet
 **Phase en cours :** Phase 2 — Paie Avancée
-**Dernière action :** 02-04 terminé — export journal de paie CSV avec endpoint API et bouton téléchargement
+**Dernière action :** 02-05 terminé — multi-convention collective : table fiscal_params + API GET/PUT /api/settings + section paramètres de calcul dans le formulaire entreprise
 
 ## Progress
 
@@ -20,7 +20,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - [x] REQUIREMENTS.md — 42 exigences v1 définies
 - [x] ROADMAP.md — 7 phases créées
 - [x] Phase 1 : Stabilisation (01-01 à 01-05 complétés)
-- [ ] Phase 2 : Paie Avancée (02-01, 02-03, 02-04 complétés — heures sup + masse salariale + export CSV)
+- [ ] Phase 2 : Paie Avancée (02-01, 02-03, 02-04, 02-05 complétés — heures sup + masse salariale + export CSV + multi-convention collective)
 - [ ] Phase 3 : Congés & Absences
 - [ ] Phase 4 : Dossier Personnel
 - [ ] Phase 5 : Évaluations & Discipline
@@ -54,6 +54,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - *02-01 : calculerHeuresSup (3 paliers +15%/+50%/+75%), PaieDialog UI, POST + PATCH API*
 - *02-03 : MasseSalarialeDashboard (/paie/masse-salariale) + EmployeeCostSheet (coût réel par salarié)*
 - *02-04 : Export journal de paie CSV — endpoint GET /api/paie/export + bouton PaieExportButton*
+- *02-05 : Multi-convention collective — table fiscal_params + RLS + GET/PUT /api/settings + section paramètres de calcul dans ParametresForm*
 
 ## Key Decisions
 
@@ -69,6 +70,8 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | AT/MP 3% taux moyen avec avertissement affiché | 02-03 | Taux variable par secteur CNPS CI — transparence légale |
 | Séparateur CSV point-virgule + BOM UTF-8 | 02-04 | Compatibilité Excel France/CI + affichage correct caractères accentués |
 | Brouillons exclus de l'export CSV | 02-04 | Le journal comptable ne doit contenir que les bulletins validés/payés |
+| UNIQUE(company_id) sur fiscal_params + upsert onConflict | 02-05 | Une seule convention par entreprise — simplifie le code et évite les doublons |
+| Enum Zod strict pour convention côté API | 02-05 | 7 conventions CI reconnues — évite les valeurs arbitraires en base |
 
 ## Plan 01-02 Completion Note
 
