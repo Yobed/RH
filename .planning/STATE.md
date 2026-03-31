@@ -11,7 +11,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Milestone :** v1.0 — SaaS RH Ivoirien Complet
 **Phase en cours :** Phase 2 — Paie Avancée
-**Dernière action :** 02-03 terminé — masse salariale dashboard + fiche coût réel employeur (charges patronales CNPS CI)
+**Dernière action :** 02-04 terminé — export journal de paie CSV avec endpoint API et bouton téléchargement
 
 ## Progress
 
@@ -20,7 +20,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - [x] REQUIREMENTS.md — 42 exigences v1 définies
 - [x] ROADMAP.md — 7 phases créées
 - [x] Phase 1 : Stabilisation (01-01 à 01-05 complétés)
-- [ ] Phase 2 : Paie Avancée (02-01, 02-03 complétés — heures sup + masse salariale)
+- [ ] Phase 2 : Paie Avancée (02-01, 02-03, 02-04 complétés — heures sup + masse salariale + export CSV)
 - [ ] Phase 3 : Congés & Absences
 - [ ] Phase 4 : Dossier Personnel
 - [ ] Phase 5 : Évaluations & Discipline
@@ -53,6 +53,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 *31 mars 2026 — Phase 2 Paie Avancée démarrée :*
 - *02-01 : calculerHeuresSup (3 paliers +15%/+50%/+75%), PaieDialog UI, POST + PATCH API*
 - *02-03 : MasseSalarialeDashboard (/paie/masse-salariale) + EmployeeCostSheet (coût réel par salarié)*
+- *02-04 : Export journal de paie CSV — endpoint GET /api/paie/export + bouton PaieExportButton*
 
 ## Key Decisions
 
@@ -66,6 +67,8 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | HS stockées en JSONB details { heures_sup, heures_sup_montant } | 02-01 | Historique et réimpression du bulletin |
 | Charges patronales calculées à la volée (pas stockées) | 02-03 | lib/paie-ci.ts source unique — pas de duplication |
 | AT/MP 3% taux moyen avec avertissement affiché | 02-03 | Taux variable par secteur CNPS CI — transparence légale |
+| Séparateur CSV point-virgule + BOM UTF-8 | 02-04 | Compatibilité Excel France/CI + affichage correct caractères accentués |
+| Brouillons exclus de l'export CSV | 02-04 | Le journal comptable ne doit contenir que les bulletins validés/payés |
 
 ## Plan 01-02 Completion Note
 
