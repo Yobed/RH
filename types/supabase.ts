@@ -60,8 +60,8 @@ export type Database = {
           prime_transport: number | null
           salaire_brut: number
           salaire_net: number
-          statut: string | null
           sursalaire: number | null
+          details: Json | null
         }
         Insert: {
           autres_retenues?: number
@@ -81,8 +81,8 @@ export type Database = {
           prime_transport?: number | null
           salaire_brut: number
           salaire_net: number
-          statut?: string | null
           sursalaire?: number | null
+          details?: Json | null
         }
         Update: {
           autres_retenues?: number
@@ -102,8 +102,8 @@ export type Database = {
           prime_transport?: number | null
           salaire_brut?: number
           salaire_net?: number
-          statut?: string | null
           sursalaire?: number | null
+          details?: Json | null
         }
         Relationships: [
           {
@@ -613,6 +613,41 @@ export type Database = {
             columns: ["evaluateur_id"]
             isOneToOne: false
             referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiscal_params: {
+        Row: {
+          company_id: string
+          convention: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          valeur_point: number
+        }
+        Insert: {
+          company_id: string
+          convention?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          valeur_point?: number
+        }
+        Update: {
+          company_id?: string
+          convention?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          valeur_point?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_params_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
