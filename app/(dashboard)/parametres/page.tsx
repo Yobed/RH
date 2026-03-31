@@ -28,6 +28,14 @@ export default async function ParametresPage() {
         .single()
     : { data: null };
 
+  const { data: fiscalParams } = companyId
+    ? await supabase
+        .from("fiscal_params")
+        .select("convention, valeur_point")
+        .eq("company_id", companyId as string)
+        .maybeSingle()
+    : { data: null };
+
   return (
     <div className="p-6 space-y-6 max-w-2xl">
       <div className="flex items-center gap-3">
@@ -54,6 +62,17 @@ export default async function ParametresPage() {
           cnps_matricule: company?.cnps_matricule ?? null,
           nccm: company?.nccm ?? null,
           ncc: company?.ncc ?? null,
+        }}
+        fiscalParams={{
+          convention: (fiscalParams?.convention ?? "CCI") as
+            | "CCI"
+            | "Commerce"
+            | "BTP"
+            | "Banque & Assurance"
+            | "Transport"
+            | "Industrie"
+            | "Agriculture",
+          valeur_point: fiscalParams?.valeur_point ?? 0,
         }}
       />
     </div>

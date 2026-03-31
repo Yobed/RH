@@ -5,6 +5,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+type ConventionType =
+  | "CCI"
+  | "Commerce"
+  | "BTP"
+  | "Banque & Assurance"
+  | "Transport"
+  | "Industrie"
+  | "Agriculture";
+
 interface Props {
   profile: { full_name: string; email: string; role: string };
   company: {
@@ -16,9 +25,13 @@ interface Props {
     nccm?: string | null;
     ncc?: string | null;
   };
+  fiscalParams: {
+    convention: ConventionType;
+    valeur_point: number;
+  };
 }
 
-const CONVENTIONS = [
+const CONVENTIONS_GENERALES = [
   "",
   "Convention Collective Interprofessionnelle",
   "Convention Collective Commerce",
@@ -29,10 +42,20 @@ const CONVENTIONS = [
   "Convention Collective Agriculture",
 ];
 
+const CONVENTIONS_CALCUL: { value: ConventionType; label: string }[] = [
+  { value: "CCI", label: "Interprofessionnelle (CCI)" },
+  { value: "Commerce", label: "Commerce" },
+  { value: "BTP", label: "Bâtiment & Travaux Publics (BTP)" },
+  { value: "Banque & Assurance", label: "Banque & Assurance" },
+  { value: "Transport", label: "Transport" },
+  { value: "Industrie", label: "Industrie" },
+  { value: "Agriculture", label: "Agriculture" },
+];
+
 const selectClass =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
 
-export function ParametresForm({ profile, company }: Props) {
+export function ParametresForm({ profile, company, fiscalParams }: Props) {
   const [fullName, setFullName] = useState(profile.full_name);
   const [companyName, setCompanyName] = useState(company.name);
   const [convention, setConvention] = useState(company.convention_collective);
@@ -43,6 +66,15 @@ export function ParametresForm({ profile, company }: Props) {
   const [ncc, setNcc] = useState(company.ncc ?? "");
   const [savingProfil, setSavingProfil] = useState(false);
   const [savingEntreprise, setSavingEntreprise] = useState(false);
+
+  // Paramètres fiscaux (convention collective de calcul)
+  const [conventionCalcul, setConventionCalcul] = useState<ConventionType>(
+    fiscalParams.convention
+  );
+  const [valeurPoint, setValeurPoint] = useState<string>(
+    fiscalParams.valeur_point.toString()
+  );
+  const [savingFiscal, setSavingFiscal] = useState(false);
 
   async function saveProfil() {
     if (!fullName.trim()) return;
@@ -89,6 +121,33 @@ export function ParametresForm({ profile, company }: Props) {
       toast.success("Entreprise mise à jour");
     } finally {
       setSavingEntreprise(false);
+    }
+  }
+
+  async function saveFiscalParams() {
+    const point = parseFloat(valeurPoint);
+    if (isNaN(point) || point < 0) {
+      toast.error("Valeur de point invalide");
+      return;
+    }
+    setSavingFiscal(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          convention: conventionCalcul,
+          valeur_point: point,
+        }),
+      });
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
+        toast.error(err.error ?? "Erreur serveur");
+        return;
+      }
+      toast.success("Paramètres de calcul sauvegardés");
+    } finally {
+      setSavingFiscal(false);
     }
   }
 
@@ -147,7 +206,7 @@ export function ParametresForm({ profile, company }: Props) {
             onChange={(e) => setConvention(e.target.value)}
             className={`mt-1 ${selectClass}`}
           >
-            {CONVENTIONS.map((c) => (
+            {CONVENTIONS_GENERALES.map((c) => (
               <option key={c} value={c}>
                 {c || "— Aucune convention spécifique —"}
               </option>
@@ -230,11 +289,63 @@ export function ParametresForm({ profile, company }: Props) {
         </Button>
       </div>
 
+      {/* Paramètres de calcul — Convention collective */}
+      <div className="rounded-lg border bg-white p-5 space-y-4">
+        <div>
+          <h2 className="text-base font-semibold">Paramètres de calcul salarial</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Configure les règles de calcul propres à votre convention collective (primes
+            d'ancienneté, sursalaires, valeur du point).
+          </p>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Convention collective de calcul</label>
+          <select
+            value={conventionCalcul}
+            onChange={(e) => setConventionCalcul(e.target.value as ConventionType)}
+            className={`mt-1 ${selectClass}`}
+          >
+            {CONVENTIONS_CALCUL.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sélectionnez la convention qui régit le calcul des primes et indemnités dans votre
+            secteur d'activité.
+          </p>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Valeur du point (FCFA)</label>
+          <Input
+            type="number"
+            min={0}
+            step={1}
+            value={valeurPoint}
+            onChange={(e) => setValeurPoint(e.target.value)}
+            placeholder="ex: 450"
+            className="mt-1"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Utilisée pour le calcul du sursalaire et des primes conventionnelles. Saisir 0 si non
+            applicable.
+          </p>
+        </div>
+
+        <Button onClick={saveFiscalParams} disabled={savingFiscal}>
+          {savingFiscal ? "Enregistrement..." : "Sauvegarder les paramètres de calcul"}
+        </Button>
+      </div>
+
       {/* Droit applicable */}
       <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
         <p className="font-medium mb-1">Droit applicable</p>
         <p>
-          Code du Travail ivoirien — Loi n°2015-532 du 20 juillet 2015 · Décret n°96-287 du 3 avril 1996
+          Code du Travail ivoirien — Loi n°2015-532 du 20 juillet 2015 · Décret n°96-287 du 3
+          avril 1996
         </p>
         <p className="mt-1 text-xs text-blue-600">
           SMIG en vigueur : 75 000 FCFA/mois (Décret n°2023-374)
