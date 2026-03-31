@@ -272,6 +272,7 @@ export interface LignesBulletin {
   taux_horaire?: number;
   autres_retenues?: number;
   avances?: number;
+  nb_jours_absence?: number; // jours absence non justifiée (retenue proportionnelle)
 }
 
 export interface ResultatPaieComplet {
@@ -283,6 +284,16 @@ export interface ResultatPaieComplet {
   total_retenues: number;
   salaire_net: number;
   heures_sup_montant: number;
+  retenu_absence: number; // retenue pour absence non justifiée
+}
+
+/**
+ * Retenue pour absence non justifiée — droit CI
+ * Base : salaire journalier = salaire_brut / 26 jours ouvrables (standard cabinet comptable CI)
+ */
+export function calculerRetenuAbsence(nbJoursAbsence: number, salaireBrut: number): number {
+  if (nbJoursAbsence <= 0 || salaireBrut <= 0) return 0;
+  return Math.round((salaireBrut / 26) * nbJoursAbsence);
 }
 
 export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieComplet {
@@ -318,13 +329,16 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   const base_its_apres_abattement = Math.max(0, Math.round(base_its * (1 - TAUX_ABATTEMENT_ITS)));
   const its = calculerITS(base_its_apres_abattement);
 
+  const retenu_absence = calculerRetenuAbsence(lignes.nb_jours_absence ?? 0, lignes.salaire_brut);
+
   const total_retenues = cnps_salarie + cmu + its
     + (lignes.autres_retenues ?? 0)
-    + (lignes.avances ?? 0);
+    + (lignes.avances ?? 0)
+    + retenu_absence;
 
   const salaire_net = Math.max(0, total_brut - total_retenues);
 
-  return { total_brut, total_imposable, cnps_salarie, cmu, its, total_retenues, salaire_net, heures_sup_montant };
+  return { total_brut, total_imposable, cnps_salarie, cmu, its, total_retenues, salaire_net, heures_sup_montant, retenu_absence };
 }
 
 export function formatAnciennete(dateEmbauche: string): string {
