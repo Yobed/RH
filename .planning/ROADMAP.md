@@ -74,7 +74,7 @@ Plans:
 **Covers:** CON-01, CON-02, CON-03, CON-04, CON-05, CON-06
 **Plans:** 5 plans
 Plans:
-- [ ] 03-01-PLAN.md — Table leave_balances + lib/conges-ci.ts (calculerJoursAcquis 2,5j/mois) + widget solde fiche employé
+- [x] 03-01-PLAN.md — Table leave_balances + lib/conges-ci.ts (calculerJoursAcquis 2,5j/mois) + widget solde fiche employé
 - [ ] 03-02-PLAN.md — Workflow multi-niveaux (en_attente → valide_manager → approuve|refuse) + CongesApprovalButton + colonnes audit
 - [ ] 03-03-PLAN.md — Page /conges/calendrier — grille mensuelle par employé avec filtre département
 - [ ] 03-04-PLAN.md — calculerRetenuAbsence dans lib/paie-ci.ts + champ absence PaieDialog + preview retenue

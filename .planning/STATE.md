@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-last_updated: "2026-03-31T10:24:41.460Z"
+last_updated: "2026-03-31T10:55:29.785Z"
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 10
-  completed_plans: 9
+  total_plans: 15
+  completed_plans: 10
 ---
 
 # STATE.md — FichePaie RH
@@ -18,13 +18,13 @@ progress:
 Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Valeur principale :** Éditer un bulletin conforme CI, gérer le dossier salarié complet, obtenir une réponse juridique fiable — sans formation technique.
-**Focus actuel :** Phase 2 — Paie Avancée (02-01 complété — heures supplémentaires)
+**Focus actuel :** Phase 3 — Congés & Absences (03-01 complété — solde légal CI)
 
 ## Current Status
 
 **Milestone :** v1.0 — SaaS RH Ivoirien Complet
-**Phase en cours :** Phase 2 — Paie Avancée
-**Dernière action :** 02-05 terminé — multi-convention collective : table fiscal_params + API GET/PUT /api/settings + section paramètres de calcul dans le formulaire entreprise
+**Phase en cours :** Phase 3 — Congés & Absences
+**Dernière action :** 03-01 terminé — solde congés légaux CI : table leave_balances + lib/conges-ci.ts + API GET/POST /api/conges/balance + widget fiche employé
 
 ## Progress
 
@@ -34,7 +34,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - [x] ROADMAP.md — 7 phases créées
 - [x] Phase 1 : Stabilisation (01-01 à 01-05 complétés)
 - [ ] Phase 2 : Paie Avancée (02-01, 02-03, 02-04, 02-05 complétés — heures sup + masse salariale + export CSV + multi-convention collective)
-- [ ] Phase 3 : Congés & Absences
+- [ ] Phase 3 : Congés & Absences (03-01 complété — solde légal CI)
 - [ ] Phase 4 : Dossier Personnel
 - [ ] Phase 5 : Évaluations & Discipline
 - [ ] Phase 6 : QHSE
@@ -72,6 +72,10 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 - *02-04 : Export journal de paie CSV — endpoint GET /api/paie/export + bouton PaieExportButton*
 - *02-05 : Multi-convention collective — table fiscal_params + RLS + GET/PUT /api/settings + section paramètres de calcul dans ParametresForm*
 
+*31 mars 2026 — Phase 3 Congés & Absences démarrée :*
+
+- *03-01 : leave_balances migration + lib/conges-ci.ts (2,5j/mois Art. 25) + API GET/POST /api/conges/balance + widget solde fiche employé (8 tests TDD)*
+
 ## Key Decisions
 
 | Décision | Plan | Justification |
@@ -88,6 +92,9 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | Brouillons exclus de l'export CSV | 02-04 | Le journal comptable ne doit contenir que les bulletins validés/payés |
 | UNIQUE(company_id) sur fiscal_params + upsert onConflict | 02-05 | Une seule convention par entreprise — simplifie le code et évite les doublons |
 | Enum Zod strict pour convention côté API | 02-05 | 7 conventions CI reconnues — évite les valeurs arbitraires en base |
+| Colonne solde GENERATED ALWAYS AS STORED | 03-01 | Base de données garantit la cohérence sans calcul applicatif |
+| Mois complet = embauché le 1er du mois | 03-01 | Art. 25 CT-CI — présent dès le premier jour du mois |
+| Calcul à la volée sans upsert au rendu | 03-01 | Écriture uniquement via API — pas d'effet de bord au rendu serveur |
 
 ## Plan 01-02 Completion Note
 

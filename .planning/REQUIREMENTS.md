@@ -26,7 +26,7 @@
 
 ### Congés & Absences
 
-- [ ] **CON-01** : Solde congés légaux CI (2,5 j/mois travaillé, calcul automatique)
+- [x] **CON-01** : Solde congés légaux CI (2,5 j/mois travaillé, calcul automatique)
 - [ ] **CON-02** : Saisie des absences et demandes de congés par l'employé
 - [ ] **CON-03** : Workflow de validation congés (employé → manager → RH)
 - [ ] **CON-04** : Calendrier des absences par équipe/département
