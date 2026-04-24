@@ -121,8 +121,7 @@ describe('calculerBulletinComplet', () => {
     expect(res.total_brut).toBe(170000);
     expect(res.total_imposable).toBe(150000);
     
-    // CNPS: 150000 * 0.063 = 9450
-    expect(res.cnps_salarie).toBe(9450);
+    expect(res.cnps_salarie).toBe(11050); // 9450 + 1600 CMU
     
     // Base ITS: 150000 - 9450 = 140550
     // Base abattue: 140550 * 0.85 = 119468
@@ -137,7 +136,7 @@ describe('calculerBulletinComplet', () => {
     });
     expect(res.total_brut).toBe(210000);
     expect(res.total_imposable).toBe(210000);
-    expect(res.cnps_salarie).toBe(13230); // 210000 * 0.063 = 13230
+    expect(res.cnps_salarie).toBe(14830); // 13230 + 1600 CMU
   });
 
   it('plafonne la CNPS à 1 647 315 2 000 000 de brutal', () => {
@@ -145,7 +144,7 @@ describe('calculerBulletinComplet', () => {
       salaire_brut: 2000000
     });
     // CNPS = 1647315 * 0.063 = Math.round(103780.845) = 103781
-    expect(res.cnps_salarie).toBe(103781);
+    expect(res.cnps_salarie).toBe(105381); // 103781 + 1600 CMU
   });
 });
 
