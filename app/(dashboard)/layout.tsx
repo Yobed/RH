@@ -3,7 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { SidebarNav } from "@/components/rh/SidebarNav";
 import { UserMenu } from "@/components/rh/UserMenu";
 import { NotificationBell } from "@/components/rh/NotificationBell";
-import { Building2 } from "lucide-react";
+import { BuildingsIcon as Building2 } from "@/components/rh/ClientIcons";
 
 export default async function DashboardLayout({
   children,

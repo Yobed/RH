@@ -1013,6 +1013,123 @@ export type Database = {
           },
         ]
       }
+      work_accidents: {
+        Row: {
+          id: string
+          company_id: string
+          employee_id: string
+          date_accident: string
+          heure_accident: string | null
+          lieu: string | null
+          description: string
+          gravite: "bénin" | "grave" | "mortel"
+          jours_arret: number | null
+          statut_cnps: "non_declare" | "declare" | "indemnise" | "clos"
+          numero_cnps: string | null
+          pieces_jointes: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          employee_id: string
+          date_accident: string
+          heure_accident?: string | null
+          lieu?: string | null
+          description: string
+          gravite?: "bénin" | "grave" | "mortel"
+          jours_arret?: number | null
+          statut_cnps?: "non_declare" | "declare" | "indemnise" | "clos"
+          numero_cnps?: string | null
+          pieces_jointes?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          employee_id?: string
+          date_accident?: string
+          heure_accident?: string | null
+          lieu?: string | null
+          description?: string
+          gravite?: "bénin" | "grave" | "mortel"
+          jours_arret?: number | null
+          statut_cnps?: "non_declare" | "declare" | "indemnise" | "clos"
+          numero_cnps?: string | null
+          pieces_jointes?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_accidents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_accidents_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medical_visits: {
+        Row: {
+          id: string
+          company_id: string
+          employee_id: string
+          type_visite: "embauche" | "periodique" | "reprise" | "spontanee"
+          date_visite: string
+          date_prochaine: string | null
+          resultat: "apte" | "apte_amenagement" | "inapte" | null
+          medecin: string | null
+          observations: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          employee_id: string
+          type_visite?: "embauche" | "periodique" | "reprise" | "spontanee"
+          date_visite: string
+          date_prochaine?: string | null
+          resultat?: "apte" | "apte_amenagement" | "inapte" | null
+          medecin?: string | null
+          observations?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          company_id?: string
+          employee_id?: string
+          type_visite?: "embauche" | "periodique" | "reprise" | "spontanee"
+          date_visite?: string
+          date_prochaine?: string | null
+          resultat?: "apte" | "apte_amenagement" | "inapte" | null
+          medecin?: string | null
+          observations?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_visits_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_visits_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,0 +1,38 @@
+import { createServerClient } from "@/lib/supabase/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+
+export const dynamic = 'force-dynamic';
+
+const patchSchema = z.object({
+  statut_cnps: z.enum(["non_declare", "declare", "indemnise", "clos"]).optional(),
+  numero_cnps: z.string().max(50).optional(),
+  jours_arret: z.number().int().min(0).optional(),
+  gravite: z.enum(["bénin", "grave", "mortel"]).optional(),
+});
+
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const supabase = createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  let body: unknown;
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: "Corps invalide" }, { status: 400 });
+  }
+
+  const parsed = patchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
+  }
+
+  const { data, error } = await supabase
+    .from("work_accidents")
+    .update(parsed.data)
+    .eq("id", params.id)
+    .select()
+    .single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
+}
