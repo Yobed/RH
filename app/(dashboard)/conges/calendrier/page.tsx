@@ -2,7 +2,6 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { CongesCalendrierClient } from "@/components/rh/CongesCalendrierClient";
-import { ArrowLeft } from "lucide-react";
 
 export const metadata = { title: "Calendrier des Absences — RH Manager CI" };
 
@@ -27,10 +26,8 @@ export default async function CalendrierPage({
 }: {
   searchParams: SearchParams;
 }) {
-  const mois = searchParams?.mois ?? new Date().toISOString().slice(0, 7); // "YYYY-MM"
+  const mois = searchParams?.mois ?? new Date().toISOString().slice(0, 7);
   const debut = `${mois}-01`;
-
-  // Calculer le dernier jour du mois
   const [annee, moisNum] = mois.split("-").map(Number);
   const dernierJour = new Date(annee, moisNum, 0).getDate();
   const fin = `${mois}-${String(dernierJour).padStart(2, "0")}`;
@@ -48,7 +45,6 @@ export default async function CalendrierPage({
     .in("statut", ["approuve", "valide_manager", "en_attente"])
     .order("date_debut");
 
-  // Transformer en CongesCalendrierItem[]
   const conges: CongesCalendrierItem[] = (congesRaw ?? []).map((c) => {
     const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
     return {
@@ -64,7 +60,6 @@ export default async function CalendrierPage({
     };
   });
 
-  // Extraire la liste distincte des départements non-null
   const departements: string[] = Array.from(
     new Set(
       conges
@@ -74,23 +69,23 @@ export default async function CalendrierPage({
   ).sort();
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
+        <div>
           <Link
             href="/conges"
-            className="inline-flex items-center gap-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Retour
+            ← Retour aux congés
           </Link>
-          <div>
-            <h1 className="text-2xl font-bold">Calendrier des Absences</h1>
-            <p className="text-sm text-muted-foreground">
-              Vue mensuelle par équipe — filtre par département
-            </p>
-          </div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Calendrier des Absences</h1>
+          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+            Vue mensuelle par équipe — filtre par département
+          </p>
         </div>
+        <span className="shrink-0 text-xs font-mono text-slate-400 border border-slate-200 rounded-lg px-2.5 py-1 bg-white">
+          {new Date(mois + "-01").toLocaleDateString("fr-CI", { month: "long", year: "numeric" })}
+        </span>
       </div>
 
       <CongesCalendrierClient

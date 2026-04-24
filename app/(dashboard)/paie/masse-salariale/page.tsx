@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 import { createServerClient } from "@/lib/supabase/server";
 import { MasseSalarialeDashboard } from "@/components/paie/MasseSalarialeDashboard";
-import { TrendingUp, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = { title: "Masse salariale — RH Manager CI" };
@@ -13,7 +12,6 @@ export default async function MasseSalarialeePage({
 }) {
   const supabase = createServerClient();
 
-  // Période par défaut = mois courant, filtrable via ?periode=YYYY-MM
   const periodeParam = searchParams.periode;
   const currentPeriode = new Date().toISOString().slice(0, 7);
   const periode = periodeParam ?? currentPeriode;
@@ -29,7 +27,6 @@ export default async function MasseSalarialeePage({
     .eq("periode", periode)
     .order("created_at", { ascending: false });
 
-  // Générer les 12 derniers mois pour le sélecteur
   const moisDisponibles: string[] = [];
   for (let i = 0; i < 12; i++) {
     const d = new Date();
@@ -43,63 +40,51 @@ export default async function MasseSalarialeePage({
   }));
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
         <div>
           <Link
             href="/paie"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
+            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Retour à la paie
+            ← Retour à la paie
           </Link>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-6 w-6 text-muted-foreground" />
-            <h1 className="text-2xl font-bold">Masse Salariale</h1>
-          </div>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Masse Salariale</h1>
+          <p className="text-sm text-slate-400 mt-0.5 font-medium">
             Coûts salariaux globaux — charges patronales CNPS CI 2026
           </p>
         </div>
 
-        {/* Sélecteur de période */}
-        <form method="get" className="flex items-center gap-2">
-          <label
-            htmlFor="periode"
-            className="text-sm text-muted-foreground whitespace-nowrap"
-          >
-            Période :
+        <form method="get" className="shrink-0 flex items-center gap-2">
+          <label htmlFor="periode" className="text-xs text-slate-500 font-medium whitespace-nowrap">
+            Période
           </label>
           <select
             id="periode"
             name="periode"
             defaultValue={periode}
-            className="rounded-md border bg-white px-3 py-1.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            onChange={(e) => {
-              if (typeof window !== "undefined") {
-                const url = new URL(window.location.href);
-                url.searchParams.set("periode", e.target.value);
-                window.location.href = url.toString();
-              }
-            }}
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[oklch(0.38_0.10_252/0.3)]"
           >
             {moisDisponibles.map((m) => (
               <option key={m} value={m}>
-                {new Date(m + "-01").toLocaleDateString("fr-CI", {
-                  month: "long",
-                  year: "numeric",
-                })}
+                {new Date(m + "-01").toLocaleDateString("fr-CI", { month: "long", year: "numeric" })}
               </option>
             ))}
           </select>
+          <button
+            type="submit"
+            className="rounded-lg bg-[oklch(0.175_0.04_248)] px-3 py-1.5 text-xs font-semibold text-[oklch(0.78_0.13_73)] hover:opacity-90 transition-opacity"
+          >
+            Filtrer
+          </button>
         </form>
       </div>
 
       {/* Rappel légal */}
-      <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
-        <p className="font-medium mb-1">Charges patronales CNPS CI — Références 2026</p>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-3">
+      <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Charges patronales CNPS CI — Références 2026</p>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-slate-600 sm:grid-cols-3">
           <span>Retraite patronale : <strong>7,7%</strong> (plafond 1 647 315 FCFA)</span>
           <span>Prestations familiales : <strong>5%</strong> (plafond 70 000 FCFA)</span>
           <span>Accidents maternité : <strong>0,75%</strong></span>
@@ -109,16 +94,10 @@ export default async function MasseSalarialeePage({
         </div>
       </div>
 
-      {/* Dashboard */}
       {bulletinsData.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-12 text-center">
-          <TrendingUp className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
-          <p className="font-medium text-muted-foreground">
-            Aucun bulletin pour la période {periode}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Générez des bulletins de paie pour voir la masse salariale.
-          </p>
+        <div className="rounded-xl border border-dashed border-slate-200 p-12 text-center">
+          <p className="text-sm font-medium text-slate-500">Aucun bulletin pour la période {periode}</p>
+          <p className="mt-1 text-xs text-slate-400">Générez des bulletins de paie pour voir la masse salariale.</p>
         </div>
       ) : (
         <MasseSalarialeDashboard bulletins={bulletinsData} periode={periode} />

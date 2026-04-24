@@ -1,64 +1,55 @@
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { OvertimeManager } from "@/components/rh/OvertimeManager";
-import { SidebarNav } from "@/components/rh/SidebarNav";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock } from "lucide-react";
+
+export const metadata = { title: "Heures Supplémentaires — RH Manager CI" };
 
 export default async function HeuresSupPage() {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
-  // Fetch company
   const { data: profile } = await supabase
     .from("profiles")
     .select("company_id")
     .eq("id", user.id)
     .single();
 
-  if (!profile?.company_id) {
-    redirect("/onboarding");
-  }
+  if (!profile?.company_id) redirect("/onboarding");
 
-  // Fetch employees for selection
-  const { data: employees } = await supabase
-    .from("employees")
-    .select("id, full_name, matricule, salaire_brut")
-    .eq("company_id", profile.company_id)
-    .eq("statut", "actif")
-    .order("full_name");
-
-  // Fetch historical records
-  const { data: records } = await supabase
-    .from("overtime_records")
-    .select("*, employee:employees(full_name, matricule)")
-    .eq("company_id", profile.company_id)
-    .order("date", { ascending: false })
-    .limit(50);
+  const [{ data: employees }, { data: records }] = await Promise.all([
+    supabase
+      .from("employees")
+      .select("id, full_name, matricule, salaire_brut")
+      .eq("company_id", profile.company_id)
+      .eq("statut", "actif")
+      .order("full_name"),
+    supabase
+      .from("overtime_records")
+      .select("*, employee:employees(full_name, matricule)")
+      .eq("company_id", profile.company_id)
+      .order("date", { ascending: false })
+      .limit(50),
+  ]);
 
   return (
-    <div className="flex min-h-screen bg-slate-50/50">
-      <SidebarNav />
-      <main className="flex-1 p-8">
-        <div className="max-w-6xl mx-auto space-y-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">Heures Supplémentaires</h1>
-              <p className="text-slate-500 mt-1">Gérez et calculez les heures extra de vos collaborateurs conformément au Code du Travail CI.</p>
-            </div>
-          </div>
-
-          <OvertimeManager 
-            employees={employees || []} 
-            initialRecords={records || []}
-            companyId={profile.company_id}
-          />
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Heures Supplémentaires</h1>
+          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+            Calcul et gestion conformément au Code du Travail CI
+          </p>
         </div>
-      </main>
+      </div>
+
+      <OvertimeManager
+        employees={employees || []}
+        initialRecords={records || []}
+        companyId={profile.company_id}
+      />
     </div>
   );
 }
