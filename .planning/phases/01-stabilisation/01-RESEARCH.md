@@ -19,6 +19,7 @@
 ---
 
 <phase_requirements>
+
 ## Phase Requirements
 
 | ID | Description | Research Support |
@@ -79,6 +80,7 @@ npm install --save-dev vitest @vitest/coverage-v8
 **Contexte :** Supabase CLI est disponible via `npx supabase` (v2.84.5, confirmé localement). Il n'est pas installé globalement mais `npx` fonctionne.
 
 **Commande de régénération :**
+
 ```bash
 npx supabase gen types typescript \
   --project-id <SUPABASE_PROJECT_REF> \
@@ -90,6 +92,7 @@ Le `SUPABASE_PROJECT_REF` est l'identifiant de 20 caractères visible dans l'URL
 **Prérequis :** Les 5 scripts `scripts/*.sql` doivent être appliqués en production avant la régénération (dans l'ordre : `migration_securite.sql` → `add_employee_fields.sql` → `add_bulletin_primes.sql` → `add_employee_primes.sql` → `add_salary_history.sql`). La migration `companies` (plan 01-02) doit aussi être appliquée avant pour que les colonnes `raison_sociale`, `adresse`, `cnps_matricule`, `nccm`, `ncc` apparaissent dans les types.
 
 **État actuel des types :**
+
 - `companies` Row : uniquement `{ id, name, convention_collective, created_at }` — manque `raison_sociale`, `adresse`, `cnps_matricule`, `nccm`, `ncc`
 - `bulletins_paie` : **table entièrement absente** des types (7 colonnes de primes + `cnps_salarie` + `its` + etc.)
 - `employee_salary_history` : **table entièrement absente**
@@ -100,6 +103,7 @@ Le `SUPABASE_PROJECT_REF` est l'identifiant de 20 caractères visible dans l'URL
 ### Pattern 01-02 : Migration SQL `companies` + formulaire
 
 **Migration à créer (nouvelle) :**
+
 ```sql
 -- supabase/migrations/20260330120000_companies_legal_fields.sql
 ALTER TABLE companies
@@ -119,6 +123,7 @@ ALTER TABLE companies
 **Problème documenté dans CONCERNS.md (point 14) :** La fonction `previewCalc` dans `PaieDialog.tsx` (lignes 86-115) réimplémente manuellement ce que fait `calculerBulletin()` dans `lib/paie-ci.ts`. Le `PATCH /api/paie/[id]` réimplémente aussi ce calcul inline (lignes 72-80 de la route).
 
 **Analyse du code actuel :**
+
 - `previewCalc` dans `PaieDialog.tsx` : duplique CNPS, CMU, abattement 15%, ITS — mais ne gère pas `prime_anciennete` de la même façon que le backend
 - `PATCH /api/paie/[id]` : réimplémente le calcul inline au lieu d'appeler `calculerBulletin()`
 - `lib/paie-ci.ts` : la fonction `calculerBulletin()` existe et est correcte mais sa signature actuelle prend `(salaireBrut, autresRetenues, avances)` sans les primes détaillées
@@ -130,6 +135,7 @@ ALTER TABLE companies
 **Bug de sécurité à corriger dans le même plan :** `PUT /api/paie/[id]` (changement de statut) ne filtre pas par `company_id` — seulement `.eq("id", params.id)`. Fix : ajouter `get_user_company_id()` et `.eq("company_id", companyId)`.
 
 **Fonctions utilitaires dupliquées :**
+
 - `formatAnciennete()` définie dans `employes/[id]/page.tsx` et `paie/[id]/print/page.tsx` — à exporter depuis `lib/paie-ci.ts`
 - `scoreLabel()` et `scoreVariant()` définis dans `employes/[id]/page.tsx` et `evaluations/page.tsx` — à exporter depuis un `lib/utils-rh.ts` ou `lib/evaluations.ts`
 
@@ -138,6 +144,7 @@ ALTER TABLE companies
 **Contrainte clé :** Next.js 14 utilise `moduleResolution: "bundler"` dans `tsconfig.json`. Vitest a besoin de sa propre configuration pour éviter les conflits avec le plugin `next` de TypeScript.
 
 **Configuration recommandée `vitest.config.ts` :**
+
 ```typescript
 import { defineConfig } from 'vitest/config'
 import path from 'path'
@@ -160,6 +167,7 @@ export default defineConfig({
 **Pourquoi `environment: 'node'` et non `jsdom` :** Les fonctions `lib/paie-ci.ts` n'utilisent pas le DOM. `node` est plus léger et évite les conflits. Si des tests de composants React sont ajoutés plus tard, un `environment` par fichier peut être spécifié via `// @vitest-environment jsdom`.
 
 **Script `package.json` à ajouter :**
+
 ```json
 "test": "vitest run",
 "test:watch": "vitest",
@@ -180,6 +188,7 @@ export default defineConfig({
 | `calculerIndemniteLicenciement` | 0 an, 5 ans, 10 ans, 11 ans, fraction d'année, 0.5 an |
 
 **Valeurs LF 2026 à vérifier dans les tests :**
+
 - SMIG_MENSUEL = 75 000 FCFA
 - TAUX_CNPS_RETRAITE_SALARIE = 6,3%
 - PLAFOND_CNPS_MENSUEL = 1 647 315 FCFA
@@ -194,6 +203,7 @@ export default defineConfig({
 Le projet consulte déjà `profiles.role` dans d'autres routes (ex: `app/api/conges/route.ts` lit `profiles`). Le champ `role` est dans `types/supabase.ts` : `profiles.Row.role: string`.
 
 Pattern à appliquer dans `POST /api/rag/upload` :
+
 ```typescript
 // Après vérification de l'utilisateur
 const { data: profile } = await supabase
@@ -208,6 +218,7 @@ if (profile?.role !== "admin") {
 ```
 
 **Table `audit_logs` — structure existante :**
+
 ```typescript
 // Types actuels dans types/supabase.ts
 audit_logs.Insert: {
@@ -219,6 +230,7 @@ audit_logs.Insert: {
 ```
 
 Pattern d'alimentation après opération critique :
+
 ```typescript
 await supabase.from("audit_logs").insert({
   action: "RAG_UPLOAD",
@@ -231,6 +243,7 @@ await supabase.from("audit_logs").insert({
 **Migration vers `supabase/migrations/` :** Les 5 scripts `scripts/*.sql` doivent être copiés (pas déplacés — les originaux servent de référence) dans `supabase/migrations/` avec horodatage. Convention : `YYYYMMDDHHMMSS_description.sql`.
 
 Ordre de migration reconstruit depuis les dates des fichiers :
+
 ```
 supabase/migrations/
   20260324120000_securite_rls.sql         (migration_securite.sql)
@@ -298,6 +311,7 @@ supabase/migrations/
 **Pourquoi ça arrive :** Le `tsconfig.json` définit `paths: { "@/*": ["./*"] }` mais Vitest ne lit pas `tsconfig.json` par défaut pour la résolution des modules.
 
 **Comment éviter :** Ajouter dans `vitest.config.ts` :
+
 ```typescript
 resolve: { alias: { '@': path.resolve(__dirname, '.') } }
 ```
@@ -323,6 +337,7 @@ resolve: { alias: { '@': path.resolve(__dirname, '.') } }
 **Ce qui va mal :** Les nouveaux champs `raison_sociale`, `adresse` etc. sont `VARCHAR` nullable en base. Le formulaire peut envoyer `""` (chaîne vide) au lieu de `null`. Le bulletin imprimé affichera `""` au lieu de `"—"`.
 
 **Comment éviter :** Dans `app/api/entreprise/route.ts`, transformer `""` en `null` dans le schéma Zod :
+
 ```typescript
 raison_sociale: z.string().max(200).nullable().optional()
   .transform(v => v === "" ? null : v),
@@ -470,9 +485,11 @@ const { data, error } = await supabase
 | Supabase Cloud (production) | Appliquer migrations + régénérer types | oui (compte existant) | — | — |
 
 **Dépendances manquantes sans fallback :**
+
 - vitest et @vitest/coverage-v8 : doivent être installés (`npm install --save-dev vitest @vitest/coverage-v8`) — Wave 0 du plan 01-04.
 
 **Dépendances manquantes avec fallback :**
+
 - Aucune.
 
 ---
@@ -536,6 +553,7 @@ const { data, error } = await supabase
 ## Metadata
 
 **Confidence breakdown:**
+
 - Stack (vitest, supabase CLI) : HIGH — versions vérifiées sur le registre npm et via npx
 - Architecture (centralisation calc, patterns RLS) : HIGH — code source analysé ligne par ligne
 - Pitfalls : HIGH — issus directement de CONCERNS.md (audit existant avec numéros de lignes)

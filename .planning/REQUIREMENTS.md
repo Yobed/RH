@@ -28,7 +28,7 @@
 
 - [x] **CON-01** : Solde congés légaux CI (2,5 j/mois travaillé, calcul automatique)
 - [ ] **CON-02** : Saisie des absences et demandes de congés par l'employé
-- [ ] **CON-03** : Workflow de validation congés (employé → manager → RH)
+- [x] **CON-03** : Workflow de validation congés (employé → manager → RH)
 - [ ] **CON-04** : Calendrier des absences par équipe/département
 - [ ] **CON-05** : Impact automatique sur le bulletin (retenue absence proportionnelle)
 - [ ] **CON-06** : Gestion arrêt maladie et déclaration accident de travail
@@ -127,6 +127,7 @@
 | COM-01 à COM-02 | Phase 7 | Pending |
 
 **Couverture :**
+
 - Exigences v1 : 42 au total
 - Mappées aux phases : 42
 - Non mappées : 0 ✓

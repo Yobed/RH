@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const fiscalParamsSchema = z.object({
   convention: z.enum([
     "CCI",
@@ -101,3 +103,4 @@ export async function PUT(req: Request) {
 
   return NextResponse.json(data);
 }
+

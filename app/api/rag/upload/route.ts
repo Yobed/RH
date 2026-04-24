@@ -1,5 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+
+export const dynamic = 'force-dynamic';
 const pdfParse = require("pdf-parse") as (buffer: Buffer) => Promise<{ text: string; numpages: number }>; // CommonJS interop
 
 export const runtime = "nodejs";

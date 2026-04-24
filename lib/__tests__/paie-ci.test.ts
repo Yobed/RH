@@ -7,6 +7,8 @@ import {
   calculerPrimeAnciennete,
   calculerProvision13e,
   calculerIndemniteLicenciement,
+  calculerSoldeDeCompte,
+  calculerRetenuAbsence,
   formatAnciennete,
   SMIG_MENSUEL,
   PLAFOND_CNPS_MENSUEL,
@@ -188,7 +190,7 @@ describe('calculerPrimeAnciennete', () => {
     expect(calculerPrimeAnciennete(100000, d.toISOString())).toBe(5000);
   });
 
-  it('plafonne à 25% après 25 ans et 30 ans', () => {
+  it('plafonne à 25% après 25 ans et 30 ans (Interprofessionnelle)', () => {
     const d = new Date();
     d.setFullYear(d.getFullYear() - 26);
     expect(calculerPrimeAnciennete(100000, d.toISOString())).toBe(25000); // 25% plafond
@@ -196,6 +198,26 @@ describe('calculerPrimeAnciennete', () => {
     const d30 = new Date();
     d30.setFullYear(d30.getFullYear() - 30);
     expect(calculerPrimeAnciennete(100000, d30.toISOString())).toBe(25000); // 25% plafond
+  });
+
+  it('convention BTP : plafond limité à 20% après 25 ans', () => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 26);
+    // BTP plafonne à 20% => 100000 * 20% = 20000
+    expect(calculerPrimeAnciennete(100000, d.toISOString(), 'BTP')).toBe(20000);
+  });
+
+  it('convention BTP : calcul normal pour 10 ans (10%)', () => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 10);
+    // 10 ans * 1% = 10% => 100000 * 10% = 10000 (identique à Interprofessionnelle)
+    expect(calculerPrimeAnciennete(100000, d.toISOString(), 'BTP')).toBe(10000);
+  });
+
+  it('convention Commerce : plafond identique à CCI (25%)', () => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 30);
+    expect(calculerPrimeAnciennete(100000, d.toISOString(), 'Commerce')).toBe(25000);
   });
 });
 
@@ -264,5 +286,86 @@ describe('formatAnciennete', () => {
 
   it('calcule correctement pour plusieurs années', () => {
     expect(formatAnciennete('2023-02-15T12:00:00Z')).toMatch(/03 ans 01 mois/);
+  });
+});
+
+describe('calculerRetenuAbsence', () => {
+  it('cas standard : 3 jours absence sur 300 000 FCFA brut → 34 615 FCFA', () => {
+    // Math.round(300000 / 26 * 3) = Math.round(34615.38...) = 34615
+    expect(calculerRetenuAbsence(3, 300000)).toBe(34615);
+  });
+
+  it('retourne 0 si nb_jours_absence est 0', () => {
+    expect(calculerRetenuAbsence(0, 300000)).toBe(0);
+  });
+
+  it('retourne 0 si nb_jours_absence est négatif (cas défensif)', () => {
+    expect(calculerRetenuAbsence(-1, 300000)).toBe(0);
+  });
+
+  it('mois entier : 26 jours sur 100 000 FCFA → 100 000 FCFA', () => {
+    expect(calculerRetenuAbsence(26, 100000)).toBe(100000);
+  });
+
+  it('SMIG CI : 1 jour sur 75 000 FCFA → 2 885 FCFA', () => {
+    // Math.round(75000 / 26 * 1) = Math.round(2884.61...) = 2885
+    expect(calculerRetenuAbsence(1, 75000)).toBe(2885);
+  });
+});
+
+describe('calculerBulletinComplet avec absences', () => {
+  it('intègre retenu_absence dans total_retenues pour 3 jours absent', () => {
+    const res = calculerBulletinComplet({
+      salaire_brut: 300000,
+      nb_jours_absence: 3,
+    });
+    expect(res.retenu_absence).toBe(34615);
+    // total_retenues inclut la retenue absence
+    const sansAbsence = calculerBulletinComplet({ salaire_brut: 300000 });
+    expect(res.total_retenues).toBe(sansAbsence.total_retenues + 34615);
+    expect(res.salaire_net).toBe(sansAbsence.salaire_net - 34615);
+  });
+
+  it('retenu_absence vaut 0 si pas d\'absence', () => {
+    const res = calculerBulletinComplet({ salaire_brut: 300000 });
+    expect(res.retenu_absence).toBe(0);
+  });
+});
+
+describe('calculerSoldeDeCompte', () => {
+  it('calcule correctement pour un CDI', () => {
+    const stc = calculerSoldeDeCompte({
+      type_contrat: 'CDI',
+      salaire_moyen_12_mois: 100000,
+      salaire_mensuel_actuel: 100000,
+      anciennete_annees: 5, // 5 ans * 30% * 100000 = 150000
+      jours_conges_restants: 22, // 22 * (100000 / 26) = 84615
+      jours_preavis_non_effectues: 30, // 30 * (100000 / 26) = 115385
+      somme_salaires_bruts_cdd: 0,
+    });
+    
+    expect(stc.indemnite_licenciement).toBe(150000);
+    expect(stc.indemnite_precarite).toBe(0);
+    expect(stc.indemnite_compensatrice_conges).toBe(84615);
+    expect(stc.indemnite_preavis).toBe(115385);
+    expect(stc.total_brut_stc).toBe(350000);
+  });
+
+  it('calcule correctement pour un CDD (avec précarité)', () => {
+    const stc = calculerSoldeDeCompte({
+      type_contrat: 'CDD',
+      salaire_moyen_12_mois: 100000,
+      salaire_mensuel_actuel: 100000,
+      anciennete_annees: 1,
+      jours_conges_restants: 10, // 10 * (100000 / 26) = 38462
+      jours_preavis_non_effectues: 0,
+      somme_salaires_bruts_cdd: 1200000, // 3% = 36000
+    });
+    
+    expect(stc.indemnite_licenciement).toBe(0);
+    expect(stc.indemnite_precarite).toBe(36000);
+    expect(stc.indemnite_compensatrice_conges).toBe(38462);
+    expect(stc.indemnite_preavis).toBe(0);
+    expect(stc.total_brut_stc).toBe(74462);
   });
 });

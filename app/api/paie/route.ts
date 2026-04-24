@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { calculerBulletinComplet } from "@/lib/paie-ci";
 
+export const dynamic = 'force-dynamic';
+
 const schema = z.object({
   employee_id: z.string().uuid("Employé requis"),
   periode: z.string().regex(/^\d{4}-\d{2}$/, "Format YYYY-MM requis"),
@@ -19,6 +21,7 @@ const schema = z.object({
   heures_sup_h75: z.number().min(0).default(0),
   autres_retenues: z.number().min(0).default(0),
   avances: z.number().min(0).default(0),
+  nb_jours_absence: z.number().min(0).max(31).default(0),
 });
 
 export async function GET() {
@@ -70,6 +73,7 @@ export async function POST(req: Request) {
     },
     autres_retenues: d.autres_retenues,
     avances: d.avances,
+    nb_jours_absence: d.nb_jours_absence,
   });
   const { data, error } = await supabase
     .from("bulletins_paie")
@@ -96,7 +100,9 @@ export async function POST(req: Request) {
           h50: d.heures_sup_h50,
           h75: d.heures_sup_h75
         },
-        heures_sup_montant: calc.heures_sup_montant
+        heures_sup_montant: calc.heures_sup_montant,
+        nb_jours_absence: d.nb_jours_absence,
+        retenu_absence: calc.retenu_absence,
       }
     })
     .select()
@@ -120,3 +126,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json(data, { status: 201 });
 }
+

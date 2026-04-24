@@ -610,45 +610,123 @@ export type Database = {
           },
         ]
       }
-      evaluations: {
+      disciplinary_procedures: {
         Row: {
-          company_id: string
-          created_at: string | null
-          date_evaluation: string
-          employee_id: string
-          evaluateur_id: string | null
           id: string
-          periode: string
-          periodicite: string | null
-          score_global: number | null
-          scores: Json
-          statut: string | null
+          company_id: string
+          employee_id: string
+          type: string
+          motif: string
+          statut: string
+          date_incident: string | null
+          date_notification: string | null
+          reponse_employe: string | null
+          sanction_appliquee: string | null
+          documents_urls: Json | null
+          created_at: string | null
+          updated_at: string | null
         }
         Insert: {
-          company_id: string
-          created_at?: string | null
-          date_evaluation: string
-          employee_id: string
-          evaluateur_id?: string | null
           id?: string
-          periode: string
-          periodicite?: string | null
-          score_global?: number | null
-          scores?: Json
-          statut?: string | null
+          company_id: string
+          employee_id: string
+          type: string
+          motif: string
+          statut: string
+          date_incident?: string | null
+          date_notification?: string | null
+          reponse_employe?: string | null
+          sanction_appliquee?: string | null
+          documents_urls?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
         }
         Update: {
+          id?: string
           company_id?: string
+          employee_id?: string
+          type?: string
+          motif?: string
+          statut?: string
+          date_incident?: string | null
+          date_notification?: string | null
+          reponse_employe?: string | null
+          sanction_appliquee?: string | null
+          documents_urls?: Json | null
           created_at?: string | null
-          date_evaluation?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_procedures_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disciplinary_procedures_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluations: {
+        Row: {
+          id: string
+          company_id: string
+          employee_id: string
+          evaluateur_id: string | null
+          titre: string
+          type: string
+          statut: string
+          date_prevue: string
+          date_realisation: string | null
+          score_global: number | null
+          commentaires_evaluateur: string | null
+          commentaires_employe: string | null
+          objectifs_futurs: string | null
+          criteres_evaluation: Json | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          employee_id: string
+          evaluateur_id?: string | null
+          titre: string
+          type: string
+          statut: string
+          date_prevue: string
+          date_realisation?: string | null
+          score_global?: number | null
+          commentaires_evaluateur?: string | null
+          commentaires_employe?: string | null
+          objectifs_futurs?: string | null
+          criteres_evaluation?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          company_id?: string
           employee_id?: string
           evaluateur_id?: string | null
-          id?: string
-          periode?: string
-          periodicite?: string | null
+          titre?: string
+          type?: string
+          statut?: string
+          date_prevue?: string
+          date_realisation?: string | null
           score_global?: number | null
-          scores?: Json
-          statut?: string | null
+          commentaires_evaluateur?: string | null
+          commentaires_employe?: string | null
+          objectifs_futurs?: string | null
+          criteres_evaluation?: Json | null
+          created_at?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {

@@ -1,6 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const supabase = createServerClient();
 
@@ -34,3 +36,4 @@ export async function GET() {
   const matricule = `${prefix}${String(nextNum).padStart(3, "0")}`;
   return NextResponse.json({ matricule });
 }
+

@@ -24,7 +24,7 @@ export default async function RecrutementPage() {
 
   const { data: postes } = await supabase
     .from("job_postings")
-    .select("id, titre, type_contrat, statut, date_limite, competences")
+    .select("id, titre, type_contrat, statut, date_limite, competences, is_internal")
     .order("created_at", { ascending: false });
 
   const { data: candidats } = await supabase
@@ -78,9 +78,16 @@ export default async function RecrutementPage() {
               <div key={p.id} className="rounded-lg border bg-white p-4">
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-medium">{p.titre}</p>
-                  <Badge variant={p.statut === "ouvert" ? "default" : "secondary"}>
-                    {p.statut}
-                  </Badge>
+                  <div className="flex flex-col items-end gap-1">
+                    <Badge variant={p.statut === "ouvert" ? "default" : "secondary"}>
+                      {p.statut}
+                    </Badge>
+                    {p.is_internal && (
+                      <Badge variant="outline" className="text-blue-600 border-blue-600 bg-blue-50">
+                        Interne
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 {p.type_contrat && (
                   <p className="mt-1 text-xs text-muted-foreground">{p.type_contrat}</p>

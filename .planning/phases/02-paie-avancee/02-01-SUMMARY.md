@@ -99,6 +99,7 @@ Chaque tâche commitée atomiquement :
 ### Auto-fixed Issues
 
 **1. [Rule 2 - Missing Critical] Mise à jour PATCH /api/paie/[id] avec support HS**
+
 - **Found during:** Task 2 (UI + API)
 - **Issue:** Le plan mentionnait uniquement POST mais la PaieDialog utilise aussi PATCH pour l'édition des brouillons — sans mise à jour, les HS saisies en édition auraient été ignorées
 - **Fix:** Mis à jour `editSchema`, appel `calculerBulletinComplet` et INSERT details dans le PATCH

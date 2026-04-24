@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const legalCaseSchema = z.object({
   reference: z.string().min(1, "Référence obligatoire").max(50),
   titre: z.string().min(3, "Titre obligatoire").max(200),
@@ -77,3 +79,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json(data, { status: 201 });
 }
+

@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
+import { DocumentDropdown } from "@/components/rh/DocumentDropdown";
+import { CareerTimeline } from "@/components/rh/CareerTimeline";
+import { CareerEventDialog } from "@/components/rh/CareerEventDialog";
+import { ContractPrintButton } from "@/components/rh/ContractPrintButton";
 import {
   User,
   Phone,
@@ -15,7 +19,17 @@ import {
   CalendarDays,
   Banknote,
   TrendingUp,
+  History,
+  GraduationCap,
+  ShieldCheck,
+  FolderOpen,
 } from "lucide-react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import Link from "next/link";
 import { formatAnciennete, calculerPrimeAnciennete } from "@/lib/paie-ci";
 import { calculerJoursAcquis, calculerSoldeConges } from "@/lib/conges-ci";
@@ -41,72 +55,27 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-
-
 export default async function EmployeeDetailPage({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
-
   const anneeEnCours = new Date().getFullYear();
 
-  const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }, { data: salaryHistory }, { data: leaveBalance }, { data: congesAnnuelsApprouves }] = await Promise.all([
-    supabase
-      .from("employees")
-      .select("*")
-      .eq("id", params.id)
-      .single(),
-    supabase
-      .from("contracts")
-      .select("id, type_contrat, date_debut, date_fin, salaire_brut, statut, renouvellement_count")
-      .eq("employee_id", params.id)
-      .order("date_debut", { ascending: false }),
-    supabase
-      .from("evaluations")
-      .select("id, periodicite, periode, date_evaluation, score_global, statut")
-      .eq("employee_id", params.id)
-      .order("date_evaluation", { ascending: false })
-      .limit(5),
-    supabase
-      .from("documents")
-      .select("id, name, famille, file_type, file_size_kb, created_at, file_url")
-      .eq("employee_id", params.id)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("conges")
-      .select("id, type, date_debut, date_fin, nb_jours, statut")
-      .eq("employee_id", params.id)
-      .order("date_debut", { ascending: false })
-      .limit(5),
-    supabase
-      .from("bulletins_paie")
-      .select("id, periode, salaire_brut, cnps_salarie, its, salaire_net, statut")
-      .eq("employee_id", params.id)
-      .order("periode", { ascending: false })
-      .limit(6),
-    supabase.from("employee_salary_history")
-      .select("id, date_effet, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, motif, created_at")
-      .eq("employee_id", params.id)
-      .order("date_effet", { ascending: false }),
-    supabase
-      .from("leave_balances")
-      .select("jours_acquis, jours_pris, solde, annee")
-      .eq("employee_id", params.id)
-      .eq("annee", anneeEnCours)
-      .single(),
-    supabase
-      .from("conges")
-      .select("nb_jours")
-      .eq("employee_id", params.id)
-      .eq("type", "annuel")
-      .eq("statut", "approuve")
-      .gte("date_debut", `${anneeEnCours}-01-01`)
-      .lte("date_debut", `${anneeEnCours}-12-31`),
+  const [{ data: emp }, { data: contracts }, { data: evaluations }, { data: documents }, { data: conges }, { data: bulletins }, { data: salaryHistory }, { data: leaveBalance }, { data: congesAnnuelsApprouves }, { data: careerEvents }, { data: company }] = await Promise.all([
+    supabase.from("employees").select("*").eq("id", params.id).single(),
+    supabase.from("contracts").select("id, type_contrat, date_debut, date_fin, salaire_brut, statut, renouvellement_count").eq("employee_id", params.id).order("date_debut", { ascending: false }),
+    supabase.from("evaluations").select("id, periodicite, periode, date_evaluation, score_global, statut").eq("employee_id", params.id).order("date_evaluation", { ascending: false }).limit(5),
+    supabase.from("documents").select("id, name, famille, file_type, file_size_kb, created_at, file_url").eq("employee_id", params.id).order("created_at", { ascending: false }),
+    supabase.from("conges").select("id, type, date_debut, date_fin, nb_jours, statut").eq("employee_id", params.id).order("date_debut", { ascending: false }).limit(5),
+    supabase.from("bulletins_paie").select("id, periode, salaire_brut, cnps_salarie, its, salaire_net, statut").eq("employee_id", params.id).order("periode", { ascending: false }).limit(6),
+    supabase.from("employee_salary_history").select("id, date_effet, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, motif, created_at").eq("employee_id", params.id).order("date_effet", { ascending: false }),
+    supabase.from("leave_balances").select("jours_acquis, jours_pris, solde, annee").eq("employee_id", params.id).eq("annee", anneeEnCours).single(),
+    supabase.from("conges").select("nb_jours").eq("employee_id", params.id).eq("type", "annuel").eq("statut", "approuve").gte("date_debut", `${anneeEnCours}-01-01`).lte("date_debut", `${anneeEnCours}-12-31`),
+    supabase.from("career_events").select("*").eq("employee_id", params.id).order("date_event", { ascending: false }),
+    supabase.from("companies").select("*").single(),
   ]);
 
   if (!emp) notFound();
 
   const anciennete = formatAnciennete(emp.date_embauche);
-
-  // Calcul du solde congés — utilise les données en base si disponibles, sinon calcule à la volée
   const joursPrisAnnee = (congesAnnuelsApprouves ?? []).reduce((acc, c) => acc + c.nb_jours, 0);
   const joursAcquisCalc = leaveBalance?.jours_acquis ?? calculerJoursAcquis(emp.date_embauche, anneeEnCours);
   const jours_pris_final = leaveBalance?.jours_pris ?? joursPrisAnnee;
@@ -115,582 +84,379 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
   return (
     <div className="p-6 space-y-6">
       {/* Navigation */}
-      <Link
-        href="/employes"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft className="h-4 w-4" />
+      <Link href="/employes" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group">
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
         Retour à la liste
       </Link>
 
-      {/* En-tête */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <User className="h-7 w-7" />
+      {/* Hero Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between bg-white rounded-xl border p-6 shadow-sm">
+        <div className="flex items-center gap-5">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/5 text-primary border border-primary/10">
+            <User className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{emp.full_name}</h1>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-sm text-muted-foreground">{emp.poste}</span>
+            <h1 className="text-3xl font-bold tracking-tight">{emp.full_name}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-base text-muted-foreground font-medium">{emp.poste}</span>
               {emp.departement && (
-                <>
-                  <span className="text-muted-foreground">·</span>
-                  <span className="text-sm text-muted-foreground">{emp.departement}</span>
-                </>
+                <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal">
+                  {emp.departement}
+                </Badge>
               )}
-              <Badge variant={emp.statut === "actif" ? "default" : "secondary"}>
+              <Badge variant={emp.statut === "actif" ? "default" : "secondary"} className={emp.statut === "actif" ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
                 {emp.statut ?? "actif"}
               </Badge>
             </div>
           </div>
         </div>
-        <EmployeeDialog employee={emp} />
+        <div className="flex flex-wrap gap-3">
+          <DocumentDropdown employee={emp} company={company} />
+          <EmployeeDialog employee={emp} />
+        </div>
       </div>
 
-      {/* Informations */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* Identité */}
-        <div className="rounded-lg border bg-white p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <User className="h-4 w-4 text-muted-foreground" />
-            Identité
-          </div>
-          <InfoRow
-            label="Matricule"
-            value={<span className="font-mono text-xs">{emp.matricule}</span>}
-          />
-          <InfoRow
-            label="Civilité"
-            value={(emp as { civilite?: string | null }).civilite}
-          />
-          <InfoRow
-            label="Genre"
-            value={emp.genre === "M" ? "Masculin" : emp.genre === "F" ? "Féminin" : null}
-          />
-          <InfoRow
-            label="Date de naissance"
-            value={emp.date_naissance ? new Date(emp.date_naissance).toLocaleDateString("fr-CI") : null}
-          />
-          <InfoRow
-            label="Nationalité"
-            value={(emp as { nationalite?: string | null }).nationalite}
-          />
-          <InfoRow
-            label="État civil"
-            value={(emp as { etat_civil?: string | null }).etat_civil}
-          />
-          <InfoRow
-            label="Enfants à charge"
-            value={(emp as { nb_enfants?: number | null }).nb_enfants != null
-              ? String((emp as { nb_enfants?: number | null }).nb_enfants)
-              : null}
-          />
-          <InfoRow
-            label="Email"
-            value={
-              emp.email ? (
-                <a href={`mailto:${emp.email}`} className="text-primary hover:underline">
-                  {emp.email}
-                </a>
-              ) : null
-            }
-          />
-          <InfoRow
-            label="Téléphone"
-            value={
-              emp.phone ? (
-                <a href={`tel:${emp.phone}`} className="hover:underline">
-                  {emp.phone}
-                </a>
-              ) : null
-            }
-          />
-        </div>
+      <Tabs defaultValue="summary" className="space-y-6">
+        <TabsList className="bg-muted/50 p-1 rounded-xl w-fit">
+          <TabsTrigger value="summary" className="gap-2 rounded-lg px-4">
+            <History className="h-4 w-4" />
+            <span className="hidden sm:inline">Parcours</span>
+          </TabsTrigger>
+          <TabsTrigger value="contracts" className="gap-2 rounded-lg px-4">
+            <Briefcase className="h-4 w-4" />
+            <span className="hidden sm:inline">Contrats & Salaire</span>
+          </TabsTrigger>
+          <TabsTrigger value="leaves" className="gap-2 rounded-lg px-4">
+            <CalendarDays className="h-4 w-4" />
+            <span className="hidden sm:inline">Congés</span>
+          </TabsTrigger>
+          <TabsTrigger value="payroll" className="gap-2 rounded-lg px-4">
+            <Banknote className="h-4 w-4" />
+            <span className="hidden sm:inline">Paie</span>
+          </TabsTrigger>
+          <TabsTrigger value="ged" className="gap-2 rounded-lg px-4">
+            <FolderOpen className="h-4 w-4" />
+            <span className="hidden sm:inline">GED</span>
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Poste */}
-        <div className="rounded-lg border bg-white p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-            Poste & Contrat
-          </div>
-          <InfoRow label="Poste" value={emp.poste} />
-          <InfoRow label="Département" value={emp.departement} />
-          <InfoRow
-            label="Catégorie"
-            value={(emp as { categorie?: string | null }).categorie}
-          />
-          <InfoRow
-            label="Niveau d'études"
-            value={(emp as { niveau_etude?: string | null }).niveau_etude}
-          />
-          <InfoRow
-            label="Type de contrat"
-            value={emp.type_contrat ? <Badge variant="outline">{emp.type_contrat}</Badge> : null}
-          />
-          <InfoRow
-            label="Date d'embauche"
-            value={new Date(emp.date_embauche).toLocaleDateString("fr-CI")}
-          />
-          <InfoRow label="Ancienneté" value={anciennete} />
-          <InfoRow
-            label="Salaire brut"
-            value={
-              emp.salaire_brut != null
-                ? new Intl.NumberFormat("fr-CI", {
-                    style: "currency",
-                    currency: "XOF",
-                    minimumFractionDigits: 0,
-                  }).format(emp.salaire_brut)
-                : null
-            }
-          />
-          {/* Primes habituelles */}
-          {(() => {
-            const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
-            const primes = [
-              { label: "02 Sursalaire", val: emp.sursalaire },
-              { label: "04 Prime exceptionnelle", val: emp.prime_exceptionnelle },
-              { label: "05 Prime de salissure", val: emp.prime_salissure },
-              { label: "06 Prime de dépassement", val: emp.prime_depassement },
-              { label: "07 Prime de fonction", val: emp.prime_fonction },
-              { label: "08 Indemnité transport", val: emp.prime_transport },
-            ].filter((p) => p.val != null && Number(p.val) > 0);
-            if (primes.length === 0) return null;
-            return (
-              <>
-                <div className="pt-1 border-t mt-1">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">Primes habituelles</p>
-                  {primes.map((p) => (
-                    <InfoRow key={p.label} label={p.label} value={fmtXOF(Number(p.val))} />
-                  ))}
+        {/* Tab: Summary */}
+        <TabsContent value="summary" className="space-y-6 pt-2">
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-6">
+              {/* Identité */}
+              <div className="rounded-xl border bg-white p-5 space-y-4">
+                <h3 className="text-sm font-semibold flex items-center gap-2 border-b pb-2">
+                  <User className="h-4 w-4 text-primary" />
+                  Identité & Contacts
+                </h3>
+                <div className="grid gap-y-3 sm:grid-cols-2">
+                  <InfoRow label="Matricule" value={<span className="font-mono text-xs">{emp.matricule}</span>} />
+                  <InfoRow label="Email" value={emp.email ? <a href={`mailto:${emp.email}`} className="text-primary hover:underline">{emp.email}</a> : null} />
+                  <InfoRow label="Téléphone" value={emp.phone ? <a href={`tel:${emp.phone}`} className="hover:underline">{emp.phone}</a> : null} />
+                  <InfoRow label="Genre" value={emp.genre === "M" ? "Masculin" : emp.genre === "F" ? "Féminin" : null} />
+                  <InfoRow label="Date de naissance" value={emp.date_naissance ? new Date(emp.date_naissance).toLocaleDateString("fr-CI") : null} />
+                  <InfoRow label="Nationalité" value={emp.nationalite} />
+                  <InfoRow label="État civil" value={emp.etat_civil} />
+                  <InfoRow label="Enfants à charge" value={emp.nb_enfants} />
                 </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
+              </div>
 
-      {/* Contrats */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <FileText className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Historique des contrats</h2>
-        </div>
-        {!contracts || contracts.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Aucun contrat enregistré pour cet employé.
-          </div>
-        ) : (
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Début</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Fin</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden md:table-cell">
-                    Salaire brut
-                  </th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Statut</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {contracts.map((c) => (
-                  <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">
-                      <Badge variant="outline">{c.type_contrat}</Badge>
-                      {(c.renouvellement_count ?? 0) > 0 && (
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          × {c.renouvellement_count} renouv.
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {new Date(c.date_debut).toLocaleDateString("fr-CI")}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {c.date_fin
-                        ? new Date(c.date_fin).toLocaleDateString("fr-CI")
-                        : "Indéterminé"}
-                    </td>
-                    <td className="px-4 py-3 text-right hidden md:table-cell">
-                      {new Intl.NumberFormat("fr-CI", {
-                        style: "currency",
-                        currency: "XOF",
-                        minimumFractionDigits: 0,
-                      }).format(c.salaire_brut)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={c.statut === "actif" ? "default" : "secondary"}>
-                        {c.statut ?? "actif"}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Historique des éléments de salaire */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <Banknote className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Historique des éléments de salaire</h2>
-        </div>
-        {!salaryHistory || (salaryHistory as unknown[]).length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Aucun historique — les modifications salariales apparaîtront ici.
-          </div>
-        ) : (
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Date d&apos;effet</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">Salaire brut</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden lg:table-cell">Total primes</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Motif</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {salaryHistory?.map((h) => {
-                  const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
-                  const totalPrimes = (h.sursalaire ?? 0) + (h.prime_exceptionnelle ?? 0) + (h.prime_salissure ?? 0) + (h.prime_depassement ?? 0) + (h.prime_fonction ?? 0) + (h.prime_transport ?? 0);
-                  return (
-                    <tr key={h.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 font-mono text-sm">
-                        {new Date(h.date_effet).toLocaleDateString("fr-CI")}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium">
-                        {h.salaire_brut != null ? fmtXOF(h.salaire_brut) : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-right text-muted-foreground hidden lg:table-cell">
-                        {totalPrimes > 0 ? fmtXOF(totalPrimes) : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                        {h.motif ?? "—"}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Coût Réel Employeur */}
-      {emp.salaire_brut != null && emp.salaire_brut > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-lg font-semibold">Coût Réel Employeur</h2>
-            <span className="text-xs text-muted-foreground">
-              Toutes charges patronales CNPS CI incluses
-            </span>
-          </div>
-          <EmployeeCostSheet
-            salaireBrut={emp.salaire_brut}
-            sursalaire={emp.sursalaire}
-            primeExceptionnelle={emp.prime_exceptionnelle}
-            primeSalissure={emp.prime_salissure}
-            primeDepassement={emp.prime_depassement}
-            primeFonction={emp.prime_fonction}
-            primeTransport={emp.prime_transport}
-            primeAnciennete={calculerPrimeAnciennete(emp.salaire_brut, emp.date_embauche)}
-          />
-        </div>
-      )}
-
-      {/* Évaluations */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <BarChart2 className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Dernières évaluations</h2>
-        </div>
-        {!evaluations || evaluations.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Aucune évaluation enregistrée.
-          </div>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {evaluations.map((ev) => (
-              <div key={ev.id} className="rounded-lg border bg-white p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium">{ev.periode}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {new Date(ev.date_evaluation).toLocaleDateString("fr-CI")}
-                    </p>
-                  </div>
-                  {ev.periodicite && (
-                    <Badge variant="outline" className="text-xs">
-                      {ev.periodicite}
-                    </Badge>
-                  )}
+              {/* Suivi de Carrière */}
+              <div className="rounded-xl border bg-white p-5">
+                <div className="flex items-center justify-between mb-4 border-b pb-2">
+                  <h3 className="text-sm font-semibold flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" />
+                    Parcours Professionnel
+                  </h3>
+                  <CareerEventDialog employeeId={emp.id} companyId={emp.company_id} />
                 </div>
-                {ev.score_global != null && (
-                  <div className="mt-3">
-                    <span
-                      className={`text-2xl font-bold ${
-                        ev.score_global >= 75
-                          ? "text-emerald-600"
-                          : ev.score_global >= 40
-                          ? "text-amber-600"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {ev.score_global}
-                    </span>
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      {scoreLabel(ev.score_global)}
-                    </span>
+                <CareerTimeline events={careerEvents || []} />
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Évaluations */}
+              <div className="rounded-xl border bg-white p-5">
+                <h3 className="text-sm font-semibold flex items-center gap-2 border-b pb-2 mb-4">
+                  <BarChart2 className="h-4 w-4 text-primary" />
+                  Performance
+                </h3>
+                {!evaluations || evaluations.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-8">Aucune évaluation.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {evaluations.map((ev) => (
+                      <div key={ev.id} className="rounded-lg border p-3 hover:bg-muted/10 transition-colors">
+                        <div className="flex justify-between items-start">
+                          <p className="font-medium text-sm">{ev.periode}</p>
+                          <Badge variant="outline" className="text-[10px] leading-3 py-0 h-4">
+                            {ev.score_global}/100
+                          </Badge>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          {new Date(ev.date_evaluation).toLocaleDateString("fr-CI")}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
-            ))}
+            </div>
           </div>
-        )}
-      </div>
+        </TabsContent>
 
-      {/* Solde congés — widget légal CI */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Solde congés {anneeEnCours}</h2>
-          <span className="text-xs text-muted-foreground">(Art. 25 CT-CI — 2,5 j/mois)</span>
-        </div>
-        <div className="rounded-lg border bg-white p-4">
-          <div className="flex flex-wrap gap-6">
-            <div className="flex flex-col gap-0.5">
-              <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Acquis</span>
-              <span className="text-2xl font-bold">{joursAcquisCalc.toFixed(1)} j</span>
+        {/* Tab: Contracts */}
+        <TabsContent value="contracts" className="space-y-6 pt-2">
+          {/* Contrats */}
+          <div className="rounded-xl border bg-white overflow-hidden">
+            <div className="p-5 border-b bg-muted/20">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" />
+                Historique des contrats
+              </h3>
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Pris</span>
-              <span className="text-2xl font-bold text-amber-600">{jours_pris_final.toFixed(1)} j</span>
+            {!contracts || contracts.length === 0 ? (
+              <div className="p-8 text-center text-sm text-muted-foreground italic">Aucun contrat.</div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="bg-muted/30 border-b">
+                  <tr>
+                    <th className="px-5 py-3 text-left font-medium text-muted-foreground uppercase text-[10px] tracking-wider">Type</th>
+                    <th className="px-5 py-3 text-left font-medium text-muted-foreground uppercase text-[10px] tracking-wider">Période</th>
+                    <th className="px-5 py-3 text-right font-medium text-muted-foreground uppercase text-[10px] tracking-wider">Salaire brut</th>
+                    <th className="px-5 py-3 text-center font-medium text-muted-foreground uppercase text-[10px] tracking-wider">Statut</th>
+                    <th className="px-5 py-3 text-right font-medium text-muted-foreground uppercase text-[10px] tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y text-xs sm:text-sm">
+                  {contracts.map((c) => (
+                    <tr key={c.id} className="hover:bg-muted/10 transition-colors">
+                      <td className="px-5 py-4">
+                        <div className="flex flex-col">
+                          <span className="font-semibold">{c.type_contrat}</span>
+                          {(c.renouvellement_count ?? 0) > 0 && <span className="text-[10px] text-muted-foreground">{c.renouvellement_count} renouvs.</span>}
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-muted-foreground">
+                        {new Date(c.date_debut).toLocaleDateString("fr-CI")} → {c.date_fin ? new Date(c.date_fin).toLocaleDateString("fr-CI") : "Indét."}
+                      </td>
+                      <td className="px-5 py-4 text-right font-mono font-medium">
+                        {new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(c.salaire_brut)}
+                      </td>
+                      <td className="px-5 py-4 text-center">
+                        <Badge variant={c.statut === "actif" ? "default" : "secondary"}>{c.statut}</Badge>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <ContractPrintButton employee={emp} contract={c} company={company} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Historique Salaire */}
+            <div className="rounded-xl border bg-white overflow-hidden">
+               <div className="p-4 border-b">
+                 <h3 className="text-sm font-semibold flex items-center gap-2 text-muted-foreground">Historique Éléments Salaire</h3>
+               </div>
+               <div className="max-h-[300px] overflow-auto">
+                 <table className="w-full text-xs">
+                    <thead className="bg-muted/20 sticky top-0 border-b">
+                      <tr>
+                        <th className="px-4 py-2 text-left">Date</th>
+                        <th className="px-4 py-2 text-right">Salaire Brut</th>
+                        <th className="px-4 py-2 text-left">Motif</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {salaryHistory?.map((h) => (
+                        <tr key={h.id} className="hover:bg-muted/5">
+                          <td className="px-4 py-2">{new Date(h.date_effet).toLocaleDateString("fr-CI")}</td>
+                          <td className="px-4 py-2 text-right font-mono font-medium">
+                            {new Intl.NumberFormat("fr-CI").format(h.salaire_brut)}
+                          </td>
+                          <td className="px-4 py-2 text-muted-foreground italic truncate max-w-[150px]">{h.motif ?? "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                 </table>
+               </div>
             </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Restant</span>
-              <div className="flex items-center gap-2">
-                <span className={`text-2xl font-bold ${
-                  soldeCalc > 5 ? "text-emerald-600" : soldeCalc >= 1 ? "text-amber-600" : "text-red-500"
-                }`}>
-                  {soldeCalc.toFixed(1)} j
-                </span>
-                <Badge
-                  variant={soldeCalc > 5 ? "default" : soldeCalc >= 1 ? "secondary" : "destructive"}
-                  className={soldeCalc > 5 ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-100" : ""}
-                >
-                  {soldeCalc > 5 ? "Disponible" : soldeCalc >= 1 ? "Faible" : "Épuisé"}
-                </Badge>
+
+            {/* Coût Employeur */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2 pl-1">
+                <TrendingUp className="h-4 w-4 text-amber-500" />
+                Détail charges patronales
+              </h3>
+              <EmployeeCostSheet
+                salaireBrut={emp.salaire_brut ?? 0}
+                sursalaire={emp.sursalaire}
+                primeExceptionnelle={emp.prime_exceptionnelle}
+                primeSalissure={emp.prime_salissure}
+                primeDepassement={emp.prime_depassement}
+                primeFonction={emp.prime_fonction}
+                primeTransport={emp.prime_transport}
+                primeAnciennete={calculerPrimeAnciennete(emp.salaire_brut ?? 0, emp.date_embauche)}
+              />
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Tab: Leaves */}
+        <TabsContent value="leaves" className="space-y-6 pt-2">
+          <div className="grid gap-6 md:grid-cols-4">
+             <div className="md:col-span-1 space-y-6">
+                <div className="rounded-xl border bg-white p-5 text-center space-y-4">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Solde annuel {anneeEnCours}</p>
+                  <div className="py-2">
+                    <span className={`text-5xl font-black ${soldeCalc > 5 ? "text-emerald-600" : "text-amber-600"}`}>
+                      {soldeCalc.toFixed(1)}
+                    </span>
+                    <span className="text-sm font-bold text-muted-foreground ml-1">jours</span>
+                  </div>
+                  <div className="border-t pt-4 grid grid-cols-2 text-xs divide-x">
+                    <div><p className="text-muted-foreground mb-1">Acquis</p><p className="font-bold">{joursAcquisCalc.toFixed(1)}</p></div>
+                    <div><p className="text-muted-foreground mb-1">Pris</p><p className="font-bold text-amber-600">{jours_pris_final.toFixed(1)}</p></div>
+                  </div>
+                </div>
+             </div>
+
+             <div className="md:col-span-3 rounded-xl border bg-white overflow-hidden">
+                <div className="p-4 border-b bg-muted/10">
+                  <h3 className="text-sm font-semibold">Congés récents</h3>
+                </div>
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/5">
+                    <tr><th className="px-4 py-2 text-left">Type</th><th className="px-4 py-2 text-left">Période</th><th className="px-4 py-2 text-right">Jours</th><th className="px-4 py-2 text-center">Statut</th></tr>
+                  </thead>
+                  <tbody className="divide-y text-xs sm:text-sm">
+                    {conges?.map(c => (
+                      <tr key={c.id}>
+                        <td className="px-4 py-3">{c.type}</td>
+                        <td className="px-4 py-3 text-muted-foreground font-mono text-[10px]">{new Date(c.date_debut).toLocaleDateString("fr-CI")} → {new Date(c.date_fin).toLocaleDateString("fr-CI")}</td>
+                        <td className="px-4 py-3 text-right font-bold">{c.nb_jours}j</td>
+                        <td className="px-4 py-3 text-center"><Badge variant={c.statut === "approuve" ? "default" : "outline"}>{c.statut}</Badge></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+             </div>
+          </div>
+        </TabsContent>
+
+        {/* Tab: Payroll */}
+        <TabsContent value="payroll" className="space-y-6 pt-2">
+          <div className="rounded-xl border bg-white overflow-hidden shadow-sm">
+            <div className="p-5 border-b flex items-center justify-between">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Banknote className="h-4 w-4 text-emerald-600" />
+                Liste des bulletins de paie
+              </h3>
+            </div>
+            {!bulletins || bulletins.length === 0 ? (
+              <div className="p-12 text-center text-muted-foreground italic text-sm">Aucun bulletin généré.</div>
+            ) : (
+              <table className="w-full text-xs sm:text-sm">
+                <thead className="bg-muted/20 border-b">
+                   <tr>
+                     <th className="px-5 py-3 text-left">Période</th>
+                     <th className="px-5 py-3 text-right">Brut</th>
+                     <th className="px-5 py-3 text-right">Cotisations</th>
+                     <th className="px-5 py-3 text-right">Salaire Net</th>
+                     <th className="px-5 py-3 text-center">Statut</th>
+                   </tr>
+                </thead>
+                <tbody className="divide-y">
+                   {bulletins.map(b => (
+                     <tr key={b.id} className="hover:bg-muted/5 transition-colors">
+                        <td className="px-5 py-4 font-mono font-medium">{b.periode}</td>
+                        <td className="px-5 py-4 text-right">{new Intl.NumberFormat("fr-CI").format(b.salaire_brut)}</td>
+                        <td className="px-5 py-4 text-right text-red-500">−{new Intl.NumberFormat("fr-CI").format((b.cnps_salarie ?? 0) + (b.its ?? 0))}</td>
+                        <td className="px-5 py-4 text-right font-bold text-emerald-700">{new Intl.NumberFormat("fr-CI").format(b.salaire_net)}</td>
+                        <td className="px-5 py-4 text-center"><Badge variant="outline">{b.statut}</Badge></td>
+                     </tr>
+                   ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Tab: GED */}
+        <TabsContent value="ged" className="space-y-6 pt-2">
+          <div className="grid gap-6 lg:grid-cols-4">
+            {/* Checklist */}
+            <div className="lg:col-span-1 space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2 border-b pb-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                Conformité Légale
+              </h3>
+              {(() => {
+                const REQUIS = ["CNI / Passeport", "Extrait de naissance", "Contrat", "CV", "Diplômes"];
+                const presentsArr = documents?.map(d => d.famille) ?? [];
+                return (
+                  <div className="space-y-2">
+                    {REQUIS.map(r => {
+                      const has = presentsArr.includes(r);
+                      return (
+                        <div key={r} className={`flex items-center justify-between px-3 py-2 rounded-lg text-[11px] font-medium border ${has ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-red-50 text-red-700 border-red-100"}`}>
+                           <span>{r}</span>
+                           <span>{has ? "✓" : "✗"}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Document List */}
+            <div className="lg:col-span-3 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold flex items-center gap-2">
+                  <FolderOpen className="h-4 w-4 text-primary" />
+                  Tous les documents archivés
+                </h3>
+                <DocumentUploadDialog employeeId={emp.id} companyId={emp.company_id} />
+              </div>
+              <div className="rounded-xl border bg-white overflow-hidden shadow-sm">
+                {!documents || documents.length === 0 ? (
+                  <p className="p-10 text-center text-sm text-muted-foreground italic">Espace documentaire vide.</p>
+                ) : (
+                  <table className="w-full text-xs sm:text-sm">
+                    <thead className="bg-muted/10 border-b">
+                       <tr>
+                         <th className="px-5 py-3 text-left">Nom du document</th>
+                         <th className="px-5 py-3 text-left">Catégorie</th>
+                         <th className="px-5 py-3 text-left">Date</th>
+                         <th className="px-5 py-3 text-right">Action</th>
+                       </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                       {documents.map(doc => (
+                         <tr key={doc.id} className="hover:bg-muted/5 transition-colors">
+                            <td className="px-5 py-4 font-medium max-w-[200px] truncate">{doc.name}</td>
+                            <td className="px-5 py-4"><Badge variant="secondary" className="text-[10px] font-normal">{doc.famille ?? "GED"}</Badge></td>
+                            <td className="px-5 py-4 text-muted-foreground">{new Date(doc.created_at!).toLocaleDateString("fr-CI")}</td>
+                            <td className="px-5 py-4 text-right">
+                               <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">Télécharger</a>
+                            </td>
+                         </tr>
+                       ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Congés */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <CalendarDays className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Congés récents</h2>
-        </div>
-        {!conges || conges.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-            Aucun congé enregistré.
-          </div>
-        ) : (
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Période</th>
-                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">Jours</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Statut</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {conges.map((c) => (
-                  <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">{c.type}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs">
-                      {new Date(c.date_debut).toLocaleDateString("fr-CI")} → {new Date(c.date_fin).toLocaleDateString("fr-CI")}
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold">{c.nb_jours}j</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={c.statut === "approuve" ? "default" : c.statut === "refuse" ? "destructive" : "outline"}>
-                        {c.statut === "approuve" ? "Approuvé" : c.statut === "refuse" ? "Refusé" : "En attente"}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Bulletins de paie */}
-      <div>
-        <div className="flex items-center gap-2 mb-3">
-          <Banknote className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Derniers bulletins de paie</h2>
-        </div>
-        {!bulletins || bulletins.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-            Aucun bulletin de paie généré.
-          </div>
-        ) : (
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Période</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">Brut</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden md:table-cell">CNPS</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden md:table-cell">ITS</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">Net</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Statut</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {bulletins.map((b) => {
-                  const fmtXOF = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
-                  return (
-                    <tr key={b.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 font-mono">{b.periode}</td>
-                      <td className="px-4 py-3 text-right">{fmtXOF(b.salaire_brut)}</td>
-                      <td className="px-4 py-3 text-right text-red-600 hidden md:table-cell">−{fmtXOF(b.cnps_salarie)}</td>
-                      <td className="px-4 py-3 text-right text-red-600 hidden md:table-cell">−{fmtXOF(b.its)}</td>
-                      <td className="px-4 py-3 text-right font-bold text-emerald-700">{fmtXOF(b.salaire_net)}</td>
-                      <td className="px-4 py-3">
-                        <Badge variant={b.statut === "payé" ? "default" : b.statut === "validé" ? "secondary" : "outline"}>
-                          {b.statut}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Checklist documents obligatoires */}
-      {(() => {
-        const DOCS_REQUIS = [
-          "CNI / Passeport",
-          "Extrait de naissance",
-          "Casier judiciaire",
-          "Contrat",
-          "CV",
-          "Diplômes",
-          "Médical",
-        ] as const;
-        const familles = new Set(documents?.map((d) => d.famille).filter(Boolean));
-        const manquants = DOCS_REQUIS.filter((d) => !familles.has(d));
-        const presents = DOCS_REQUIS.filter((d) => familles.has(d));
-        return (
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="h-4 w-4 text-muted-foreground" />
-              <h2 className="text-lg font-semibold">Checklist documents</h2>
-              <span className="text-xs text-muted-foreground">
-                {presents.length}/{DOCS_REQUIS.length} fournis
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-              {DOCS_REQUIS.map((doc) => {
-                const ok = familles.has(doc);
-                return (
-                  <div
-                    key={doc}
-                    className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
-                      ok
-                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                        : "border-red-200 bg-red-50 text-red-700"
-                    }`}
-                  >
-                    <span className="text-base">{ok ? "✓" : "✗"}</span>
-                    <span className="font-medium">{doc}</span>
-                  </div>
-                );
-              })}
-            </div>
-            {manquants.length > 0 && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Documents manquants : {manquants.join(", ")}
-              </p>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* Documents */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-muted-foreground" />
-            <h2 className="text-lg font-semibold">Documents</h2>
-          </div>
-          <DocumentUploadDialog employeeId={emp.id} companyId={emp.company_id} />
-        </div>
-        {!documents || documents.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
-            Aucun document archivé pour cet employé.
-          </div>
-        ) : (
-          <div className="rounded-lg border bg-white overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="border-b bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Document</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Famille</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden md:table-cell">Taille</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Date</th>
-                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">Fichier</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {documents.map((doc) => (
-                  <tr key={doc.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 font-medium truncate max-w-[200px]">{doc.name}</td>
-                    <td className="px-4 py-3">
-                      {doc.famille && (
-                        <span className="text-xs font-medium rounded px-1.5 py-0.5 bg-muted">
-                          {doc.famille}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right text-muted-foreground hidden md:table-cell">
-                      {doc.file_size_kb != null ? `${doc.file_size_kb} Ko` : "—"}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                      {new Date(doc.created_at!).toLocaleDateString("fr-CI")}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <a
-                        href={doc.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline"
-                      >
-                        Ouvrir
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
+

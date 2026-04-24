@@ -9,6 +9,7 @@
 **Résumé : aucun test automatisé configuré et aucun fichier de test présent dans le code applicatif.**
 
 Aucun des éléments suivants n'a été détecté dans le projet (hors `node_modules`) :
+
 - Fichiers `*.test.ts`, `*.test.tsx`, `*.spec.ts`, `*.spec.tsx`
 - Configuration Jest (`jest.config.*`)
 - Configuration Vitest (`vitest.config.*`)
@@ -29,6 +30,7 @@ npm run lint     # ESLint via next lint
 ```
 
 **Le script `npm run build` est la seule vérification automatisée active.** Il effectue :
+
 - Vérification TypeScript complète (mode strict)
 - Vérification des imports cassés
 - Compilation des Server/Client Components
@@ -55,6 +57,7 @@ Ces fonctions sont le coeur légal de l'application. Une régression silencieuse
 ### Routes API (priorité haute)
 
 Aucun test d'intégration pour les routes sous `app/api/`. Les points critiques non couverts :
+
 - `app/api/paie/route.ts` — calcul CNPS/ITS côté serveur
 - `app/api/employees/route.ts` — création automatique du contrat associé
 - `app/api/conges/route.ts` — logique d'approbation
@@ -145,6 +148,7 @@ describe("calculerBulletin", () => {
 ### Priorité 2 — Tests Playwright pour les flux critiques
 
 Créer `playwright.config.ts` et écrire des tests E2E pour :
+
 - Connexion / déconnexion
 - Création d'un employé et vérification de son affichage dans la liste
 - Génération d'un bulletin de paie et contrôle du montant net affiché

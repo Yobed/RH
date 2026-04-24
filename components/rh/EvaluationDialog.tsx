@@ -28,14 +28,14 @@ interface Props {
 
 const schema = z.object({
   employee_id: z.string().uuid("Sélectionnez un employé"),
-  periodicite: z.enum(["mensuel", "trimestriel", "semestriel", "annuel"]),
-  periode: z.string().min(1, "Période obligatoire").max(50),
-  date_evaluation: z.string().min(1, "Date obligatoire"),
+  type: z.enum(["ANNUELLE", "SEMESTRIELLE", "TRIMESTRIELLE", "MENSUELLE", "PERIODE_ESSAI", "AUTRE"]),
+  titre: z.string().min(1, "Titre obligatoire").max(100),
+  date_prevue: z.string().min(1, "Date obligatoire"),
   technique: z.string().optional(),
   comportement: z.string().optional(),
   ponctualite: z.string().optional(),
   initiative: z.string().optional(),
-  statut: z.enum(["brouillon", "validé"]),
+  statut: z.enum(["PLANIFIEE", "EN_COURS", "TERMINEE", "ANNULEE"]),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -81,9 +81,9 @@ export function EvaluationDialog({ employees }: Props) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      periodicite: "annuel",
-      statut: "brouillon",
-      date_evaluation: new Date().toISOString().split("T")[0],
+      type: "ANNUELLE",
+      statut: "PLANIFIEE",
+      date_prevue: new Date().toISOString().split("T")[0],
     },
   });
 
@@ -108,10 +108,10 @@ export function EvaluationDialog({ employees }: Props) {
 
     const payload = {
       employee_id: data.employee_id,
-      periodicite: data.periodicite,
-      periode: data.periode,
-      date_evaluation: data.date_evaluation,
-      scores,
+      type: data.type,
+      titre: data.titre,
+      date_prevue: data.date_prevue,
+      criteres_evaluation: scores,
       statut: data.statut,
     };
 
@@ -149,7 +149,7 @@ export function EvaluationDialog({ employees }: Props) {
           {/* Employé & période */}
           <section className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Employé & Période
+              Employé & Détails
             </p>
 
             <div>
@@ -169,32 +169,34 @@ export function EvaluationDialog({ employees }: Props) {
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Périodicité *</label>
-                <select {...register("periodicite")} className={`mt-1 ${selectClass}`}>
-                  <option value="mensuel">Mensuel</option>
-                  <option value="trimestriel">Trimestriel</option>
-                  <option value="semestriel">Semestriel</option>
-                  <option value="annuel">Annuel</option>
+                <label className="text-sm font-medium">Type d'évaluation *</label>
+                <select {...register("type")} className={`mt-1 ${selectClass}`}>
+                  <option value="ANNUELLE">Annuelle</option>
+                  <option value="SEMESTRIELLE">Semestrielle</option>
+                  <option value="TRIMESTRIELLE">Trimestrielle</option>
+                  <option value="MENSUELLE">Mensuelle</option>
+                  <option value="PERIODE_ESSAI">Période d'essai</option>
+                  <option value="AUTRE">Autre</option>
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Date d'évaluation *</label>
-                <Input type="date" {...register("date_evaluation")} className="mt-1" />
-                {errors.date_evaluation && (
-                  <p className="mt-1 text-xs text-red-500">{errors.date_evaluation.message}</p>
+                <label className="text-sm font-medium">Date prévue *</label>
+                <Input type="date" {...register("date_prevue")} className="mt-1" />
+                {errors.date_prevue && (
+                  <p className="mt-1 text-xs text-red-500">{errors.date_prevue.message}</p>
                 )}
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium">Libellé de période *</label>
+              <label className="text-sm font-medium">Titre de l'évaluation *</label>
               <Input
-                {...register("periode")}
-                placeholder="Ex: T1 2025, Annuel 2024, Jan 2025"
+                {...register("titre")}
+                placeholder="Ex: Évaluation Annuelle 2026"
                 className="mt-1"
               />
-              {errors.periode && (
-                <p className="mt-1 text-xs text-red-500">{errors.periode.message}</p>
+              {errors.titre && (
+                <p className="mt-1 text-xs text-red-500">{errors.titre.message}</p>
               )}
             </div>
           </section>
@@ -234,10 +236,11 @@ export function EvaluationDialog({ employees }: Props) {
 
           {/* Statut */}
           <div>
-            <label className="text-sm font-medium">Statut</label>
+            <label className="text-sm font-medium">Statut initial</label>
             <select {...register("statut")} className={`mt-1 ${selectClass}`}>
-              <option value="brouillon">Brouillon</option>
-              <option value="validé">Validé</option>
+              <option value="PLANIFIEE">Planifiée</option>
+              <option value="EN_COURS">En cours</option>
+              <option value="TERMINEE">Terminée</option>
             </select>
           </div>
 

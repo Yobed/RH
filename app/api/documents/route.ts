@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const documentSchema = z.object({
   name: z.string().min(1, "Nom obligatoire").max(200),
   file_url: z.string().url("URL invalide"),
@@ -71,3 +73,25 @@ export async function POST(req: Request) {
 
   return NextResponse.json(data, { status: 201 });
 }
+
+export async function DELETE(req: Request) {
+  const supabase = createServerClient();
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ error: "ID manquant" }, { status: 400 });
+  }
+
+  const { error } = await supabase
+    .from("documents")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}
+

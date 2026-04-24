@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const patchSchema = z.object({
-  statut: z.enum(["brouillon", "validé"]),
+  statut: z.enum(["PLANIFIEE", "EN_COURS", "TERMINEE", "ANNULEE"]),
 });
 
 export async function PUT(

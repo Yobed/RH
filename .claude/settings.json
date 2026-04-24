@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" requirements mark-complete CON-01)",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state record-session --stopped-at \"03-02 completed — workflow validation multi-niveaux conges\")",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state add-decision --phase \"03-conges-absences\" --summary \"canManagerApprove=true et canRhApprove=true hardcodes en V1 — RBAC complet en phase suivante\")",
+      "Bash(ls app/\\\\\\(dashboard\\\\\\)/conges/)",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state record-metric --phase \"03-conges-absences\" --plan \"03\" --duration \"15\" --tasks \"2\" --files \"2\")"
+    ]
+  }
+}

@@ -62,6 +62,7 @@ Le bulletin imprimé lit `raison_sociale`, `adresse`, `cnps_matricule`, `nccm`, 
 Il n'existe aucun fichier `*.test.ts`, `*.spec.ts`, aucun dossier `__tests__/`. Il n'y a pas de configuration Jest, Vitest, Playwright ou Cypress.
 
 Zones à risque sans couverture :
+
 - `lib/paie-ci.ts` : calculs fiscaux (`calculerITS`, `calculerBulletin`, `calculerChargesPatronales`, `calculerPrimeAnciennete`, `calculerIndemniteLicenciement`). Une erreur sur ces fonctions est silencieuse jusqu'au bulletin imprimé.
 - Logique d'archivage du salaire dans `app/api/employees/[id]/route.ts` : la comparaison de champs salariaux avant/après mise à jour n'est pas testée.
 - `calculerProvision13e` dans `lib/paie-ci.ts` : formule récemment modifiée (75%/12), zéro test de non-régression.
@@ -199,6 +200,7 @@ La logique de calcul du net à payer (CNPS, abattement, ITS, transport non impos
 Toutes les migrations sont des scripts SQL manuels dans `scripts/` à exécuter dans l'éditeur SQL Supabase. Il n'y a pas de dossier `supabase/migrations/` avec versionnement automatique via `supabase db push`.
 
 Scripts présents dans `scripts/` (à appliquer dans l'ordre) :
+
 1. `migration_securite.sql`
 2. `add_employee_fields.sql`
 3. `add_employee_primes.sql`

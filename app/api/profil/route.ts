@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const profilSchema = z.object({
   full_name: z.string().min(2, "Minimum 2 caractères").max(100),
 });
@@ -44,3 +46,4 @@ export async function PUT(req: Request) {
 
   return NextResponse.json(data);
 }
+

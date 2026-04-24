@@ -8,6 +8,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   // Vérification du secret n8n pour les appels automatiques
   const secret = req.headers.get("x-webhook-secret");
@@ -148,5 +150,121 @@ async function syncForCompany(
     created++;
   }
 
+  // 3. Visites médicales expirantes (dans les 30 prochains jours)
+  const nextMonth = new Date(today);
+  nextMonth.setDate(today.getDate() + 30);
+  const nextMonthStr = nextMonth.toISOString().split("T")[0];
+
+  const { data: medicalExams } = await supabase
+    .from("medical_exams")
+    .select("id, type, date_expiration, employees(full_name)")
+    .eq("company_id", companyId)
+    .lte("date_expiration", nextMonthStr)
+    .gte("date_expiration", today.toISOString().split("T")[0]);
+
+  for (const exam of medicalExams ?? []) {
+    const emp = Array.isArray(exam.employees) ? exam.employees[0] : exam.employees;
+    const titre = `Visite médicale : ${emp?.full_name ?? "Employé"}`;
+    
+    // Vérifier doublon
+    const { data: existing } = await supabase
+      .from("notifications")
+      .select("id")
+      .eq("company_id", companyId)
+      .eq("titre", titre)
+      .limit(1)
+      .single();
+
+    if (existing) continue;
+
+    await supabase.from("notifications").insert({
+      company_id: companyId,
+      type: "info",
+      titre,
+      message: `La visite médicale (${exam.type}) de ${emp?.full_name} expire le ${new Date(exam.date_expiration!).toLocaleDateString("fr-CI")}.`,
+    });
+    created++;
+  }
+
+  // 4. Documents manquants (Audit périodique)
+  // On ne le fait que si on n'a pas généré d'alerte document récemment pour cet employé
+  const { data: employees } = await supabase
+    .from("employees")
+    .select("id, full_name, documents(famille)")
+    .eq("company_id", companyId)
+    .eq("statut", "actif");
+
+  const DOCS_OBLIGATOIRES = ["CNI / Passeport", "Contrat", "CV"];
+
+  for (const emp of employees ?? []) {
+    const familles = new Set(emp.documents?.map((d: any) => d.famille));
+    const manquants = DOCS_OBLIGATOIRES.filter(d => !familles.has(d));
+
+    if (manquants.length > 0) {
+      const titre = `Dossier incomplet : ${emp.full_name}`;
+      
+      // On ne crée une notification que si elle n'existe pas déjà ou si elle date de plus de 30 jours
+      const { data: existing } = await supabase
+        .from("notifications")
+        .select("id, created_at")
+        .eq("company_id", companyId)
+        .eq("titre", titre)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (existing) {
+        const lastCreated = new Date(existing.created_at!);
+        const diffDays = Math.floor((today.getTime() - lastCreated.getTime()) / (1000 * 3600 * 24));
+        if (diffDays < 30) continue; // Pas d'alerte plus d'une fois par mois
+      }
+
+      await supabase.from("notifications").insert({
+        company_id: companyId,
+        type: "alerte_contrat",
+        titre,
+        message: `Le dossier de ${emp.full_name} est incomplet. Documents manquants : ${manquants.join(", ")}.`,
+      });
+      created++;
+    }
+  }
+
+  // 5. Fins de période d'essai (dans les 10 prochains jours)
+  const trialLimit = new Date(today);
+  trialLimit.setDate(today.getDate() + 10);
+  const trialLimitStr = trialLimit.toISOString().split("T")[0];
+
+  const { data: trialContracts } = await supabase
+    .from("contracts")
+    .select("id, date_fin_essai, employees(full_name, poste)")
+    .eq("company_id", companyId)
+    .eq("statut", "actif")
+    .lte("date_fin_essai", trialLimitStr)
+    .gte("date_fin_essai", today.toISOString().split("T")[0]);
+
+  for (const c of trialContracts ?? []) {
+    const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
+    const titre = `Fin d'essai : ${emp?.full_name}`;
+    
+    const { data: existing } = await supabase
+      .from("notifications")
+      .select("id")
+      .eq("company_id", companyId)
+      .eq("titre", titre)
+      .limit(1)
+      .single();
+
+    if (existing) continue;
+
+    await supabase.from("notifications").insert({
+      company_id: companyId,
+      type: "alerte_contrat",
+      titre,
+      message: `La période d'essai de ${emp?.full_name} (${emp?.poste}) se termine le ${new Date(c.date_fin_essai!).toLocaleDateString("fr-CI")}. Une décision (confirmation/rupture/renouvellement) doit être prise.`,
+    });
+    created++;
+  }
+
   return created;
 }
+

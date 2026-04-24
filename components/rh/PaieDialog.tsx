@@ -7,7 +7,8 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PlusIcon } from "lucide-react";
-import { calculerPrimeAnciennete, calculerProvision13e, calculerBulletinComplet } from "@/lib/paie-ci";
+import { calculerPrimeAnciennete, calculerProvision13e, calculerBulletinComplet, calculerRetenuAbsence } from "@/lib/paie-ci";
+import { exportPDF, generatePaySlipPDF, type CompanyInfo } from "@/lib/pdf-templates";
 
 import {
   Dialog,
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil } from "lucide-react";
+import { Pencil, Printer, Download } from "lucide-react";
 import type { Tables } from "@/types/supabase";
 
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule" | "salaire_brut"> & {
@@ -48,6 +49,7 @@ export interface BulletinEditable {
   heures_sup_h75?: number | null;
   autres_retenues?: number | null;
   avances?: number | null;
+  nb_jours_absence?: number | null;
   employee_id: string;
   employee_name: string;
 }
@@ -68,6 +70,7 @@ const schema = z.object({
   heures_sup_h75:        z.string().optional(),
   autres_retenues:       z.string().optional(),
   avances:               z.string().optional(),
+  nb_jours_absence:      z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -86,11 +89,12 @@ function currentPeriode() {
 interface Props {
   employees: Employee[];
   bulletin?: BulletinEditable; // mode édition si fourni
+  company?: CompanyInfo | null;
 }
 
 
 
-export function PaieDialog({ employees, bulletin }: Props) {
+export function PaieDialog({ employees, bulletin, company }: Props) {
   const isEdit = !!bulletin;
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -114,11 +118,13 @@ export function PaieDialog({ employees, bulletin }: Props) {
         heures_sup_h75:      String(bulletin.heures_sup_h75 ?? 0),
         autres_retenues:     String(bulletin.autres_retenues ?? 0),
         avances:             String(bulletin.avances ?? 0),
+        nb_jours_absence:    String(bulletin.nb_jours_absence ?? 0),
       } : {
         periode: currentPeriode(),
         sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
         prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
         prime_transport: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
+        nb_jours_absence: "0",
       },
     });
 
@@ -173,6 +179,7 @@ export function PaieDialog({ employees, bulletin }: Props) {
     },
     autres_retenues:      Number(watch("autres_retenues")) || 0,
     avances:              Number(watch("avances")) || 0,
+    nb_jours_absence:     Number(watch("nb_jours_absence")) || 0,
   };
   const preview = nums.salaire_brut > 0 ? calculerBulletinComplet(nums) : null;
 
@@ -191,6 +198,7 @@ export function PaieDialog({ employees, bulletin }: Props) {
       heures_sup_h75:       Number(data.heures_sup_h75) || 0,
       autres_retenues:      Number(data.autres_retenues) || 0,
       avances:              Number(data.avances) || 0,
+      nb_jours_absence:     Number(data.nb_jours_absence) || 0,
     };
 
     const res = isEdit
@@ -218,9 +226,23 @@ export function PaieDialog({ employees, bulletin }: Props) {
       sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
       prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
       prime_transport: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
+      nb_jours_absence: "0",
     });
     router.refresh();
   }
+
+  const handleDownloadPDF = () => {
+    if (!preview) return;
+    const emp = employees.find(e => e.id === watch("employee_id"));
+    const doc = generatePaySlipPDF({
+      result: preview,
+      lines: nums,
+      employee: emp || { full_name: bulletin?.employee_name || "Employé", matricule: "—", poste: "—" },
+      company: company || { name: "RH Manager CI" },
+      period: watch("periode")
+    });
+    exportPDF(doc, `Bulletin_${watch("periode")}_${emp?.full_name || "Salarie"}`);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -376,23 +398,47 @@ export function PaieDialog({ employees, bulletin }: Props) {
           </div>
 
           {/* ── RETENUES DIVERSES ────────────────────────────────────── */}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-sm font-medium">Autres retenues (FCFA)</label>
-              <Input type="number" min="0" step="1000" {...register("autres_retenues")} className="mt-1" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">Avances / Acomptes (FCFA)</label>
-              <Input type="number" min="0" step="1000" {...register("avances")} className="mt-1" />
+          <div className="rounded-lg border bg-slate-50 p-3 space-y-2">
+            <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">
+              Retenues
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label className="text-xs font-medium text-slate-700">Autres retenues (FCFA)</label>
+                <Input type="number" min="0" step="1000" {...register("autres_retenues")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">Avances / Acomptes (FCFA)</label>
+                <Input type="number" min="0" step="1000" {...register("avances")} className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  Jours d&apos;absence non justifiée
+                </label>
+                <Input type="number" min="0" max="31" step="1" placeholder="0" {...register("nb_jours_absence")} className="mt-1" />
+                <p className="text-[10px] text-muted-foreground mt-0.5">Retenue = brut ÷ 26 × jours</p>
+              </div>
             </div>
           </div>
 
           {/* ── APERÇU ───────────────────────────────────────────────── */}
           {preview && (
             <div className="rounded-lg border bg-slate-50 p-4 space-y-1.5 text-sm">
-              <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide mb-2">
-                Aperçu du bulletin
-              </p>
+              <div className="flex justify-between items-center mb-2">
+                <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+                  Aperçu du bulletin
+                </p>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleDownloadPDF}
+                  className="h-7 text-[10px] gap-1.5"
+                >
+                  <Printer className="h-3 w-3" />
+                  PDF
+                </Button>
+              </div>
               <div className="flex justify-between border-b pb-1.5 mb-1">
                 <span className="text-muted-foreground">Total brut imposable</span>
                 <span className="font-medium">{fmt(preview.total_imposable)}</span>
@@ -435,6 +481,12 @@ export function PaieDialog({ employees, bulletin }: Props) {
                 <div className="flex justify-between text-red-600">
                   <span>− Avances / Acomptes</span>
                   <span>{fmt(nums.avances)}</span>
+                </div>
+              )}
+              {nums.nb_jours_absence > 0 && (preview?.retenu_absence ?? 0) > 0 && (
+                <div className="flex justify-between text-red-600">
+                  <span>− Retenue absence ({nums.nb_jours_absence}j)</span>
+                  <span>{fmt(preview!.retenu_absence)}</span>
                 </div>
               )}
               <div className="border-t pt-2 flex justify-between font-bold text-emerald-700 text-base">

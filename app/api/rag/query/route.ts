@@ -4,6 +4,8 @@ import { z } from "zod";
 import { anthropic, CLAUDE_MODEL } from "@/lib/claude";
 import { gemini, GEMINI_FLASH } from "@/lib/gemini";
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   question: z.string().min(1).max(2000),
   history: z
@@ -163,3 +165,4 @@ Question originale : "${question}"`,
     );
   }
 }
+

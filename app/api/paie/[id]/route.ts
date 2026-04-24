@@ -21,6 +21,7 @@ const editSchema = z.object({
   heures_sup_h75:       z.number().min(0).default(0),
   autres_retenues:      z.number().min(0).default(0),
   avances:              z.number().min(0).default(0),
+  nb_jours_absence:     z.number().min(0).max(31).default(0),
 });
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
@@ -93,6 +94,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     },
     autres_retenues: d.autres_retenues,
     avances: d.avances,
+    nb_jours_absence: d.nb_jours_absence,
   });
 
   const { data, error } = await supabase
@@ -118,6 +120,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
           h75: d.heures_sup_h75,
         },
         heures_sup_montant: calc.heures_sup_montant,
+        nb_jours_absence: d.nb_jours_absence,
+        retenu_absence: calc.retenu_absence,
       },
     })
     .eq("id", params.id)

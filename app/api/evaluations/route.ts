@@ -3,13 +3,17 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { gemini, GEMINI_FLASH } from "@/lib/gemini";
 
+export const dynamic = 'force-dynamic';
+
 const evaluationSchema = z.object({
   employee_id: z.string().uuid("Employé obligatoire"),
-  periodicite: z.enum(["mensuel", "trimestriel", "semestriel", "annuel"]),
-  periode: z.string().min(1, "Période obligatoire").max(50),
-  date_evaluation: z.string().min(1, "Date obligatoire"),
+  titre: z.string().min(1, "Titre obligatoire").max(100),
+  type: z.enum(["ANNUELLE", "SEMESTRIELLE", "TRIMESTRIELLE", "MENSUELLE", "AUTRE"]),
+  statut: z.enum(["PLANIFIEE", "EN_COURS", "TERMINEE", "ANNULEE"]).default("PLANIFIEE"),
+  date_prevue: z.string().min(1, "Date obligatoire"),
+  date_realisation: z.string().optional().nullable(),
   score_global: z.coerce.number().int().min(0).max(100).nullable().optional(),
-  scores: z
+  criteres_evaluation: z
     .object({
       technique: z.coerce.number().int().min(0).max(100).optional(),
       comportement: z.coerce.number().int().min(0).max(100).optional(),
@@ -18,7 +22,9 @@ const evaluationSchema = z.object({
     })
     .optional()
     .default({}),
-  statut: z.enum(["brouillon", "validé"]).default("brouillon"),
+  commentaires_evaluateur: z.string().optional().nullable(),
+  commentaires_employe: z.string().optional().nullable(),
+  objectifs_futurs: z.string().optional().nullable(),
 });
 
 /**
@@ -83,8 +89,8 @@ export async function POST(req: Request) {
 
   // Calculer le score global automatiquement si des sous-scores sont fournis
   let scoreGlobal = parsed.data.score_global ?? null;
-  const scores = parsed.data.scores ?? {};
-  const vals = Object.values(scores).filter((v): v is number => v !== undefined);
+  const criteres = parsed.data.criteres_evaluation ?? {};
+  const vals = Object.values(criteres).filter((v): v is number => v !== undefined);
   if (vals.length > 0 && scoreGlobal === null) {
     scoreGlobal = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
   }
@@ -92,7 +98,7 @@ export async function POST(req: Request) {
   // ✅ PARALLÈLE — Gemini synthèse + profil évaluateur simultanément
   const [synthese, profileResult] = await Promise.all([
     scoreGlobal !== null
-      ? genererSyntheseGemini(scores, scoreGlobal)
+      ? genererSyntheseGemini(criteres, scoreGlobal)
       : Promise.resolve(null),
     supabase.from("profiles").select("id").eq("id", user.id).single(),
   ]);
@@ -103,12 +109,16 @@ export async function POST(req: Request) {
     .from("evaluations")
     .insert({
       employee_id: parsed.data.employee_id,
-      periodicite: parsed.data.periodicite,
-      periode: parsed.data.periode,
-      date_evaluation: parsed.data.date_evaluation,
-      score_global: scoreGlobal,
-      scores: scores,
+      titre: parsed.data.titre,
+      type: parsed.data.type,
       statut: parsed.data.statut,
+      date_prevue: parsed.data.date_prevue,
+      date_realisation: parsed.data.date_realisation ?? null,
+      score_global: scoreGlobal,
+      criteres_evaluation: criteres,
+      commentaires_evaluateur: parsed.data.commentaires_evaluateur ?? null,
+      commentaires_employe: parsed.data.commentaires_employe ?? null,
+      objectifs_futurs: parsed.data.objectifs_futurs ?? null,
       company_id: companyId as string,
       evaluateur_id: profile?.id ?? null,
     })
@@ -127,3 +137,4 @@ export async function POST(req: Request) {
     { status: 201 }
   );
 }
+

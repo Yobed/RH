@@ -113,6 +113,7 @@ completed: 2026-03-30
 ## User Setup Required
 
 **TOUT EST OK !!** L'application est fully fonctionnelle sur ce segment en base locale / développement grâce à:
+
 - La vérification visuelle de l'utilisateur ("bulletin ok").
 - L'application directe en base de données.
 

@@ -42,6 +42,7 @@ Table `fiscal_params` avec RLS par tenant + endpoint API GET/PUT + section formu
 ### Task 1 — Migration `fiscal_params`
 
 Migration `supabase/migrations/20260331091947_fiscal_params.sql` créant la table `fiscal_params` :
+
 - Colonnes : `id`, `company_id` (FK companies), `convention` (TEXT, défaut CCI), `valeur_point` (NUMERIC 10,2), `created_at`, `updated_at`
 - `UNIQUE(company_id)` — une ligne par entreprise, permet l'upsert idempotent
 - Trigger `updated_at` automatique
@@ -51,15 +52,18 @@ Migration `supabase/migrations/20260331091947_fiscal_params.sql` créant la tabl
 ### Task 2 — Interface et API
 
 **`app/api/settings/route.ts`**
+
 - `GET /api/settings` — retourne les `fiscal_params` de l'entreprise (maybeSingle, null si absent)
 - `PUT /api/settings` — upsert avec validation Zod (enum convention + valeur_point >= 0)
 - Auth vérifiée en premier, company_id via `get_user_company_id()`, jamais de bypass RLS
 
 **`app/(dashboard)/parametres/page.tsx`**
+
 - Charge `fiscal_params` côté serveur via Supabase Server Client
 - Passe les données au composant `ParametresForm` via prop `fiscalParams`
 
 **`components/rh/ParametresForm.tsx`**
+
 - Nouvelle section "Paramètres de calcul salarial" après les infos légales entreprise
 - `<select>` des 7 conventions (CCI, Commerce, BTP, Banque & Assurance, Transport, Industrie, Agriculture)
 - Champ `valeur_point` (FCFA, nombre positif)
@@ -86,6 +90,7 @@ None — les données fiscal_params sont lues depuis Supabase et affichées dans
 ## Self-Check
 
 Files created/modified:
+
 - `supabase/migrations/20260331091947_fiscal_params.sql` — FOUND
 - `app/api/settings/route.ts` — FOUND
 - `types/supabase.ts` — FOUND (modified)
@@ -93,6 +98,7 @@ Files created/modified:
 - `components/rh/ParametresForm.tsx` — FOUND (modified)
 
 Commits:
+
 - `c3a93c1` — feat(02-05): migration fiscal_params
 - `eb23a94` — feat(02-05): interface paramètres convention collective
 

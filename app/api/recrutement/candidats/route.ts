@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const candidatSchema = z.object({
   full_name: z.string().min(2, "Nom obligatoire").max(100),
   email: z.string().email("Email invalide"),
@@ -69,3 +71,4 @@ export async function POST(req: Request) {
 
   return NextResponse.json(data, { status: 201 });
 }
+

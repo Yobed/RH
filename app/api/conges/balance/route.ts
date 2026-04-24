@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { calculerJoursAcquis, calculerSoldeConges, SoldeConges } from "@/lib/conges-ci";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/conges/balance?employee_id=UUID&annee=YYYY
  * Retourne le solde de congés de l'employé pour l'année.
@@ -172,3 +174,4 @@ export async function POST(req: Request): Promise<NextResponse> {
   };
   return NextResponse.json(soldeConges);
 }
+

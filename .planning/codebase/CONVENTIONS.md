@@ -7,29 +7,35 @@
 ## Nommage des fichiers
 
 **Composants React :**
+
 - PascalCase obligatoire → `EmployeeDialog.tsx`, `PaieDialog.tsx`, `KpiCard.tsx`
 - Les dialogs CRUD portent le suffixe `Dialog` → `CongesDialog.tsx`, `ContractDialog.tsx`
 - Les boutons d'action dédiés portent le suffixe `Button` → `PaieStatusButton.tsx`, `CongesApprovalButton.tsx`
 - Localisation : `components/rh/` pour les composants métier, `components/ui/` pour les primitives UI
 
 **Pages Next.js (App Router) :**
+
 - Toutes en minuscules kebab-case via le dossier → `app/(dashboard)/employes/page.tsx`
 - Routes groupées par layout → `(auth)` et `(dashboard)`
 - Routes dynamiques avec crochets → `employes/[id]/page.tsx`, `paie/[id]/print/page.tsx`
 
 **Routes API :**
+
 - Dossier en minuscules, pluriel anglais → `app/api/employees/route.ts`, `app/api/legal-cases/route.ts`
 - Exceptions en français pour les modules purement ivoiriens → `app/api/paie/route.ts`, `app/api/conges/route.ts`
 - Sous-routes dynamiques → `app/api/employees/[id]/route.ts`
 
 **Hooks :**
+
 - camelCase préfixé `use` (non détectés dans la base actuelle, pattern attendu) → `useEmployeeData.ts`
 
 **Librairies utilitaires :**
+
 - camelCase en `lib/` → `lib/paie-ci.ts`, `lib/utils.ts`
 - Sous-dossiers pour les clients tiers → `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/claude/index.ts`
 
 **Tables Supabase :**
+
 - snake_case pluriel → `employees`, `bulletins_paie`, `legal_cases`, `audit_logs`, `candidates`
 - Colonnes snake_case → `company_id`, `full_name`, `salaire_brut`, `date_embauche`
 
@@ -38,11 +44,13 @@
 ## TypeScript
 
 **Mode strict activé** dans `tsconfig.json` :
+
 ```json
 { "strict": true, "noEmit": true }
 ```
 
 **Règle absolue :** `any` est interdit (CLAUDE.md). Utiliser `unknown` pour les corps de requête non validés :
+
 ```ts
 // Correct — app/api/employees/route.ts
 let body: unknown;
@@ -51,6 +59,7 @@ const parsed = createSchema.safeParse(body);
 ```
 
 **Types Supabase générés :** utiliser `Tables<"nom_table">` depuis `types/supabase.ts` :
+
 ```ts
 import type { Tables } from "@/types/supabase";
 type Employee = Tables<"employees">;
@@ -58,12 +67,14 @@ type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule" | "sa
 ```
 
 **Types dérivés de Zod :** inférer le type du formulaire depuis le schéma :
+
 ```ts
 const schema = z.object({ ... });
 type FormData = z.infer<typeof schema>;
 ```
 
 **Types locaux étendus :** intersections pour les champs supplémentaires non encore dans les types générés :
+
 ```ts
 // components/rh/EmployeeDialog.tsx
 type EmployeeWithPrimes = Employee & {
@@ -74,6 +85,7 @@ type EmployeeWithPrimes = Employee & {
 ```
 
 **Interfaces pour les props :**
+
 ```ts
 interface Props {
   employee?: EmployeeWithPrimes;
@@ -88,11 +100,13 @@ export function EmployeeDialog({ employee }: Props) { ... }
 ## Alias de chemin
 
 Défini dans `tsconfig.json` :
+
 ```json
 { "paths": { "@/*": ["./*"] } }
 ```
 
 Tous les imports locaux utilisent `@/` :
+
 ```ts
 import { createServerClient } from "@/lib/supabase/server";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
@@ -104,6 +118,7 @@ import type { Tables } from "@/types/supabase";
 ## Organisation des imports
 
 Ordre observé dans les composants client :
+
 1. Hooks React natifs (`useState`, `useEffect`)
 2. Hooks Next.js (`useRouter`, `useForm`)
 3. Librairies tierces (`zod`, `sonner`, `lucide-react`)
@@ -111,6 +126,7 @@ Ordre observé dans les composants client :
 5. Types (`import type { Tables } from "@/types/supabase"`)
 
 Ordre observé dans les routes API :
+
 1. Client Supabase (`@/lib/supabase/server`)
 2. Next.js (`NextResponse`)
 3. Zod
@@ -123,6 +139,7 @@ Ordre observé dans les routes API :
 **Directive `"use client"` :** tous les composants Dialog et les composants avec état local la portent en première ligne. Les pages `(dashboard)` sont des Server Components par défaut.
 
 **Composants Dialog (pattern CRUD standard) :**
+
 ```tsx
 "use client";
 // 1. Schéma Zod local
@@ -168,6 +185,7 @@ export function XxxDialog({ entity }: Props) {
 ```
 
 **Sections dans les formulaires longs :**
+
 ```tsx
 <section className="space-y-3">
   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
@@ -178,6 +196,7 @@ export function XxxDialog({ entity }: Props) {
 ```
 
 **Affichage des erreurs de champ :**
+
 ```tsx
 {errors.full_name && (
   <p className="mt-1 text-xs text-red-500">{errors.full_name.message}</p>
@@ -185,6 +204,7 @@ export function XxxDialog({ entity }: Props) {
 ```
 
 **Bouton déclencheur Dialog avec @base-ui/react :**
+
 ```tsx
 // Utiliser render={<Button />} — PAS asChild
 <DialogTrigger render={<Button />}>Texte</DialogTrigger>
@@ -192,6 +212,7 @@ export function XxxDialog({ entity }: Props) {
 ```
 
 **Pages Server Component (pattern dashboard) :**
+
 ```tsx
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Module — RH Manager CI" };
@@ -208,6 +229,7 @@ export default async function XxxPage() {
 ## Formulaires — react-hook-form + Zod
 
 **Règle mémorisée :** pas de `.default()` dans le schéma Zod, utiliser `defaultValues` dans `useForm` :
+
 ```ts
 // INTERDIT
 const schema = z.object({ statut: z.string().default("actif") });
@@ -220,6 +242,7 @@ useForm<FormData>({
 ```
 
 **Champs numériques dans les formulaires :** stockés en `string` côté formulaire, convertis en `number` dans `cleanPayload` ou `onSubmit` :
+
 ```ts
 // Dans le schéma formulaire (côté client)
 salaire_brut: z.string().optional(),
@@ -228,6 +251,7 @@ if (k === "salaire_brut") return [k, v ? Number(v) : null];
 ```
 
 **Champs select natifs :** `<select {...register("champ")} className={selectClass}>` avec la constante CSS partagée au niveau du composant :
+
 ```ts
 const selectClass = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ...";
 ```
@@ -239,6 +263,7 @@ const selectClass = "w-full rounded-md border border-input bg-background px-3 py
 ## Pattern routes API
 
 **Structure standard de chaque route POST/PUT :**
+
 ```ts
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
@@ -291,6 +316,7 @@ export async function POST(req: Request) {
 ## Devise et formatage monétaire
 
 **Format FCFA XOF obligatoire :**
+
 ```ts
 // Pattern standard — app/(dashboard)/paie/page.tsx
 const fmt = (n: number) =>
@@ -320,6 +346,7 @@ const fmt = (n: number) =>
 **Stockage en base :** format ISO `YYYY-MM-DD` (type `date` Postgres).
 
 **Période de paie :** format `YYYY-MM` validé par regex dans les schémas Zod :
+
 ```ts
 periode: z.string().regex(/^\d{4}-\d{2}$/, "Format YYYY-MM requis"),
 ```
@@ -327,6 +354,7 @@ periode: z.string().regex(/^\d{4}-\d{2}$/, "Format YYYY-MM requis"),
 **Inputs HTML :** `<Input type="date" {...register("date_embauche")} />` — le navigateur gère l'affichage selon la locale.
 
 **Calcul d'ancienneté** (pattern `lib/paie-ci.ts`) :
+
 ```ts
 const debut = new Date(dateEmbauche); // ISO string YYYY-MM-DD
 const now = new Date();
@@ -338,6 +366,7 @@ let annees = now.getFullYear() - debut.getFullYear();
 ## Notifications et feedback
 
 **Toast :** bibliothèque `sonner` uniquement :
+
 ```ts
 import { toast } from "sonner";
 toast.success("Employé ajouté");
@@ -351,6 +380,7 @@ toast.error(err.error ?? "Erreur serveur");
 ## Commentaires
 
 **Code métier :** commentaires JSDoc détaillés avec sources légales dans `lib/paie-ci.ts` :
+
 ```ts
 /**
  * Calcul ITS — Barème CI Art. 116 CGI CI
@@ -371,6 +401,7 @@ toast.error(err.error ?? "Erreur serveur");
 **Prettier :** non détecté. Aucun `.prettierrc` ni `prettier.config.*` présent.
 
 **Scripts disponibles :**
+
 ```bash
 npm run dev      # Développement local (next dev)
 npm run build    # Build production (next build)

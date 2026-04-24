@@ -107,6 +107,7 @@ interface Props {
 ## Mise a Jour leave_balances
 
 Uniquement lors de l'action `valider_rh` :
+
 - Annee extraite de `date_debut` du conge
 - Si row existant : `jours_pris += nb_jours`
 - Si row absent : INSERT avec `jours_acquis=0, jours_pris=nb_jours`
@@ -122,6 +123,7 @@ Uniquement lors de l'action `valider_rh` :
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Missing component] AlertDialog shadcn absent — utilise Dialog existant**
+
 - **Found during:** Task 2
 - **Issue:** Le plan mentionnait AlertDialog shadcn mais le composant n'est pas installe dans le projet (seuls badge, button, card, dialog, input, select, table, textarea sont presents)
 - **Fix:** Utilise Dialog de ui/dialog.tsx (base-ui) deja disponible pour le modal de confirmation de refus
@@ -129,6 +131,7 @@ Uniquement lors de l'action `valider_rh` :
 - **Commit:** cdf04dc
 
 **2. [Rule 2 - Missing feature] Acces conditionnel bouton Refuser**
+
 - **Found during:** Task 2
 - **Issue:** Le bouton "Refuser" doit etre visible selon le role — pas affiche si l'utilisateur ne peut pas agir
 - **Fix:** `canRefuse && (canManagerApprove || canRhApprove)` comme condition de rendu

@@ -62,6 +62,7 @@ metrics:
 **GREEN :** `lib/conges-ci.ts` implémenté — tous les tests passent.
 
 **Migration :** `supabase/migrations/20260401000000_leave_balances.sql` créée avec :
+
 - Table `leave_balances` (id, company_id, employee_id, annee, jours_acquis, jours_pris, solde GENERATED, updated_at)
 - RLS avec policy `get_user_company_id()`
 - UNIQUE(company_id, employee_id, annee)
@@ -74,6 +75,7 @@ metrics:
 ### Task 2 — API GET/POST balance + widget fiche employé
 
 **API `app/api/conges/balance/route.ts` :**
+
 - `GET ?employee_id=UUID&annee=YYYY` : retourne `SoldeConges` depuis `leave_balances`. Si aucune ligne, calcule avec `calculerJoursAcquis()` + somme des congés annuels approuvés, puis upsert.
 - `POST { employee_id, annee }` : force le recalcul (upsert). Utile pour cron mensuelle.
 - Auth 401 si non connecté. Validation Zod. Aucun `any`.
@@ -81,6 +83,7 @@ metrics:
 **types/supabase.ts :** Table `leave_balances` ajoutée avec Row/Insert/Update/Relationships.
 
 **Fiche employé `app/(dashboard)/employes/[id]/page.tsx` :**
+
 - Import de `calculerJoursAcquis` et `calculerSoldeConges`
 - Requêtes parallèles ajoutées : `leave_balances` pour l'année en cours + `conges` annuels approuvés de l'année
 - Calcul côté serveur si aucune ligne en base (pas d'upsert au rendu)

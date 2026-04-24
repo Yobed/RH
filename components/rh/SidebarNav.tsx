@@ -18,15 +18,20 @@ import {
   Banknote,
   Bell,
   TrendingUp,
+  PieChart,
+  Clock,
+  BarChart3,
 } from "lucide-react";
 
 const navItems = [
   { href: "/rh", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { href: "/analytique", label: "Analytique", icon: PieChart, exact: false },
   { href: "/employes", label: "Employés", icon: Users, exact: false },
   { href: "/contrats", label: "Contrats", icon: FileText, exact: false },
   { href: "/conges", label: "Congés", icon: CalendarDays, exact: false },
   { href: "/paie", label: "Paie", icon: Banknote, exact: true },
-  { href: "/paie/masse-salariale", label: "Masse salariale", icon: TrendingUp, exact: false },
+  { href: "/rh/heures-sup", label: "Heures supplémentaires", icon: Clock, exact: false },
+  { href: "/rh/analyses", label: "Analyses & Finance", icon: BarChart3, exact: false },
   { href: "/paie/fin-de-contrat", label: "Fin de contrat", icon: FileText, exact: false },
   { href: "/recrutement", label: "Recrutement", icon: UserPlus, exact: false },
   { href: "/evaluations", label: "Évaluations", icon: BarChart2, exact: false },

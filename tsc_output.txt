@@ -1,0 +1,14 @@
+components/rh/ArretMaladieDialog.tsx(18,23): error TS2307: Cannot find module '@/components/ui/label' or its corresponding type declarations.
+components/rh/ArretMaladieDialog.tsx(19,26): error TS2307: Cannot find module '@/components/ui/checkbox' or its corresponding type declarations.
+components/rh/ArretMaladieDialog.tsx(28,57): error TS2307: Cannot find module '@/components/ui/tooltip' or its corresponding type declarations.
+components/rh/ArretMaladieDialog.tsx(88,5): error TS2322: Type 'Resolver<{ employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at?: boolean | undefined; commentaire?: string | undefined; }, any, { employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }>' is not assignable to type 'Resolver<{ employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }, any, { employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }>'.
+  Types of parameters 'options' and 'options' are incompatible.
+    Type 'ResolverOptions<{ employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }>' is not assignable to type 'ResolverOptions<{ employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at?: boolean | undefined; commentaire?: string | undefined; }>'.
+      Type 'boolean | undefined' is not assignable to type 'boolean'.
+        Type 'undefined' is not assignable to type 'boolean'.
+components/rh/ArretMaladieDialog.tsx(160,22): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
+  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.
+components/rh/ArretMaladieDialog.tsx(172,38): error TS2345: Argument of type '(values: { employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }) => Promise<void>' is not assignable to parameter of type 'SubmitHandler<TFieldValues>'.
+  Types of parameters 'values' and 'data' are incompatible.
+    Type 'TFieldValues' is not assignable to type '{ employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }'.
+      Type 'FieldValues' is missing the following properties from type '{ employee_id: string; date_debut: string; date_fin: string; nb_jours: string; est_at: boolean; commentaire?: string | undefined; }': employee_id, date_debut, date_fin, nb_jours, est_at

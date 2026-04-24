@@ -40,6 +40,7 @@ Ressource Humaine/          # Racine du projet
 ## Détail des répertoires
 
 ### `app/(auth)/`
+
 - **But :** Pages publiques non protégées par le middleware
 - **Fichiers clés :**
   - `app/(auth)/layout.tsx` — layout centré pour les pages d'authentification
@@ -47,6 +48,7 @@ Ressource Humaine/          # Racine du projet
   - `app/(auth)/register/page.tsx` — création de compte (Client Component, `supabase.auth.signUp`)
 
 ### `app/(dashboard)/`
+
 - **But :** Toutes les pages protégées du tableau de bord RH
 - **Layout :** `app/(dashboard)/layout.tsx` — sidebar navy `SidebarNav`, topbar avec `NotificationBell`, vérification session serveur
 - **Pages :**
@@ -70,6 +72,7 @@ Ressource Humaine/          # Racine du projet
 | `/parametres` | `app/(dashboard)/parametres/page.tsx` | Paramètres entreprise |
 
 ### `app/api/`
+
 - **But :** Route Handlers — toutes les mutations passent ici, jamais de Supabase directement depuis le client
 - **Inventaire complet :**
 
@@ -101,6 +104,7 @@ Ressource Humaine/          # Racine du projet
 | `GET /api/auth/callback` | GET | Callback PKCE Supabase OAuth |
 
 ### `components/rh/`
+
 - **But :** Composants métier — tous sont des Client Components (`"use client"`)
 - **Convention de nommage :** PascalCase, suffixe fonctionnel
 
@@ -135,11 +139,13 @@ Ressource Humaine/          # Racine du projet
 | `PrintButton.tsx` | Bouton impression bulletin de paie |
 
 ### `components/ui/`
+
 - **But :** Composants shadcn/ui de base, non modifiés ou légèrement étendus
 - **Fichiers :** `badge.tsx`, `button.tsx`, `card.tsx`, `dialog.tsx`, `input.tsx`, `select.tsx`, `table.tsx`, `textarea.tsx`
 - **Note :** `input.tsx` utilise `React.forwardRef` pour la compatibilité react-hook-form
 
 ### `lib/supabase/`
+
 - **But :** Trois clients Supabase distincts selon le contexte d'exécution
 
 | Fichier | Fonction exportée | Contexte d'utilisation |
@@ -152,6 +158,7 @@ Ressource Humaine/          # Racine du projet
 **Chemin de stockage :** `documents/{company_id}/{employee_id}/{famille}/{timestamp}_{filename}`
 
 ### `lib/ai/`
+
 - **Fichier :** `lib/ai/orchestrator.ts`
 - **But :** Orchestration des agents IA — serveur uniquement, jamais importé côté client
 - **Fonctions exportées :**
@@ -159,6 +166,7 @@ Ressource Humaine/          # Racine du projet
   - `questionnerAssistantRH(input)` — RAG + reformulation Gemini
 
 ### `lib/`
+
 - `lib/paie-ci.ts` — moteur de calcul paie CI : constantes SMIG/CNPS/CMU, fonctions `calculerBulletin()`, `calculerChargesPatronales()`, `calculerITS()`, `calculerPrimeAnciennete()`, `calculerIndemniteLicenciement()`, `calculerProvision13e()`
 - `lib/utils.ts` — utilitaires généraux (`cn()` pour Tailwind, formatage FCFA)
 - `lib/claude/index.ts` — client Anthropic SDK, constante `CLAUDE_MODEL`
@@ -166,11 +174,13 @@ Ressource Humaine/          # Racine du projet
 - `lib/n8n/webhooks.ts` — `triggerN8n(path, payload)` — POST vers `N8N_BASE_URL/webhook/{path}` avec secret
 
 ### `types/`
+
 - **Fichier :** `types/supabase.ts` — types TypeScript auto-générés depuis le schéma Supabase
 - **Usage :** `Tables<'employees'>`, `TablesInsert<'contracts'>`, `TablesUpdate<'evaluations'>`
 - **Helpers exportés :** `Tables<T>`, `TablesInsert<T>`, `TablesUpdate<T>`, `Enums<T>`, `CompositeTypes<T>`
 
 ### `scripts/`
+
 - **But :** Migrations SQL à exécuter manuellement dans le SQL Editor Supabase
 - **Fichiers :**
 
@@ -185,6 +195,7 @@ Ressource Humaine/          # Racine du projet
 | `seed_legal_documents.sql` / `seed_legal_v2.sql` / `seed_legal_v3.sql` | Données initiales Code du Travail CI pour RAG |
 
 ### `skills/`
+
 - **But :** Documentation de pilotage pour Claude Code — à lire avant de coder dans chaque domaine
 - **Fichiers :** `skills/architecture/SKILL.md`, `skills/database/SKILL.md`, `skills/modules/SKILL.md`, `skills/workflows/SKILL.md`, `skills/ai-rag/SKILL.md`, `skills/forms/SKILL.md`, `skills/security/SKILL.md`
 
@@ -213,6 +224,7 @@ Les types TypeScript sont dans `types/supabase.ts`. Les tables non encore reflé
 | `audit_logs` | `id`, `company_id`, `user_id`, `action`, `resource`, `resource_id`, `details`, `created_at` | `company_id`, immuable |
 
 **Fonctions Postgres disponibles :**
+
 - `get_user_company_id()` — retourne le `company_id` de l'utilisateur connecté (utilisée dans toutes les RLS)
 - `match_legal_documents(query_embedding, match_threshold, match_count, filter_company_id)` — recherche vectorielle pgvector
 
@@ -235,6 +247,7 @@ Les types TypeScript sont dans `types/supabase.ts`. Les tables non encore reflé
 ## Où placer le nouveau code
 
 **Nouveau module RH (ex: `formations`) :**
+
 - Page : `app/(dashboard)/formations/page.tsx`
 - API lecture : requête directe dans la page RSC via `createServerClient()`
 - API mutations : `app/api/formations/route.ts` + `app/api/formations/[id]/route.ts`
@@ -244,14 +257,17 @@ Les types TypeScript sont dans `types/supabase.ts`. Les tables non encore reflé
 - Migration SQL : `scripts/add_formations.sql` (avec RLS `company_id = get_user_company_id()`)
 
 **Nouveau calcul de paie CI :**
+
 - Ajouter la fonction dans `lib/paie-ci.ts`
 - Importer dans `app/api/paie/route.ts`
 
 **Nouveau composant UI de base :**
+
 - Ajouter dans `components/ui/` en suivant le patron shadcn/ui
 - Si `Input`-like : utiliser `React.forwardRef` obligatoirement
 
 **Nouveau webhook n8n :**
+
 - Utiliser `triggerN8n(path, payload)` depuis `lib/n8n/webhooks.ts`
 - Documenter le webhook dans `skills/workflows/SKILL.md`
 

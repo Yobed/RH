@@ -1,8 +1,8 @@
 /**
  * Calcul bulletin de paie — Droit ivoirien
  * Sources :
- *   - Code du Travail CI (Loi n°2015-532 du 20 juillet 2015, mis à jour 2025)
- *   - Convention Collective Interprofessionnelle AICI-UGTCI
+ *   - Code du Travail ivoirien CI (Loi n°2015-532 du 20 juillet 2015, mis à jour 2025)
+ *   - Convention Collective Interprofessionnelle ASSIM-UGTCI
  *   - Décret n°2022-986 (SMIG 75 000 FCFA au 01/01/2023)
  *   - CNPS CI — retraite salariale 6,30% / plafond 1 647 315 FCFA/mois
  *   - CNAM — CMU forfait mensuel 1 600 FCFA (part salariale + part patronale)
@@ -15,6 +15,8 @@
  *
  * Dernière mise à jour : mars 2026
  */
+
+import { calculerICCP } from '@/lib/conges-ci';
 
 // SMIG mensuel en vigueur depuis le 01/01/2023
 // Source : Décret n°2022-986 du Ministère de l'Emploi CI
@@ -137,7 +139,7 @@ export interface ChargesPatronales {
   total: number;
 }
 
-export function calculerChargesPatronales(salaireBrut: number): ChargesPatronales {
+export function calculerChargesPatronales(salaireBrut: number, tauxAtMp: number = CHARGES_PATRONALES_TAUX.at_mp): ChargesPatronales {
   const baseFamiliales = Math.min(salaireBrut, PLAFOND_FAMILIALES);
   const familiales = Math.round(baseFamiliales * CHARGES_PATRONALES_TAUX.familiales);
 
@@ -146,7 +148,8 @@ export function calculerChargesPatronales(salaireBrut: number): ChargesPatronale
   const baseRetraite = Math.min(salaireBrut, PLAFOND_CNPS_MENSUEL);
   const retraite = Math.round(baseRetraite * CHARGES_PATRONALES_TAUX.retraite);
 
-  const at_mp = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.at_mp);
+  // Le taux AT/MP peut varier d'une entreprise à l'autre (généralement entre 2% et 5%)
+  const at_mp = Math.round(salaireBrut * tauxAtMp);
 
   const cmu = CMU_MENSUEL;
 
@@ -172,7 +175,7 @@ export function calculerProvision13e(salaireBrut: number): number {
 // Taux : 1% du salaire catégoriel par année d'ancienneté révolue
 // Plafond : 25% (atteint après 25 ans de présence)
 // Source : Convention Collective Interprofessionnelle CI
-export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string): number {
+export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string, convention: string = 'Interprofessionnelle'): number {
   const debut = new Date(dateEmbauche);
   const now = new Date();
   // Années complètes de service
@@ -181,11 +184,24 @@ export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string
     || (now.getMonth() === debut.getMonth() && now.getDate() >= debut.getDate());
   if (!moisPasse) annees -= 1;
   if (annees <= 0) return 0;
-  const taux = Math.min(annees * 0.01, 0.25); // plafond 25%
+  
+  let taux = 0;
+  
+  if (convention === 'BTP') {
+    // Exemple BTP : taux limité à 20%
+    taux = Math.min(annees * 0.01, 0.20);
+  } else if (convention === 'Commerce') {
+    // Exemple Commerce
+    taux = Math.min(annees * 0.01, 0.25);
+  } else {
+    // CCI Interprofessionnelle par défaut : 1% par an, max 25%
+    taux = Math.min(annees * 0.01, 0.25);
+  }
+
   return Math.round(salaireCat * taux);
 }
 
-// ── Indemnité de licenciement — Art. 74 CT-CI ───────────────────────────
+// ── Indemnité de licenciement — Art. 74 Code du Travail ivoirien CI ─────
 // Source : Décret n°96-201 du 7 mars 1996 / CCI Art. 39
 // Base = salaire global mensuel moyen des 12 derniers mois (pas le salaire actuel)
 // Tranches : 30% (1–5 ans) · 35% (6–10 ans) · 40% (11 ans et +)
@@ -229,7 +245,7 @@ export function calculerHeuresSup(nbH15: number, nbH50: number, nbH75: number, t
   return Math.round(h15 + h50 + h75);
 }
 
-// ── Préavis CDI — Décret n°96-200 / CCI Art. 34 ───────────────────────
+// ── Préavis CDI — Art. 34 Code du Travail ivoirien CI ───────────────────
 // Ouvriers/employés : 8 jours minimum — 4 mois maximum
 // Agents de maîtrise (cat. 6+) : 3 mois minimum — 4 mois maximum
 // Cadres : 3 mois minimum — 4 mois maximum
@@ -278,9 +294,10 @@ export interface LignesBulletin {
 export interface ResultatPaieComplet {
   total_brut: number;
   total_imposable: number;
-  cnps_salarie: number;
-  cmu: number;
-  its: number;
+  cnps_retraite: number; // Part retraite 6.3%
+  cmu: number;           // Part CMU
+  cnps_salarie: number;  // Total CNPS + CMU
+  its: number;           // Impôt sur le revenu
   total_retenues: number;
   salaire_net: number;
   heures_sup_montant: number;
@@ -319,26 +336,39 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
 
   // CNPS plafonné
   const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
-  const cnps_salarie = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
+  const cnps_retraite = Math.round(base_cnps * TAUX_CNPS_RETRAITE_SALARIE);
 
   // CMU forfait
   const cmu = CMU_MENSUEL;
 
   // ITS : abattement sur base imposable après CNPS
-  const base_its = Math.max(0, total_imposable - cnps_salarie);
+  const base_its = Math.max(0, total_imposable - cnps_retraite);
   const base_its_apres_abattement = Math.max(0, Math.round(base_its * (1 - TAUX_ABATTEMENT_ITS)));
   const its = calculerITS(base_its_apres_abattement);
 
   const retenu_absence = calculerRetenuAbsence(lignes.nb_jours_absence ?? 0, lignes.salaire_brut);
 
-  const total_retenues = cnps_salarie + cmu + its
+  const cnps_salarie = cnps_retraite + cmu;
+
+  const total_retenues = cnps_salarie + its
     + (lignes.autres_retenues ?? 0)
     + (lignes.avances ?? 0)
     + retenu_absence;
 
   const salaire_net = Math.max(0, total_brut - total_retenues);
 
-  return { total_brut, total_imposable, cnps_salarie, cmu, its, total_retenues, salaire_net, heures_sup_montant, retenu_absence };
+  return { 
+    total_brut, 
+    total_imposable, 
+    cnps_retraite, 
+    cmu, 
+    cnps_salarie,
+    its, 
+    total_retenues, 
+    salaire_net, 
+    heures_sup_montant, 
+    retenu_absence 
+  };
 }
 
 export function formatAnciennete(dateEmbauche: string): string {
@@ -359,8 +389,8 @@ export function formatAnciennete(dateEmbauche: string): string {
   return `${y} an${years > 1 ? "s" : ""} ${m} mois ${d} jour${days > 1 ? "s" : ""}`;
 }
 
-// ── Indemnité de précarité (CDD) — Art. 14.8 CT-CI ──────────────────────
-// Source : Code du Travail de Côte d'Ivoire (taux légal : 3% de la somme brute perçue)
+// ── Indemnité de précarité (CDD) — Art. 14.8 Code du Travail ivoirien CI ─
+// Taux légal : 3% de la somme brute perçue durant tout le contrat
 export function calculerIndemnitePrecarite(sommeSalairesBruts: number): number {
   if (sommeSalairesBruts <= 0) return 0;
   return Math.round(sommeSalairesBruts * 0.03);
@@ -400,13 +430,16 @@ export function calculerSoldeDeCompte(params: ParametresSoldeDeCompte): Resultat
   }
 
   // ICCP (Indemnité Compensatrice de Congés Payés)
-  // Usuellement 1/30ème du salaire mensuel brut par jour ou 1/26 selon mois calendaire/ouvrable
-  const tauxJournalierConges = params.salaire_mensuel_actuel / 30;
-  const indemnite_compensatrice_conges = Math.round(tauxJournalierConges * params.jours_conges_restants);
+  // Art. 25 Code du Travail ivoirien CI — taux journalier : salaire / 26 jours ouvrables
+  const indemnite_compensatrice_conges = calculerICCP(
+    params.jours_conges_restants,
+    params.salaire_mensuel_actuel
+  );
 
-  // Indemnité de préavis
-  const tauxJournalierPreavis = params.salaire_mensuel_actuel / 30;
-  const indemnite_preavis = Math.round(tauxJournalierPreavis * params.jours_preavis_non_effectues);
+  // Indemnité de préavis — taux journalier : salaire / 26 jours ouvrables (praticien CI)
+  const indemnite_preavis = Math.round(
+    (params.salaire_mensuel_actuel / 26) * params.jours_preavis_non_effectues
+  );
 
   const total_brut_stc = 
     indemnite_licenciement + 

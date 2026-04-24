@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { CheckCircle2, RotateCcw } from "lucide-react";
+import { CheckCircle2, RotateCcw, Play } from "lucide-react";
 
 interface Props {
   id: string;
@@ -14,8 +14,7 @@ export function EvaluationStatusButton({ id, statut }: Props) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function toggle() {
-    const newStatut = statut === "brouillon" ? "validé" : "brouillon";
+  async function updateStatut(newStatut: string) {
     setLoading(true);
     const res = await fetch(`/api/evaluations/${id}`, {
       method: "PUT",
@@ -29,33 +28,47 @@ export function EvaluationStatusButton({ id, statut }: Props) {
       return;
     }
 
-    toast.success(newStatut === "validé" ? "Évaluation validée" : "Remise en brouillon");
+    toast.success("Statut mis à jour");
     router.refresh();
   }
 
-  if (statut === "validé") {
+  if (statut === "TERMINEE" || statut === "ANNULEE") {
     return (
       <button
-        onClick={toggle}
+        onClick={() => updateStatut("EN_COURS")}
         disabled={loading}
-        title="Remettre en brouillon"
-        className="flex items-center gap-1 rounded-md border border-muted px-2 py-1 text-xs text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50"
+        title="Rouvrir l'évaluation"
+        className="flex items-center gap-1 rounded-md border border-muted px-2 py-1 text-xs text-muted-foreground hover:bg-muted transition-colors disabled:opacity-50 mx-auto"
       >
         <RotateCcw className="h-3 w-3" />
-        Brouillon
+        Rouvrir
+      </button>
+    );
+  }
+
+  if (statut === "PLANIFIEE") {
+    return (
+      <button
+        onClick={() => updateStatut("EN_COURS")}
+        disabled={loading}
+        title="Démarrer l'évaluation"
+        className="flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs text-blue-700 hover:bg-blue-100 transition-colors disabled:opacity-50 mx-auto"
+      >
+        <Play className="h-3 w-3" />
+        Démarrer
       </button>
     );
   }
 
   return (
     <button
-      onClick={toggle}
+      onClick={() => updateStatut("TERMINEE")}
       disabled={loading}
-      title="Valider l'évaluation"
-      className="flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-100 transition-colors disabled:opacity-50"
+      title="Clôturer l'évaluation"
+      className="flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-100 transition-colors disabled:opacity-50 mx-auto"
     >
       <CheckCircle2 className="h-3 w-3" />
-      Valider
+      Clôturer
     </button>
   );
 }

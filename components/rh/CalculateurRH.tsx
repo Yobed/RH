@@ -409,19 +409,106 @@ function CalcCongesFamiliaux() {
   );
 }
 
+function CalcSoldeDeCompte() {
+  const [type, setType] = useState<"CDD" | "CDI">("CDI");
+  const [salaireMoyen, setSalaireMoyen] = useState("");
+  const [anciennete, setAnciennete] = useState("");
+  const [conges, setConges] = useState("");
+  const [preavis, setPreavis] = useState("");
+  const [sommeBruteCDD, setSommeBruteCDD] = useState("");
+
+  const results = salaireMoyen && anciennete ? {
+    indemniteLicenciement: type === "CDI" ? calculerIndemniteLicenciement(Number(salaireMoyen), Number(anciennete)) : 0,
+    indemnitePrecarite: type === "CDD" ? Math.round(Number(sommeBruteCDD || 0) * 0.03) : 0,
+    conges: Math.round((Number(salaireMoyen) / 26) * Number(conges || 0)),
+    preavis: Math.round((Number(salaireMoyen) / 26) * Number(preavis || 0)),
+  } : null;
+
+  const total = results ? results.indemniteLicenciement + results.indemnitePrecarite + results.conges + results.preavis : 0;
+
+  return (
+    <div className="rounded-lg border bg-white p-5 space-y-4">
+      <div>
+        <h2 className="text-base font-semibold">Solde de Tout Compte (STC)</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Estimation des indemnités de fin de contrat — Art. 14.8 & 74 CT-CI
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="text-sm font-medium">Type de contrat</label>
+          <select value={type} onChange={(e) => setType(e.target.value as any)} className={`mt-1 ${selectClass}`}>
+            <option value="CDI">CDI</option>
+            <option value="CDD">CDD</option>
+          </select>
+        </div>
+        <div>
+          <label className="text-sm font-medium">Salaire moyen mensuel (FCFA)</label>
+          <input type="number" value={salaireMoyen} onChange={(e) => setSalaireMoyen(e.target.value)} placeholder="200 000" className={`mt-1 ${selectClass}`} />
+        </div>
+        {type === "CDD" && (
+          <div className="sm:col-span-2">
+            <label className="text-sm font-medium">Somme totale des salaires bruts perçus (FCFA)</label>
+            <input type="number" value={sommeBruteCDD} onChange={(e) => setSommeBruteCDD(e.target.value)} placeholder="1 200 000" className={`mt-1 ${selectClass}`} />
+            <p className="text-[10px] text-muted-foreground mt-1">L'indemnité de précarité (3%) est calculée sur ce montant total.</p>
+          </div>
+        )}
+        <div>
+          <label className="text-sm font-medium">Ancienneté (années)</label>
+          <input type="number" step="0.1" value={anciennete} onChange={(e) => setAnciennete(e.target.value)} placeholder="2.5" className={`mt-1 ${selectClass}`} />
+        </div>
+        <div>
+          <label className="text-sm font-medium">Reliquat congés (jours)</label>
+          <input type="number" value={conges} onChange={(e) => setConges(e.target.value)} placeholder="15" className={`mt-1 ${selectClass}`} />
+        </div>
+      </div>
+
+      {results && (
+        <div className="rounded-lg bg-slate-50 border border-slate-200 p-4 space-y-2">
+          {type === "CDI" && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600">Indemnité de licenciement</span>
+              <span className="font-medium">{fcfa(results.indemniteLicenciement)}</span>
+            </div>
+          )}
+          {type === "CDD" && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600">Indemnité de précarité (3%)</span>
+              <span className="font-medium">{fcfa(results.indemnitePrecarite)}</span>
+            </div>
+          )}
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-600">Indemnité compensatrice de congés</span>
+            <span className="font-medium">{fcfa(results.conges)}</span>
+          </div>
+          <div className="flex justify-between text-sm border-t pt-2 mt-2">
+            <span className="text-slate-800 font-bold text-lg">Total STC Estimé</span>
+            <span className="text-slate-900 font-bold text-lg">{fcfa(total)}</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2 italic">
+            * Hors prorata de 13e mois et indemnité de préavis éventuelle. Calcul théorique à valider.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Composant principal ────────────────────────────────────────────────
 export function CalculateurRH() {
   return (
     <div className="space-y-5">
       <div className="rounded-lg border bg-blue-50 border-blue-200 p-3 text-xs text-blue-800">
         Calculs basés sur le <strong>Code du Travail CI 2025</strong>, la <strong>Convention Collective Interprofessionnelle AICI-UGTCI</strong>
-        et les décrets d'application (Décrets n°96-200, 96-201, 96-203 / Décret n°2022-986).
+        et les décrets d&apos;application (Décrets n°96-200, 96-201, 96-203 / Décret n°2022-986).
         Les taux CNPS et barème ITS sont indicatifs — vérifier auprès de la CNPS CI et la Loi de Finances en vigueur.
       </div>
       <CalcLicenciement />
       <CalcPreavis />
       <CalcConges />
       <CalcHeureSup />
+      <CalcSoldeDeCompte />
       <CalcCongesFamiliaux />
     </div>
   );

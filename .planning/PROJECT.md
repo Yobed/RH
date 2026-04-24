@@ -21,16 +21,14 @@ Un RH ivoirien doit pouvoir éditer un bulletin de paie 100 % conforme au droit 
 - ✓ Gestion des contrats (CDI, CDD, Stage, Apprentissage) — existant
 - ✓ Bulletin modifiable en brouillon — existant
 - ✓ Impression bulletin format SYSTECH — existant
-- ✓ Gestion des congés (saisie de base) — existant
 - ✓ Notifications internes — existant
 - ✓ Documents légaux / droit du travail CI — existant
 - ✓ Agent RAG (base) — existant
 - ✓ Multi-tenant avec RLS Supabase — existant
 - ✓ Authentification Supabase Auth — existant
 
-### Active
+#### Phase 02 (Paie Avancée)
 
-#### Module Paie — Validé en Phase 02 (2026-03-31)
 - ✓ Calcul des heures supplémentaires (décret CI n°96-203 : +15% à +75%)
 - ✓ Calcul de solde de tout compte (indemnités légales à la rupture)
 - ✓ Calcul de fin de contrat CDD (indemnité de précarité 3% si applicable)
@@ -39,27 +37,40 @@ Un RH ivoirien doit pouvoir éditer un bulletin de paie 100 % conforme au droit 
 - ✓ Export comptable / journal de paie
 - ✓ Configuration conventions collectives (CCI, BTP, Commerce…)
 
-#### Module Congés & Absences
-- [ ] Solde congés légaux CI (2,5 j/mois travaillé)
-- [ ] Workflow de validation (employé → manager → RH)
-- [ ] Calendrier des absences
-- [ ] Impact automatique sur le bulletin (retenue absence)
-- [ ] Gestion des arrêts maladie et accident de travail
+#### Phase 03 (Congés & Absences)
 
-#### Module Évaluations
-- [ ] Évaluation annuelle, semestrielle, trimestrielle
-- [ ] Évaluation de période d'essai (avec date de fin calculée)
-- [ ] Formulaire d'évaluation configurable
-- [ ] Historique des évaluations par employé
-- [ ] Alertes automatiques avant échéance d'évaluation
+- ✓ Solde congés légaux CI (2,5 j/mois travaillé)
+- ✓ Workflow de validation (employé → manager → RH)
+- ✓ Calendrier des absences
+- ✓ Impact automatique sur le bulletin (retenue absence)
+- ✓ Gestion des arrêts maladie et accident de travail
+
+#### Phase 04 (Analytique RH & Reporting)
+
+- ✓ Tableau de bord masse salariale mensuelle
+- ✓ Suivi effectifs (entrées/sorties, pyramide des âges)
+- ✓ Indicateurs RH clés (turnover, absentéisme, ancienneté moyenne)
+- ✓ Export vers comptabilité
+
+#### Phase 05 (Module Évaluations)
+
+- ✓ Évaluation annuelle, semestrielle, trimestrielle, mensuelle
+- ✓ Formulaire d'évaluation avec critères et notation paramétrables
+- ✓ Historique des évaluations par employé, table SQL et interface
+- ✓ Synthèse d'évaluation par intelligence artificielle (Gemini Flash)
+- [ ] Alertes automatiques n8n avant échéance d'évaluation (à configurer côté n8n)
+
+### Active
 
 #### Module Disciplinaire
+
 - [ ] Processus disciplinaire complet (demande d'explication → sanctions)
 - [ ] Demande d'explication avec réponse employé
 - [ ] Modèles de courriels : convocation licenciement, abandon de poste, faute lourde, démission, licenciement économique
 - [ ] Suivi des procédures disciplinaires (statut, délais légaux CI)
 
 #### Module Dossier Personnel
+
 - [ ] Rangement et classement des documents du personnel
 - [ ] Attestation de travail (génération automatique)
 - [ ] Attestation de salaire
@@ -67,24 +78,21 @@ Un RH ivoirien doit pouvoir éditer un bulletin de paie 100 % conforme au droit 
 - [ ] Documents contractuels (avenants, renouvellements CDD)
 
 #### Module QHSE / Sécurité
+
 - [ ] Déclaration d'accident de travail
 - [ ] Visite médicale (suivi, rappels, résultats)
 - [ ] Registre QHSE
 - [ ] Déclaration CNPS AT/MP
 
 #### Module IA / RAG
+
 - [ ] Questions droit du travail CI (Code du Travail, CCI, décrets)
 - [ ] Rédaction de documents RH (lettres, mises en demeure, convocations)
 - [ ] Analyse et explication de bulletins de paie
 - [ ] Conseils RH personnalisés selon le contexte de l'entreprise
 
-#### Module Reporting
-- [ ] Tableau de bord masse salariale mensuelle
-- [ ] Suivi effectifs (entrées/sorties, pyramide des âges)
-- [ ] Indicateurs RH clés (turnover, absentéisme, ancienneté moyenne)
-- [ ] Export vers comptabilité
-
 #### Module Communication
+
 - [ ] Messagerie interne employé ↔ RH
 - [ ] Notifications automatiques (bulletins disponibles, congés validés, évaluations)
 
@@ -101,6 +109,7 @@ Un RH ivoirien doit pouvoir éditer un bulletin de paie 100 % conforme au droit 
 **Codebase existante :** MVP en cours avec ~22 routes API, 27 composants RH, 14 tables Supabase. Stack : Next.js 14 App Router + TypeScript + Tailwind + shadcn/ui + Supabase + n8n + Claude API.
 
 **Dette technique connue :**
+
 - `types/supabase.ts` désynchronisé (4 migrations non reflétées)
 - Calcul de paie dupliqué 3× (POST, PATCH, print page) → à centraliser dans `lib/paie-ci.ts`
 - Zéro test automatisé sur les calculs fiscaux
@@ -125,7 +134,7 @@ Paramètres 2026 : SMIG 75 000 FCFA, CNPS retraite 6,3% (plafond 1 647 315), CMU
 ## Key Decisions
 
 | Décision | Justification | Résultat |
-|----------|--------------|---------|
+| --- | --- | --- |
 | Supabase RLS pour le multi-tenant | Sécurité au niveau base de données, pas applicatif | ✓ Validé |
 | Format SYSTECH pour les bulletins | Standard reconnu en Côte d'Ivoire | ✓ Validé |
 | Prime 13e mois = 75% salaire / 12 par mois | Prorata temporis mensuel | ✓ Validé |
@@ -138,18 +147,26 @@ Paramètres 2026 : SMIG 75 000 FCFA, CNPS retraite 6,3% (plafond 1 647 315), CMU
 
 Ce document évolue à chaque transition de phase et à chaque milestone.
 
+### Mises à jour après chaque cycle
+
 **Après chaque phase :**
+
 1. Exigences invalidées ? → Déplacer dans Out of Scope avec raison
 2. Exigences validées ? → Déplacer dans Validated avec référence de phase
 3. Nouvelles exigences émergées ? → Ajouter dans Active
 4. Décisions à logger ? → Ajouter dans Key Decisions
 5. "What This Is" toujours exact ? → Mettre à jour si dérivé
 
+### Révision de milestone
+
 **Après chaque milestone :**
+
 1. Revue complète de toutes les sections
 2. Core Value check — toujours la bonne priorité ?
 3. Audit Out of Scope — raisons toujours valides ?
 4. Mettre à jour le Context avec l'état courant
 
 ---
-*Dernière mise à jour : 30 mars 2026 — initialisation projet*
+---
+
+Dernière mise à jour : 02 avril 2026 — validation Phase 05 (Module Évaluations)

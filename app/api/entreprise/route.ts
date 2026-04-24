@@ -2,6 +2,8 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+
 const entrepriseSchema = z.object({
   name: z.string().min(2, "Nom obligatoire").max(200),
   convention_collective: z.string().max(200).nullable().optional(),
@@ -68,3 +70,4 @@ export async function PUT(req: Request) {
 
   return NextResponse.json(data);
 }
+

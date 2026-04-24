@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-last_updated: "2026-03-31T10:55:29.785Z"
+status: Executing Phase 03
+last_updated: "2026-04-02T16:08:21.329Z"
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 15
-  completed_plans: 10
+  total_plans: 19
+  completed_plans: 14
 ---
 
 # STATE.md — FichePaie RH
@@ -18,23 +18,36 @@ progress:
 Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Valeur principale :** Éditer un bulletin conforme CI, gérer le dossier salarié complet, obtenir une réponse juridique fiable — sans formation technique.
-**Focus actuel :** Phase 3 — Congés & Absences (03-02 complété — workflow validation multi-niveaux)
+## Project Status
 
-## Current Status
+- **Current Phase**: Phase 4 (Dossier Personnel & Cycle Contractuel)
+- **Overall Completion**: 45%
+- **Last Sync**: 24 avril 2026
 
-**Milestone :** v1.0 — SaaS RH Ivoirien Complet
-**Phase en cours :** Phase 3 — Congés & Absences
-**Dernière action :** 03-02 terminé — workflow validation multi-niveaux congés : machine à états (en_attente → valide_manager → approuve/refuse) + colonnes audit + CongesApprovalButton multi-rôle + page /conges deux sections
+## What's Working
 
-## Progress
+- **Core RH**: Employees, Contracts, Companies CRUD.
+- **Advanced Payroll (Phase 2)**: Overtime (HS), End of Contract (Dispositif, Indemnités), Monthly Payroll, Ledger (Journal de paie).
+- **Leave & Absence (Phase 3)**: Leave balance calculation (2.5 days/month), Request/Approval workflow, Calendar view, Payroll integration (automatic deduction for unjustified absences), **Sick Leave Module** (AT declaration, justification upload).
 
-- [x] Cartographie codebase (7 documents `.planning/codebase/`)
-- [x] PROJECT.md initialisé
+## Recent Changes (Phase 3.5)
+
+- Added `justificatif_url`, `est_justifie`, and `est_at` to `conges` table.
+- Implemented `ArretMaladieDialog` with file upload to Supabase Storage.
+- Implemented API route `/api/conges/arret` for multipart file processing.
+- Added status badges ("AT", "Justifié", "Non justifié") to Leave lists.
+- Integrated payroll logic: unjustified absences lead to deductions; justified sick leave is recorded with medical evidence.
+
+## Current Focus
+
+- Initializing Phase 4: **Dossier Personnel & Cycle Contractuel**
+- Setting up the GED (Electronic Document Management) structure.
+- Planning the transition from basic leave management to full career tracking.
 - [x] REQUIREMENTS.md — 42 exigences v1 définies
 - [x] ROADMAP.md — 7 phases créées
 - [x] Phase 1 : Stabilisation (01-01 à 01-05 complétés)
 - [ ] Phase 2 : Paie Avancée (02-01, 02-03, 02-04, 02-05 complétés — heures sup + masse salariale + export CSV + multi-convention collective)
-- [ ] Phase 3 : Congés & Absences (03-01 complété — solde légal CI, 03-02 complété — workflow validation)
+- [ ] Phase 3 : Congés & Absences (03-01 complété — solde légal CI, 03-02 complété — workflow validation, 03-03 complété — calendrier absences)
 - [ ] Phase 4 : Dossier Personnel
 - [ ] Phase 5 : Évaluations & Discipline
 - [ ] Phase 6 : QHSE
@@ -76,6 +89,7 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 - *03-01 : leave_balances migration + lib/conges-ci.ts (2,5j/mois Art. 25) + API GET/POST /api/conges/balance + widget solde fiche employé (8 tests TDD)*
 - *03-02 : machine à états workflow congés (en_attente→valide_manager→approuve/refuse) + colonnes audit + API PUT /api/conges/[id] + CongesApprovalButton multi-rôle + page /conges deux files d'attente*
+- *03-03 : page /conges/calendrier (Server Component) + CongesCalendrierClient (grille mensuelle colorée par type, filtre département, navigation mois URL sync, vue mobile)*
 
 ## Key Decisions
 
@@ -98,6 +112,9 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | Calcul à la volée sans upsert au rendu | 03-01 | Écriture uniquement via API — pas d'effet de bord au rendu serveur |
 | canManagerApprove=true et canRhApprove=true hardcodés en V1 | 03-02 | RBAC simplifié — tous les RH voient les deux files en v1 |
 | leave_balances upsert (insert si absent) | 03-02 | Robustesse si row manquant — évite 404 silencieux |
+| Données congés chargées côté serveur + passées en props Client | 03-03 | Pas de fetch client — évite appels RLS répétés côté navigateur |
+| Navigation mois = état local + URL sync router.push | 03-03 | Permet partage de lien et retour navigateur fonctionnel |
+| useMemo sur buildJoursCouvertsParEmploye | 03-03 | O(n×31) calculé une seule fois par [conges, moisAffiche] |
 
 ## Plan 01-02 Completion Note
 

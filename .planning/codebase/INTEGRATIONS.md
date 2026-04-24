@@ -7,15 +7,18 @@
 **Fournisseur :** Supabase Cloud (PostgreSQL 15, pgvector activé)
 
 **SDK :**
+
 - `@supabase/supabase-js ^2.99.3` — client principal
 - `@supabase/ssr ^0.9.0` — gestion des cookies pour Next.js App Router
 
 **Clients instanciés :**
+
 - Client navigateur : `lib/supabase/client.ts` → `createBrowserClient()` (composants client)
 - Client serveur : `lib/supabase/server.ts` → `createServerClient()` (Server Components / Route Handlers)
 - Client middleware : `lib/supabase/middleware.ts` → `updateSession()` (protection des routes)
 
 **Variables d'environnement :**
+
 - `NEXT_PUBLIC_SUPABASE_URL` — URL publique du projet Supabase
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — clé anonyme publique
 
@@ -49,19 +52,23 @@
 ### Row Level Security (RLS)
 
 Toutes les tables ont RLS activé. Règle systématique :
+
 ```sql
 USING (company_id = get_user_company_id())
 WITH CHECK (company_id = get_user_company_id())
 ```
+
 Aucune requête ne doit bypasser le RLS.
 
 ### Storage Supabase
 
 **Buckets détectés :**
+
 - `legal-documents` — stockage de fichiers PDF juridiques (route `app/api/rag/upload/route.ts`)
 - Bucket générique pour les documents RH (chemin : `documents/{companyId}/{employeeId}/{famille}/{timestamp}_{filename}`, via `lib/supabase/storage.ts`)
 
 **Helpers :**
+
 - `lib/supabase/storage.ts` → `uploadDocument()`, `buildStoragePath()`
 
 ---
@@ -73,9 +80,11 @@ Aucune requête ne doit bypasser le RLS.
 **Client :** `lib/claude/index.ts` → instance `anthropic` (serveur uniquement)
 
 **Variable d'environnement :**
+
 - `ANTHROPIC_API_KEY` — clé API Anthropic (jamais exposée au client)
 
 **Usages dans le code :**
+
 - Scoring de CV candidat (route `app/api/recrutement/score-cv`) via `lib/ai/orchestrator.ts`
 - Synthèse finale d'analyse candidat après exécution parallèle des agents
 - Agent juridique RAG : réponse expert en droit du travail ivoirien (`app/api/rag/query/route.ts`)
@@ -87,14 +96,17 @@ Aucune requête ne doit bypasser le RLS.
 
 **SDK :** `@google/genai ^1.46.0`
 **Modèles configurés :**
+
 - `gemini-2.0-flash` (constante `GEMINI_FLASH`) — tâches rapides, extraction structurée
 - `gemini-2.0-pro-exp` (constante `GEMINI_PRO`) — raisonnement profond (non utilisé en production à ce jour)
 **Client :** `lib/gemini/index.ts` → instance `gemini` (serveur uniquement)
 
 **Variable d'environnement :**
+
 - `GEMINI_API_KEY` — clé API Google Generative AI
 
 **Usages :**
+
 - Extraction structurée des informations d'un CV (JSON : nom, email, compétences, expérience…)
 - Reformulation de questions RH pour améliorer la recherche juridique RAG
 - Tâches de faible coût en parallèle avec Claude (via `Promise.all`)
@@ -106,6 +118,7 @@ Aucune requête ne doit bypasser le RLS.
 **Fichier :** `lib/ai/orchestrator.ts`
 
 **Architecture :**
+
 - Exécution **parallèle** (`Promise.all`) des 3 agents pour minimiser la latence
 - Agent 1 (Gemini Flash) : extraction structurée du CV
 - Agent 2 (Claude Sonnet) : scoring et recommandation (shortlist / refus / en_attente)
@@ -113,6 +126,7 @@ Aucune requête ne doit bypasser le RLS.
 - Synthèse finale : Claude Sonnet (après récupération des 3 résultats)
 
 **Fonctions exportées :**
+
 - `analyserCandidat(input)` — analyse complète d'un candidat
 - `questionnerAssistantRH(input)` — assistant juridique RAG
 
@@ -124,6 +138,7 @@ Aucune requête ne doit bypasser le RLS.
 **Client :** `lib/n8n/webhooks.ts` → `triggerN8n(path, payload)`
 
 **Variables d'environnement :**
+
 - `N8N_BASE_URL` — URL de base du serveur n8n
 - `N8N_WEBHOOK_SECRET` — secret d'authentification (header `X-Webhook-Secret`)
 
@@ -134,6 +149,7 @@ Aucune requête ne doit bypasser le RLS.
 | `webhook/rag/query` | Recherche RAG pgvector : reçoit `{ question, company_id }`, retourne `{ reponse, sources }` |
 
 **Responsabilités n8n :**
+
 - Calcul d'embeddings et recherche vectorielle pgvector (`match_legal_documents`)
 - Orchestration des appels vers Supabase pour le RAG juridique
 
@@ -144,6 +160,7 @@ Aucune requête ne doit bypasser le RLS.
 **Fournisseur :** Supabase Auth (Email/Mot de passe)
 
 **Implémentation :**
+
 - Sessions gérées via cookies HTTP (SSR-compatible)
 - Middleware Next.js : `middleware.ts` → `lib/supabase/middleware.ts` → `updateSession()`
 - Routes publiques : `/login`, `/register`, `/auth/*`
@@ -158,10 +175,12 @@ Aucune requête ne doit bypasser le RLS.
 **Fournisseur :** Supabase Storage
 
 **Buckets :**
+
 - `legal-documents` — documents juridiques PDF pour le RAG (partagés entre tenants)
 - Bucket documents RH (chemin structuré par `companyId/employeeId/famille/`)
 
 **Chemin des documents RH :**
+
 ```
 documents/{companyId}/{employeeId}/{famille}/{timestamp}_{filename}
 ```
@@ -173,6 +192,7 @@ documents/{companyId}/{employeeId}/{famille}/{timestamp}_{filename}
 **Module interne :** `lib/paie-ci.ts` (aucun service externe)
 
 **Fonctions exportées :**
+
 - `calculerBulletin(salaireBrut, autresRetenues, avances)` → `ResultatPaie`
 - `calculerChargesPatronales(salaireBrut)` → `ChargesPatronales`
 - `calculerITS(salaireImposable)` — barème progressif ITS (CGI CI Art. 116)
@@ -181,6 +201,7 @@ documents/{companyId}/{employeeId}/{famille}/{timestamp}_{filename}
 - `calculerIndemniteLicenciement(salaireMoyen12Mois, annees)` — Art. 74 CT-CI
 
 **Constantes réglementaires CI :**
+
 - SMIG mensuel : 75 000 FCFA (Décret n°2022-986)
 - CNPS retraite salarié : 6,30% plafonné à 1 647 315 FCFA/mois
 - CMU forfait : 1 600 FCFA/mois

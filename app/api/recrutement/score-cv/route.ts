@@ -4,6 +4,8 @@ import { z } from "zod";
 import { anthropic, CLAUDE_MODEL } from "@/lib/claude";
 import { gemini, GEMINI_FLASH } from "@/lib/gemini";
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   candidate_id: z.string().uuid("ID candidat invalide"),
 });
@@ -199,3 +201,4 @@ Réponds UNIQUEMENT en JSON valide, sans markdown :
     score: scoreDetail,
   });
 }
+

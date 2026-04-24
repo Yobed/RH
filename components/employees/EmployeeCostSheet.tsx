@@ -20,6 +20,7 @@ interface EmployeeCostSheetProps {
   primeFonction?: number | null;
   primeTransport?: number | null;
   primeAnciennete?: number | null;
+  tauxAtMp?: number;
 }
 
 interface LigneCalcul {
@@ -72,6 +73,7 @@ export function EmployeeCostSheet({
   primeFonction,
   primeTransport,
   primeAnciennete,
+  tauxAtMp = 0.03, // Valeur par défaut de 3%
 }: EmployeeCostSheetProps) {
   const totalBrut =
     salaireBrut +
@@ -97,7 +99,8 @@ export function EmployeeCostSheet({
 
   // Charges patronales sur le brut de base (hors transport, non soumis)
   const chargesPatronales: ChargesPatronales = calculerChargesPatronales(
-    bulletin.total_imposable
+    bulletin.total_imposable,
+    tauxAtMp
   );
 
   // Coût total employeur

@@ -75,7 +75,14 @@
       "Read(//c/Users/WILFRIED/.config/**)",
       "Read(//c/Users/WILFRIED/.config/gh/**)",
       "WebFetch(domain:rh-manager-ci.vercel.app)",
-      "mcp__claude_ai_Supabase__list_tables"
+      "mcp__claude_ai_Supabase__list_tables",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state add-decision --phase \"03-conges-absences\" --summary \"Données serveur complètes en props CongesCalendrierClient — pas de fetch client pour éviter appels RLS répétés\")",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state add-decision --phase \"03-conges-absences\" --summary \"Navigation mois calendrier = état local + URL sync via router.push pour partage de lien\")",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" roadmap update-plan-progress \"3\")",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" requirements mark-complete CON-03)",
+      "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state record-session --stopped-at \"Completed 03-conges-absences-03-03-PLAN.md\")",
+      "Bash(grep -n \"nb_jours_absence\" supabase/migrations/*.sql)",
+      "Bash(grep -n \"nb_jours_absence\\\\|details.*JSONB\\\\|JSONB.*details\" supabase/migrations/*.sql)"
     ]
   }
 }

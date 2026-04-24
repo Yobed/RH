@@ -29,6 +29,7 @@ const schema = z.object({
   salaire_max: z.string().optional(),
   date_limite: z.string().optional(),
   statut: z.enum(["ouvert", "fermé", "brouillon"]),
+  is_internal: z.boolean().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -49,7 +50,7 @@ export function JobPostingDialog() {
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { statut: "ouvert", type_contrat: "" },
+    defaultValues: { statut: "ouvert", type_contrat: "", is_internal: false },
   });
 
   function addCompetence() {
@@ -80,6 +81,7 @@ export function JobPostingDialog() {
       salaire_max: data.salaire_max ? Number(data.salaire_max) : null,
       date_limite: data.date_limite || null,
       competences: competences.length > 0 ? competences : null,
+      is_internal: data.is_internal ?? false,
     };
 
     const res = await fetch("/api/recrutement/postes", {
@@ -247,6 +249,18 @@ export function JobPostingDialog() {
                   <option value="fermé">Fermé</option>
                 </select>
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="is_internal"
+                {...register("is_internal")}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="is_internal" className="text-sm font-medium leading-none">
+                Poste réservé au recrutement interne (Mobilité)
+              </label>
             </div>
           </section>
 
