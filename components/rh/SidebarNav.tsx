@@ -22,6 +22,7 @@ import {
   ChartBar,
   FirstAid,
   Presentation,
+  ChatCircleText,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 
@@ -40,6 +41,7 @@ const navItems = [
   { href: "/contentieux", label: "Contentieux", icon: Scales, exact: false },
   { href: "/qhse", label: "QHSE", icon: FirstAid, exact: false },
   { href: "/reporting", label: "Reporting", icon: Presentation, exact: false },
+  { href: "/messages", label: "Messagerie", icon: ChatCircleText, exact: false },
   { href: "/notifications", label: "Notifications", icon: Bell, exact: false },
   { href: "/archives", label: "Archives", icon: Archive, exact: false },
   { href: "/agent-juridique", label: "Agent Juridique", icon: Robot, exact: false },
