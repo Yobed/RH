@@ -6,17 +6,14 @@ import { ComplianceAlertList } from "@/components/rh/ComplianceAlertList";
 import { QuickActions } from "@/components/rh/QuickActions";
 import { DashboardCharts } from "@/components/rh/DashboardCharts";
 import {
-  Users,
-  FileWarning,
-  Briefcase,
-  BarChart2,
-  Scale,
-  TrendingUp,
-  Clock,
-  ArrowRight
-} from "lucide-react";
+  UsersIcon as Users,
+  WarningIcon as FileWarning,
+  BriefcaseIcon as Briefcase,
+  ScalesIcon as Scale,
+} from "@/components/rh/ClientIcons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata = { title: "Tableau de bord — RH Manager CI" };
 
@@ -44,7 +41,7 @@ export default async function RhPage() {
     { data: contractsDet },
     { data: medicalDet },
     { data: trialsDet },
-    { data: recentActivities }
+    { data: recentActivities },
   ] = await Promise.all([
     supabase
       .from("employees")
@@ -84,19 +81,14 @@ export default async function RhPage() {
       .eq("statut", "actif")
       .order("created_at", { ascending: false })
       .limit(5),
-    supabase
-      .from("employees")
-      .select("departement")
-      .eq("statut", "actif"),
+    supabase.from("employees").select("departement").eq("statut", "actif"),
     supabase
       .from("conges")
       .select("id, employees(full_name), type, nb_jours, date_debut, date_fin")
       .eq("statut", "demande")
       .order("created_at", { ascending: false })
       .limit(5),
-    supabase
-      .from("documents")
-      .select("employee_id, type"),
+    supabase.from("documents").select("employee_id, type"),
     supabase
       .from("contracts")
       .select("*", { count: "exact", head: true })
@@ -127,303 +119,373 @@ export default async function RhPage() {
       .from("documents")
       .select("id, name, created_at, employees(full_name)")
       .order("created_at", { ascending: false })
-      .limit(5)
+      .limit(5),
   ]);
 
-  // Préparer les alertes pour ComplianceAlertList
-  const allAlerts: any[] = [
-    ...(contractsDet?.map(c => ({
+  const allAlerts: {
+    id: string;
+    type: "CONTRACT" | "TRIAL" | "MEDICAL" | "DOCUMENT";
+    label: string;
+    employeeName: string;
+    date: string;
+    urgency: "high" | "medium" | "low";
+  }[] = [
+    ...(contractsDet?.map((c) => ({
       id: c.employee_id,
-      type: "CONTRACT",
+      type: "CONTRACT" as const,
       label: `Fin de ${c.type_contrat}`,
-      employeeName: (c.employees as any)?.full_name || "Employé",
+      employeeName: (c.employees as { full_name?: string })?.full_name ?? "Employé",
       date: c.date_fin,
-      urgency: "high"
-    })) || []),
-    ...(trialsDet?.map(t => ({
+      urgency: "high" as const,
+    })) ?? []),
+    ...(trialsDet?.map((t) => ({
       id: t.employee_id,
-      type: "TRIAL",
+      type: "TRIAL" as const,
       label: "Fin de période d'essai",
-      employeeName: (t.employees as any)?.full_name || "Employé",
+      employeeName: (t.employees as { full_name?: string })?.full_name ?? "Employé",
       date: t.date_fin_essai,
-      urgency: "high"
-    })) || []),
-    ...(medicalDet?.map(m => ({
+      urgency: "high" as const,
+    })) ?? []),
+    ...(medicalDet?.map((m) => ({
       id: m.employee_id,
-      type: "MEDICAL",
+      type: "MEDICAL" as const,
       label: `Visite ${m.type_examen}`,
-      employeeName: (m.employees as any)?.full_name || "Employé",
+      employeeName: (m.employees as { full_name?: string })?.full_name ?? "Employé",
       date: m.date_expiration,
-      urgency: "medium"
-    })) || [])
-  ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(0, 5);
+      urgency: "medium" as const,
+    })) ?? []),
+  ]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5);
 
-  // Calcul approfondi de la conformité documentaire
   const mandatoryDocsPerEmployee = 3;
   const totalExpectedDocs = (totalActifs ?? 0) * mandatoryDocsPerEmployee;
-  
+
   const docTracking: Record<string, Set<string>> = {};
-  documentCounts?.forEach(doc => {
+  documentCounts?.forEach((doc) => {
     if (!docTracking[doc.employee_id]) docTracking[doc.employee_id] = new Set();
     const type = doc.type?.toUpperCase();
-    if (type?.includes("CNI") || type?.includes("PASSEPORT")) docTracking[doc.employee_id].add("IDENTITY");
+    if (type?.includes("CNI") || type?.includes("PASSEPORT"))
+      docTracking[doc.employee_id].add("IDENTITY");
     if (type?.includes("CONTRAT")) docTracking[doc.employee_id].add("CONTRACT");
     if (type?.includes("CV")) docTracking[doc.employee_id].add("CV");
   });
 
-  const actualDocsCount = Object.values(docTracking).reduce((acc, current) => acc + current.size, 0);
+  const actualDocsCount = Object.values(docTracking).reduce(
+    (acc, current) => acc + current.size,
+    0
+  );
   const missingDocsTotal = Math.max(0, totalExpectedDocs - actualDocsCount);
 
-  const complianceScore = Math.max(0, 100 - (
-    ((cddExpirant ?? 0) * 8) + 
-    ((essaiExpirant ?? 0) * 10) + 
-    ((medicalAlertsCount ?? 0) * 5) + 
-    (Math.min(missingDocsTotal, 50) * 1)
-  ));
+  const complianceScore = Math.max(
+    0,
+    100 -
+      ((cddExpirant ?? 0) * 8 +
+        (essaiExpirant ?? 0) * 10 +
+        (medicalAlertsCount ?? 0) * 5 +
+        Math.min(missingDocsTotal, 50) * 1)
+  );
 
-  const pctFemmes =
-    totalActifs && totalActifs > 0
-      ? Math.round(((totalFemmes ?? 0) / totalActifs) * 100)
-      : 0;
-
-  // Données pour les charts
   const deptMap: Record<string, number> = {};
   parDepartement?.forEach((e) => {
     const dept = e.departement ?? "Non défini";
     deptMap[dept] = (deptMap[dept] ?? 0) + 1;
   });
   const chartDeptData = Object.entries(deptMap).map(([name, value]) => ({ name, value }));
-  
   const chartGenderData = [
     { name: "Hommes", value: (totalActifs ?? 0) - (totalFemmes ?? 0) },
-    { name: "Femmes", value: totalFemmes ?? 0 }
+    { name: "Femmes", value: totalFemmes ?? 0 },
   ];
 
+  const dateLabel = new Date().toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+
   return (
-    <div className="p-6 space-y-10 bg-slate-50/30 min-h-screen">
-      {/* SECTION: HERO & COMPLIANCE */}
-      <section className="space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="relative min-h-screen bg-slate-50/40">
+      {/* Grain overlay */}
+      <div
+        className="pointer-events-none fixed inset-0 z-50 opacity-[0.022]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundSize: "200px 200px",
+        }}
+      />
+
+      <div className="relative px-6 py-7 space-y-8 max-w-[1400px]">
+
+        {/* ── HERO ── */}
+        <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-black tracking-tight text-slate-900">
-              Tableau de Bord <span className="text-primary italic">RH</span>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 mb-2">
+              {dateLabel}
+            </p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 leading-none">
+              Tableau de bord
             </h1>
-            <p className="text-muted-foreground font-medium mt-1">
-              Gestion centralisée de votre capital humain en Côte d'Ivoire.
+            <p className="text-sm text-slate-500 font-medium mt-1.5">
+              Capital humain — Côte d&apos;Ivoire
             </p>
           </div>
-          <div className="bg-white px-4 py-2 rounded-xl border shadow-sm flex items-center gap-3">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Clock className="h-4 w-4 text-primary" />
+
+          <ComplianceAuditHeader
+            score={Math.round(complianceScore)}
+            risks={{
+              contracts: cddExpirant ?? 0,
+              trials: essaiExpirant ?? 0,
+              medical: medicalAlertsCount ?? 0,
+              documents: missingDocsTotal,
+            }}
+          />
+        </section>
+
+        {/* ── ACTIONS RAPIDES ── */}
+        <section>
+          <SectionLabel>Actions rapides</SectionLabel>
+          <QuickActions />
+        </section>
+
+        {/* ── KPIs — Bento asymétrique ── */}
+        <section>
+          <SectionLabel>Indicateurs clés</SectionLabel>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="col-span-2 lg:col-span-2">
+              <KpiCard
+                label="Effectif actif"
+                value={totalActifs || 0}
+                icon={Users}
+                description="Collaborateurs en poste"
+                index={0}
+                featured
+              />
             </div>
-            <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none">Aujourd'hui</p>
-              <p className="text-sm font-bold text-slate-700 mt-1">
-                {new Date().toLocaleDateString('fr-FR', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
-              </p>
-            </div>
+            <KpiCard
+              label="Recrutements"
+              value={postesOuverts || 0}
+              icon={Briefcase}
+              variant="success"
+              description="Postes ouverts"
+              index={1}
+            />
+            <KpiCard
+              label="Contentieux"
+              value={contentieuxOuverts ?? 0}
+              icon={Scale}
+              description="Dossiers actifs"
+              variant={(contentieuxOuverts ?? 0) > 0 ? "warning" : "default"}
+              index={2}
+            />
+            <KpiCard
+              label="Alertes médicales"
+              value={medicalAlertsCount ?? 0}
+              icon={FileWarning}
+              description="Visites sous 30 jours"
+              variant={(medicalAlertsCount ?? 0) > 0 ? "danger" : "default"}
+              index={3}
+            />
+            <KpiCard
+              label="Évaluations"
+              value={evalBrouillon ?? 0}
+              icon={Briefcase}
+              description="En brouillon"
+              variant={(evalBrouillon ?? 0) > 0 ? "warning" : "default"}
+              index={4}
+            />
           </div>
-        </div>
+        </section>
 
-        <ComplianceAuditHeader 
-          score={Math.round(complianceScore)}
-          risks={{
-            contracts: cddExpirant ?? 0,
-            trials: essaiExpirant ?? 0,
-            medical: medicalAlertsCount ?? 0,
-            documents: missingDocsTotal
-          }}
-        />
-      </section>
+        {/* ── CHARTS ── */}
+        <section>
+          <SectionLabel>Analyses</SectionLabel>
+          <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+        </section>
 
-      {/* SECTION: QUICK ACTIONS */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Actions Rapides</h2>
-        </div>
-        <QuickActions />
-      </section>
+        {/* ── ALERTES & CONGÉS ── */}
+        <div className="grid gap-4 lg:grid-cols-2">
+          <ComplianceAlertList alerts={allAlerts} />
 
-      {/* SECTION: KPI CORES */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <KpiCard
-          label="Effectif actif"
-          value={totalActifs ?? 0}
-          icon={Users}
-          description="Total collaborateurs (Statut Actif)"
-        />
-        <KpiCard
-          label="Parité Homme/Femme"
-          value={`${pctFemmes} %`}
-          icon={TrendingUp}
-          description={`${totalFemmes ?? 0} femmes sur ${totalActifs ?? 0}`}
-          variant="success"
-        />
-        <KpiCard
-          label="Alertes Fin de CDD"
-          value={cddExpirant ?? 0}
-          icon={FileWarning}
-          description="Contrats expirant sous 30 jours"
-          variant={(cddExpirant ?? 0) > 0 ? "warning" : "default"}
-        />
-        <KpiCard
-          label="Postes de Recrutement"
-          value={postesOuverts ?? 0}
-          icon={Briefcase}
-          description="Offres actuellement au statut 'Ouvert'"
-        />
-        <KpiCard
-          label="Évaluations en cours"
-          value={evalBrouillon ?? 0}
-          icon={BarChart2}
-          description="Performance à finaliser"
-          variant={(evalBrouillon ?? 0) > 0 ? "warning" : "default"}
-        />
-        <KpiCard
-          label="Cas de Contentieux"
-          value={contentieuxOuverts ?? 0}
-          icon={Scale}
-          description="Dossiers juridiques actifs"
-          variant={(contentieuxOuverts ?? 0) > 0 ? "danger" : "default"}
-        />
-      </section>
-
-      {/* SECTION: CHARTS */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-slate-400">Analyses Visuelles</h2>
-        </div>
-        <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
-      </section>
-
-      {/* SECTION: ALERTS & DEMANDES */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ComplianceAlertList alerts={allAlerts} />
-        
-        <div className="rounded-2xl border bg-white p-6 shadow-sm flex flex-col h-full">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 leading-none">Congés en attente</h2>
-              <p className="text-xs text-muted-foreground mt-2">Demandes nécessitant une approbation</p>
-            </div>
-            <Link href="/conges">
-              <Button variant="ghost" size="sm" className="text-primary font-bold hover:bg-primary/5">
-                Tout voir <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          
-          {!congesEnAttente || congesEnAttente.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-8 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-              <p className="text-sm text-slate-400 font-medium italic">Aucune demande en attente.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {congesEnAttente.map((c) => {
-                const empRaw = c.employees;
-                const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
-                return (
-                  <div key={c.id} className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/30 px-4 py-3 hover:border-primary/20 hover:bg-white transition-all group">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center font-bold text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                        {emp?.full_name?.charAt(0) || "?"}
-                      </div>
-                      <div>
-                        <p className="font-bold text-slate-900 group-hover:text-primary transition-colors">{emp?.full_name ?? "—"}</p>
-                        <p className="text-xs text-slate-500 font-medium">
-                          {new Date(c.date_debut as string).toLocaleDateString("fr-CI")} ({c.nb_jours} jours)
-                        </p>
-                      </div>
-                    </div>
-                    <Badge variant="outline" className="bg-white border-slate-200 font-bold uppercase text-[10px] tracking-widest">{c.type}</Badge>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* SECTION: ACTIVITY & LAST ADDED */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Activités Récentes (Documents) */}
-        <div className="lg:col-span-1 rounded-2xl border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900 mb-6">GED Récents</h2>
-          <div className="space-y-6">
-            {recentActivities?.map((act) => (
-              <div key={act.id} className="flex gap-4 relative pb-6 last:pb-0">
-                {/* Timeline Line */}
-                <div className="absolute left-[15px] top-8 bottom-0 w-px bg-slate-100 last:hidden" />
-                
-                <div className="h-8 w-8 rounded-full border bg-white flex items-center justify-center shrink-0 z-10">
-                  <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 truncate max-w-[200px]">{act.name}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    Généré pour <span className="text-slate-600 font-bold">{(act.employees as any)?.full_name}</span>
-                  </p>
-                  <p className="text-[9px] text-slate-400 mt-1 uppercase font-black">
-                    {new Date(act.created_at).toLocaleDateString('fr-CI', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-sm font-bold text-slate-900 leading-none">Congés en attente</h2>
+                <p className="text-[11px] text-slate-400 font-medium mt-1">
+                  Demandes nécessitant une approbation
+                </p>
               </div>
-            ))}
+              <Link href="/conges">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-[11px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 gap-1"
+                >
+                  Tout voir
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+
+            {!congesEnAttente || congesEnAttente.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-xl border border-dashed border-slate-200 bg-slate-50/40">
+                <p className="text-xs text-slate-400 font-medium">Aucune demande en attente.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-50">
+                {congesEnAttente.map((c) => {
+                  const empRaw = c.employees;
+                  const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
+                  return (
+                    <div
+                      key={c.id}
+                      className="flex items-center justify-between py-3 first:pt-0 last:pb-0 group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-[oklch(0.175_0.04_248)] flex items-center justify-center font-bold text-[oklch(0.78_0.13_73)] text-xs shrink-0">
+                          {emp?.full_name?.charAt(0) ?? "?"}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-slate-800 leading-none">
+                            {emp?.full_name ?? "—"}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-medium mt-1">
+                            {new Date(c.date_debut as string).toLocaleDateString("fr-CI")} ·{" "}
+                            {c.nb_jours} jour{(c.nb_jours ?? 1) > 1 ? "s" : ""}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="bg-slate-50 border-slate-200 text-slate-500 font-semibold text-[9px] uppercase tracking-widest"
+                      >
+                        {c.type}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Derniers collaborateurs */}
-        <div className="lg:col-span-2 rounded-2xl border bg-white p-6 shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-slate-900">Derniers Collaborateurs</h2>
-            <Link href="/employes">
-              <Button variant="outline" size="sm" className="font-bold border-slate-200">Voir tout</Button>
-            </Link>
+        {/* ── ACTIVITÉ & COLLABORATEURS ── */}
+        <div className="grid gap-4 lg:grid-cols-3">
+          {/* Timeline GED */}
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6">
+            <h2 className="text-sm font-bold text-slate-900 mb-5">Documents récents</h2>
+            <div className="space-y-5">
+              {recentActivities?.map((act, i) => (
+                <div key={act.id} className="flex gap-3 relative">
+                  {i < (recentActivities.length - 1) && (
+                    <div className="absolute left-[13px] top-7 bottom-0 w-px bg-slate-100" />
+                  )}
+                  <div className="h-7 w-7 rounded-full border border-slate-100 bg-white flex items-center justify-center shrink-0 z-10">
+                    <div className="h-2 w-2 rounded-full bg-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-800 truncate">{act.name}</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      {(act.employees as { full_name?: string })?.full_name}
+                    </p>
+                    <p className="text-[9px] text-slate-300 mt-1 font-mono">
+                      {new Date(act.created_at).toLocaleDateString("fr-CI", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 border-y border-slate-100">
-                <tr>
-                  <th className="px-4 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-widest">Collaborateur</th>
-                  <th className="px-4 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-widest">Poste / Dépt</th>
-                  <th className="px-4 py-3 text-left font-bold text-slate-500 uppercase text-[10px] tracking-widest">Contrat</th>
-                  <th className="px-4 py-3 text-right font-bold text-slate-500 uppercase text-[10px] tracking-widest">Statut</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {derniersEmployes?.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-xs">
-                          {emp.full_name?.charAt(0)}
-                        </div>
-                        <span className="font-bold text-slate-800 group-hover:text-primary transition-colors">{emp.full_name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4">
-                      <p className="font-medium text-slate-700">{emp.poste}</p>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase">{emp.departement ?? "—"}</p>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Badge variant="outline" className="bg-slate-50 border-slate-200 text-slate-600 font-bold uppercase text-[9px] tracking-tighter">
-                        {emp.type_contrat || "—"}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
-                        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        <span className="text-[10px] font-bold uppercase">{emp.statut}</span>
-                      </div>
-                    </td>
+
+          {/* Table collaborateurs */}
+          <div className="lg:col-span-2 rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6 overflow-hidden">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-sm font-bold text-slate-900">Derniers collaborateurs</h2>
+              <Link href="/employes">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-[11px] font-semibold border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300"
+                >
+                  Voir tout
+                </Button>
+              </Link>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-100">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                      Collaborateur
+                    </th>
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                      Poste
+                    </th>
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                      Contrat
+                    </th>
+                    <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                      Statut
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {derniersEmployes?.map((emp) => (
+                    <tr
+                      key={emp.id}
+                      className="group hover:bg-slate-50/60 transition-colors"
+                    >
+                      <td className="py-3.5">
+                        <div className="flex items-center gap-2.5">
+                          <div className="h-7 w-7 rounded-lg bg-[oklch(0.175_0.04_248)] flex items-center justify-center font-bold text-[oklch(0.78_0.13_73)] text-xs shrink-0">
+                            {emp.full_name?.charAt(0)}
+                          </div>
+                          <span className="font-semibold text-slate-800 text-xs">
+                            {emp.full_name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5">
+                        <p className="text-xs font-medium text-slate-700">{emp.poste}</p>
+                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mt-0.5">
+                          {emp.departement ?? "—"}
+                        </p>
+                      </td>
+                      <td className="py-3.5">
+                        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                          {emp.type_contrat ?? "—"}
+                        </span>
+                      </td>
+                      <td className="py-3.5 text-right">
+                        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+                          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          <span className="text-[9px] font-bold uppercase text-emerald-700 tracking-wide">
+                            {emp.statut}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 mb-3">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 whitespace-nowrap">
+        {children}
+      </p>
+      <div className="flex-1 h-px bg-slate-200/60" />
     </div>
   );
 }
