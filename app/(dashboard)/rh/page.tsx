@@ -10,10 +10,10 @@ import {
   WarningIcon as FileWarning,
   BriefcaseIcon as Briefcase,
   ScalesIcon as Scale,
+  ArrowRightIcon as ArrowRight,
 } from "@/components/rh/ClientIcons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata = { title: "Tableau de bord — RH Manager CI" };
 
