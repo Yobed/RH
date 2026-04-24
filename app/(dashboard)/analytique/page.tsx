@@ -10,8 +10,6 @@ export const metadata = {
 export default async function AnalytiquePage() {
   const supabase = createServerClient();
 
-  // On récupère toutes les données nécessaires (sans restriction si RLS activé, ou filtré par company_id s'il le faut manuellement)
-  // Comme RLS est activé et géré, on peut directement requêter
   const { data: employees, error: errEmployees } = await supabase
     .from("employees")
     .select("id, full_name, date_embauche, date_naissance, genre, statut");
@@ -33,28 +31,50 @@ export default async function AnalytiquePage() {
     .select("id, employee_id, resultat, prochaine_visite");
 
   if (errEmployees || errBulletins || errContracts || errConges || errMedical) {
-    console.error("Erreur de récupération des données analytiques", { errEmployees, errBulletins, errContracts, errConges, errMedical });
+    console.error("Erreur de récupération des données analytiques", {
+      errEmployees,
+      errBulletins,
+      errContracts,
+      errConges,
+      errMedical,
+    });
     return (
-      <div className="p-8 text-center text-red-500">
-        Erreur lors du chargement des données analytiques. Veuillez réessayer ultérieurement.
+      <div className="p-6 md:p-8">
+        <div className="rounded-2xl border border-rose-100 bg-rose-50 p-10 text-center">
+          <p className="text-sm font-semibold text-rose-600">
+            Erreur lors du chargement des données analytiques. Veuillez réessayer ultérieurement.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Analytique RH</h1>
-        <p className="text-slate-500 mt-1">
-          Indicateurs de performance, effectifs et masse salariale
-        </p>
+    <div className="p-6 md:p-8 space-y-6">
+      {/* En-tête */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Analytique RH</h1>
+          <p className="text-sm text-slate-400 mt-0.5">
+            Indicateurs de performance, effectifs et masse salariale
+          </p>
+        </div>
       </div>
 
-      <Suspense fallback={<div className="h-96 flex items-center justify-center">Chargement des graphiques...</div>}>
-        <AnalytiqueDashboard 
-          employees={employees || []} 
-          bulletins={bulletins || []} 
-          contracts={contracts || []} 
+      <Suspense
+        fallback={
+          <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] p-16 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[oklch(0.175_0.04_248)]" />
+              <p className="text-sm text-slate-400 font-medium">Chargement des graphiques…</p>
+            </div>
+          </div>
+        }
+      >
+        <AnalytiqueDashboard
+          employees={employees || []}
+          bulletins={bulletins || []}
+          contracts={contracts || []}
           conges={conges || []}
           medical={medical || []}
         />

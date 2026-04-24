@@ -1,10 +1,66 @@
 import { createServerClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import { ContractDialog, type ExistingContract } from "@/components/rh/ContractDialog";
-import { FileText, AlertTriangle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Contrats — RH Manager CI" };
+
+const fmt = (n: number) =>
+  new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
+
+const TypeBadge = ({ type }: { type: string }) => {
+  const isCdi = type?.toUpperCase() === "CDI";
+  if (isCdi) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+        {type}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+      {type}
+    </span>
+  );
+};
+
+const StatutBadge = ({ statut }: { statut: string }) => {
+  if (statut === "actif") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        {statut}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+      <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+      {statut}
+    </span>
+  );
+};
+
+const JoursBadge = ({ jours }: { jours: number }) => {
+  if (jours <= 7) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600">
+        J-{jours}
+      </span>
+    );
+  }
+  if (jours <= 15) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+        J-{jours}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+      J-{jours}
+    </span>
+  );
+};
 
 export default async function ContratsPage() {
   const supabase = createServerClient();
@@ -20,7 +76,6 @@ export default async function ContratsPage() {
     .toISOString()
     .split("T")[0];
 
-  // Contrats expirant sous 30j avec N+1
   const { data: contratsExpirants } = await supabase
     .from("contracts")
     .select(
@@ -32,7 +87,6 @@ export default async function ContratsPage() {
     .lte("date_fin", in30Days)
     .order("date_fin", { ascending: true });
 
-  // Récupérer les noms des N+1
   const allManagerIds = contratsExpirants
     ?.flatMap((c) => Array.isArray(c.employees) ? c.employees : [c.employees])
     .map((emp) => emp?.manager_id)
@@ -47,7 +101,6 @@ export default async function ContratsPage() {
     managers?.forEach((m) => { managerNames[m.id] = m.full_name; });
   }
 
-  // Tous les contrats récents avec employee_id pour le mode édition
   const { data: tousContrats } = await supabase
     .from("contracts")
     .select(
@@ -63,29 +116,49 @@ export default async function ContratsPage() {
     );
   }
 
-  function alertVariant(jours: number) {
-    if (jours <= 7) return "destructive";
-    if (jours <= 15) return "secondary";
-    return "outline";
-  }
-
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 md:p-8 space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Contrats</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contrats</h1>
+          <p className="text-sm text-slate-400 mt-0.5">
             Gestion des contrats de travail — CDD, CDI, Stage, Apprentissage
           </p>
         </div>
         <ContractDialog employees={employees ?? []} />
       </div>
 
-      {/* Alertes expirations avec N+1 */}
+      {/* KPI row */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Contrats actifs</p>
+          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
+            {tousContrats?.filter((c) => c.statut === "actif").length ?? 0}
+          </p>
+          <p className="mt-1 text-xs text-slate-400">en cours</p>
+        </div>
+        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Expirant sous 30j</p>
+          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
+            {contratsExpirants?.length ?? 0}
+          </p>
+          <p className="mt-1 text-xs text-slate-400">à renouveler ou clôturer</p>
+        </div>
+        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">CDI</p>
+          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
+            {tousContrats?.filter((c) => c.type_contrat?.toUpperCase() === "CDI" && c.statut === "actif").length ?? 0}
+          </p>
+          <p className="mt-1 text-xs text-slate-400">contrats permanents</p>
+        </div>
+      </div>
+
+      {/* Alertes expirations */}
       {contratsExpirants && contratsExpirants.length > 0 && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <div className="flex items-center gap-2 mb-3 text-amber-700 font-medium">
-            <AlertTriangle className="h-4 w-4" />
+        <div className="rounded-2xl border border-amber-100 bg-amber-50/60 p-4">
+          <div className="flex items-center gap-2 mb-3 text-amber-700 font-semibold text-sm">
+            <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
             {contratsExpirants.length} contrat(s) expirant dans les 30 jours
           </div>
           <div className="space-y-2">
@@ -97,19 +170,21 @@ export default async function ContratsPage() {
               return (
                 <div
                   key={c.id}
-                  className="rounded bg-white px-3 py-2.5 text-sm border border-amber-100 space-y-1"
+                  className="rounded-xl bg-white px-3 py-2.5 text-sm border border-amber-100/80 space-y-1 shadow-sm"
                 >
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
-                      <span className="font-medium">{emp.full_name}</span>
-                      <span className="text-muted-foreground ml-2">— {emp.poste}</span>
+                      <span className="font-semibold text-slate-800">{emp.full_name}</span>
+                      <span className="text-slate-400 ml-2 text-xs">— {emp.poste}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">{c.type_contrat}</Badge>
+                      <TypeBadge type={c.type_contrat} />
                       {(c.renouvellement_count ?? 0) >= 2 && (
-                        <Badge variant="destructive">Conversion CDI requise</Badge>
+                        <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-600">
+                          Conversion CDI requise
+                        </span>
                       )}
-                      <Badge variant={alertVariant(jours)}>J-{jours}</Badge>
+                      <JoursBadge jours={jours} />
                     </div>
                   </div>
                   {managerNom && (
@@ -126,34 +201,35 @@ export default async function ContratsPage() {
 
       {/* Liste des contrats */}
       <div>
-        <h2 className="mb-3 text-lg font-semibold">Contrats récents</h2>
+        <h2 className="text-base font-semibold text-slate-700 mb-3">Contrats récents</h2>
         {!tousContrats || tousContrats.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-12 text-center">
-            <FileText className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
-            <p className="font-medium text-muted-foreground">Aucun contrat enregistré</p>
-            <p className="mt-1 text-sm text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-slate-200 p-12 text-center">
+            <p className="font-medium text-slate-400">Aucun contrat enregistré</p>
+            <p className="mt-1 text-sm text-slate-400">
               Les contrats sont créés automatiquement lors de l&apos;ajout d&apos;un employé.
             </p>
           </div>
         ) : (
-          <div className="rounded-lg border bg-white overflow-hidden">
+          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
             <table className="w-full text-sm">
-              <thead className="border-b bg-muted/50">
+              <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Employé</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Début</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">Fin</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden lg:table-cell">Fin essai</th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground hidden lg:table-cell">Salaire brut</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Statut</th>
-                  <th className="px-4 py-3 text-center font-medium text-muted-foreground">Actions</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Début</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Fin</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Fin essai</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Salaire brut</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
+                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-slate-50">
                 {tousContrats.map((c) => {
                   const employee = Array.isArray(c.employees) ? c.employees[0] : c.employees;
                   if (!employee) return null;
+                  const jours = c.date_fin ? joursRestants(c.date_fin) : null;
+                  const isExpiringSoon = jours !== null && jours <= 30 && c.statut === "actif";
                   const editContract: ExistingContract = {
                     id: c.id,
                     employee_id: c.employee_id,
@@ -165,37 +241,41 @@ export default async function ContratsPage() {
                     renouvellement_count: c.renouvellement_count,
                   };
                   return (
-                    <tr key={c.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 font-medium">{employee.full_name}</td>
-                      <td className="px-4 py-3">
-                        <Badge variant="outline">{c.type_contrat}</Badge>
+                    <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
+                      <td className="px-4 py-3 text-sm">
+                        <p className="font-semibold text-slate-800">{employee.full_name}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{employee.poste}</p>
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
+                      <td className="px-4 py-3 text-sm">
+                        <TypeBadge type={c.type_contrat} />
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">
                         {new Date(c.date_debut).toLocaleDateString("fr-CI")}
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                        {c.date_fin
-                          ? new Date(c.date_fin).toLocaleDateString("fr-CI")
-                          : "Indéterminé"}
+                      <td className="px-4 py-3 text-sm hidden md:table-cell">
+                        {c.date_fin ? (
+                          <div className="flex items-center gap-2">
+                            <span className={isExpiringSoon ? "text-red-600 font-medium" : "text-slate-500"}>
+                              {new Date(c.date_fin).toLocaleDateString("fr-CI")}
+                            </span>
+                            {isExpiringSoon && jours !== null && <JoursBadge jours={jours} />}
+                          </div>
+                        ) : (
+                          <span className="text-slate-400">Indéterminé</span>
+                        )}
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
+                      <td className="px-4 py-3 text-sm text-slate-500 hidden lg:table-cell">
                         {c.date_fin_essai
                           ? new Date(c.date_fin_essai).toLocaleDateString("fr-CI")
                           : "—"}
                       </td>
-                      <td className="px-4 py-3 text-right hidden lg:table-cell">
-                        {new Intl.NumberFormat("fr-CI", {
-                          style: "currency",
-                          currency: "XOF",
-                          minimumFractionDigits: 0,
-                        }).format(c.salaire_brut)}
+                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">
+                        {fmt(c.salaire_brut)}
                       </td>
-                      <td className="px-4 py-3">
-                        <Badge variant={c.statut === "actif" ? "default" : "secondary"}>
-                          {c.statut}
-                        </Badge>
+                      <td className="px-4 py-3 text-sm">
+                        <StatutBadge statut={c.statut} />
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-3 text-sm text-center">
                         <ContractDialog employees={[]} contract={editContract} />
                       </td>
                     </tr>

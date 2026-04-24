@@ -5,39 +5,56 @@ import { EmployeeTable } from "@/components/rh/EmployeeTable";
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Employés — RH Manager CI" };
 
-const statutVariant: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
-  actif: "default",
-  inactif: "secondary",
-  suspendu: "destructive",
-};
-
 export default async function EmployesPage() {
   const supabase = createServerClient();
 
   const { data: employees } = await supabase
     .from("employees")
-      .select("*")
+    .select("*")
     .order("full_name", { ascending: true });
 
   const total = employees?.length ?? 0;
   const actifs = employees?.filter((e) => e.statut === "actif").length ?? 0;
   const femmes = employees?.filter((e) => e.genre === "F" && e.statut === "actif").length ?? 0;
+  const pctFemmes = actifs > 0 && femmes > 0 ? Math.round((femmes / actifs) * 100) : null;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* En-tête */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="p-6 md:p-8 space-y-6 bg-transparent">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Employés</h1>
-          <p className="text-sm text-muted-foreground">
-            {actifs} actif{actifs > 1 ? "s" : ""}
-            {total !== actifs ? ` · ${total} au total` : ""}
-            {actifs > 0 && femmes > 0
-              ? ` · ${Math.round((femmes / actifs) * 100)} % femmes`
-              : ""}
-          </p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Employés</h1>
+          <p className="text-sm text-slate-400 mt-0.5">Gestion du personnel</p>
+          {/* Mini KPIs inline */}
+          <div className="flex flex-wrap items-center gap-4 mt-3">
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-slate-400 shrink-0" />
+              <span className="text-sm text-slate-600">
+                <span className="font-semibold font-mono tabular-nums text-slate-900">{total}</span>
+                {" "}au total
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+              <span className="text-sm text-slate-600">
+                <span className="font-semibold font-mono tabular-nums text-slate-900">{actifs}</span>
+                {" "}actif{actifs > 1 ? "s" : ""}
+              </span>
+            </div>
+            {pctFemmes !== null && (
+              <div className="flex items-center gap-1.5">
+                <span className="h-2 w-2 rounded-full bg-violet-400 shrink-0" />
+                <span className="text-sm text-slate-600">
+                  <span className="font-semibold font-mono tabular-nums text-slate-900">{pctFemmes} %</span>
+                  {" "}femmes
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-        <EmployeeDialog />
+        <div className="shrink-0">
+          <EmployeeDialog />
+        </div>
       </div>
 
       <EmployeeTable employees={employees ?? []} />

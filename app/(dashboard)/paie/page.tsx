@@ -1,9 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
-import { Banknote, Printer } from "lucide-react";
 import Link from "next/link";
 import { PaieExportButton } from "@/components/rh/PaieExportButton";
 import { LivrePaieButton } from "@/components/rh/LivrePaieButton";
@@ -13,23 +11,23 @@ export const metadata = { title: "Paie — RH Manager CI" };
 const StatutBadge = ({ statut }: { statut: string }) => {
   if (statut === "payé") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200 shadow-sm">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
         {statut}
       </span>
     );
   }
   if (statut === "validé") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 border border-amber-200 shadow-sm">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
         {statut}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-800 border border-slate-200 shadow-sm">
-      <span className="h-1.5 w-1.5 rounded-full bg-slate-500"></span>
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+      <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
       {statut}
     </span>
   );
@@ -66,18 +64,19 @@ export default async function PaiePage() {
     supabase.from("companies").select("*").single(),
   ]);
 
-  // KPI masse salariale du mois courant
   const currentPeriode = new Date().toISOString().slice(0, 7);
   const bulletinsMois = bulletins?.filter((b) => b.periode === currentPeriode) ?? [];
   const masseSalariale = bulletinsMois.reduce((s, b) => s + Number(b.salaire_net), 0);
   const masseCharges = bulletinsMois.reduce((s, b) => s + Number(b.cnps_salarie) + Number(b.its), 0);
+  const nbPayes = bulletinsMois.filter((b) => b.statut === "payé").length;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 md:p-8 space-y-6">
+      {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Bulletins de Paie</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
+          <p className="text-sm text-slate-400 mt-0.5">
             CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Droit ivoirien 2026
           </p>
         </div>
@@ -91,44 +90,27 @@ export default async function PaiePage() {
       {/* KPI mois courant */}
       {bulletinsMois.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border-l-4 border-emerald-500 bg-gradient-to-br from-emerald-50 to-white p-5 shadow-sm">
-            <div className="flex items-start justify-between">
-              <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Masse salariale nette</p>
-              <div className="rounded-full bg-emerald-100 p-2 shadow-sm">
-                <Banknote className="h-4 w-4 text-emerald-600" />
-              </div>
-            </div>
-            <p className="mt-3 text-3xl font-bold text-slate-800 tracking-tight">{fmt(masseSalariale)}</p>
-            <p className="mt-1.5 text-xs font-medium text-emerald-600 flex items-center gap-1">
-              <span className="text-lg leading-none">↑</span> {bulletinsMois.length} bulletin(s) · {currentPeriode}
-            </p>
+          <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Masse salariale nette</p>
+            <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseSalariale)}</p>
+            <p className="mt-1 text-xs text-slate-400">{bulletinsMois.length} bulletin(s) · {currentPeriode}</p>
           </div>
-          <div className="rounded-xl border-l-4 border-rose-500 bg-gradient-to-br from-rose-50 to-white p-5 shadow-sm">
-            <div className="flex items-start justify-between">
-              <p className="text-xs font-bold text-rose-800 uppercase tracking-wider">Total charges (CNPS+ITS)</p>
-              <div className="rounded-full bg-rose-100 p-2 shadow-sm">
-                <Banknote className="h-4 w-4 text-rose-600" />
-              </div>
-            </div>
-            <p className="mt-3 text-3xl font-bold text-slate-800 tracking-tight">{fmt(masseCharges)}</p>
-            <p className="mt-1.5 text-xs font-medium text-rose-600">Total retenues salariales</p>
+          <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Total charges (CNPS + ITS)</p>
+            <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseCharges)}</p>
+            <p className="mt-1 text-xs text-slate-400">Retenues salariales du mois</p>
           </div>
-          <div className="rounded-xl border-l-4 border-sky-500 bg-gradient-to-br from-sky-50 to-white p-5 shadow-sm">
-            <div className="flex items-start justify-between">
-              <p className="text-xs font-bold text-sky-800 uppercase tracking-wider">Bulletins Payés</p>
-              <div className="rounded-full bg-sky-100 p-2 shadow-sm">
-                <Banknote className="h-4 w-4 text-sky-600" />
-              </div>
-            </div>
-            <p className="mt-3 text-3xl font-bold text-slate-800 tracking-tight">{bulletinsMois.filter((b) => b.statut === "payé").length}</p>
-            <p className="mt-1.5 text-xs font-medium text-sky-600">sur {bulletinsMois.length} ce mois</p>
+          <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Bulletins payés</p>
+            <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{nbPayes}</p>
+            <p className="mt-1 text-xs text-slate-400">sur {bulletinsMois.length} ce mois</p>
           </div>
         </div>
       )}
 
       {/* Rappel légal */}
-      <div className="rounded-lg border bg-blue-50 border-blue-200 p-4 text-sm text-blue-800">
-        <p className="font-medium mb-2">Calcul automatique — Références légales 2026</p>
+      <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-800">
+        <p className="font-semibold mb-2">Calcul automatique — Références légales 2026</p>
         <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-3">
           <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 1 647 315 FCFA/mois)</span>
           <span>CMU (CNAM) salariale : <strong>1 600 FCFA</strong> forfait/mois</span>
@@ -141,54 +123,50 @@ export default async function PaiePage() {
 
       {/* Liste bulletins */}
       <div>
-        <div className="flex items-center gap-2 mb-3">
-          <Banknote className="h-5 w-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Tous les bulletins</h2>
-        </div>
+        <h2 className="text-base font-semibold text-slate-700 mb-3">Tous les bulletins</h2>
 
         {!bulletins || bulletins.length === 0 ? (
-          <div className="rounded-lg border border-dashed p-12 text-center">
-            <Banknote className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
-            <p className="font-medium text-muted-foreground">Aucun bulletin de paie</p>
-            <p className="mt-1 text-sm text-muted-foreground">Créez le premier bulletin du mois.</p>
+          <div className="rounded-2xl border border-dashed border-slate-200 p-12 text-center">
+            <p className="font-medium text-slate-400">Aucun bulletin de paie</p>
+            <p className="mt-1 text-sm text-slate-400">Créez le premier bulletin du mois.</p>
           </div>
         ) : (
-          <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
             <table className="w-full text-sm">
-              <thead className="border-b bg-muted/40 sticky top-0 z-10 backdrop-blur-sm">
+              <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
-                  <th className="px-5 py-3.5 text-left font-semibold text-slate-600">Employé</th>
-                  <th className="px-5 py-3.5 text-left font-semibold text-slate-600">Période</th>
-                  <th className="px-5 py-3.5 text-right font-semibold text-slate-600 hidden lg:table-cell">Brut</th>
-                  <th className="px-5 py-3.5 text-right font-semibold text-slate-600 hidden lg:table-cell">CNPS</th>
-                  <th className="px-5 py-3.5 text-right font-semibold text-slate-600 hidden lg:table-cell">ITS</th>
-                  <th className="px-5 py-3.5 text-right font-semibold text-slate-600">Net</th>
-                  <th className="px-5 py-3.5 text-left font-semibold text-slate-600">Statut</th>
-                  <th className="px-5 py-3.5 text-right font-semibold text-slate-600 min-w-[130px]"></th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Période</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Brut</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">CNPS</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">ITS</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Net</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 min-w-[130px]"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-50">
                 {bulletins.map((b) => {
                   const empRaw = b.employees;
                   const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
                   const detailsObj = b.details as { heures_sup?: { h15: number, h50: number, h75: number }; nb_jours_absence?: number } | null;
                   return (
-                    <tr key={b.id} className="group odd:bg-slate-50/50 hover:bg-muted/40 transition-colors">
-                      <td className="px-5 py-4">
+                    <tr key={b.id} className="group hover:bg-slate-50/60 transition-colors">
+                      <td className="px-4 py-3 text-sm">
                         <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
-                        <p className="text-xs font-medium text-slate-500 mt-0.5">{emp?.matricule}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{emp?.matricule}</p>
                       </td>
-                      <td className="px-5 py-4 font-mono text-xs font-medium uppercase text-slate-600 tracking-wider">
+                      <td className="px-4 py-3 text-sm font-mono tabular-nums text-xs uppercase tracking-wider text-slate-500">
                         {formatPeriode(b.periode)}
                       </td>
-                      <td className="px-5 py-4 text-right hidden lg:table-cell font-medium text-slate-500">{fmt(b.salaire_brut)}</td>
-                      <td className="px-5 py-4 text-right font-medium text-rose-600 hidden lg:table-cell">− {fmt(b.cnps_salarie)}</td>
-                      <td className="px-5 py-4 text-right font-medium text-rose-600 hidden lg:table-cell">− {fmt(b.its)}</td>
-                      <td className="px-5 py-4 text-right font-bold text-emerald-700 text-base">{fmt(b.salaire_net)}</td>
-                      <td className="px-5 py-4">
+                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-500">{fmt(b.salaire_brut)}</td>
+                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(b.cnps_salarie)}</td>
+                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(b.its)}</td>
+                      <td className="px-4 py-3 text-sm text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(b.salaire_net)}</td>
+                      <td className="px-4 py-3 text-sm">
                         <StatutBadge statut={b.statut ?? "brouillon"} />
                       </td>
-                      <td className="px-5 py-4 text-right">
+                      <td className="px-4 py-3 text-sm text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {b.statut === "brouillon" && (
                             <PaieDialog
@@ -220,9 +198,9 @@ export default async function PaiePage() {
                           <Link
                             href={`/paie/${b.id}/print`}
                             target="_blank"
-                            className="inline-flex items-center gap-1.5 rounded-md border bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors shadow-sm"
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
                           >
-                            <Printer className="h-3.5 w-3.5" />
+                            Imprimer
                           </Link>
                         </div>
                       </td>
