@@ -11,8 +11,8 @@ export default async function CalculateurPage() {
   const supabase = createServerClient();
   const { data: employees } = await supabase
     .from("employees")
-    .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche")
-    .eq("actif", true)
+    .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche, sursalaire, prime_transport, prime_anciennete, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, departement")
+    .eq("statut", "actif")
     .order("full_name");
 
   return (
@@ -50,7 +50,7 @@ export default async function CalculateurPage() {
         </TabsList>
 
         <TabsContent value="cockpit" className="mt-0 outline-none">
-          <SimulatorCockpit />
+          <SimulatorCockpit employees={employees ?? []} />
         </TabsContent>
 
         <TabsContent value="stc" className="mt-0 outline-none max-w-4xl">
