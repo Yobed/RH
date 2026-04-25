@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       contents: `Reformule cette question RH en termes juridiques précis pour une recherche documentaire sur le droit du travail ivoirien. Réponds UNIQUEMENT par la question reformulée, sans explication.
 
 Question originale : "${question}"`,
-    }),
+    }).catch(() => null),
   ]);
 
   if (ragResult && Array.isArray(ragResult.chunks) && ragResult.chunks.length > 0) {
@@ -100,7 +100,7 @@ Question originale : "${question}"`,
   }
 
   if (!usedRag) {
-    const questionRecherche = geminiReformulation.text?.trim() ?? question;
+    const questionRecherche = geminiReformulation?.text?.trim() ?? question;
     const keywords = questionRecherche
       .split(/\s+/)
       .filter((w) => w.length > 4)

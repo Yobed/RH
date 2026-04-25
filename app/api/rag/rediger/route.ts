@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   const [employeeRes, companyRes] = await Promise.all([
     supabase
       .from("employees")
-      .select("full_name, poste, date_embauche, type_contrat, salaire_base, matricule, categorie_emploi")
+      .select("full_name, poste, date_embauche, type_contrat, salaire_brut, matricule, categorie")
       .eq("id", employee_id)
       .single(),
     supabase
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 
   if (!employeeRes.data) return NextResponse.json({ error: "Employé introuvable" }, { status: 404 });
 
-  const emp = employeeRes.data;
+  const emp = employeeRes.data as typeof employeeRes.data & { salaire_brut?: number | null; categorie?: string | null };
   type CompanyInfo = { name: string; raison_sociale: string | null; adresse: string | null; cnps_matricule: string | null; ncc: string | null };
   const companiesRaw = companyRes.data?.companies;
   const company = (Array.isArray(companiesRaw) ? companiesRaw[0] : companiesRaw) as CompanyInfo | null;
@@ -97,8 +97,8 @@ Règles absolues :
 - Poste : ${emp.poste}
 - Type de contrat : ${emp.type_contrat ?? "CDI"}
 - Date d'embauche : ${emp.date_embauche ? new Date(emp.date_embauche).toLocaleDateString("fr-CI") : "—"}
-- Salaire de base : ${emp.salaire_base ? emp.salaire_base.toLocaleString("fr-CI") + " FCFA" : "—"}
-- Catégorie : ${emp.categorie_emploi ?? "—"}
+- Salaire de base : ${emp.salaire_brut ? emp.salaire_brut.toLocaleString("fr-CI") + " FCFA" : "—"}
+- Catégorie : ${emp.categorie ?? "—"}
 
 **Date du document :** ${today}
 ${contexte ? `\n**Contexte/motifs supplémentaires :** ${contexte}` : ""}
