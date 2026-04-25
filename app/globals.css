@@ -150,3 +150,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ── Responsive helpers ── */
+@layer utilities {
+  /* Tables horizontalement scrollables sur mobile */
+  .table-responsive {
+    @apply overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0;
+  }
+
+  /* Grille KPI : 2 colonnes mobile, 3+ desktop */
+  .kpi-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3;
+  }
+
+  /* Padding de page adaptatif */
+  .page-padding {
+    @apply p-4 sm:p-6;
+  }
+}

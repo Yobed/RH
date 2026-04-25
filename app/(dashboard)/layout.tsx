@@ -4,6 +4,7 @@ import { SidebarNav } from "@/components/rh/SidebarNav";
 import { UserMenu } from "@/components/rh/UserMenu";
 import { NotificationBell } from "@/components/rh/NotificationBell";
 import { ThemeToggle } from "@/components/rh/ThemeToggle";
+import { MobileSidebar } from "@/components/rh/MobileSidebar";
 import { BuildingsIcon as Building2 } from "@/components/rh/ClientIcons";
 
 export default async function DashboardLayout({
@@ -12,9 +13,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const supabase = createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
 
@@ -26,9 +25,9 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--background)" }}>
-      {/* Sidebar navy premium */}
+      {/* Sidebar desktop — masquée sur mobile */}
       <aside
-        className="flex w-64 shrink-0 flex-col print:hidden"
+        className="hidden lg:flex w-64 shrink-0 flex-col print:hidden"
         style={{ background: "var(--sidebar)", borderRight: "1px solid var(--sidebar-border)" }}
       >
         {/* Logo */}
@@ -75,17 +74,24 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Contenu principal */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Topbar épurée */}
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        {/* Topbar */}
         <header
-          className="flex items-center justify-end px-6 py-3 print:hidden"
+          className="flex items-center justify-between px-4 py-3 print:hidden lg:justify-end"
           style={{ background: "var(--card)", borderBottom: "1px solid var(--border)" }}
         >
+          {/* Hamburger visible uniquement sur mobile */}
+          <MobileSidebar companyName="RH Manager CI" />
+
+          {/* Logo mobile */}
+          <p className="text-sm font-bold text-slate-800 dark:text-slate-200 lg:hidden">RH Manager CI</p>
+
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <NotificationBell />
           </div>
         </header>
+
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>

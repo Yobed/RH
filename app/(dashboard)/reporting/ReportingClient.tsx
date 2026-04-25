@@ -112,7 +112,7 @@ export function ReportingClient({
       </div>
 
       {/* Header + export */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-slate-800">Masse salariale — 12 derniers mois</h2>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -140,7 +140,7 @@ export function ReportingClient({
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.35, delay: i * 0.04, ease: [0.23, 1, 0.32, 1] }}
-                className="grid grid-cols-[80px_1fr_140px] items-center gap-4"
+                className="grid grid-cols-[60px_1fr_100px] sm:grid-cols-[80px_1fr_140px] items-center gap-2 sm:gap-4"
               >
                 <span className="font-mono text-[11px] text-slate-500 tabular-nums">{m.periode}</span>
                 <MiniBar value={m.masse_brute} max={maxBrute} color="bg-[oklch(0.38_0.10_252)]" />
@@ -155,6 +155,7 @@ export function ReportingClient({
 
       {/* Detail table */}
       <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/60">
@@ -194,6 +195,7 @@ export function ReportingClient({
             </tfoot>
           )}
         </table>
+        </div>
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ export default async function DisciplinairePage() {
   const clotures = total - ouverts;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -90,6 +90,7 @@ export default async function DisciplinairePage() {
             <p className="font-medium text-slate-400 text-sm">Aucune procédure enregistrée</p>
           </div>
         ) : (
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead className="bg-slate-50/60 border-b border-slate-100">
               <tr>
@@ -141,6 +142,7 @@ export default async function DisciplinairePage() {
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

@@ -71,7 +71,7 @@ export default async function PaiePage() {
   const nbPayes = bulletinsMois.filter((b) => b.statut === "payé").length;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -111,7 +111,7 @@ export default async function PaiePage() {
       {/* Rappel légal */}
       <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-800">
         <p className="font-semibold mb-2">Calcul automatique — Références légales 2026</p>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2 md:grid-cols-3">
           <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 1 647 315 FCFA/mois)</span>
           <span>CMU (CNAM) salariale : <strong>1 600 FCFA</strong> forfait/mois</span>
           <span>ITS : barème progressif (0% → 12% → 18% → 25% → 32%)</span>
@@ -132,6 +132,7 @@ export default async function PaiePage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full text-sm">
               <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
@@ -209,6 +210,7 @@ export default async function PaiePage() {
                 })}
               </tbody>
             </table>
+          </div>
           </div>
         )}
       </div>

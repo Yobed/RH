@@ -117,9 +117,9 @@ export default async function ContratsPage() {
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contrats</h1>
           <p className="text-sm text-slate-400 mt-0.5">
@@ -211,6 +211,7 @@ export default async function ContratsPage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <table className="w-full text-sm">
               <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
@@ -283,6 +284,7 @@ export default async function ContratsPage() {
                 })}
               </tbody>
             </table>
+          </div>
           </div>
         )}
       </div>

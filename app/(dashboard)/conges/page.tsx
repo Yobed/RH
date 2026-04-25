@@ -96,6 +96,7 @@ function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
 }) {
   return (
     <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
       <table className="w-full text-sm">
         <thead className="bg-slate-50/60 border-b border-slate-100">
           <tr>
@@ -160,6 +161,7 @@ function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
@@ -204,7 +206,7 @@ export default async function CongesPage() {
   const joursTotal = approuvesCeMois.reduce((s, c) => s + Number(c.nb_jours), 0);
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>

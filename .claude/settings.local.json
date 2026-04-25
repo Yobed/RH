@@ -82,7 +82,35 @@
       "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" requirements mark-complete CON-03)",
       "Bash(node \"$HOME/.claude/get-shit-done/bin/gsd-tools.cjs\" state record-session --stopped-at \"Completed 03-conges-absences-03-03-PLAN.md\")",
       "Bash(grep -n \"nb_jours_absence\" supabase/migrations/*.sql)",
-      "Bash(grep -n \"nb_jours_absence\\\\|details.*JSONB\\\\|JSONB.*details\" supabase/migrations/*.sql)"
+      "Bash(grep -n \"nb_jours_absence\\\\|details.*JSONB\\\\|JSONB.*details\" supabase/migrations/*.sql)",
+      "Bash(curl -s https://raw.githubusercontent.com/pbakaus/impeccable/main/README.md)",
+      "Read(//tmp/impeccable/dist/claude-code/**)",
+      "Read(//c/tmp/impeccable/**)",
+      "Bash(curl -s https://raw.githubusercontent.com/leonxlnx/taste-skill/main/README.md)",
+      "Bash(npx --yes skills add https://github.com/Leonxlnx/taste-skill)",
+      "Bash(npx --yes skills add --yes --global https://github.com/Leonxlnx/taste-skill)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(curl -s -X POST https://nfnqfaeydefqabwewtbe.supabase.co/rest/v1/rpc/exec_sql -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg' -H 'Content-Type: application/json' -d @/tmp/migration_payload.json)",
+      "Bash(supabase --version)",
+      "Bash(curl -s 'https://nfnqfaeydefqabwewtbe.supabase.co/rest/v1/work_accidents?limit=1' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg')",
+      "Bash(curl -s 'https://nfnqfaeydefqabwewtbe.supabase.co/rest/v1/medical_visits?limit=1' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg')",
+      "Bash(curl -s 'https://nfnqfaeydefqabwewtbe.supabase.co/rest/v1/messages?limit=1' -H 'apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbnFmYWV5ZGVmcWFid2V3dGJlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDI2MzM3MywiZXhwIjoyMDg5ODM5MzczfQ.wTe0ppcBTMYKR11FHQH8lVc26npu3OXq3SLmMDdbfzg')",
+      "Bash(git merge *)",
+      "Bash(git -C \"c:/Users/WILFRIED/OneDrive - Gravel Ivoire/Bureau/Ressource Humaine/.claude/worktrees/agent-a15cc98dbe612e61c\" log --oneline -5)",
+      "Bash(git -C \"c:/Users/WILFRIED/OneDrive - Gravel Ivoire/Bureau/Ressource Humaine/.claude/worktrees/agent-a15cc98dbe612e61c\" diff HEAD --name-only)",
+      "Bash(git -C \"c:/Users/WILFRIED/OneDrive - Gravel Ivoire/Bureau/Ressource Humaine/.claude/worktrees/agent-a15cc98dbe612e61c\" diff --stat HEAD echo \"---\" ls \"c:/Users/WILFRIED/OneDrive - Gravel Ivoire/Bureau/Ressource Humaine/.claude/worktrees/agent-a15cc98dbe612e61c/components/rh/\")",
+      "Bash(cat vercel.json)",
+      "Bash(cat .vercel/project.json)",
+      "Bash(cat lib/claude.ts)",
+      "Bash(cat lib/anthropic.ts)",
+      "Bash(grep -v \"^$\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\WILFRIED\\OneDrive - Gravel Ivoire\\Bureau\\Ressource Humaine\\app\\api\\qhse\\accidents",
+      "\\tmp"
     ]
   }
 }

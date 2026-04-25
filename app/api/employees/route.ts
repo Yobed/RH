@@ -32,6 +32,26 @@ const createSchema = z.object({
   prime_transport:      z.coerce.number().min(0).nullable().optional(),
 });
 
+export async function GET(req: Request) {
+  const supabase = createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+
+  const { searchParams } = new URL(req.url);
+  const limit = Math.min(parseInt(searchParams.get("limit") ?? "200", 10), 500);
+  const statut = searchParams.get("statut") ?? "actif";
+
+  const { data, error } = await supabase
+    .from("employees")
+    .select("id, full_name, poste, matricule, departement, statut")
+    .eq("statut", statut)
+    .order("full_name")
+    .limit(limit);
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data ?? []);
+}
+
 export async function POST(req: Request) {
   const supabase = createServerClient();
 

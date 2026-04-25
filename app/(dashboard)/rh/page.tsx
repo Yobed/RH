@@ -214,7 +214,7 @@ export default async function RhPage() {
         }}
       />
 
-      <div className="relative px-6 py-7 space-y-8 max-w-[1400px]">
+      <div className="relative px-4 sm:px-6 py-7 space-y-8 max-w-[1400px]">
 
         {/* ── HERO ── */}
         <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -414,17 +414,17 @@ export default async function RhPage() {
               </Link>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-100">
                     <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                       Collaborateur
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 hidden sm:table-cell">
                       Poste
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 hidden sm:table-cell">
                       Contrat
                     </th>
                     <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
@@ -448,13 +448,13 @@ export default async function RhPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="py-3.5">
+                      <td className="py-3.5 hidden sm:table-cell">
                         <p className="text-xs font-medium text-slate-700">{emp.poste}</p>
                         <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mt-0.5">
                           {emp.departement ?? "—"}
                         </p>
                       </td>
-                      <td className="py-3.5">
+                      <td className="py-3.5 hidden sm:table-cell">
                         <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
                           {emp.type_contrat ?? "—"}
                         </span>

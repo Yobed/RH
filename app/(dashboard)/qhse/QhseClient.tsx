@@ -150,7 +150,7 @@ export function QhseClient({
       )}
 
       {/* Tab bar + export */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
           {(["accidents", "visites"] as const).map((t) => (
             <button
@@ -178,6 +178,7 @@ export function QhseClient({
       {/* Accidents table */}
       {tab === "accidents" && (
         <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60">
@@ -228,12 +229,14 @@ export function QhseClient({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
       {/* Visites table */}
       {tab === "visites" && (
         <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60">
@@ -288,6 +291,7 @@ export function QhseClient({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

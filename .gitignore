@@ -41,3 +41,5 @@ next-env.d.ts
 
 # supabase temp files
 supabase/.temp/
+
+.vercel
