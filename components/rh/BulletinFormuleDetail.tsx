@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   TAUX_CNPS_RETRAITE_SALARIE,
@@ -6,7 +6,7 @@ import {
   CMU_MENSUEL,
   TAUX_ABATTEMENT_ITS,
   CHARGES_PATRONALES_TAUX,
-  PLAFOND_FAMILIALES,
+  calculerChargesPatronales,
 } from "@/lib/paie-ci";
 
 interface Props {
@@ -96,16 +96,9 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
   const baseItsAvantAbattement = Math.max(0, totalImposable - cnpsRetraite);
   const baseIts = Math.max(0, Math.round(baseItsAvantAbattement * (1 - TAUX_ABATTEMENT_ITS)));
 
-  // Charges patronales
-  const baseFamiliales = Math.min(b.salaire_brut, PLAFOND_FAMILIALES);
-  const familialesPatron = Math.round(baseFamiliales * CHARGES_PATRONALES_TAUX.familiales);
-  const maternitePatron = Math.round(b.salaire_brut * CHARGES_PATRONALES_TAUX.maternite);
-  const baseCnpsPatron = Math.min(b.salaire_brut, PLAFOND_CNPS_MENSUEL);
-  const retraitePatron = Math.round(baseCnpsPatron * CHARGES_PATRONALES_TAUX.retraite);
-  const atMpPatron = Math.round(b.salaire_brut * CHARGES_PATRONALES_TAUX.at_mp);
-  const fdfpPatron = Math.round(b.salaire_brut * CHARGES_PATRONALES_TAUX.fdfp);
-  const cmuPatron = CMU_MENSUEL;
-  const totalPatron = familialesPatron + maternitePatron + retraitePatron + atMpPatron + fdfpPatron + cmuPatron;
+  // Charges patronales (utilisant la fonction centralisée)
+  const patronal = calculerChargesPatronales(b.salaire_brut);
+
 
   return (
     <div className="space-y-4 p-4 sm:p-6 max-w-3xl">
@@ -218,44 +211,48 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
       </Section>
 
       {/* 3. Charges patronales */}
-      <Section title="③ Charges patronales CNPS CI (coût employeur)">
+      <Section title="③ Charges patronales CNPS CI & DGI (coût employeur)">
         <Row
           label="Prestations familiales"
-          formula={`${pct(CHARGES_PATRONALES_TAUX.familiales)} × min(Brut, plafond ${fmt(PLAFOND_FAMILIALES)})`}
-          result={fmt(familialesPatron)}
-          note={`Base plafonnée : ${fmt(baseFamiliales)}`}
+          formula={`${pct(CHARGES_PATRONALES_TAUX.familiales)} × Brut`}
+          result={fmt(patronal.familiales)}
         />
         <Row
           label="Accidents du travail / Maladies pro"
-          formula={`${pct(CHARGES_PATRONALES_TAUX.maternite)} × Brut (taux AT/MP = ${pct(CHARGES_PATRONALES_TAUX.at_mp)} taux moyen)`}
-          result={fmt(maternitePatron + atMpPatron)}
+          formula={`${pct(CHARGES_PATRONALES_TAUX.maternite)} × Brut (maternité) + AT/MP`}
+          result={fmt(patronal.maternite + patronal.at_mp)}
           note="Taux AT/MP variable selon secteur d'activité"
         />
         <Row
           label="Retraite patronale"
           formula={`${pct(CHARGES_PATRONALES_TAUX.retraite)} × min(Brut, plafond ${fmt(PLAFOND_CNPS_MENSUEL)})`}
-          result={fmt(retraitePatron)}
+          result={fmt(patronal.retraite)}
         />
         <Row
-          label="FDFP (formation professionnelle)"
+          label="TFC (FDFP + Ex. Formation)"
           formula={`${pct(CHARGES_PATRONALES_TAUX.fdfp)} × masse salariale brute`}
-          result={fmt(fdfpPatron)}
+          result={fmt(patronal.fdfp)}
+        />
+        <Row
+          label="Taxe d'Apprentissage"
+          formula={`${pct(CHARGES_PATRONALES_TAUX.apprentissage)} × masse salariale brute`}
+          result={fmt(patronal.apprentissage)}
         />
         <Row
           label="CMU patronale"
           formula="Forfait mensuel fixe par salarié"
-          result={fmt(cmuPatron)}
+          result={fmt(patronal.cmu)}
         />
         <Row
           label="Total charges patronales"
-          formula="Σ cotisations CNPS CI 2026"
-          result={fmt(totalPatron)}
+          formula="Σ cotisations employeur (CNPS + DGI)"
+          result={fmt(patronal.total)}
           highlight
         />
         <Row
           label="Coût total employeur (TCO)"
-          formula={`Brut (${fmt(totalBrut)}) + Charges patronales (${fmt(totalPatron)})`}
-          result={fmt(totalBrut + totalPatron)}
+          formula={`Brut (${fmt(totalBrut)}) + Charges patronales (${fmt(patronal.total)})`}
+          result={fmt(totalBrut + patronal.total)}
           highlight
         />
       </Section>

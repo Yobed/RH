@@ -21,6 +21,22 @@ function parseDate(raw: string | number | undefined): string | null {
   return null;
 }
 
+function parseSalary(val: unknown): number {
+  if (typeof val === "number") return val;
+  if (!val) return 0;
+  // Retire tous les espaces, espacements insécables, "F", "C", "A"
+  let s = String(val).toUpperCase().replace(/[\s\uFEFF\xA0FCFA]/g, "");
+  // Remplace la virgule par un point
+  s = s.replace(",", ".");
+  // Gestion format français avec multiples points (ex: 1.500.000)
+  const parts = s.split(".");
+  if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+    s = parts.join("");
+  }
+  const parsed = parseFloat(s);
+  return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+}
+
 export async function POST(req: Request) {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -58,7 +74,7 @@ export async function POST(req: Request) {
 
     const full_name = String(row["full_name"] ?? "").trim();
     const date_embauche_raw = row["date_embauche"];
-    const salaire_brut = parseFloat(String(row["salaire_brut"] ?? "0").replace(/\s/g, ""));
+    const salaire_brut = parseSalary(row["salaire_brut"]);
     const type_contrat = String(row["type_contrat"] ?? "CDI").trim().toUpperCase();
 
     if (!full_name) { errors.push(`Ligne ${rowNum}: full_name manquant`); continue; }

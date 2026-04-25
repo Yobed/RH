@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
@@ -77,7 +77,7 @@ export default async function PaiePage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
           <p className="text-sm text-slate-600 mt-0.5">
-            CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Droit ivoirien 2026
+            CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Législation 2024-2025
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -112,12 +112,12 @@ export default async function PaiePage() {
       <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-800">
         <p className="font-semibold mb-2">Calcul automatique — Références légales 2026</p>
         <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2 md:grid-cols-3">
-          <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 1 647 315 FCFA/mois)</span>
+          <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 3 375 000 FCFA/mois)</span>
           <span>CMU (CNAM) salariale : <strong>1 600 FCFA</strong> forfait/mois</span>
           <span>ITS : barème progressif (0% → 12% → 18% → 25% → 32%)</span>
           <span>Abattement ITS : <strong>15%</strong> charges professionnelles</span>
           <span>Charges patronales : <strong>~{Math.round((0.05 + 0.0075 + 0.077 + 0.03 + 0.01) * 100)}%</strong> + CMU 1 600 FCFA</span>
-          <span>FDFP : <strong>1%</strong> masse salariale</span>
+          <span>TFC (FDFP) : <strong>1,2%</strong> + Taxe Apprentissage : <strong>0,4%</strong></span>
         </div>
       </div>
 

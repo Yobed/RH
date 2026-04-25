@@ -99,7 +99,7 @@ export async function GET() {
   const effectifCols = ["Nom", "Poste", "Date embauche", "Statut", "Salaire base (FCFA)", "Catégorie"];
   const evalCols = ["Score global", "Date évaluation", "Type"];
 
-  const csv = [
+  const csv = "\uFEFF" + [
     `=== MASSE SALARIALE MENSUELLE (${currentYear - 1} → ${currentYear}) ===`,
     toCSV(masseSalariale, masseCols),
     "",

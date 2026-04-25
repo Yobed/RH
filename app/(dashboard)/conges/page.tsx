@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
@@ -24,6 +24,20 @@ const STATUT_LABEL: Record<string, string> = {
 };
 
 function formatDate(d: string) {
+  if (!d) return "";
+  try {
+    const parts = d.split("T")[0].split("-");
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      return new Date(y, m, day).toLocaleDateString("fr-CI", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    }
+  } catch {}
   return new Date(d).toLocaleDateString("fr-CI", {
     day: "2-digit",
     month: "short",

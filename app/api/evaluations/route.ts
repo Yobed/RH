@@ -33,9 +33,13 @@ const evaluationSchema = z.object({
  * Exemples : "2026", "S1-2026", "T1-2026", "Avril 2026", "Essai-2026"
  */
 function deriverPeriode(type: string, datePrevue: string): string {
-  const d = new Date(datePrevue);
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1; // 1-indexed
+  // Parsing strict sans décalage UTC
+  const [y, m, dstr] = datePrevue.split("-");
+  const year = parseInt(y, 10) || new Date().getFullYear();
+  const month = parseInt(m, 10) || new Date().getMonth() + 1;
+  const day = parseInt(dstr, 10) || 1;
+  
+  const dLocal = new Date(year, month - 1, day);
 
   switch (type.toUpperCase()) {
     case "ANNUELLE":
@@ -48,7 +52,7 @@ function deriverPeriode(type: string, datePrevue: string): string {
       if (month <= 9) return `T3-${year}`;
       return `T4-${year}`;
     case "MENSUELLE":
-      return d.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+      return dLocal.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
     case "PERIODE_ESSAI":
       return `Essai-${year}`;
     default:

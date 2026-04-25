@@ -1,4 +1,4 @@
-﻿import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { KpiCard } from "@/components/rh/KpiCard";
 import { ComplianceAlertList } from "@/components/rh/ComplianceAlertList";
 import { QuickActions } from "@/components/rh/QuickActions";
@@ -54,12 +54,10 @@ export default async function RhPage() {
       .from("contracts")
       .select("*", { count: "exact", head: true })
       .eq("statut", "actif")
-      .gte("date_fin", today)
       .lte("date_fin", in30Days),
     supabase
       .from("medical_exams")
       .select("*", { count: "exact", head: true })
-      .gte("prochaine_visite", today)
       .lte("prochaine_visite", in30Days),
     supabase
       .from("job_postings")
@@ -91,26 +89,22 @@ export default async function RhPage() {
       .from("contracts")
       .select("*", { count: "exact", head: true })
       .eq("statut", "actif")
-      .gte("date_fin_essai", today)
       .lte("date_fin_essai", in30Days),
     supabase
       .from("contracts")
       .select("employee_id, date_fin, type_contrat, employees(full_name)")
       .eq("statut", "actif")
-      .gte("date_fin", today)
       .lte("date_fin", in30Days)
       .limit(3),
     supabase
       .from("medical_exams")
       .select("employee_id, date_expiration, type_examen, employees(full_name)")
-      .gte("date_expiration", today)
       .lte("date_expiration", in30Days)
       .limit(3),
     supabase
       .from("contracts")
       .select("employee_id, date_fin_essai, type_contrat, employees(full_name)")
       .eq("statut", "actif")
-      .gte("date_fin_essai", today)
       .lte("date_fin_essai", in30Days)
       .limit(3),
     supabase

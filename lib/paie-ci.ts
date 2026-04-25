@@ -23,9 +23,9 @@ import { calculerICCP } from '@/lib/conges-ci';
 export const SMIG_MENSUEL = 75_000;
 export const SMIG_HORAIRE = Math.round(SMIG_MENSUEL / 173.33); // ≈ 433 FCFA/h
 
-// CNPS retraite salariale : 6,30% plafonné à 1 647 315 FCFA/mois
+// CNPS retraite salariale : 6,30% plafonné à 45 fois le SMIG (45 x 75 000 = 3 375 000 FCFA/mois)
 export const TAUX_CNPS_RETRAITE_SALARIE = 0.063;
-export const PLAFOND_CNPS_MENSUEL = 1_647_315;
+export const PLAFOND_CNPS_MENSUEL = 3_375_000;
 // Alias compatibilité descendante
 export const TAUX_CNPS_SALARIE = TAUX_CNPS_RETRAITE_SALARIE;
 export const PLAFOND_CNPS = PLAFOND_CNPS_MENSUEL;
@@ -38,14 +38,13 @@ export const TAUX_ABATTEMENT_ITS = 0.15;
 
 // Charges patronales CNPS CI
 export const CHARGES_PATRONALES_TAUX = {
-  familiales: 0.05,      // Prestations familiales (base plafonnée à 70 000 FCFA/mois)
+  familiales: 0.05,      // Prestations familiales (sans plafond)
   maternite: 0.0075,     // Accidents maternité
   retraite: 0.077,       // Retraite patronale (plafond PLAFOND_CNPS_MENSUEL)
   at_mp: 0.03,           // Accidents travail / Maladies pro (taux moyen, variable)
-  fdfp: 0.01,            // Fonds Développement Formation Professionnelle
+  fdfp: 0.012,           // Taxe de Formation Continue (FDFP) 1.2%
+  apprentissage: 0.004,  // Taxe d'Apprentissage 0.4%
 } as const;
-
-export const PLAFOND_FAMILIALES = 70_000;
 
 /**
  * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI simplifié mensuel
@@ -56,14 +55,13 @@ export const PLAFOND_FAMILIALES = 70_000;
 export function calculerITS(salaireImposable: number): number {
   if (salaireImposable <= 0) return 0;
 
-  // Barème mensuel progressif ITS CI (Art. 116 CGI CI)
-  // Tranches mensuelles = tranches annuelles ÷ 12
-  // ⚠️ À vérifier avec la Loi de Finances de l'année en cours
+  // Barème mensuel progressif ITS CI unifié (Réforme 2024, Art. 116 CGI CI)
   const tranches = [
     { limite: 75_000, taux: 0 },
-    { limite: 200_000, taux: 0.12 },
-    { limite: 350_000, taux: 0.18 },
-    { limite: 600_000, taux: 0.25 },
+    { limite: 240_000, taux: 0.16 },
+    { limite: 800_000, taux: 0.21 },
+    { limite: 2_400_000, taux: 0.24 },
+    { limite: 8_000_000, taux: 0.28 },
     { limite: Infinity, taux: 0.32 },
   ];
 
@@ -108,10 +106,9 @@ export function calculerBulletin(
   // Total retenu salarié
   const cnps_salarie = cnps_retraite + cmu_salarie;
 
-  // Base imposable ITS = brut - CNPS retraite - abattement 15% (CGI CI Art. 116)
-  // ⚠️ Abattement à confirmer avec Loi de Finances en vigueur
-  const abattement = Math.round(salaireBrut * TAUX_ABATTEMENT_ITS);
-  const base_imposable = Math.max(0, salaireBrut - cnps_retraite - abattement);
+  // Base imposable ITS = (brut - CNPS retraite) - abattement 15% (CGI CI)
+  const baseImposableApresCnps = Math.max(0, salaireBrut - cnps_retraite);
+  const base_imposable = Math.max(0, Math.round(baseImposableApresCnps * (1 - TAUX_ABATTEMENT_ITS)));
   const its = calculerITS(base_imposable);
 
   const salaire_net_avant_retenues = salaireBrut - cnps_salarie - its;
@@ -130,18 +127,18 @@ export function calculerBulletin(
 }
 
 export interface ChargesPatronales {
-  familiales: number;    // 5% base plafonnée
+  familiales: number;    // 5% de la masse salariale (sans plafond)
   maternite: number;     // 0,75%
   retraite: number;      // 7,7% plafonné
   at_mp: number;         // 3% (taux moyen)
   cmu: number;           // CMU patronale forfait
-  fdfp: number;          // FDFP 1%
+  fdfp: number;          // FDFP 1.2%
+  apprentissage: number; // Apprentissage 0.4%
   total: number;
 }
 
 export function calculerChargesPatronales(salaireBrut: number, tauxAtMp: number = CHARGES_PATRONALES_TAUX.at_mp): ChargesPatronales {
-  const baseFamiliales = Math.min(salaireBrut, PLAFOND_FAMILIALES);
-  const familiales = Math.round(baseFamiliales * CHARGES_PATRONALES_TAUX.familiales);
+  const familiales = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.familiales);
 
   const maternite = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.maternite);
 
@@ -154,10 +151,11 @@ export function calculerChargesPatronales(salaireBrut: number, tauxAtMp: number 
   const cmu = CMU_MENSUEL;
 
   const fdfp = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.fdfp);
+  const apprentissage = Math.round(salaireBrut * CHARGES_PATRONALES_TAUX.apprentissage);
 
-  const total = familiales + maternite + retraite + at_mp + cmu + fdfp;
+  const total = familiales + maternite + retraite + at_mp + cmu + fdfp + apprentissage;
 
-  return { familiales, maternite, retraite, at_mp, cmu, fdfp, total };
+  return { familiales, maternite, retraite, at_mp, cmu, fdfp, apprentissage, total };
 }
 
 // ── Provision 13e mois / Prime exceptionnelle — prorata temporis ────────
@@ -372,21 +370,27 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
 }
 
 export function formatAnciennete(dateEmbauche: string): string {
-  const debut = new Date(dateEmbauche);
+  const [y, m, dstr] = dateEmbauche.split("-");
+  if (!y || !m || !dstr) return "0 jour";
+  
+  const debut = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(dstr.substring(0, 2), 10));
   const now = new Date();
+  
   let years = now.getFullYear() - debut.getFullYear();
   let months = now.getMonth() - debut.getMonth();
   let days = now.getDate() - debut.getDate();
+  
   if (days < 0) {
     months -= 1;
     days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
   }
   if (months < 0) { years -= 1; months += 12; }
   if (years === 0 && months === 0) return `${days} jour${days > 1 ? "s" : ""}`;
-  const y = String(years).padStart(2, "0");
-  const m = String(months).padStart(2, "0");
-  const d = String(days).padStart(2, "0");
-  return `${y} an${years > 1 ? "s" : ""} ${m} mois ${d} jour${days > 1 ? "s" : ""}`;
+  
+  const yStr = String(years).padStart(2, "0");
+  const mStr = String(months).padStart(2, "0");
+  const dStr = String(days).padStart(2, "0");
+  return `${yStr} an${years > 1 ? "s" : ""} ${mStr} mois ${dStr} jour${days > 1 ? "s" : ""}`;
 }
 
 // ── Indemnité de précarité (CDD) — Art. 14.8 Code du Travail ivoirien CI ─

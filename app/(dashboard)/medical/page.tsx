@@ -1,6 +1,7 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { MedicalExamDialog } from "@/components/rh/MedicalExamDialog";
+import { formatDateLocal } from "@/lib/utils";
 
 export const metadata = { title: "Santé & Sécurité — RH Manager CI" };
 
@@ -87,7 +88,7 @@ export default async function MedicalPage() {
                     </td>
                     <td className="px-4 py-3 text-slate-700">{exam.type_examen?.replace(/_/g, " ")}</td>
                     <td className="px-4 py-3 text-slate-600 text-xs tabular-nums">
-                      {new Date(exam.date_examen).toLocaleDateString("fr-CI")}
+                      {formatDateLocal(exam.date_examen)}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${resultatColor[exam.resultat] ?? "bg-slate-100 text-slate-600"}`}>
@@ -97,7 +98,7 @@ export default async function MedicalPage() {
                     <td className="px-4 py-3 hidden md:table-cell text-xs tabular-nums">
                       {exam.prochaine_visite ? (
                         <span className={overdue ? "text-red-600 font-semibold" : "text-slate-600"}>
-                          {new Date(exam.prochaine_visite).toLocaleDateString("fr-CI")}
+                          {formatDateLocal(exam.prochaine_visite)}
                         </span>
                       ) : (
                         <span className="text-slate-300">—</span>

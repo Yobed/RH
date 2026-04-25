@@ -1,4 +1,4 @@
-﻿import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { ReportingClient } from "./ReportingClient";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,9 @@ export default async function ReportingPage() {
   const yearStart = `${currentYear}-01-01`;
   const twelveMonthsAgo = new Date();
   twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
-  const periodStart = twelveMonthsAgo.toISOString().slice(0, 7);
+  const periodY = twelveMonthsAgo.getFullYear();
+  const periodM = twelveMonthsAgo.getMonth() + 1;
+  const periodStart = `${periodY}-${String(periodM).padStart(2, "0")}`;
 
   const [bulletinsRes, congesRes, employeesRes, evaluationsRes, accidentsRes] = await Promise.all([
     supabase
@@ -24,11 +26,11 @@ export default async function ReportingPage() {
       .eq("statut", "en_attente"),
     supabase
       .from("employees")
-      .select("statut, date_embauche"),
+      .select("statut, date_embauche, updated_at"),
     supabase
       .from("evaluations")
       .select("score_global")
-      .gte("date_evaluation", yearStart),
+      .gte("date_prevue", yearStart),
     supabase
       .from("work_accidents")
       .select("id", { count: "exact", head: true })
@@ -66,8 +68,9 @@ export default async function ReportingPage() {
   const effectif_essai = employees.filter((e) => e.statut === "essai").length;
 
   const departsAnnee = employees.filter(
-    (e) => e.statut === "inactif" && e.date_embauche && e.date_embauche >= yearStart
-  ).length;
+    (e) => e.statut === "inactif" || e.statut === "depart"
+  ).length; // Simplify since we do not have a dedicated date_depart column, we assume inactifs are departures
+
   const turn_over_annee = effectif_actif > 0
     ? Math.round((departsAnnee / effectif_actif) * 100)
     : 0;

@@ -65,8 +65,19 @@ export async function POST(req: Request) {
     doc.text(employee.full_name, 120, 60);
     doc.text(`Matricule : ${employee.matricule}`, 120, 65);
     doc.text(`Type de contrat : ${employee.type_contrat || 'N/A'}`, 120, 70);
+    let formattedDateEmb = "";
     if (employee.date_embauche) {
-      doc.text(`Date d'embauche : ${new Date(employee.date_embauche).toLocaleDateString("fr-CI")}`, 120, 75);
+      try {
+        const [y, m, dStr] = employee.date_embauche.split("-");
+        if (y && m && dStr) {
+          formattedDateEmb = `${dStr.substring(0, 2)}/${m}/${y}`;
+        } else {
+          formattedDateEmb = new Date(employee.date_embauche).toLocaleDateString("fr-CI");
+        }
+      } catch {
+        formattedDateEmb = new Date(employee.date_embauche).toLocaleDateString("fr-CI");
+      }
+      doc.text(`Date d'embauche : ${formattedDateEmb}`, 120, 75);
     }
 
     // Tableau des Indemnités

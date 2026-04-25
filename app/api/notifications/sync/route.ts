@@ -45,6 +45,12 @@ export async function POST(req: Request) {
   return NextResponse.json({ created });
 }
 
+function formatDateLocal(dateStr: string): string {
+  if (!dateStr) return "N/A";
+  const [y, m, d] = dateStr.split("-");
+  return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10)).toLocaleDateString("fr-CI");
+}
+
 async function syncForCompany(
   supabase: ReturnType<typeof createServerClient>,
   companyId: string
@@ -181,7 +187,7 @@ async function syncForCompany(
       company_id: companyId,
       type: "info",
       titre,
-      message: `La visite médicale (${exam.type}) de ${emp?.full_name} expire le ${new Date(exam.date_expiration!).toLocaleDateString("fr-CI")}.`,
+      message: `La visite médicale (${exam.type}) de ${emp?.full_name} expire le ${formatDateLocal(exam.date_expiration!)}.`,
     });
     created++;
   }
@@ -260,7 +266,7 @@ async function syncForCompany(
       company_id: companyId,
       type: "alerte_contrat",
       titre,
-      message: `La période d'essai de ${emp?.full_name} (${emp?.poste}) se termine le ${new Date(c.date_fin_essai!).toLocaleDateString("fr-CI")}. Une décision (confirmation/rupture/renouvellement) doit être prise.`,
+      message: `La période d'essai de ${emp?.full_name} (${emp?.poste}) se termine le ${formatDateLocal(c.date_fin_essai!)}. Une décision (confirmation/rupture/renouvellement) doit être prise.`,
     });
     created++;
   }

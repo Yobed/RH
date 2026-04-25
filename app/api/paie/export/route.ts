@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { calculerChargesPatronales } from "@/lib/paie-ci";
 
 export const dynamic = 'force-dynamic';
 
@@ -26,15 +27,20 @@ export async function GET(request: Request) {
     }
 
     // CSV header
-    // Matricule, Nom, Département, Période, Salaire Brut, ITS, CNPS Salarié, Avances, Autres Retenues, Net Primes, Salaire Net
-    let csv = "Matricule;Employe;Departement;Periode;Salaire Brut;ITS;CNPS Salarie;Avances;Autres Retenues;Salaire Net\n";
+    // Matricule, Nom, Département, Période, Salaire Brut, ITS, CNPS Salarié, Avances, Autres Retenues, Salaire Net, CNPS Patronal, TFC (FDFP), Taxe Apprentissage
+    let csv = "\uFEFFMatricule;Employe;Departement;Periode;Salaire Brut;ITS;CNPS Salarie;Avances;Autres Retenues;Salaire Net;CNPS Patronal;FDFP (TFC);Taxe Apprentissage\n";
 
     bulletins.forEach((b) => {
       const matricule = (b.employee as any)?.matricule || "";
       const nom = (b.employee as any)?.full_name || "";
       const dept = (b.employee as any)?.departement || "";
       
-      csv += `${matricule};"${nom}";"${dept}";${b.periode};${b.salaire_brut};${b.its};${b.cnps_salarie};${b.avances};${b.autres_retenues};${b.salaire_net}\n`;
+      // Calculate missing patronal charges that aren't stored in the db schema yet
+      const patronal = calculerChargesPatronales(b.salaire_brut);
+      // CNPS patronal = familiales + maternite + retraite + at_mp
+      const cnpsPatronal = patronal.familiales + patronal.maternite + patronal.retraite + patronal.at_mp;
+      
+      csv += `${matricule};"${nom}";"${dept}";${b.periode};${b.salaire_brut};${b.its};${b.cnps_salarie};${b.avances};${b.autres_retenues};${b.salaire_net};${cnpsPatronal};${patronal.fdfp};${patronal.apprentissage}\n`;
     });
 
     const filename = periode ? `journal_paie_${periode}.csv` : `journal_paie_complet.csv`;

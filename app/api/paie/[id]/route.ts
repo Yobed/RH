@@ -108,7 +108,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       prime_depassement: d.prime_depassement,
       prime_fonction: d.prime_fonction,
       prime_transport: d.prime_transport,
-      cnps_salarie: calc.cnps_salarie + calc.cmu,
+      cnps_salarie: calc.cnps_salarie,
       its: calc.its,
       autres_retenues: d.autres_retenues,
       avances: d.avances,
