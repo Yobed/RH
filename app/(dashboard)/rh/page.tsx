@@ -1,10 +1,9 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { KpiCard } from "@/components/rh/KpiCard";
-import { Badge } from "@/components/ui/badge";
-import { ComplianceAuditHeader } from "@/components/rh/ComplianceAuditHeader";
 import { ComplianceAlertList } from "@/components/rh/ComplianceAlertList";
 import { QuickActions } from "@/components/rh/QuickActions";
 import { DashboardCharts } from "@/components/rh/DashboardCharts";
+import { DashboardHeroClient } from "@/components/rh/DashboardHeroClient";
 import {
   UsersIcon as Users,
   WarningIcon as FileWarning,
@@ -13,7 +12,6 @@ import {
   ArrowRightIcon as ArrowRight,
 } from "@/components/rh/ClientIcons";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Tableau de bord — RH Manager CI" };
 
@@ -204,54 +202,29 @@ export default async function RhPage() {
   });
 
   return (
-    <div className="relative min-h-screen bg-slate-50/40">
-      {/* Grain overlay */}
-      <div
-        className="pointer-events-none fixed inset-0 z-50 opacity-[0.022]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundSize: "200px 200px",
-        }}
-      />
+    <div className="relative min-h-screen overflow-x-hidden">
+      <div className="relative px-4 sm:px-6 py-8 space-y-10 max-w-[1440px]">
 
-      <div className="relative px-4 sm:px-6 py-7 space-y-8 max-w-[1400px]">
-
-        {/* ── HERO ── */}
-        <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400 mb-2">
-              {dateLabel}
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 leading-none">
-              Tableau de bord
-            </h1>
-            <p className="text-sm text-slate-500 font-medium mt-1.5">
-              Capital humain — Côte d&apos;Ivoire
-            </p>
-          </div>
-
-          <ComplianceAuditHeader
-            score={Math.round(complianceScore)}
-            risks={{
-              contracts: cddExpirant ?? 0,
-              trials: essaiExpirant ?? 0,
-              medical: medicalAlertsCount ?? 0,
-              documents: missingDocsTotal,
-            }}
-          />
-        </section>
+        {/* ── HERO ANIMÉ ── */}
+        <DashboardHeroClient
+          totalActifs={totalActifs ?? 0}
+          complianceScore={Math.round(complianceScore)}
+          congesEnAttente={congesEnAttente?.length ?? 0}
+          dateLabel={dateLabel}
+        />
 
         {/* ── ACTIONS RAPIDES ── */}
-        <section>
-          <SectionLabel>Actions rapides</SectionLabel>
+        <section className="space-y-3">
+          <SectionDivider label="Actions rapides" />
           <QuickActions />
         </section>
 
-        {/* ── KPIs — Bento asymétrique ── */}
-        <section>
-          <SectionLabel>Indicateurs clés</SectionLabel>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="col-span-2 lg:col-span-2">
+        {/* ── BENTO KPIs — 12-col dense grid ── */}
+        <section className="space-y-3">
+          <SectionDivider label="Indicateurs" />
+          <div className="grid grid-cols-2 lg:grid-cols-12 gap-4 auto-rows-auto" style={{ gridAutoFlow: "dense" }}>
+            {/* Featured — col 1-6 */}
+            <div className="col-span-2 lg:col-span-6">
               <KpiCard
                 label="Effectif actif"
                 value={totalActifs || 0}
@@ -261,44 +234,67 @@ export default async function RhPage() {
                 featured
               />
             </div>
-            <KpiCard
-              label="Recrutements"
-              value={postesOuverts || 0}
-              icon={Briefcase}
-              variant="success"
-              description="Postes ouverts"
-              index={1}
-            />
-            <KpiCard
-              label="Contentieux"
-              value={contentieuxOuverts ?? 0}
-              icon={Scale}
-              description="Dossiers actifs"
-              variant={(contentieuxOuverts ?? 0) > 0 ? "warning" : "default"}
-              index={2}
-            />
-            <KpiCard
-              label="Alertes médicales"
-              value={medicalAlertsCount ?? 0}
-              icon={FileWarning}
-              description="Visites sous 30 jours"
-              variant={(medicalAlertsCount ?? 0) > 0 ? "danger" : "default"}
-              index={3}
-            />
-            <KpiCard
-              label="Évaluations"
-              value={evalBrouillon ?? 0}
-              icon={Briefcase}
-              description="En brouillon"
-              variant={(evalBrouillon ?? 0) > 0 ? "warning" : "default"}
-              index={4}
-            />
+            {/* col 7-9 */}
+            <div className="col-span-1 lg:col-span-3">
+              <KpiCard
+                label="Recrutements"
+                value={postesOuverts || 0}
+                icon={Briefcase}
+                variant="success"
+                description="Postes ouverts"
+                index={1}
+              />
+            </div>
+            {/* col 10-12 */}
+            <div className="col-span-1 lg:col-span-3">
+              <KpiCard
+                label="Contentieux"
+                value={contentieuxOuverts ?? 0}
+                icon={Scale}
+                description="Dossiers actifs"
+                variant={(contentieuxOuverts ?? 0) > 0 ? "warning" : "default"}
+                index={2}
+              />
+            </div>
+            {/* col 1-4 */}
+            <div className="col-span-1 lg:col-span-4">
+              <KpiCard
+                label="Alertes médicales"
+                value={medicalAlertsCount ?? 0}
+                icon={FileWarning}
+                description="Visites sous 30 jours"
+                variant={(medicalAlertsCount ?? 0) > 0 ? "danger" : "default"}
+                index={3}
+              />
+            </div>
+            {/* col 5-8 */}
+            <div className="col-span-1 lg:col-span-4">
+              <KpiCard
+                label="Évaluations"
+                value={evalBrouillon ?? 0}
+                icon={Briefcase}
+                description="En brouillon"
+                variant={(evalBrouillon ?? 0) > 0 ? "warning" : "default"}
+                index={4}
+              />
+            </div>
+            {/* col 9-12 */}
+            <div className="col-span-2 lg:col-span-4">
+              <KpiCard
+                label="CDD expirant"
+                value={cddExpirant ?? 0}
+                icon={Briefcase}
+                description="Sous 30 jours"
+                variant={(cddExpirant ?? 0) > 0 ? "danger" : "default"}
+                index={5}
+              />
+            </div>
           </div>
         </section>
 
         {/* ── CHARTS ── */}
-        <section>
-          <SectionLabel>Analyses</SectionLabel>
+        <section className="space-y-3">
+          <SectionDivider label="Analyses" />
           <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
         </section>
 
@@ -306,60 +302,58 @@ export default async function RhPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <ComplianceAlertList alerts={allAlerts} />
 
-          <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6 flex flex-col">
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.06)] p-6 flex flex-col glow-hover">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="text-sm font-bold text-slate-900 leading-none">Congés en attente</h2>
-                <p className="text-[11px] text-slate-400 font-medium mt-1">
-                  Demandes nécessitant une approbation
+                <h2
+                  className="text-base font-bold text-slate-900 dark:text-white leading-none"
+                  style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
+                >
+                  Congés en attente
+                </h2>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-1">
+                  Demandes à approuver
                 </p>
               </div>
-              <Link href="/conges">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-[11px] font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 gap-1"
-                >
-                  Tout voir
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
+              <Link
+                href="/conges"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              >
+                Tout voir <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
 
             {!congesEnAttente || congesEnAttente.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-xl border border-dashed border-slate-200 bg-slate-50/40">
+              <div className="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
                 <p className="text-xs text-slate-400 font-medium">Aucune demande en attente.</p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
                 {congesEnAttente.map((c) => {
                   const empRaw = c.employees;
                   const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
                   return (
-                    <div
-                      key={c.id}
-                      className="flex items-center justify-between py-3 first:pt-0 last:pb-0 group"
-                    >
+                    <div key={c.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-lg bg-[oklch(0.175_0.04_248)] flex items-center justify-center font-bold text-[oklch(0.78_0.13_73)] text-xs shrink-0">
+                        <div
+                          className="h-9 w-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
+                          style={{ background: "oklch(0.175 0.045 248)", color: "oklch(0.78 0.13 73)" }}
+                        >
                           {emp?.full_name?.charAt(0) ?? "?"}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-slate-800 leading-none">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 leading-none">
                             {emp?.full_name ?? "—"}
                           </p>
-                          <p className="text-[10px] text-slate-400 font-medium mt-1">
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium mt-1">
                             {new Date(c.date_debut as string).toLocaleDateString("fr-CI")} ·{" "}
                             {c.nb_jours} jour{(c.nb_jours ?? 1) > 1 ? "s" : ""}
                           </p>
                         </div>
                       </div>
-                      <Badge
-                        variant="outline"
-                        className="bg-slate-50 border-slate-200 text-slate-500 font-semibold text-[9px] uppercase tracking-widest"
-                      >
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
                         {c.type}
-                      </Badge>
+                      </span>
                     </div>
                   );
                 })}
@@ -369,25 +363,30 @@ export default async function RhPage() {
         </div>
 
         {/* ── ACTIVITÉ & COLLABORATEURS ── */}
-        <div className="grid gap-4 lg:grid-cols-3">
-          {/* Timeline GED */}
-          <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6">
-            <h2 className="text-sm font-bold text-slate-900 mb-5">Documents récents</h2>
+        <div className="grid gap-4 lg:grid-cols-3 pb-8">
+          {/* Timeline documents */}
+          <div className="rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.06)] p-6 glow-hover">
+            <h2
+              className="text-base font-bold text-slate-900 dark:text-white mb-5"
+              style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
+            >
+              Documents récents
+            </h2>
             <div className="space-y-5">
               {recentActivities?.map((act, i) => (
                 <div key={act.id} className="flex gap-3 relative">
                   {i < (recentActivities.length - 1) && (
-                    <div className="absolute left-[13px] top-7 bottom-0 w-px bg-slate-100" />
+                    <div className="absolute left-[13px] top-7 bottom-0 w-px bg-slate-100 dark:bg-slate-700" />
                   )}
-                  <div className="h-7 w-7 rounded-full border border-slate-100 bg-white flex items-center justify-center shrink-0 z-10">
+                  <div className="h-7 w-7 rounded-full border border-slate-100 dark:border-slate-600 bg-white dark:bg-[oklch(0.20_0.032_248)] flex items-center justify-center shrink-0 z-10">
                     <div className="h-2 w-2 rounded-full bg-emerald-400" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-slate-800 truncate">{act.name}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
+                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{act.name}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
                       {(act.employees as { full_name?: string })?.full_name}
                     </p>
-                    <p className="text-[9px] text-slate-300 mt-1 font-mono">
+                    <p className="text-[9px] text-slate-300 dark:text-slate-600 mt-1 font-mono">
                       {new Date(act.created_at).toLocaleDateString("fr-CI", {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -400,69 +399,69 @@ export default async function RhPage() {
           </div>
 
           {/* Table collaborateurs */}
-          <div className="lg:col-span-2 rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6 overflow-hidden">
+          <div className="lg:col-span-2 rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.06)] p-6 overflow-hidden glow-hover">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-bold text-slate-900">Derniers collaborateurs</h2>
-              <Link href="/employes">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-[11px] font-semibold border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300"
-                >
-                  Voir tout
-                </Button>
+              <h2
+                className="text-base font-bold text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
+              >
+                Collaborateurs récents
+              </h2>
+              <Link
+                href="/employes"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              >
+                Voir tout <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
 
-            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="overflow-x-auto -mx-2 px-2">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                  <tr className="border-b border-slate-100 dark:border-slate-700">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
                       Collaborateur
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 hidden sm:table-cell">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 hidden sm:table-cell">
                       Poste
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 hidden sm:table-cell">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 hidden sm:table-cell">
                       Contrat
                     </th>
-                    <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                    <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
                       Statut
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-700/40">
                   {derniersEmployes?.map((emp) => (
-                    <tr
-                      key={emp.id}
-                      className="group hover:bg-slate-50/60 transition-colors"
-                    >
+                    <tr key={emp.id} className="group hover:bg-slate-50/60 dark:hover:bg-[oklch(0.18_0.028_248)] transition-colors">
                       <td className="py-3.5">
                         <div className="flex items-center gap-2.5">
-                          <div className="h-7 w-7 rounded-lg bg-[oklch(0.175_0.04_248)] flex items-center justify-center font-bold text-[oklch(0.78_0.13_73)] text-xs shrink-0">
+                          <div
+                            className="h-8 w-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0"
+                            style={{ background: "oklch(0.175 0.045 248)", color: "oklch(0.78 0.13 73)" }}
+                          >
                             {emp.full_name?.charAt(0)}
                           </div>
-                          <span className="font-semibold text-slate-800 text-xs">
-                            {emp.full_name}
-                          </span>
+                          <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">{emp.full_name}</span>
                         </div>
                       </td>
                       <td className="py-3.5 hidden sm:table-cell">
-                        <p className="text-xs font-medium text-slate-700">{emp.poste}</p>
-                        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mt-0.5">
+                        <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{emp.poste}</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wide mt-0.5">
                           {emp.departement ?? "—"}
                         </p>
                       </td>
                       <td className="py-3.5 hidden sm:table-cell">
-                        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md">
                           {emp.type_contrat ?? "—"}
                         </span>
                       </td>
                       <td className="py-3.5 text-right">
-                        <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50">
                           <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                          <span className="text-[9px] font-bold uppercase text-emerald-700 tracking-wide">
+                          <span className="text-[9px] font-bold uppercase text-emerald-700 dark:text-emerald-400 tracking-wide">
                             {emp.statut}
                           </span>
                         </div>
@@ -479,13 +478,14 @@ export default async function RhPage() {
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionDivider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3 mb-3">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 whitespace-nowrap">
-        {children}
+    <div className="flex items-center gap-3">
+      <div className="h-1 w-1 rounded-full bg-[oklch(0.78_0.13_73)]" />
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 whitespace-nowrap">
+        {label}
       </p>
-      <div className="flex-1 h-px bg-slate-200/60" />
+      <div className="flex-1 h-px bg-gradient-to-r from-slate-200 dark:from-slate-700 to-transparent" />
     </div>
   );
 }
