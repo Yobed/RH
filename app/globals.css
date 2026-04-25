@@ -8,50 +8,41 @@
   :root {
     /* ── Ivoire Prestige — Palette RH Manager CI ── */
 
-    /* Fond chaud off-white, pas de blanc clinique */
     --background: oklch(0.979 0.006 80);
-    --foreground: oklch(0.16 0.03 252);
+    --foreground: oklch(0.12 0.03 252);
 
-    /* Cards blanches avec légère chaleur */
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.16 0.03 252);
+    --card-foreground: oklch(0.12 0.03 252);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.16 0.03 252);
+    --popover-foreground: oklch(0.12 0.03 252);
 
-    /* Primary : Navy profond ivoirien */
     --primary: oklch(0.38 0.10 252);
     --primary-foreground: oklch(0.985 0 0);
 
-    /* Secondary : Bleu-gris très clair */
     --secondary: oklch(0.955 0.012 252);
     --secondary-foreground: oklch(0.38 0.10 252);
 
-    /* Muted : Gris chaud discret */
+    /* Muted — plus foncé pour meilleure lisibilité */
     --muted: oklch(0.963 0.006 80);
-    --muted-foreground: oklch(0.51 0.02 252);
+    --muted-foreground: oklch(0.38 0.02 252);
 
-    /* Accent : Or ivoirien chaud */
     --accent: oklch(0.78 0.13 73);
     --accent-foreground: oklch(0.18 0.04 60);
 
-    /* Destructive : Rouge vif */
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.985 0 0);
 
-    /* Bordures et inputs subtils */
     --border: oklch(0.908 0.006 80);
     --input: oklch(0.908 0.006 80);
     --ring: oklch(0.38 0.10 252);
     --radius: 0.5rem;
 
-    /* Charts */
     --chart-1: oklch(0.38 0.10 252);
     --chart-2: oklch(0.78 0.13 73);
     --chart-3: oklch(0.55 0.14 160);
     --chart-4: oklch(0.65 0.16 27);
     --chart-5: oklch(0.50 0.12 300);
 
-    /* Sidebar : Navy sombre premium */
     --sidebar: oklch(0.175 0.04 248);
     --sidebar-foreground: oklch(0.88 0.01 252);
     --sidebar-primary: oklch(0.78 0.13 73);
@@ -63,51 +54,65 @@
   }
 
   .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: 210 40% 98%;
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    /* ── Dark Mode — Navy Prestige ── */
+    --background: oklch(0.13 0.025 248);
+    --foreground: oklch(0.95 0.01 252);
+
+    --card: oklch(0.18 0.03 248);
+    --card-foreground: oklch(0.95 0.01 252);
+    --popover: oklch(0.18 0.03 248);
+    --popover-foreground: oklch(0.95 0.01 252);
+
+    --primary: oklch(0.78 0.13 73);
+    --primary-foreground: oklch(0.14 0.03 60);
+
+    --secondary: oklch(0.22 0.03 248);
+    --secondary-foreground: oklch(0.88 0.01 252);
+
+    --muted: oklch(0.22 0.03 248);
+    --muted-foreground: oklch(0.72 0.02 252);
+
+    --accent: oklch(0.78 0.13 73);
+    --accent-foreground: oklch(0.14 0.03 60);
+
+    --destructive: oklch(0.65 0.22 27);
+    --destructive-foreground: oklch(0.985 0 0);
+
+    --border: oklch(0.26 0.04 248);
+    --input: oklch(0.26 0.04 248);
+    --ring: oklch(0.78 0.13 73);
+
+    --chart-1: oklch(0.78 0.13 73);
+    --chart-2: oklch(0.55 0.14 160);
+    --chart-3: oklch(0.65 0.16 27);
+    --chart-4: oklch(0.50 0.12 300);
+    --chart-5: oklch(0.60 0.10 200);
+
+    --sidebar: oklch(0.10 0.025 248);
+    --sidebar-foreground: oklch(0.82 0.01 252);
+    --sidebar-primary: oklch(0.78 0.13 73);
+    --sidebar-primary-foreground: oklch(0.14 0.03 60);
+    --sidebar-accent: oklch(0.18 0.03 248);
+    --sidebar-accent-foreground: oklch(0.95 0 0);
+    --sidebar-border: oklch(0.20 0.03 248);
+    --sidebar-ring: oklch(0.78 0.13 73);
   }
+
   .theme {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
   }
+
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
   }
+
   html {
     @apply font-sans;
   }
@@ -117,9 +122,24 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: oklch(0.75 0.006 80); border-radius: 99px; }
   ::-webkit-scrollbar-thumb:hover { background: oklch(0.60 0.01 252); }
+  .dark ::-webkit-scrollbar-thumb { background: oklch(0.35 0.04 248); }
 
   /* Transitions globales fluides */
   a, button { transition: all 0.15s ease; }
+
+  /* Dark mode — surfaces */
+  .dark .bg-white { background-color: oklch(0.18 0.03 248) !important; }
+  .dark .border-slate-100 { border-color: oklch(0.26 0.04 248) !important; }
+  .dark .bg-slate-50 { background-color: oklch(0.16 0.025 248) !important; }
+  .dark .bg-slate-50\/60 { background-color: oklch(0.16 0.025 248 / 0.6) !important; }
+  .dark .text-slate-900 { color: oklch(0.95 0.01 252) !important; }
+  .dark .text-slate-800 { color: oklch(0.90 0.01 252) !important; }
+  .dark .text-slate-700 { color: oklch(0.82 0.01 252) !important; }
+  .dark .text-slate-600 { color: oklch(0.75 0.015 252) !important; }
+  .dark .text-slate-500 { color: oklch(0.68 0.015 252) !important; }
+  .dark .text-slate-400 { color: oklch(0.62 0.015 252) !important; }
+  .dark .border-slate-200 { border-color: oklch(0.28 0.04 248) !important; }
+  .dark .bg-white\/60 { background-color: oklch(0.18 0.03 248 / 0.6) !important; }
 }
 
 @layer base {

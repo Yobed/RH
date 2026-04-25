@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { anthropic, CLAUDE_MODEL } from "@/lib/claude";
+import { grok, GROK_MODEL } from "@/lib/grok";
 
 export const dynamic = 'force-dynamic';
 
@@ -106,14 +106,16 @@ ${contexte ? `\n**Contexte/motifs supplémentaires :** ${contexte}` : ""}
 Génère le document complet, formel et conforme au droit du travail ivoirien.`;
 
   try {
-    const message = await anthropic.messages.create({
-      model: CLAUDE_MODEL,
+    const completion = await grok.chat.completions.create({
+      model: GROK_MODEL,
       max_tokens: 2048,
-      system: systemPrompt,
-      messages: [{ role: "user", content: userPrompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
     });
 
-    const document = message.content[0].type === "text" ? message.content[0].text : "";
+    const document = completion.choices[0]?.message?.content ?? "";
 
     return NextResponse.json({
       document,

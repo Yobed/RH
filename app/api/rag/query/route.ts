@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { anthropic, CLAUDE_MODEL } from "@/lib/claude";
+import { grok, GROK_MODEL } from "@/lib/grok";
 import { gemini, GEMINI_FLASH } from "@/lib/gemini";
 
 export const dynamic = 'force-dynamic';
@@ -69,11 +69,9 @@ export async function POST(req: Request) {
   let contextChunks: ContextChunk[] = [];
   let usedRag = false;
 
-  // ✅ PARALLÈLE — RAG n8n + reformulation Gemini Flash simultanément
   const n8nBase = process.env.N8N_BASE_URL;
 
   const [ragResult, geminiReformulation] = await Promise.all([
-    // RAG via n8n (embedding pgvector)
     n8nBase
       ? fetch(`${n8nBase}/webhook/rag/query`, {
           method: "POST",
@@ -88,7 +86,6 @@ export async function POST(req: Request) {
           .catch(() => null)
       : Promise.resolve(null),
 
-    // Gemini Flash reformule la question pour améliorer la pertinence RAG
     gemini.models.generateContent({
       model: GEMINI_FLASH,
       contents: `Reformule cette question RH en termes juridiques précis pour une recherche documentaire sur le droit du travail ivoirien. Réponds UNIQUEMENT par la question reformulée, sans explication.
@@ -97,13 +94,11 @@ Question originale : "${question}"`,
     }),
   ]);
 
-  // Traitement RAG n8n
   if (ragResult && Array.isArray(ragResult.chunks) && ragResult.chunks.length > 0) {
     contextChunks = ragResult.chunks.slice(0, 4);
     usedRag = true;
   }
 
-  // Si n8n n'a rien retourné, fallback Supabase avec la question reformulée par Gemini
   if (!usedRag) {
     const questionRecherche = geminiReformulation.text?.trim() ?? question;
     const keywords = questionRecherche
@@ -125,7 +120,6 @@ Question originale : "${question}"`,
     }
   }
 
-  // Construire les messages pour Claude
   const contextBlock =
     contextChunks.length > 0
       ? `\n\n--- SOURCES DOCUMENTAIRES ---\n${contextChunks
@@ -133,7 +127,7 @@ Question originale : "${question}"`,
           .join("\n\n")}\n--- FIN SOURCES ---`
       : "";
 
-  const claudeMessages: { role: "user" | "assistant"; content: string }[] = [
+  const messages: { role: "user" | "assistant"; content: string }[] = [
     ...history.slice(-8).map((m) => ({ role: m.role, content: m.content })),
     {
       role: "user" as const,
@@ -141,17 +135,17 @@ Question originale : "${question}"`,
     },
   ];
 
-  // Appel Claude avec contexte enrichi
   try {
-    const message = await anthropic.messages.create({
-      model: CLAUDE_MODEL,
+    const completion = await grok.chat.completions.create({
+      model: GROK_MODEL,
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: claudeMessages,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...messages,
+      ],
     });
 
-    const answer =
-      message.content[0].type === "text" ? message.content[0].text : "";
+    const answer = completion.choices[0]?.message?.content ?? "";
 
     return NextResponse.json({
       answer,
@@ -165,4 +159,3 @@ Question originale : "${question}"`,
     );
   }
 }
-

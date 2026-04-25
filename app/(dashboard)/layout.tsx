@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { SidebarNav } from "@/components/rh/SidebarNav";
 import { UserMenu } from "@/components/rh/UserMenu";
 import { NotificationBell } from "@/components/rh/NotificationBell";
+import { ThemeToggle } from "@/components/rh/ThemeToggle";
 import { BuildingsIcon as Building2 } from "@/components/rh/ClientIcons";
 
 export default async function DashboardLayout({
@@ -78,9 +79,12 @@ export default async function DashboardLayout({
         {/* Topbar épurée */}
         <header
           className="flex items-center justify-end px-6 py-3 print:hidden"
-          style={{ background: "white", borderBottom: "1px solid var(--border)" }}
+          style={{ background: "var(--card)", borderBottom: "1px solid var(--border)" }}
         >
-          <NotificationBell />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <NotificationBell />
+          </div>
         </header>
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
