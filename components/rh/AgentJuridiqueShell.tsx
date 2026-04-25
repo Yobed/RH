@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { RagChat } from "./RagChat";
 import { DocumentDrafter } from "./DocumentDrafter";
+import { DocumentTemplateSelector } from "./DocumentTemplateSelector";
 import { LegalDocUpload } from "./LegalDocUpload";
 import { cn } from "@/lib/utils";
 
-type Tab = "juridique" | "redaction";
+type Tab = "juridique" | "redaction" | "modeles";
 
 const TABS: { value: Tab; label: string; shortLabel: string }[] = [
   { value: "juridique", label: "Q&A Juridique", shortLabel: "Q&A" },
-  { value: "redaction", label: "Rédiger un document", shortLabel: "Rédiger" },
+  { value: "redaction", label: "Rédiger avec IA", shortLabel: "IA" },
+  { value: "modeles", label: "Modèles de documents", shortLabel: "Modèles" },
 ];
 
 export function AgentJuridiqueShell() {
@@ -49,16 +51,16 @@ export function AgentJuridiqueShell() {
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">
-        {tab === "juridique" ? (
+        {tab === "juridique" && (
           <div className="flex h-full flex-col">
             <div className="flex-1 overflow-hidden bg-slate-50 dark:bg-[oklch(0.16_0.025_248)]">
               <RagChat />
             </div>
             <LegalDocUpload />
           </div>
-        ) : (
-          <DocumentDrafter />
         )}
+        {tab === "redaction" && <DocumentDrafter />}
+        {tab === "modeles" && <DocumentTemplateSelector />}
       </div>
     </div>
   );

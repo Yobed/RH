@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { PrintButton } from "@/components/rh/PrintButton";
+import { BulletinFormuleDetail } from "@/components/rh/BulletinFormuleDetail";
 import {
   calculerITS,
   TAUX_CNPS_RETRAITE_SALARIE,
@@ -725,6 +726,27 @@ export default async function PrintBulletinPage({
           </p>
 
         </div>
+      </div>
+
+      {/* ── DÉTAIL DES FORMULES — masqué à l'impression ─────────────────────── */}
+      <div className="print:hidden mt-8 border-t border-slate-100 dark:border-slate-700 pt-8">
+        <BulletinFormuleDetail
+          bulletin={{
+            salaire_brut: sal_cat,
+            sursalaire,
+            prime_anciennete: prime_anc,
+            prime_exceptionnelle: prime_excep,
+            prime_salissure: prime_sal,
+            prime_depassement: prime_dep,
+            prime_fonction: prime_fonc,
+            prime_transport: prime_transp,
+            cnps_salarie: cnps_retraite_sal + cmu_sal,
+            its,
+            salaire_net: net_a_payer,
+            autres_retenues: autresRetenues,
+            avances,
+          }}
+        />
       </div>
     </div>
   );

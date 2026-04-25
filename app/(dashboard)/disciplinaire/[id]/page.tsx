@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { DisciplinaryManager } from "@/components/rh/DisciplinaryManager";
 import { LegalCounselSidebar } from "@/components/rh/LegalCounselSidebar";
+import { DemandeExplicationProcess } from "@/components/rh/DemandeExplicationProcess";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
@@ -114,6 +115,13 @@ export default async function DisciplinaryDetailPage({ params }: { params: { id:
         </div>
 
         <div className="lg:col-span-2 space-y-6">
+          {procedure.type === "demande_d_explication" && (
+            <DemandeExplicationProcess
+              statut={procedure.statut}
+              dateIncident={procedure.date_incident}
+              dateNotification={procedure.date_notification}
+            />
+          )}
           <DisciplinaryManager procedure={procedure} />
           <LegalCounselSidebar type={procedure.type} statut={procedure.statut} />
         </div>

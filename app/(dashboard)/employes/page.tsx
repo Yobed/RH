@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { EmployeeTable } from "@/components/rh/EmployeeTable";
+import { ImportExcelModal } from "@/components/rh/ImportExcelModal";
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Employés — RH Manager CI" };
@@ -52,7 +53,8 @@ export default async function EmployesPage() {
             )}
           </div>
         </div>
-        <div className="shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <ImportExcelModal />
           <EmployeeDialog />
         </div>
       </div>
