@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
@@ -49,7 +49,7 @@ const StatutBadge = ({ statut }: { statut: string }) => {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
       <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
       {STATUT_LABEL[statut] ?? statut}
     </span>
@@ -100,14 +100,14 @@ function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
       <table className="w-full text-sm">
         <thead className="bg-slate-50/60 border-b border-slate-100">
           <tr>
-            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
-            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type</th>
-            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Période</th>
-            <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Jours</th>
+            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
+            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
+            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Période</th>
+            <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours</th>
             {showActions ? (
-              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
+              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
             ) : (
-              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
+              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
             )}
           </tr>
         </thead>
@@ -118,7 +118,7 @@ function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
               <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
                 <td className="px-4 py-3 text-sm">
                   <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{emp?.matricule}</p>
+                  <p className="text-xs text-slate-600 mt-0.5">{emp?.matricule}</p>
                 </td>
                 <td className="px-4 py-3 text-sm">
                   <div className="flex flex-col gap-1">
@@ -131,7 +131,7 @@ function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm text-slate-400 hidden md:table-cell text-xs">
+                <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell text-xs">
                   {formatDate(c.date_debut)} → {formatDate(c.date_fin)}
                 </td>
                 <td className="px-4 py-3 text-sm text-center font-bold text-slate-800 font-mono tabular-nums">
@@ -151,7 +151,7 @@ function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
                     <div className="flex flex-col gap-1">
                       <StatutBadge statut={c.statut ?? "en_attente"} />
                       {c.statut === "refuse" && c.refus_motif && (
-                        <p className="text-xs text-slate-400 italic">{c.refus_motif}</p>
+                        <p className="text-xs text-slate-600 italic">{c.refus_motif}</p>
                       )}
                     </div>
                   </td>
@@ -211,7 +211,7 @@ export default async function CongesPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gestion des Congés</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Droit : 2,5 jours/mois (Art. 25 CT-CI)</p>
+          <p className="text-sm text-slate-600 mt-0.5">Droit : 2,5 jours/mois (Art. 25 CT-CI)</p>
         </div>
         <div className="flex gap-2">
           <ArretMaladieDialog employees={employeesForArret} />
@@ -222,19 +222,19 @@ export default async function CongesPage() {
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">En attente</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">En attente</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{enAttenteManager.length + enAttenteRh.length}</p>
-          <p className="mt-1 text-xs text-slate-400">demande(s) à traiter</p>
+          <p className="mt-1 text-xs text-slate-600">demande(s) à traiter</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Approuvés ce mois</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Approuvés ce mois</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{approuvesCeMois.length}</p>
-          <p className="mt-1 text-xs text-slate-400">congé(s) validé(s)</p>
+          <p className="mt-1 text-xs text-slate-600">congé(s) validé(s)</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Jours pris ce mois</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours pris ce mois</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{joursTotal}</p>
-          <p className="mt-1 text-xs text-slate-400">jours ouvrés cumulés</p>
+          <p className="mt-1 text-xs text-slate-600">jours ouvrés cumulés</p>
         </div>
       </div>
 
@@ -268,7 +268,7 @@ export default async function CongesPage() {
           )}
         </div>
         {enAttenteManager.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-400">
+          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-600">
             Aucune demande en attente de validation manager.
           </div>
         ) : (
@@ -292,7 +292,7 @@ export default async function CongesPage() {
           )}
         </div>
         {enAttenteRh.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-400">
+          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-600">
             Aucune demande en attente de validation RH.
           </div>
         ) : (
@@ -309,7 +309,7 @@ export default async function CongesPage() {
       <div>
         <h2 className="text-base font-semibold text-slate-700 mb-3">Historique</h2>
         {historique.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
+          <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-600">
             Aucun congé traité.
           </div>
         ) : (

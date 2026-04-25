@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { grok, GROK_MODEL } from "@/lib/grok";
+import { gemini, GEMINI_FLASH } from "@/lib/gemini";
 
 export const dynamic = 'force-dynamic';
 
@@ -106,16 +106,21 @@ ${contexte ? `\n**Contexte/motifs supplémentaires :** ${contexte}` : ""}
 Génère le document complet, formel et conforme au droit du travail ivoirien.`;
 
   try {
-    const completion = await grok.chat.completions.create({
-      model: GROK_MODEL,
-      max_tokens: 2048,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
+    const result = await gemini.models.generateContent({
+      model: GEMINI_FLASH,
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }]
+        }
       ],
+      config: {
+        maxOutputTokens: 2048,
+        temperature: 0.7,
+      },
     });
 
-    const document = completion.choices[0]?.message?.content ?? "";
+    const document = result.text?.trim() ?? "";
 
     return NextResponse.json({
       document,

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -49,9 +49,9 @@ function KpiBlock({ label, value, sub, index = 0 }: { label: string; value: stri
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1], delay: index * 0.06 }}
       className="rounded-2xl border border-slate-100/80 bg-white p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)]"
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600 mb-3">{label}</p>
       <p className="text-3xl font-bold font-mono tabular-nums text-slate-900">{value}</p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-slate-600 mt-1">{sub}</p>}
     </motion.div>
   );
 }
@@ -115,7 +115,7 @@ export function ReportingClient({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-slate-800">Masse salariale — 12 derniers mois</h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-600 mt-0.5">
             Total : {formatFcfa(totalAnnee)} · Moyenne mensuelle : {formatFcfa(Math.round(moyenneMensuelle))}
           </p>
         </div>
@@ -131,7 +131,7 @@ export function ReportingClient({
       {/* Monthly bar chart (CSS-based) */}
       <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
         {masseSalariale.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-8">Aucun bulletin de paie enregistré</p>
+          <p className="text-sm text-slate-600 text-center py-8">Aucun bulletin de paie enregistré</p>
         ) : (
           <div className="space-y-3">
             {masseSalariale.map((m, i) => (
@@ -142,7 +142,7 @@ export function ReportingClient({
                 transition={{ duration: 0.35, delay: i * 0.04, ease: [0.23, 1, 0.32, 1] }}
                 className="grid grid-cols-[60px_1fr_100px] sm:grid-cols-[80px_1fr_140px] items-center gap-2 sm:gap-4"
               >
-                <span className="font-mono text-[11px] text-slate-500 tabular-nums">{m.periode}</span>
+                <span className="font-mono text-[11px] text-slate-600 tabular-nums">{m.periode}</span>
                 <MiniBar value={m.masse_brute} max={maxBrute} color="bg-[oklch(0.38_0.10_252)]" />
                 <span className="font-mono text-[11px] tabular-nums text-slate-700 text-right">
                   {formatFcfa(m.masse_brute)}
@@ -160,7 +160,7 @@ export function ReportingClient({
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/60">
               {["Période", "Bulletins", "Masse brute", "Masse nette", "CNPS salarié", "ITS", "Coût employeur"].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">{h}</th>
               ))}
             </tr>
           </thead>
@@ -168,11 +168,11 @@ export function ReportingClient({
             {masseSalariale.map((m) => (
               <tr key={m.periode} className="hover:bg-slate-50/60 transition-colors">
                 <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{m.periode}</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500 text-center tabular-nums">{m.nb_bulletins}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 text-center tabular-nums">{m.nb_bulletins}</td>
                 <td className="px-4 py-3 font-mono text-xs text-slate-800 tabular-nums">{formatFcfa(m.masse_brute)}</td>
                 <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{formatFcfa(m.masse_nette)}</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500 tabular-nums">{formatFcfa(m.cnps_total)}</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500 tabular-nums">{formatFcfa(m.its_total)}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{formatFcfa(m.cnps_total)}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{formatFcfa(m.its_total)}</td>
                 <td className="px-4 py-3 font-mono text-xs font-semibold text-slate-700 tabular-nums">
                   {formatFcfa(Math.round(m.masse_brute * 1.185))}
                 </td>
@@ -182,14 +182,14 @@ export function ReportingClient({
           {masseSalariale.length > 0 && (
             <tfoot className="border-t-2 border-slate-200 bg-slate-50">
               <tr>
-                <td className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">Total</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500 tabular-nums text-center">
+                <td className="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-slate-600">Total</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums text-center">
                   {masseSalariale.reduce((s, m) => s + m.nb_bulletins, 0)}
                 </td>
                 <td className="px-4 py-3 font-mono text-xs font-bold text-slate-800 tabular-nums">{formatFcfa(totalAnnee)}</td>
                 <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{formatFcfa(masseSalariale.reduce((s, m) => s + m.masse_nette, 0))}</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500 tabular-nums">{formatFcfa(masseSalariale.reduce((s, m) => s + m.cnps_total, 0))}</td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500 tabular-nums">{formatFcfa(masseSalariale.reduce((s, m) => s + m.its_total, 0))}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{formatFcfa(masseSalariale.reduce((s, m) => s + m.cnps_total, 0))}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 tabular-nums">{formatFcfa(masseSalariale.reduce((s, m) => s + m.its_total, 0))}</td>
                 <td className="px-4 py-3 font-mono text-xs font-bold text-slate-700 tabular-nums">{formatFcfa(Math.round(totalAnnee * 1.185))}</td>
               </tr>
             </tfoot>

@@ -110,7 +110,8 @@
     ],
     "additionalDirectories": [
       "c:\\Users\\WILFRIED\\OneDrive - Gravel Ivoire\\Bureau\\Ressource Humaine\\app\\api\\qhse\\accidents",
-      "\\tmp"
+      "\\tmp",
+      "C:\\Users\\WILFRIED\\AppData\\Roaming\\Claude"
     ]
   }
 }

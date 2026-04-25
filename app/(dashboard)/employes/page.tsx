@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { EmployeeTable } from "@/components/rh/EmployeeTable";
 import { ImportExcelModal } from "@/components/rh/ImportExcelModal";
@@ -25,7 +25,7 @@ export default async function EmployesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Employés</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Gestion du personnel</p>
+          <p className="text-sm text-slate-600 mt-0.5">Gestion du personnel</p>
           {/* Mini KPIs inline */}
           <div className="flex flex-wrap items-center gap-4 mt-3">
             <div className="flex items-center gap-1.5">

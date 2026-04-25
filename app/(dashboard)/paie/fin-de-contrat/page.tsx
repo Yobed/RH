@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import Link from "next/link";
@@ -28,12 +28,12 @@ export default async function FinDeContratPage({
         <div>
           <Link
             href="/paie"
-            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2"
+            className="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-slate-600 transition-colors mb-2"
           >
             ← Retour à la paie
           </Link>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Solde de Tout Compte</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">
             Simulation fin de contrat — précarité, licenciement, congés selon lois ivoiriennes
           </p>
         </div>

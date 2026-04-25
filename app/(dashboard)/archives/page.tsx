@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
 import { ArchivesControls } from "@/components/rh/ArchivesControls";
@@ -36,12 +36,12 @@ interface PageProps {
 }
 
 function fileExtColor(fileType: string | null): string {
-  if (!fileType) return "bg-slate-100 text-slate-500";
+  if (!fileType) return "bg-slate-100 text-slate-600";
   if (fileType.includes("pdf")) return "bg-rose-50 text-rose-600";
   if (fileType.includes("word") || fileType.includes("doc")) return "bg-blue-50 text-blue-600";
   if (fileType.includes("image") || fileType.includes("png") || fileType.includes("jpg")) return "bg-violet-50 text-violet-600";
   if (fileType.includes("sheet") || fileType.includes("xls") || fileType.includes("csv")) return "bg-emerald-50 text-emerald-600";
-  return "bg-slate-50 text-slate-500";
+  return "bg-slate-50 text-slate-600";
 }
 
 export default async function ArchivesPage({ searchParams }: PageProps) {
@@ -101,7 +101,7 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Archives</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-600 mt-0.5">
             Gestion électronique des documents — centralisation et conformité.
           </p>
         </div>
@@ -115,7 +115,7 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
             key={f}
             className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-4 hover:shadow-[0_4px_16px_-2px_rgba(0,0,0,0.08)] transition-shadow"
           >
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 truncate">{f}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 truncate">{f}</p>
             <p className="mt-2 text-2xl font-bold text-slate-800">{compteFamille[f] ?? 0}</p>
           </div>
         ))}
@@ -137,7 +137,7 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
               </svg>
             </div>
             <h3 className="text-sm font-semibold text-slate-700">Aucun résultat</h3>
-            <p className="mt-1 text-sm text-slate-400 max-w-xs mx-auto">
+            <p className="mt-1 text-sm text-slate-600 max-w-xs mx-auto">
               Nous n&apos;avons trouvé aucun document correspondant à vos critères.
             </p>
           </div>
@@ -146,12 +146,12 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
             <table className="w-full text-sm">
               <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Document</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Employé</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Famille</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell text-right">Taille</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Date</th>
-                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Document</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Employé</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Famille</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell text-right">Taille</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Date</th>
+                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -170,7 +170,7 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
                             <span className="font-semibold text-slate-800 truncate max-w-[180px] group-hover:text-[oklch(0.175_0.04_248)] transition-colors">
                               {doc.name}
                             </span>
-                            <span className="text-[10px] text-slate-400 font-medium">
+                            <span className="text-[10px] text-slate-600 font-medium">
                               {doc.file_type?.split("/")[1]?.toUpperCase() || "—"}
                             </span>
                           </div>
@@ -187,12 +187,12 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
                         )}
                       </td>
                       <td className="px-4 py-3.5 hidden lg:table-cell text-right">
-                        <span className="text-xs text-slate-400 font-mono tabular-nums">
+                        <span className="text-xs text-slate-600 font-mono tabular-nums">
                           {doc.file_size_kb ? `${doc.file_size_kb} Ko` : "—"}
                         </span>
                       </td>
                       <td className="px-4 py-3.5 hidden lg:table-cell">
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-600">
                           {new Date(doc.created_at!).toLocaleDateString("fr-CI", {
                             day: "numeric",
                             month: "short",
@@ -225,7 +225,7 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
             {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 bg-slate-50/40">
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-600">
                   Page <span className="font-semibold text-slate-700">{page}</span> sur{" "}
                   <span className="font-semibold text-slate-700">{totalPages}</span>
                 </p>

@@ -24,7 +24,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-const ADMIN_EMAIL = "admin@yobed.ci";
+const ADMIN_EMAIL = "yobed.sarl@gmail.com";
 const NEW_PASSWORD = "Waliyatb1";
 
 async function main() {

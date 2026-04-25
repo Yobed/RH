@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { NotificationSyncButton } from "@/components/rh/NotificationSyncButton";
 import { NotificationMarkAllRead } from "@/components/rh/NotificationMarkAllRead";
@@ -35,7 +35,7 @@ const typeColors: Record<string, { dot: string; bg: string; border: string; icon
     dot: "bg-slate-400",
     bg: "bg-slate-50",
     border: "border-slate-100",
-    icon: "text-slate-400",
+    icon: "text-slate-600",
   },
 };
 
@@ -80,7 +80,7 @@ export default async function NotificationsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Notifications</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-600 mt-0.5">
             {unread > 0 ? (
               <span>
                 <span className="font-semibold text-[oklch(0.78_0.13_73)]">{unread} non lue{unread > 1 ? "s" : ""}</span>
@@ -105,7 +105,7 @@ export default async function NotificationsPage() {
             </svg>
           </div>
           <p className="font-semibold text-slate-700">Aucune notification</p>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-600">
             Cliquez sur &ldquo;Synchroniser&rdquo; pour générer les alertes automatiques.
           </p>
         </div>
@@ -136,7 +136,7 @@ export default async function NotificationsPage() {
                       {notif.titre}
                     </p>
                     {/* Badge type inline */}
-                    <span className="inline-flex items-center gap-1 rounded-full border border-slate-100 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-slate-100 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
                       {typeLabel[notif.type] ?? notif.type}
                     </span>
                     {/* Dot non lu animé */}
@@ -148,10 +148,10 @@ export default async function NotificationsPage() {
                     )}
                   </div>
                   {notif.message && (
-                    <p className="mt-1 text-sm text-slate-500">{notif.message}</p>
+                    <p className="mt-1 text-sm text-slate-600">{notif.message}</p>
                   )}
                   {notif.created_at && (
-                    <p className="mt-1.5 text-[11px] font-medium text-slate-400">
+                    <p className="mt-1.5 text-[11px] font-medium text-slate-600">
                       {relativeDate(notif.created_at)}
                     </p>
                   )}

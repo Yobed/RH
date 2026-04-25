@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { CongesCalendrierClient } from "@/components/rh/CongesCalendrierClient";
@@ -74,16 +74,16 @@ export default async function CalendrierPage({
         <div>
           <Link
             href="/conges"
-            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2"
+            className="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-slate-600 transition-colors mb-2"
           >
             ← Retour aux congés
           </Link>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Calendrier des Absences</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">
             Vue mensuelle par équipe — filtre par département
           </p>
         </div>
-        <span className="shrink-0 text-xs font-mono text-slate-400 border border-slate-200 rounded-lg px-2.5 py-1 bg-white">
+        <span className="shrink-0 text-xs font-mono text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 bg-white">
           {new Date(mois + "-01").toLocaleDateString("fr-CI", { month: "long", year: "numeric" })}
         </span>
       </div>

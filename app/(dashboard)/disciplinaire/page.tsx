@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { DisciplinaryDialog } from "@/components/rh/DisciplinaryDialog";
 import Link from "next/link";
@@ -57,7 +57,7 @@ export default async function DisciplinairePage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Procédures Disciplinaires</h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-600">
             Suivi des demandes d'explication, avertissements, mises à pied et licenciements.
           </p>
         </div>
@@ -67,19 +67,19 @@ export default async function DisciplinairePage() {
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Total dossiers</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Total dossiers</p>
           <p className="mt-2 text-3xl font-bold text-slate-900">{total}</p>
-          <p className="mt-1 text-xs text-slate-400">procédures enregistrées</p>
+          <p className="mt-1 text-xs text-slate-600">procédures enregistrées</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Dossiers ouverts</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Dossiers ouverts</p>
           <p className={`mt-2 text-3xl font-bold ${ouverts > 0 ? "text-red-600" : "text-slate-900"}`}>{ouverts}</p>
-          <p className="mt-1 text-xs text-slate-400">en cours de traitement</p>
+          <p className="mt-1 text-xs text-slate-600">en cours de traitement</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Clôturés</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Clôturés</p>
           <p className="mt-2 text-3xl font-bold text-slate-900">{clotures}</p>
-          <p className="mt-1 text-xs text-slate-400">procédures closes</p>
+          <p className="mt-1 text-xs text-slate-600">procédures closes</p>
         </div>
       </div>
 
@@ -87,18 +87,18 @@ export default async function DisciplinairePage() {
       <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
         {!procedures || procedures.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="font-medium text-slate-400 text-sm">Aucune procédure enregistrée</p>
+            <p className="font-medium text-slate-600 text-sm">Aucune procédure enregistrée</p>
           </div>
         ) : (
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead className="bg-slate-50/60 border-b border-slate-100">
               <tr>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type de sanction</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Date incident</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
-                <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type de sanction</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Date incident</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -111,14 +111,14 @@ export default async function DisciplinairePage() {
                   <tr key={proc.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="px-4 py-3">
                       <p className="font-semibold text-slate-900">{employee.full_name}</p>
-                      <p className="text-xs text-slate-400">{employee.poste}</p>
+                      <p className="text-xs text-slate-600">{employee.poste}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${typeCfg.bg} ${typeCfg.text}`}>
                         {proc.type.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td className="px-4 py-3 hidden md:table-cell text-slate-500 tabular-nums">
+                    <td className="px-4 py-3 hidden md:table-cell text-slate-600 tabular-nums">
                       {proc.date_incident
                         ? new Date(proc.date_incident).toLocaleDateString('fr-FR')
                         : <span className="text-slate-300">—</span>}

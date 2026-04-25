@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   UserPlus,
@@ -41,7 +41,7 @@ export function QuickActions() {
               <p className="font-semibold text-[11px] text-slate-700 leading-tight mb-0.5 group-hover:text-slate-900 transition-colors">
                 {action.title}
               </p>
-              <p className="text-[9px] text-slate-400 font-medium uppercase tracking-wide">
+              <p className="text-[9px] text-slate-600 font-medium uppercase tracking-wide">
                 {action.description}
               </p>
             </div>

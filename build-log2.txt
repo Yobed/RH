@@ -1,0 +1,29 @@
+
+> rh-manager-ci@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./components/rh/ArchivesControls.tsx
+34:6  Warning: React Hook useEffect has a missing dependency: 'updateParams'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+Failed to compile.
+
+./app/(dashboard)/evaluations/page.tsx:123:11
+Type error: Type '{ employee_name: string; employee_role: string; id: string; employee_id: string; type: string; periode: string; date_prevue: string; date_realisation: string | null; statut: string; score_global: number | null; ... 4 more ...; employees?: { ...; } | ... 2 more ... | undefined; }[]' is not assignable to type 'Evaluation[]'.
+  Property 'potential_score' is missing in type '{ employee_name: string; employee_role: string; id: string; employee_id: string; type: string; periode: string; date_prevue: string; date_realisation: string | null; statut: string; score_global: number | null; ... 4 more ...; employees?: { full_name?: string; poste?: string; } | { full_name?: string; poste?: string...' but required in type 'Evaluation'.
+
+[0m [90m 121 |[39m       }[33m>[39m[0m
+[0m [90m 122 |[39m         [33m<[39m[33mPerformanceReviewManager[39m[0m
+[0m[31m[1m>[22m[39m[90m 123 |[39m           initialEvaluations[33m=[39m{formattedEvaluations}[0m
+[0m [90m     |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 124 |[39m           employees[33m=[39m{employees [33m?[39m[33m?[39m []}[0m
+[0m [90m 125 |[39m         [33m/[39m[33m>[39m[0m
+[0m [90m 126 |[39m       [33m<[39m[33m/[39m[33mSuspense[39m[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

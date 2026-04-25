@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   TAUX_CNPS_RETRAITE_SALARIE,
@@ -65,8 +65,8 @@ function Row({
           <p className={`text-sm font-semibold ${highlight ? "text-amber-800 dark:text-amber-300" : "text-slate-800 dark:text-slate-200"}`}>
             {label}
           </p>
-          <p className="mt-0.5 font-mono text-[11px] text-slate-500 dark:text-slate-400 break-all">{formula}</p>
-          {note && <p className="mt-1 text-[10px] text-slate-400 dark:text-slate-500 italic">{note}</p>}
+          <p className="mt-0.5 font-mono text-[11px] text-slate-500 dark:text-slate-600 break-all">{formula}</p>
+          {note && <p className="mt-1 text-[10px] text-slate-400 dark:text-slate-600 italic">{note}</p>}
         </div>
         <p className={`shrink-0 font-mono text-sm font-bold tabular-nums ${highlight ? "text-amber-700 dark:text-amber-400" : "text-slate-900 dark:text-slate-100"}`}>
           {result}
@@ -117,7 +117,7 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
         </div>
         <div>
           <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Détail des formules de calcul</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Code du Travail CI · CGI Art. 116 · CNPS CI 2026</p>
+          <p className="text-xs text-slate-500 dark:text-slate-600">Code du Travail CI · CGI Art. 116 · CNPS CI 2026</p>
         </div>
       </div>
 
@@ -260,7 +260,7 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
         />
       </Section>
 
-      <p className="text-[10px] text-slate-400 text-center pt-2">
+      <p className="text-[10px] text-slate-600 text-center pt-2">
         Sources : Code du Travail CI Loi 2015-532 · CGI Art. 116 · Convention Collective Interprofessionnelle ASSIM-UGTCI · CNPS CI 2026
       </p>
     </div>

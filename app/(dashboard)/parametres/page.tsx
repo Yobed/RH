@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { ParametresForm } from "@/components/rh/ParametresForm";
 
 export const metadata = { title: "Paramètres — RH Manager CI" };
@@ -47,7 +47,7 @@ export default async function ParametresPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Paramètres</h1>
-          <p className="text-sm text-slate-400">Profil utilisateur et configuration entreprise</p>
+          <p className="text-sm text-slate-600">Profil utilisateur et configuration entreprise</p>
         </div>
       </div>
 

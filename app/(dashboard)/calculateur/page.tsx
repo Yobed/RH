@@ -1,4 +1,4 @@
-import { CalculateurRH } from "@/components/rh/CalculateurRH";
+﻿import { CalculateurRH } from "@/components/rh/CalculateurRH";
 import { SimulatorCockpit } from "@/components/rh/SimulatorCockpit";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,9 +20,9 @@ export default async function CalculateurPage() {
       <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Espace Simulation & Calcul</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">Décisions RH éclairées — Conformité Code du Travail CI 2025</p>
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">Décisions RH éclairées — Conformité Code du Travail CI 2025</p>
         </div>
-        <span className="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest border border-slate-200 text-slate-500 bg-white">
+        <span className="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest border border-slate-200 text-slate-600 bg-white">
           Conforme CI 2025
         </span>
       </div>
@@ -31,19 +31,19 @@ export default async function CalculateurPage() {
         <TabsList className="bg-white border border-slate-200 p-1 mb-6 rounded-xl h-auto gap-1">
           <TabsTrigger
             value="cockpit"
-            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-500 data-[state=inactive]:hover:text-slate-700"
+            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-700"
           >
             Cockpit Simulation
           </TabsTrigger>
           <TabsTrigger
             value="stc"
-            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-500 data-[state=inactive]:hover:text-slate-700"
+            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-700"
           >
             Solde de Tout Compte
           </TabsTrigger>
           <TabsTrigger
             value="tools"
-            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-500 data-[state=inactive]:hover:text-slate-700"
+            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-700"
           >
             Outils Rapides
           </TabsTrigger>

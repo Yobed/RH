@@ -1,0 +1,29 @@
+
+> rh-manager-ci@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./components/rh/ArchivesControls.tsx
+34:6  Warning: React Hook useEffect has a missing dependency: 'updateParams'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+Failed to compile.
+
+./components/rh/RagChat.tsx:187:9
+Type error: Type '{ children: Element; viewportRef: RefObject<HTMLDivElement | null>; className: string; }' is not assignable to type 'IntrinsicAttributes & Omit<ScrollAreaProps & RefAttributes<HTMLDivElement>, "ref"> & RefAttributes<...>'.
+  Property 'viewportRef' does not exist on type 'IntrinsicAttributes & Omit<ScrollAreaProps & RefAttributes<HTMLDivElement>, "ref"> & RefAttributes<...>'.
+
+[0m [90m 185 |[39m       {[90m/* Chat Area */[39m}[0m
+[0m [90m 186 |[39m       [33m<[39m[33mScrollArea[39m [0m
+[0m[31m[1m>[22m[39m[90m 187 |[39m         viewportRef[33m=[39m{scrollRef}[0m
+[0m [90m     |[39m         [31m[1m^[22m[39m[0m
+[0m [90m 188 |[39m         className[33m=[39m[32m"flex-1 px-6 py-6 overflow-hidden relative z-10"[39m[0m
+[0m [90m 189 |[39m       [33m>[39m[0m
+[0m [90m 190 |[39m         [33m<[39m[33mAnimatePresence[39m initial[33m=[39m{[36mfalse[39m}[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

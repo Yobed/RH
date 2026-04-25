@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { OvertimeManager } from "@/components/rh/OvertimeManager";
@@ -39,7 +39,7 @@ export default async function HeuresSupPage() {
       <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Heures Supplémentaires</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">
             Calcul et gestion conformément au Code du Travail CI
           </p>
         </div>

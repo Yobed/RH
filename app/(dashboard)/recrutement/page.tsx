@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { ScoreCvButton } from "@/components/rh/ScoreCvButton";
 import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
@@ -47,7 +47,7 @@ export default async function RecrutementPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Recrutement</h1>
-          <p className="text-sm text-slate-400">Offres d'emploi et candidatures avec scoring IA</p>
+          <p className="text-sm text-slate-600">Offres d'emploi et candidatures avec scoring IA</p>
         </div>
         <div className="flex gap-2">
           <CandidateDialog postes={postes ?? []} />
@@ -58,21 +58,21 @@ export default async function RecrutementPage() {
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Postes ouverts</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Postes ouverts</p>
           <p className="mt-2 text-3xl font-bold text-slate-900">{postesOuverts}</p>
-          <p className="mt-1 text-xs text-slate-400">offres actives</p>
+          <p className="mt-1 text-xs text-slate-600">offres actives</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Candidats en cours</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Candidats en cours</p>
           <p className="mt-2 text-3xl font-bold text-slate-900">{candidatsActifs}</p>
-          <p className="mt-1 text-xs text-slate-400">dossiers actifs</p>
+          <p className="mt-1 text-xs text-slate-600">dossiers actifs</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">Score IA moyen</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Score IA moyen</p>
           <p className={`mt-2 text-3xl font-bold font-mono ${scoreMoyen == null ? "text-slate-300" : scoreMoyen >= 80 ? "text-emerald-600" : scoreMoyen >= 60 ? "text-amber-600" : "text-red-500"}`}>
             {scoreMoyen != null ? scoreMoyen : "—"}
           </p>
-          <p className="mt-1 text-xs text-slate-400">sur les 10 derniers</p>
+          <p className="mt-1 text-xs text-slate-600">sur les 10 derniers</p>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export default async function RecrutementPage() {
         <h2 className="mb-3 text-base font-semibold text-slate-800 tracking-tight">Postes ouverts</h2>
         {!postes || postes.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 p-10 text-center">
-            <p className="font-medium text-slate-400 text-sm">Aucune offre publiée</p>
+            <p className="font-medium text-slate-600 text-sm">Aucune offre publiée</p>
           </div>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -119,7 +119,7 @@ export default async function RecrutementPage() {
                       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                         p.statut === "ouvert"
                           ? "bg-emerald-50 text-emerald-700"
-                          : "bg-slate-100 text-slate-500"
+                          : "bg-slate-100 text-slate-600"
                       }`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${p.statut === "ouvert" ? "bg-emerald-500" : "bg-slate-400"}`} />
@@ -134,10 +134,10 @@ export default async function RecrutementPage() {
                   </div>
                 </div>
                 {p.type_contrat && (
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{p.type_contrat}</p>
+                  <p className="text-xs font-medium text-slate-600 uppercase tracking-wide">{p.type_contrat}</p>
                 )}
                 {p.date_limite && (
-                  <p className="text-xs text-slate-400 mt-auto pt-1 border-t border-slate-50">
+                  <p className="text-xs text-slate-600 mt-auto pt-1 border-t border-slate-50">
                     Limite : <span className="font-medium text-slate-600">{new Date(p.date_limite).toLocaleDateString("fr-CI")}</span>
                   </p>
                 )}
@@ -151,7 +151,7 @@ export default async function RecrutementPage() {
       <div>
         <h2 className="mb-3 text-base font-semibold text-slate-800 tracking-tight">Candidatures récentes</h2>
         {!candidats || candidats.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-slate-400 text-sm">
+          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-slate-600 text-sm">
             Aucune candidature reçue.
           </div>
         ) : (
@@ -160,11 +160,11 @@ export default async function RecrutementPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Candidat</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Poste</th>
-                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Score IA</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
-                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Action</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Candidat</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Poste</th>
+                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Score IA</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -177,9 +177,9 @@ export default async function RecrutementPage() {
                     <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="px-4 py-3">
                         <p className="font-semibold text-slate-900">{c.full_name}</p>
-                        <p className="text-xs text-slate-400">{c.email}</p>
+                        <p className="text-xs text-slate-600">{c.email}</p>
                       </td>
-                      <td className="px-4 py-3 text-slate-500 hidden md:table-cell">
+                      <td className="px-4 py-3 text-slate-600 hidden md:table-cell">
                         {poste?.titre ?? "—"}
                       </td>
                       <td className="px-4 py-3 text-center">

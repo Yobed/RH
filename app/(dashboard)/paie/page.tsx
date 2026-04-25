@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
@@ -26,7 +26,7 @@ const StatutBadge = ({ statut }: { statut: string }) => {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
       <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
       {statut}
     </span>
@@ -76,7 +76,7 @@ export default async function PaiePage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-600 mt-0.5">
             CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Droit ivoirien 2026
           </p>
         </div>
@@ -91,19 +91,19 @@ export default async function PaiePage() {
       {bulletinsMois.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Masse salariale nette</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Masse salariale nette</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseSalariale)}</p>
-            <p className="mt-1 text-xs text-slate-400">{bulletinsMois.length} bulletin(s) · {currentPeriode}</p>
+            <p className="mt-1 text-xs text-slate-600">{bulletinsMois.length} bulletin(s) · {currentPeriode}</p>
           </div>
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Total charges (CNPS + ITS)</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total charges (CNPS + ITS)</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseCharges)}</p>
-            <p className="mt-1 text-xs text-slate-400">Retenues salariales du mois</p>
+            <p className="mt-1 text-xs text-slate-600">Retenues salariales du mois</p>
           </div>
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Bulletins payés</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Bulletins payés</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{nbPayes}</p>
-            <p className="mt-1 text-xs text-slate-400">sur {bulletinsMois.length} ce mois</p>
+            <p className="mt-1 text-xs text-slate-600">sur {bulletinsMois.length} ce mois</p>
           </div>
         </div>
       )}
@@ -127,8 +127,8 @@ export default async function PaiePage() {
 
         {!bulletins || bulletins.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-            <p className="font-medium text-slate-400">Aucun bulletin de paie</p>
-            <p className="mt-1 text-sm text-slate-400">Créez le premier bulletin du mois.</p>
+            <p className="font-medium text-slate-600">Aucun bulletin de paie</p>
+            <p className="mt-1 text-sm text-slate-600">Créez le premier bulletin du mois.</p>
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
@@ -136,14 +136,14 @@ export default async function PaiePage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Période</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Brut</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">CNPS</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">ITS</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Net</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 min-w-[130px]"></th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Brut</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">CNPS</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">ITS</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Net</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 min-w-[130px]"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -155,12 +155,12 @@ export default async function PaiePage() {
                     <tr key={b.id} className="group hover:bg-slate-50/60 transition-colors">
                       <td className="px-4 py-3 text-sm">
                         <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{emp?.matricule}</p>
+                        <p className="text-xs text-slate-600 mt-0.5">{emp?.matricule}</p>
                       </td>
-                      <td className="px-4 py-3 text-sm font-mono tabular-nums text-xs uppercase tracking-wider text-slate-500">
+                      <td className="px-4 py-3 text-sm font-mono tabular-nums text-xs uppercase tracking-wider text-slate-600">
                         {formatPeriode(b.periode)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-500">{fmt(b.salaire_brut)}</td>
+                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">{fmt(b.salaire_brut)}</td>
                       <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(b.cnps_salarie)}</td>
                       <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(b.its)}</td>
                       <td className="px-4 py-3 text-sm text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(b.salaire_net)}</td>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 interface Step {
   number: number;
@@ -79,7 +79,7 @@ export function DemandeExplicationProcess({ statut, dateIncident, dateNotificati
 
       {/* Context */}
       {(dateIncident || dateNotification) && (
-        <div className="flex flex-wrap gap-4 px-5 py-3 bg-slate-50 dark:bg-[oklch(0.15_0.025_248)] border-b border-slate-100 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-400">
+        <div className="flex flex-wrap gap-4 px-5 py-3 bg-slate-50 dark:bg-[oklch(0.15_0.025_248)] border-b border-slate-100 dark:border-slate-700 text-[11px] text-slate-500 dark:text-slate-600">
           {dateIncident && (
             <span>
               <span className="font-semibold text-slate-700 dark:text-slate-300">Date incident :</span>{" "}
@@ -121,7 +121,7 @@ export function DemandeExplicationProcess({ statut, dateIncident, dateNotificati
                       ? "border-emerald-400 bg-emerald-400 text-white"
                       : isActive
                       ? "border-[oklch(0.78_0.13_73)] bg-[oklch(0.78_0.13_73)] text-[oklch(0.14_0.03_60)]"
-                      : "border-slate-200 dark:border-slate-600 bg-white dark:bg-[oklch(0.22_0.03_248)] text-slate-400"
+                      : "border-slate-200 dark:border-slate-600 bg-white dark:bg-[oklch(0.22_0.03_248)] text-slate-600"
                   }`}
                 >
                   {isDone ? (
@@ -149,8 +149,8 @@ export function DemandeExplicationProcess({ statut, dateIncident, dateNotificati
                       isActive
                         ? "text-amber-800 dark:text-amber-300"
                         : isDone
-                        ? "text-slate-600 dark:text-slate-400"
-                        : "text-slate-600 dark:text-slate-500"
+                        ? "text-slate-600 dark:text-slate-600"
+                        : "text-slate-600 dark:text-slate-600"
                     }`}
                   >
                     {step.label}
@@ -160,17 +160,17 @@ export function DemandeExplicationProcess({ statut, dateIncident, dateNotificati
                       className={`text-[10px] font-mono px-2 py-0.5 rounded-full shrink-0 ${
                         isActive
                           ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
-                          : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
+                          : "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-600"
                       }`}
                     >
                       {step.delai}
                     </span>
                   )}
                 </div>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-600 leading-relaxed">
                   {step.description}
                 </p>
-                <p className="mt-1.5 text-[10px] text-slate-400 dark:text-slate-500 italic">
+                <p className="mt-1.5 text-[10px] text-slate-400 dark:text-slate-600 italic">
                   {step.legal}
                 </p>
 
@@ -191,8 +191,8 @@ export function DemandeExplicationProcess({ statut, dateIncident, dateNotificati
 
       {/* Warning note */}
       <div className="px-5 py-3 bg-slate-50 dark:bg-[oklch(0.15_0.025_248)] border-t border-slate-100 dark:border-slate-700">
-        <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed">
-          <span className="font-semibold text-slate-500 dark:text-slate-400">Point de vigilance :</span>{" "}
+        <p className="text-[10px] text-slate-400 dark:text-slate-600 leading-relaxed">
+          <span className="font-semibold text-slate-500 dark:text-slate-600">Point de vigilance :</span>{" "}
           Le non-respect de cette procédure expose l&apos;employeur à une annulation de la sanction par les tribunaux du travail CI.
           Toute sanction doit être proportionnée aux faits reprochés (principe de proportionnalité, CT CI art. 15.2).
         </p>

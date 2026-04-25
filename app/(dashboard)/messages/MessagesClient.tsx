@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -130,7 +130,7 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
                 onClick={() => { setBox(b); setSelected(null); }}
                 className={cn(
                   "flex-1 rounded-md py-1.5 text-xs font-medium transition-all",
-                  box === b ? "bg-white shadow-sm text-slate-900" : "text-slate-500"
+                  box === b ? "bg-white shadow-sm text-slate-900" : "text-slate-600"
                 )}
               >
                 {b === "inbox" ? `Reçus${unread > 0 ? ` (${unread})` : ""}` : "Envoyés"}
@@ -142,10 +142,10 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
         {/* Message list */}
         <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
           {loading && (
-            <div className="p-4 text-center text-xs text-slate-400">Chargement…</div>
+            <div className="p-4 text-center text-xs text-slate-600">Chargement…</div>
           )}
           {!loading && messages.length === 0 && (
-            <div className="p-6 text-center text-xs text-slate-400">Aucun message</div>
+            <div className="p-6 text-center text-xs text-slate-600">Aucun message</div>
           )}
           {messages.map((msg) => {
             const other = box === "inbox" ? msg.sender : msg.recipient;
@@ -166,12 +166,12 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
                       <p className={cn("text-xs truncate", !msg.lu && box === "inbox" ? "font-semibold text-slate-900" : "font-medium text-slate-700")}>
                         {other?.full_name ?? "—"}
                       </p>
-                      <span className="text-[9px] text-slate-400 shrink-0">{timeAgo(msg.created_at)}</span>
+                      <span className="text-[9px] text-slate-600 shrink-0">{timeAgo(msg.created_at)}</span>
                     </div>
                     {msg.sujet && (
                       <p className="text-[10px] font-medium text-slate-600 truncate">{msg.sujet}</p>
                     )}
-                    <p className="text-[10px] text-slate-400 truncate">{msg.corps}</p>
+                    <p className="text-[10px] text-slate-600 truncate">{msg.corps}</p>
                   </div>
                   {!msg.lu && box === "inbox" && (
                     <span className="h-2 w-2 rounded-full bg-[oklch(0.38_0.10_252)] shrink-0 mt-1" />
@@ -190,10 +190,10 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
             <div className="max-w-xl space-y-4">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-base font-semibold text-slate-800">Nouveau message</h2>
-                <button onClick={() => setComposing(false)} className="text-xs text-slate-400 hover:text-slate-600">Annuler</button>
+                <button onClick={() => setComposing(false)} className="text-xs text-slate-600 hover:text-slate-600">Annuler</button>
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Destinataire</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1.5">Destinataire</p>
                 <select
                   value={form.recipient_id}
                   onChange={(e) => setForm({ ...form, recipient_id: e.target.value })}
@@ -206,7 +206,7 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
                 </select>
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Objet <span className="text-slate-300">(optionnel)</span></p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1.5">Objet <span className="text-slate-300">(optionnel)</span></p>
                 <input
                   type="text"
                   value={form.sujet}
@@ -216,7 +216,7 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
                 />
               </div>
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1.5">Message</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1.5">Message</p>
                 <textarea
                   value={form.corps}
                   onChange={(e) => setForm({ ...form, corps: e.target.value })}
@@ -244,7 +244,7 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
                     {box === "inbox" ? selected.sender?.full_name : selected.recipient?.full_name}
                   </p>
                   {selected.sujet && <p className="text-xs font-medium text-slate-600 mt-0.5">{selected.sujet}</p>}
-                  <p className="text-[10px] text-slate-400 mt-0.5">{new Date(selected.created_at).toLocaleString("fr-CI")}</p>
+                  <p className="text-[10px] text-slate-600 mt-0.5">{new Date(selected.created_at).toLocaleString("fr-CI")}</p>
                 </div>
               </div>
               <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
@@ -254,7 +254,7 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center">
-            <p className="text-sm text-slate-400">Sélectionnez un message</p>
+            <p className="text-sm text-slate-600">Sélectionnez un message</p>
           </div>
         )}
       </div>

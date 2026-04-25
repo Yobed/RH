@@ -13,7 +13,7 @@ export function getGemini(): GoogleGenAI {
 export const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY ?? "" });
 
 // Modèles disponibles — toujours utiliser les versions stables
-// gemini-3-flash-preview : rapide, multimodal, faible coût → tâches simples
-// gemini-3-pro-preview   : raisonnement profond, 1M tokens  → tâches complexes
-export const GEMINI_FLASH = "gemini-2.0-flash";
-export const GEMINI_PRO   = "gemini-2.0-pro-exp";
+// gemini-1.5-flash : très rapide, fiable, gratuit → excellent pour le RAG
+// gemini-1.5-pro   : raisonnement approfondi
+export const GEMINI_FLASH = "gemini-2.5-flash";
+export const GEMINI_PRO   = "gemini-2.5-pro";

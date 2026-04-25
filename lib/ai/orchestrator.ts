@@ -1,17 +1,31 @@
-/**
- * Orchestrateur IA Multi-Agent — SaaS RH CI
- *
- * PRINCIPE : exécution parallèle (Promise.all) au lieu de séquentielle.
- * - Gemini Flash  → tâches rapides / peu coûteuses (extraction, structure)
- * - Claude Sonnet → raisonnement juridique, synthèse, scoring complexe
- * - n8n           → RAG pgvector, embeddings, webhooks
- *
- * RÈGLE : jamais d'IA côté client — ce fichier est serveur uniquement.
- */
-
 import { anthropic, CLAUDE_MODEL } from "@/lib/claude";
 import { gemini, GEMINI_FLASH } from "@/lib/gemini";
 import { triggerN8n } from "@/lib/n8n/webhooks";
+
+// ─── Fallback Helper ──────────────────────────────────────────────────────────
+
+async function fallbackJuridiqueGemini(question: string): Promise<string> {
+  const prompt = `
+    Tu es un assistant juridique expert en droit du travail de Côte d'Ivoire.
+    Réponds à la question suivante en te basant sur le Code du Travail (Loi n° 2015-532 du 20 juillet 2015) et la Convention Collective Interprofessionnelle (CCNI).
+    Cite les articles si possible. Si tu n'es pas sûr à 100%, mentionne qu'une vérification auprès d'un expert est recommandée.
+    
+    Question : ${question}
+    
+    Réponse (en français, précise et structurée) :
+  `;
+  
+  try {
+    const response = await gemini.models.generateContent({
+      model: GEMINI_FLASH,
+      contents: prompt,
+    });
+    return response.text ?? "";
+  } catch (e) {
+    console.error("Gemini legal fallback failed:", e);
+    return "Le service juridique est temporairement indisponible.";
+  }
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -122,8 +136,19 @@ async function obtenirContexteJuridique(
   question: string,
   companyId: string
 ): Promise<string> {
-  const result = await triggerN8n("rag/query", { question, company_id: companyId });
-  return (result as { reponse?: string }).reponse ?? "";
+  try {
+    const result = await triggerN8n("rag/query", { question, company_id: companyId });
+    const reponse = (result as { reponse?: string }).reponse;
+    
+    if (!reponse || reponse.includes("pas trouvé") || reponse.length < 10) {
+      return await fallbackJuridiqueGemini(question);
+    }
+    
+    return reponse;
+  } catch (e) {
+    console.warn("n8n logic failure, falling back to Gemini for legal context:", e);
+    return await fallbackJuridiqueGemini(question);
+  }
 }
 
 // ─── Orchestrateur principal : Analyse complète d'un candidat ────────────────
@@ -194,23 +219,39 @@ export async function questionnerAssistantRH(
 ): Promise<AssistantRHResult> {
   const debut = Date.now();
 
-  // RAG via n8n (embeddings pgvector) en parallèle avec reformulation Gemini
-  const [ragResult, questionReformulée] = await Promise.all([
-    triggerN8n("rag/query", {
+  try {
+    // RAG via n8n (embeddings pgvector) 
+    const ragResult = await triggerN8n("rag/query", {
       question: input.question,
       company_id: input.companyId,
-    }),
-    gemini.models.generateContent({
-      model: GEMINI_FLASH,
-      contents: `Reformule cette question RH de façon plus précise pour une recherche juridique CI : "${input.question}"`,
-    }),
-  ]);
+    });
 
-  const rag = ragResult as { reponse?: string; sources?: string[] };
+    const rag = ragResult as { reponse?: string; sources?: string[] };
+    
+    // Si la réponse n8n est vide ou semble être une erreur "non trouvé"
+    if (rag.reponse && !rag.reponse.includes("pas trouvé") && rag.reponse.length > 50) {
+      return {
+        reponse: rag.reponse,
+        sources: rag.sources ?? [],
+        dureeMs: Date.now() - debut,
+      };
+    }
 
-  return {
-    reponse: rag.reponse ?? "Aucune réponse trouvée.",
-    sources: rag.sources ?? [],
-    dureeMs: Date.now() - debut,
-  };
+    // Fallback if RAG is empty or unhelpful
+    const reponseGemini = await fallbackJuridiqueGemini(input.question);
+    return {
+      reponse: reponseGemini,
+      sources: ["Intelligence Artificielle (Code du Travail CI)"],
+      dureeMs: Date.now() - debut,
+    };
+
+  } catch (e) {
+    console.warn("RagChat Error or Timeout, using emergency fallback:", e);
+    const reponseGemini = await fallbackJuridiqueGemini(input.question);
+    return {
+      reponse: reponseGemini,
+      sources: ["Mode Hors-ligne / Secours IA"],
+      dureeMs: Date.now() - debut,
+    };
+  }
 }

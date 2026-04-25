@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ShieldCheck, RefreshCw } from "lucide-react";
 import { useState } from "react";
@@ -74,10 +74,10 @@ export function ComplianceAuditHeader({ score, risks }: ComplianceAuditHeaderPro
 
         <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
           <div className="flex flex-col">
-            <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Index Global</span>
+            <span className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Index Global</span>
             <div className="flex items-baseline gap-1">
               <span className="text-3xl font-black text-white">{score}</span>
-              <span className="text-slate-500 font-bold text-sm">%</span>
+              <span className="text-slate-600 font-bold text-sm">%</span>
             </div>
           </div>
           
@@ -85,26 +85,26 @@ export function ComplianceAuditHeader({ score, risks }: ComplianceAuditHeaderPro
 
           <div className="grid grid-cols-4 gap-6">
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Contrats</span>
-              <span className={`text-xl font-bold ${risks.contracts > 0 ? 'text-amber-400' : 'text-slate-400'}`}>
+              <span className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Contrats</span>
+              <span className={`text-xl font-bold ${risks.contracts > 0 ? 'text-amber-400' : 'text-slate-600'}`}>
                 {risks.contracts}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Essais</span>
-              <span className={`text-xl font-bold ${risks.trials > 0 ? 'text-orange-400' : 'text-slate-400'}`}>
+              <span className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Essais</span>
+              <span className={`text-xl font-bold ${risks.trials > 0 ? 'text-orange-400' : 'text-slate-600'}`}>
                 {risks.trials}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Docs</span>
-              <span className={`text-xl font-bold ${risks.documents > 0 ? 'text-red-400' : 'text-slate-400'}`}>
+              <span className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Docs</span>
+              <span className={`text-xl font-bold ${risks.documents > 0 ? 'text-red-400' : 'text-slate-600'}`}>
                 {risks.documents}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Santé</span>
-              <span className={`text-xl font-bold ${risks.medical > 0 ? 'text-sky-400' : 'text-slate-400'}`}>
+              <span className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Santé</span>
+              <span className={`text-xl font-bold ${risks.medical > 0 ? 'text-sky-400' : 'text-slate-600'}`}>
                 {risks.medical}
               </span>
             </div>

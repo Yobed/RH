@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { SidebarNav } from "./SidebarNav";
@@ -53,7 +53,7 @@ export function MobileSidebar({ companyName }: MobileSidebarProps) {
           </p>
           <button
             onClick={() => setOpen(false)}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-white transition-colors"
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-600 hover:text-white transition-colors"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />

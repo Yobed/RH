@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { DisciplinaryManager } from "@/components/rh/DisciplinaryManager";
@@ -69,17 +69,17 @@ export default async function DisciplinaryDetailPage({ params }: { params: { id:
               
               <div className="grid grid-cols-2 gap-8 py-4 border-y border-slate-50">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Date d'incident</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Date d'incident</p>
                   <p className="text-sm font-semibold">{procedure.date_incident ? new Date(procedure.date_incident).toLocaleDateString('fr-FR') : 'Non renseignée'}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Ouvert le</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Ouvert le</p>
                   <p className="text-sm font-semibold">{new Date(procedure.created_at).toLocaleDateString('fr-FR')}</p>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Faits Reprochés</p>
+                <p className="text-[10px] uppercase tracking-widest text-slate-600 font-bold">Faits Reprochés</p>
                 <div className="p-6 bg-slate-50 rounded-xl text-sm leading-relaxed text-slate-700 whitespace-pre-wrap border border-slate-100">
                   {procedure.motif}
                 </div>

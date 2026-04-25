@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useMemo } from "react";
 import {
@@ -131,11 +131,11 @@ function Field({
 }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1">
-      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-600 uppercase tracking-wide">
         {label}
       </label>
       {children}
-      {hint && <p className="text-[10px] text-slate-400 dark:text-slate-500">{hint}</p>}
+      {hint && <p className="text-[10px] text-slate-600 dark:text-slate-600">{hint}</p>}
     </div>
   );
 }
@@ -178,7 +178,7 @@ function ConfigPanel({
         className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-[oklch(0.195_0.025_248)] text-sm font-semibold text-slate-700 dark:text-slate-200"
       >
         {title}
-        {openSec.includes(id) ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
+        {openSec.includes(id) ? <ChevronUp className="h-4 w-4 text-slate-600" /> : <ChevronDown className="h-4 w-4 text-slate-600" />}
       </button>
       {openSec.includes(id) && <div className="p-4 space-y-3 bg-white dark:bg-[oklch(0.18_0.03_248)]">{children}</div>}
     </div>
@@ -201,7 +201,7 @@ function ConfigPanel({
             />
             <div className="flex items-center gap-2">
               <NumInput value={inputs.brut} onChange={(v) => onChange({ brut: Math.max(v, SMIG_MENSUEL) })} placeholder="250 000" />
-              <span className="text-xs text-slate-400 shrink-0">FCFA</span>
+              <span className="text-xs text-slate-600 shrink-0">FCFA</span>
             </div>
           </div>
         </Field>
@@ -325,7 +325,7 @@ function ResultsPanel({ sim }: { sim: ReturnType<typeof compute> }) {
               color === "amber" && "text-amber-900 dark:text-amber-200",
             )}>{fcfa(value)}</p>
             {label === "Net à payer" && (
-              <p className="text-[10px] text-slate-400 mt-1">{sim.netRatio.toFixed(1)}% du coût total</p>
+              <p className="text-[10px] text-slate-600 mt-1">{sim.netRatio.toFixed(1)}% du coût total</p>
             )}
           </div>
         ))}
@@ -340,7 +340,7 @@ function ResultsPanel({ sim }: { sim: ReturnType<typeof compute> }) {
           { label: "H. sup", value: sim.heures_sup_montant },
         ].map(({ label, value }) => (
           <div key={label} className="rounded-lg bg-slate-50 dark:bg-[oklch(0.195_0.025_248)] p-3 text-center">
-            <p className="text-[10px] text-slate-400 uppercase">{label}</p>
+            <p className="text-[10px] text-slate-600 uppercase">{label}</p>
             <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mt-0.5">{fcfa(value)}</p>
           </div>
         ))}
@@ -356,7 +356,7 @@ function ResultsPanel({ sim }: { sim: ReturnType<typeof compute> }) {
               "px-3 py-1.5 rounded-md text-xs font-semibold transition-all",
               view === k
                 ? "bg-white dark:bg-[oklch(0.175_0.04_248)] text-indigo-600 dark:text-[oklch(0.78_0.13_73)] shadow-sm"
-                : "text-slate-500",
+                : "text-slate-600",
             )}
           >
             {label}
@@ -386,7 +386,7 @@ function ResultsPanel({ sim }: { sim: ReturnType<typeof compute> }) {
                 </div>
                 <div className="text-right">
                   <span className="font-semibold text-slate-800 dark:text-slate-100">{fcfa(item.value)}</span>
-                  <span className="text-[10px] text-slate-400 ml-1.5">
+                  <span className="text-[10px] text-slate-600 ml-1.5">
                     {((item.value / sim.coutTotal) * 100).toFixed(1)}%
                   </span>
                 </div>
@@ -405,9 +405,9 @@ function ResultsPanel({ sim }: { sim: ReturnType<typeof compute> }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-[oklch(0.195_0.025_248)] border-b border-slate-100 dark:border-slate-700">
-                <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-400">Composante</th>
-                <th className="text-right py-3 px-4 font-semibold text-slate-600 dark:text-slate-400">Salariale</th>
-                <th className="text-right py-3 px-4 font-semibold text-slate-600 dark:text-slate-400">Patronale</th>
+                <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-600">Composante</th>
+                <th className="text-right py-3 px-4 font-semibold text-slate-600 dark:text-slate-600">Salariale</th>
+                <th className="text-right py-3 px-4 font-semibold text-slate-600 dark:text-slate-600">Patronale</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -422,8 +422,8 @@ function ResultsPanel({ sim }: { sim: ReturnType<typeof compute> }) {
               ].map(({ label, sal, pat }) => (
                 <tr key={label} className="bg-white dark:bg-[oklch(0.18_0.03_248)]">
                   <td className="py-2.5 px-4 text-slate-700 dark:text-slate-300">{label}</td>
-                  <td className="py-2.5 px-4 text-right text-slate-600 dark:text-slate-400">{sal > 0 ? fcfa(sal) : "—"}</td>
-                  <td className="py-2.5 px-4 text-right text-slate-600 dark:text-slate-400">{pat > 0 ? fcfa(pat) : "—"}</td>
+                  <td className="py-2.5 px-4 text-right text-slate-600 dark:text-slate-600">{sal > 0 ? fcfa(sal) : "—"}</td>
+                  <td className="py-2.5 px-4 text-right text-slate-600 dark:text-slate-600">{pat > 0 ? fcfa(pat) : "—"}</td>
                 </tr>
               ))}
               <tr className="bg-slate-50 dark:bg-[oklch(0.195_0.025_248)] font-bold">
@@ -453,7 +453,7 @@ function LibreMode() {
           <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200">Configuration</h3>
           <button
             onClick={() => setInputs(DEFAULT_INPUTS)}
-            className="text-xs text-slate-400 hover:text-indigo-600 transition-colors"
+            className="text-xs text-slate-600 hover:text-indigo-600 transition-colors"
           >
             Réinitialiser
           </button>
@@ -487,12 +487,12 @@ function DeltaRow({
   return (
     <tr className={cn(highlight && "bg-slate-50 dark:bg-[oklch(0.195_0.025_248)] font-bold")}>
       <td className="py-2.5 px-4 text-slate-700 dark:text-slate-300 text-sm">{label}</td>
-      <td className="py-2.5 px-4 text-right text-slate-600 dark:text-slate-400 text-sm">{fcfa(avant)}</td>
+      <td className="py-2.5 px-4 text-right text-slate-600 dark:text-slate-600 text-sm">{fcfa(avant)}</td>
       <td className="py-2.5 px-4 text-right text-slate-800 dark:text-slate-100 text-sm">{fcfa(apres)}</td>
-      <td className={cn("py-2.5 px-4 text-right text-sm font-semibold", d === 0 ? "text-slate-400" : pos ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400")}>
+      <td className={cn("py-2.5 px-4 text-right text-sm font-semibold", d === 0 ? "text-slate-600" : pos ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400")}>
         {d === 0 ? "—" : `${pos ? "+" : ""}${fcfa(d)}`}
       </td>
-      <td className={cn("py-2.5 px-4 text-right text-xs", d === 0 ? "text-slate-400" : pos ? "text-emerald-500" : "text-red-400")}>
+      <td className={cn("py-2.5 px-4 text-right text-xs", d === 0 ? "text-slate-600" : pos ? "text-emerald-500" : "text-red-400")}>
         {d === 0 ? "—" : pct(dp)}
       </td>
     </tr>
@@ -558,7 +558,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
         <div className="flex items-center gap-2 mb-4">
           <User className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
           <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">Sélectionner un salarié</h3>
-          <span className="ml-auto text-xs text-slate-400">{employees.length} actif(s) chargé(s)</span>
+          <span className="ml-auto text-xs text-slate-600">{employees.length} actif(s) chargé(s)</span>
         </div>
         <select
           value={selectedId}
@@ -576,7 +576,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
           ))}
         </select>
         {!selectedEmp && (
-          <p className="mt-2 text-xs text-slate-400 flex items-center gap-1.5">
+          <p className="mt-2 text-xs text-slate-600 flex items-center gap-1.5">
             <Info className="h-3.5 w-3.5" />
             Sélectionnez un salarié pour voir son état actuel et simuler des modifications.
           </p>
@@ -595,7 +595,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
                 </h3>
                 <button
                   onClick={() => setScenario(currentInputs)}
-                  className="text-xs text-slate-400 hover:text-indigo-600 transition-colors"
+                  className="text-xs text-slate-600 hover:text-indigo-600 transition-colors"
                 >
                   Réinitialiser
                 </button>
@@ -648,7 +648,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
                       <p className="text-base font-black text-slate-800 dark:text-slate-100">{fcfa(apres)}</p>
                       <p className={cn(
                         "text-xs font-semibold mt-1",
-                        d === 0 ? "text-slate-400" : d > 0 ? "text-emerald-500" : "text-red-500",
+                        d === 0 ? "text-slate-600" : d > 0 ? "text-emerald-500" : "text-red-500",
                       )}>
                         {d === 0 ? "Inchangé" : `${d > 0 ? "+" : ""}${fcfa(d)} (${pct(dp)})`}
                       </p>
@@ -660,7 +660,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
               {/* Delta table */}
               <div className="rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
                 <div className="px-4 py-3 bg-slate-50 dark:bg-[oklch(0.195_0.025_248)] border-b border-slate-100 dark:border-slate-700">
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-600">
                     Comparaison détaillée — Avant / Après
                   </p>
                 </div>
@@ -668,11 +668,11 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-slate-50 dark:border-slate-800">
-                        <th className="py-2 px-4 text-left text-[10px] font-semibold text-slate-400 uppercase">Composante</th>
-                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-400 uppercase">Avant</th>
-                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-400 uppercase">Après</th>
-                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-400 uppercase">Différence</th>
-                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-400 uppercase">%</th>
+                        <th className="py-2 px-4 text-left text-[10px] font-semibold text-slate-600 uppercase">Composante</th>
+                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-600 uppercase">Avant</th>
+                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-600 uppercase">Après</th>
+                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-600 uppercase">Différence</th>
+                        <th className="py-2 px-4 text-right text-[10px] font-semibold text-slate-600 uppercase">%</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50 dark:divide-slate-800 bg-white dark:bg-[oklch(0.18_0.03_248)]">
@@ -690,7 +690,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
 
               {/* Bar chart */}
               <div className="h-52">
-                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">Répartition Avant / Après</p>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-600 mb-2">Répartition Avant / Après</p>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData} barGap={4}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -751,12 +751,12 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
             { label: "Surcoût annuel", value: collectifDelta * 12, sub: "/an", delta: true },
           ].map(({ label, value, sub, delta }) => (
             <div key={label} className="rounded-xl bg-white dark:bg-[oklch(0.18_0.03_248)] border border-indigo-100 dark:border-indigo-900/30 p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1">{label}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-600 mb-1">{label}</p>
               <p className={cn(
                 "text-lg font-black",
                 delta
                   ? value === 0
-                    ? "text-slate-400"
+                    ? "text-slate-600"
                     : value > 0
                     ? "text-emerald-600 dark:text-emerald-400"
                     : "text-red-500"
@@ -764,7 +764,7 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
               )}>
                 {delta && value > 0 ? "+" : ""}{fcfa(value)}
               </p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{sub}</p>
+              <p className="text-[10px] text-slate-600 mt-0.5">{sub}</p>
             </div>
           ))}
         </div>
@@ -789,7 +789,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Cockpit de Simulation RH</h2>
-          <p className="text-sm text-slate-400 dark:text-slate-500">Analyse de masse salariale · Conforme CT-CI 2025</p>
+          <p className="text-sm text-slate-600 dark:text-slate-600">Analyse de masse salariale · Conforme CT-CI 2025</p>
         </div>
         <div className="flex gap-1 bg-slate-100 dark:bg-[oklch(0.22_0.03_248)] p-1 rounded-xl self-start sm:self-auto">
           <button
@@ -798,7 +798,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
               "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all",
               mode === "libre"
                 ? "bg-white dark:bg-[oklch(0.175_0.04_248)] text-indigo-600 dark:text-[oklch(0.78_0.13_73)] shadow-sm"
-                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200",
+                : "text-slate-600 hover:text-slate-700 dark:hover:text-slate-200",
             )}
           >
             <Calculator className="h-4 w-4" />
@@ -810,7 +810,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
               "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all",
               mode === "salarie"
                 ? "bg-white dark:bg-[oklch(0.175_0.04_248)] text-indigo-600 dark:text-[oklch(0.78_0.13_73)] shadow-sm"
-                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200",
+                : "text-slate-600 hover:text-slate-700 dark:hover:text-slate-200",
             )}
           >
             <Users className="h-4 w-4" />
@@ -829,8 +829,8 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
         employees.length === 0 ? (
           <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.18_0.03_248)] p-10 text-center">
             <Users className="h-10 w-10 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
-            <p className="text-sm font-medium text-slate-500">Aucun salarié actif trouvé.</p>
-            <p className="text-xs text-slate-400 mt-1">Ajoutez des employés dans le module Employés.</p>
+            <p className="text-sm font-medium text-slate-600">Aucun salarié actif trouvé.</p>
+            <p className="text-xs text-slate-600 mt-1">Ajoutez des employés dans le module Employés.</p>
           </div>
         ) : (
           <ParSalarieMode employees={employees} />

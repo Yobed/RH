@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
@@ -37,7 +37,7 @@ const statutConfig: Record<StatutKey, { label: string; dot: string; bg: string; 
     label: "Inactif",
     dot: "bg-slate-400",
     bg: "bg-slate-100",
-    text: "text-slate-500",
+    text: "text-slate-600",
   },
   suspendu: {
     label: "Suspendu",
@@ -98,8 +98,8 @@ export function EmployeeTable({ employees }: Props) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 p-16 text-center bg-white">
         <Users className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-        <p className="font-medium text-slate-500">Aucun employé enregistré</p>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="font-medium text-slate-600">Aucun employé enregistré</p>
+        <p className="mt-1 text-sm text-slate-600">
           Cliquez sur &ldquo;Ajouter un employé&rdquo; pour commencer.
         </p>
       </div>
@@ -117,7 +117,7 @@ export function EmployeeTable({ employees }: Props) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <MagnifyingGlass
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600"
             weight="bold"
           />
           <input
@@ -125,7 +125,7 @@ export function EmployeeTable({ employees }: Props) {
             placeholder="Rechercher par nom, poste, matricule, département…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.175_0.04_248)]/30"
+            className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-sm text-slate-800 placeholder:text-slate-600 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.175_0.04_248)]/30"
           />
         </div>
         <select
@@ -155,14 +155,14 @@ export function EmployeeTable({ employees }: Props) {
       </div>
 
       {/* Compteur */}
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-600">
         <span className="font-semibold font-mono tabular-nums text-slate-700">{filtered.length}</span>
         {" "}employé{filtered.length > 1 ? "s" : ""}
         {search || filterStatut !== "tous" || filterContrat !== "tous" ? " (filtré)" : ""}
       </p>
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-400 bg-white">
+        <div className="rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-600 bg-white">
           Aucun employé ne correspond aux critères.
         </div>
       ) : (
@@ -170,25 +170,25 @@ export function EmployeeTable({ employees }: Props) {
           <table className="w-full text-sm">
             <thead className="bg-slate-50/60 border-b border-slate-100">
               <tr>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">
                   Employé
                 </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 md:hidden">
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 md:hidden">
                   Nom
                 </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">
                   Matricule
                 </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">
                   Contrat
                 </th>
-                <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden xl:table-cell">
+                <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden xl:table-cell">
                   Salaire brut
                 </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">
                   Statut
                 </th>
-                <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">
                   Actions
                 </th>
               </tr>
@@ -227,7 +227,7 @@ export function EmployeeTable({ employees }: Props) {
                               weight="bold"
                             />
                           </Link>
-                          <p className="text-xs text-slate-400 truncate">{emp.poste}</p>
+                          <p className="text-xs text-slate-600 truncate">{emp.poste}</p>
                         </div>
                       </div>
                     </td>
@@ -239,11 +239,11 @@ export function EmployeeTable({ employees }: Props) {
                       >
                         {emp.full_name}
                       </Link>
-                      <p className="text-xs text-slate-400">{emp.poste}</p>
+                      <p className="text-xs text-slate-600">{emp.poste}</p>
                     </td>
                     {/* Matricule */}
                     <td className="px-4 py-3 hidden lg:table-cell">
-                      <span className="font-mono tabular-nums text-xs text-slate-400">
+                      <span className="font-mono tabular-nums text-xs text-slate-600">
                         {emp.matricule}
                       </span>
                     </td>

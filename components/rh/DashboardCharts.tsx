@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { 
   PieChart, 
@@ -27,7 +27,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Répartition par Département */}
       <div className="bg-white border rounded-2xl p-6 shadow-sm">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-6">Effectif par Département</h3>
+        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600 mb-6">Effectif par Département</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -55,7 +55,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
 
       {/* Répartition par Genre */}
       <div className="bg-white border rounded-2xl p-6 shadow-sm">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-6">Parité Homme/Femme</h3>
+        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600 mb-6">Parité Homme/Femme</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

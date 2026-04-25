@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { cn } from "@/lib/utils";
 import { motion, animate } from "framer-motion";
@@ -135,7 +135,7 @@ export function KpiCard({
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <div className={cn("h-1.5 w-1.5 rounded-full shrink-0", cfg.dot)} />
-            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 truncate">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-600 dark:text-slate-600 truncate">
               {label}
             </p>
           </div>
@@ -174,7 +174,7 @@ export function KpiCard({
             </span>
           )}
           {description && (
-            <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 leading-snug">
+            <span className="text-[11px] font-medium text-slate-600 dark:text-slate-600 leading-snug">
               {description}
             </span>
           )}

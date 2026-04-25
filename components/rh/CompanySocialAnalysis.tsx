@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import {
@@ -234,7 +234,7 @@ export function CompanySocialAnalysis({ employees }: CompanySocialAnalysisProps)
             <TrendingUp className="h-24 w-24" />
           </div>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">
+            <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-600">
               Coût Total (TCO)
             </CardTitle>
             <div className="rounded-xl bg-white/10 p-2 group-hover:rotate-12 transition-transform">
@@ -243,7 +243,7 @@ export function CompanySocialAnalysis({ employees }: CompanySocialAnalysisProps)
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-black tracking-tight text-amber-400">{fcfa(stats.totalCost)}</div>
-            <p className="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tighter">
+            <p className="text-[10px] text-slate-600 mt-1 uppercase font-bold tracking-tighter">
               Budget RH Mensuel Estimé
             </p>
           </CardContent>
@@ -352,7 +352,7 @@ export function CompanySocialAnalysis({ employees }: CompanySocialAnalysisProps)
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-100/50 text-[10px] uppercase font-black text-slate-500 tracking-widest border-b">
+                <tr className="bg-slate-100/50 text-[10px] uppercase font-black text-slate-600 tracking-widest border-b">
                   <th className="px-6 py-3">Département</th>
                   <th className="px-6 py-3 text-center">Effectif</th>
                   <th className="px-6 py-3">Brut (XOF)</th>

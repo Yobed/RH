@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { RagChat } from "./RagChat";
@@ -24,8 +24,8 @@ export function AgentJuridiqueShell() {
       <div className="border-b bg-white dark:bg-[oklch(0.18_0.03_248)] px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Agent IA Juridique</h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Droit du Travail CI (Loi 2015-532) · Powered by Grok
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-600 mt-0.5">
+            Droit du Travail CI (Loi 2015-532) · Powered by Gemini
           </p>
         </div>
 
@@ -39,7 +39,7 @@ export function AgentJuridiqueShell() {
                 "rounded-lg px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-semibold transition-all",
                 tab === t.value
                   ? "bg-[oklch(0.175_0.04_248)] text-[oklch(0.78_0.13_73)] shadow-sm"
-                  : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                  : "text-slate-600 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               )}
             >
               <span className="sm:hidden">{t.shortLabel}</span>

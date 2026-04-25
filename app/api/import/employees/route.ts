@@ -64,7 +64,11 @@ export async function POST(req: Request) {
     if (!full_name) { errors.push(`Ligne ${rowNum}: full_name manquant`); continue; }
     if (!date_embauche_raw) { errors.push(`Ligne ${rowNum}: date_embauche manquante`); continue; }
     if (isNaN(salaire_brut) || salaire_brut <= 0) { errors.push(`Ligne ${rowNum}: salaire_brut invalide`); continue; }
-    if (!["CDI", "CDD"].includes(type_contrat)) { errors.push(`Ligne ${rowNum}: type_contrat doit être CDI ou CDD`); continue; }
+    const allowedTypes = ["CDI", "CDD", "STAGE", "APPRENTISSAGE"];
+    if (!allowedTypes.includes(type_contrat)) { 
+      errors.push(`Ligne ${rowNum}: type_contrat '${type_contrat}' invalide. Attendus: ${allowedTypes.join(', ')}`); 
+      continue; 
+    }
 
     const date_embauche = parseDate(date_embauche_raw as string | number);
     if (!date_embauche) { errors.push(`Ligne ${rowNum}: date_embauche invalide (utiliser DD/MM/YYYY)`); continue; }
@@ -78,14 +82,14 @@ export async function POST(req: Request) {
       genre: ["M", "F"].includes(genre) ? genre : "M",
       date_naissance: parseDate(row["date_naissance"] as string | number),
       date_embauche,
-      type_contrat: type_contrat as "CDI" | "CDD",
+      type_contrat: type_contrat as "CDI" | "CDD" | "STAGE" | "APPRENTISSAGE",
       poste: String(row["poste"] ?? "").trim() || "Non défini",
       departement: String(row["departement"] ?? "").trim() || null,
       categorie: String(row["categorie"] ?? "").trim() || null,
       salaire_brut,
       statut: String(row["statut"] ?? "actif").trim().toLowerCase() === "inactif" ? "inactif" : "actif",
       email: String(row["email"] ?? "").trim() || null,
-      telephone: String(row["telephone"] ?? "").trim() || null,
+      phone: String(row["telephone"] ?? row["phone"] ?? "").trim() || null,
     });
   }
 
@@ -93,17 +97,46 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Données invalides", details: errors }, { status: 422 });
   }
 
-  const { error: upsertError } = await supabase
+  const { data: upsertedData, error: upsertError } = await supabase
     .from("employees")
-    .upsert(toUpsert, { onConflict: "company_id,matricule", ignoreDuplicates: false });
+    .upsert(toUpsert, { onConflict: "company_id,matricule", ignoreDuplicates: false })
+    .select("id, matricule, type_contrat, salaire_brut, date_embauche");
 
   if (upsertError) {
     return NextResponse.json({ error: upsertError.message }, { status: 500 });
+  }
+
+  // --- Synchronisation des Contrats ---
+  if (upsertedData && upsertedData.length > 0) {
+    // Préparer les contrats pour TOUS les employés importés qui ont un salaire
+    // On utilise un upsert sur la table contracts (conflit sur employee_id)
+    const contractsToUpsert = upsertedData
+      .filter(emp => emp.salaire_brut > 0 && emp.type_contrat)
+      .map(emp => ({
+        company_id: profile.company_id,
+        employee_id: emp.id,
+        type_contrat: emp.type_contrat,
+        date_debut: emp.date_embauche || new Date().toISOString().split('T')[0],
+        salaire_brut: Number(emp.salaire_brut),
+        statut: "actif",
+        renouvellement_count: 0
+      }));
+
+    if (contractsToUpsert.length > 0) {
+      const { error: contractError } = await supabase
+        .from("contracts")
+        .upsert(contractsToUpsert, { onConflict: "employee_id" });
+      
+      if (contractError) {
+        console.error("[import/employees] Error upserting contracts:", contractError);
+      }
+    }
   }
 
   return NextResponse.json({
     imported: toUpsert.length,
     skipped: errors.length,
     errors: errors.length > 0 ? errors : undefined,
+    contractsSync: true
   });
 }

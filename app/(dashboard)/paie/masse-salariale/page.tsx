@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+﻿export const dynamic = "force-dynamic";
 import { createServerClient } from "@/lib/supabase/server";
 import { MasseSalarialeDashboard } from "@/components/paie/MasseSalarialeDashboard";
 import Link from "next/link";
@@ -46,18 +46,18 @@ export default async function MasseSalarialeePage({
         <div>
           <Link
             href="/paie"
-            className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors mb-2"
+            className="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-slate-600 transition-colors mb-2"
           >
             ← Retour à la paie
           </Link>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Masse Salariale</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">
             Coûts salariaux globaux — charges patronales CNPS CI 2026
           </p>
         </div>
 
         <form method="get" className="shrink-0 flex items-center gap-2">
-          <label htmlFor="periode" className="text-xs text-slate-500 font-medium whitespace-nowrap">
+          <label htmlFor="periode" className="text-xs text-slate-600 font-medium whitespace-nowrap">
             Période
           </label>
           <select
@@ -83,7 +83,7 @@ export default async function MasseSalarialeePage({
 
       {/* Rappel légal */}
       <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Charges patronales CNPS CI — Références 2026</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-2">Charges patronales CNPS CI — Références 2026</p>
         <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-slate-600 sm:grid-cols-3">
           <span>Retraite patronale : <strong>7,7%</strong> (plafond 1 647 315 FCFA)</span>
           <span>Prestations familiales : <strong>5%</strong> (plafond 70 000 FCFA)</span>
@@ -96,8 +96,8 @@ export default async function MasseSalarialeePage({
 
       {bulletinsData.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-200 p-12 text-center">
-          <p className="text-sm font-medium text-slate-500">Aucun bulletin pour la période {periode}</p>
-          <p className="mt-1 text-xs text-slate-400">Générez des bulletins de paie pour voir la masse salariale.</p>
+          <p className="text-sm font-medium text-slate-600">Aucun bulletin pour la période {periode}</p>
+          <p className="mt-1 text-xs text-slate-600">Générez des bulletins de paie pour voir la masse salariale.</p>
         </div>
       ) : (
         <MasseSalarialeDashboard bulletins={bulletinsData} periode={periode} />

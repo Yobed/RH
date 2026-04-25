@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Briefcase, TrendingUp, MapPin, GraduationCap, FileEdit } from "lucide-react";
 import { format } from "date-fns";
@@ -68,7 +68,7 @@ export function CareerTimeline({ events }: { events: CareerEvent[] }) {
               <span className="text-sm font-bold text-slate-900 capitalize">
                 {event.event_type}
               </span>
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600">
                 {format(new Date(event.date_event), "d MMM yyyy", { locale: fr })}
               </span>
             </div>

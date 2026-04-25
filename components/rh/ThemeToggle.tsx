@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ export function ThemeToggle() {
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
       title={isDark ? "Mode clair" : "Mode sombre"}
-      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
     >
       {isDark ? (
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

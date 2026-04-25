@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { calculerChargesPatronales } from "@/lib/paie-ci";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -204,42 +204,42 @@ export function MasseSalarialeDashboard({
         {/* Détail des charges patronales */}
         <div className="lg:col-span-2 rounded-xl border bg-white shadow-sm p-6 flex flex-col">
           <h3 className="text-sm font-semibold mb-6 flex items-center gap-2 text-slate-800 uppercase tracking-wider">
-            <Landmark className="h-4 w-4 text-slate-500" />
+            <Landmark className="h-4 w-4 text-slate-600" />
             Détail des charges patronales CI (2026)
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 flex-grow">
             <div className="flex flex-col border-b pb-3">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Retraite patronale (7,7%)</span>
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Retraite patronale (7,7%)</span>
               <span className="text-xl font-bold text-slate-800">
                 {fmt(bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).retraite, 0))}
               </span>
             </div>
             <div className="flex flex-col border-b pb-3">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Prestations familiales (5%)</span>
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Prestations familiales (5%)</span>
               <span className="text-xl font-bold text-slate-800">
                 {fmt(bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).familiales, 0))}
               </span>
             </div>
             <div className="flex flex-col border-b pb-3">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Accidents maternité (0,75%)</span>
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">Accidents maternité (0,75%)</span>
               <span className="text-xl font-bold text-slate-800">
                 {fmt(bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).maternite, 0))}
               </span>
             </div>
             <div className="flex flex-col border-b pb-3">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">AT/MP ({(tauxAtMp * 100).toFixed(1).replace('.0', '')}%)</span>
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">AT/MP ({(tauxAtMp * 100).toFixed(1).replace('.0', '')}%)</span>
               <span className="text-xl font-bold text-slate-800">
                 {fmt(bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).at_mp, 0))}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">FDFP (1%)</span>
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">FDFP (1%)</span>
               <span className="text-xl font-bold text-slate-800">
                 {fmt(bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).fdfp, 0))}
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">CMU patronale ({nbBulletins} × 1600)</span>
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-1">CMU patronale ({nbBulletins} × 1600)</span>
               <span className="text-xl font-bold text-slate-800">{fmt(nbBulletins * 1600)}</span>
             </div>
           </div>
@@ -250,7 +250,7 @@ export function MasseSalarialeDashboard({
       {bulletins.length > 0 && (
         <div>
           <h3 className="text-sm font-semibold mb-4 text-slate-800 uppercase tracking-wider flex items-center gap-2">
-            <Briefcase className="h-4 w-4 text-slate-500" />
+            <Briefcase className="h-4 w-4 text-slate-600" />
             Répartition par Salarié
           </h3>
           <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
@@ -282,7 +282,7 @@ export function MasseSalarialeDashboard({
                     <tr key={b.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-5 py-4">
                         <p className="font-semibold text-slate-800">{b.employees?.full_name ?? "—"}</p>
-                        <p className="text-xs font-medium text-slate-500 mt-0.5">
+                        <p className="text-xs font-medium text-slate-600 mt-0.5">
                           {b.employees?.poste ?? ""}
                         </p>
                       </td>

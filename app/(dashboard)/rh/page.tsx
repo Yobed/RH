@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { KpiCard } from "@/components/rh/KpiCard";
 import { ComplianceAlertList } from "@/components/rh/ComplianceAlertList";
 import { QuickActions } from "@/components/rh/QuickActions";
@@ -311,13 +311,13 @@ export default async function RhPage() {
                 >
                   Congés en attente
                 </h2>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-1">
+                <p className="text-[11px] text-slate-600 dark:text-slate-600 font-medium mt-1">
                   Demandes à approuver
                 </p>
               </div>
               <Link
                 href="/conges"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 Tout voir <ArrowRight className="h-3 w-3" />
               </Link>
@@ -325,7 +325,7 @@ export default async function RhPage() {
 
             {!congesEnAttente || congesEnAttente.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-8 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
-                <p className="text-xs text-slate-400 font-medium">Aucune demande en attente.</p>
+                <p className="text-xs text-slate-600 font-medium">Aucune demande en attente.</p>
               </div>
             ) : (
               <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
@@ -345,13 +345,13 @@ export default async function RhPage() {
                           <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 leading-none">
                             {emp?.full_name ?? "—"}
                           </p>
-                          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium mt-1">
+                          <p className="text-[10px] text-slate-600 dark:text-slate-600 font-medium mt-1">
                             {new Date(c.date_debut as string).toLocaleDateString("fr-CI")} ·{" "}
                             {c.nb_jours} jour{(c.nb_jours ?? 1) > 1 ? "s" : ""}
                           </p>
                         </div>
                       </div>
-                      <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-600">
                         {c.type}
                       </span>
                     </div>
@@ -383,7 +383,7 @@ export default async function RhPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{act.name}</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                    <p className="text-[10px] text-slate-600 dark:text-slate-600 mt-0.5">
                       {(act.employees as { full_name?: string })?.full_name}
                     </p>
                     <p className="text-[9px] text-slate-300 dark:text-slate-600 mt-1 font-mono">
@@ -409,7 +409,7 @@ export default async function RhPage() {
               </h2>
               <Link
                 href="/employes"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 Voir tout <ArrowRight className="h-3 w-3" />
               </Link>
@@ -419,16 +419,16 @@ export default async function RhPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-700">
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600">
                       Collaborateur
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 hidden sm:table-cell">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600 hidden sm:table-cell">
                       Poste
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 hidden sm:table-cell">
+                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600 hidden sm:table-cell">
                       Contrat
                     </th>
-                    <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+                    <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600">
                       Statut
                     </th>
                   </tr>
@@ -449,12 +449,12 @@ export default async function RhPage() {
                       </td>
                       <td className="py-3.5 hidden sm:table-cell">
                         <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{emp.poste}</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wide mt-0.5">
+                        <p className="text-[10px] text-slate-600 dark:text-slate-600 font-medium uppercase tracking-wide mt-0.5">
                           {emp.departement ?? "—"}
                         </p>
                       </td>
                       <td className="py-3.5 hidden sm:table-cell">
-                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-md">
+                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-600 px-2 py-0.5 rounded-md">
                           {emp.type_contrat ?? "—"}
                         </span>
                       </td>
@@ -482,7 +482,7 @@ function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3">
       <div className="h-1 w-1 rounded-full bg-[oklch(0.78_0.13_73)]" />
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 whitespace-nowrap">
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-600 whitespace-nowrap">
         {label}
       </p>
       <div className="flex-1 h-px bg-gradient-to-r from-slate-200 dark:from-slate-700 to-transparent" />

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/types/supabase";
 
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "poste">;
@@ -135,121 +136,132 @@ export function EvaluationDialog({ employees }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={<Button />}>
-        <PlusIcon className="mr-2 h-4 w-4" />
-        Nouvelle évaluation
+      <DialogTrigger asChild>
+        <Button className="h-12 px-6 rounded-2xl font-black text-[11px] uppercase tracking-wider shadow-lg hover:shadow-primary/20 transition-all gap-2 group">
+          <PlusIcon className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+          Nouvelle évaluation
+        </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>Nouvelle évaluation</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-xl p-0 overflow-hidden border-none shadow-[0_30px_100px_rgba(0,0,0,0.25)] rounded-[2.5rem]">
+        <div className="bg-slate-900 p-8 text-white relative">
+           <div className="absolute top-0 right-0 p-8 opacity-10">
+              <PlusIcon size={80} />
+           </div>
+           <DialogHeader>
+             <DialogTitle className="text-3xl font-black tracking-tightest">Règlement de Performance</DialogTitle>
+             <p className="text-slate-600 text-xs font-bold uppercase tracking-widest mt-1">Initialiser un nouveau cycle d'audit</p>
+           </DialogHeader>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-2">
-          {/* Employé & période */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Employé & Détails
-            </p>
-
-            <div>
-              <label className="text-sm font-medium">Employé *</label>
-              <select {...register("employee_id")} className={`mt-1 ${selectClass}`}>
-                <option value="">— Sélectionner —</option>
-                {employees.map((e) => (
-                  <option key={e.id} value={e.id}>
-                    {e.full_name} — {e.poste}
-                  </option>
-                ))}
-              </select>
-              {errors.employee_id && (
-                <p className="mt-1 text-xs text-red-500">{errors.employee_id.message}</p>
-              )}
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Type d'évaluation *</label>
-                <select {...register("type")} className={`mt-1 ${selectClass}`}>
-                  <option value="ANNUELLE">Annuelle</option>
-                  <option value="SEMESTRIELLE">Semestrielle</option>
-                  <option value="TRIMESTRIELLE">Trimestrielle</option>
-                  <option value="MENSUELLE">Mensuelle</option>
-                  <option value="PERIODE_ESSAI">Période d'essai</option>
-                  <option value="AUTRE">Autre</option>
-                </select>
+        <div className="p-8 bg-white max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            {/* Employé & période */}
+            <section className="space-y-5">
+              <div className="flex items-center gap-3">
+                 <div className="h-0.5 w-6 bg-primary" />
+                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Collaborateur & Cycle</p>
               </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div className="col-span-full">
+                  <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Employé à auditer</label>
+                  <select {...register("employee_id")} className={`mt-2 ${selectClass} h-12 rounded-xl bg-slate-50 border-slate-200 font-bold focus:ring-primary/20`}>
+                    <option value="">— Sélectionner —</option>
+                    {employees.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.full_name} ({e.poste})
+                      </option>
+                    ))}
+                  </select>
+                  {errors.employee_id && (
+                    <p className="mt-2 text-[10px] font-bold text-red-500 uppercase flex items-center gap-1">
+                      <span className="h-1 w-1 bg-red-500 rounded-full" />
+                      {errors.employee_id.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Type de revue</label>
+                  <select {...register("type")} className={`mt-2 ${selectClass} h-12 rounded-xl bg-slate-50 border-slate-200 font-bold`}>
+                    <option value="ANNUELLE">Annuelle</option>
+                    <option value="SEMESTRIELLE">Semestrielle</option>
+                    <option value="TRIMESTRIELLE">Trimestrielle</option>
+                    <option value="MENSUELLE">Mensuelle</option>
+                    <option value="PERIODE_ESSAI">Période d'essai</option>
+                    <option value="AUTRE">Autre</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Date d'échéance</label>
+                  <Input type="date" {...register("date_prevue")} className="mt-2 h-12 rounded-xl bg-slate-50 border-slate-200 font-bold" />
+                </div>
+              </div>
+
               <div>
-                <label className="text-sm font-medium">Date prévue *</label>
-                <Input type="date" {...register("date_prevue")} className="mt-1" />
-                {errors.date_prevue && (
-                  <p className="mt-1 text-xs text-red-500">{errors.date_prevue.message}</p>
+                <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Désignation de la campagne</label>
+                <Input
+                  {...register("titre")}
+                  placeholder="Ex: Évaluation Annuelle 2026"
+                  className="mt-2 h-12 rounded-xl bg-slate-50 border-slate-200 font-bold"
+                />
+                {errors.titre && (
+                  <p className="mt-2 text-[10px] font-bold text-red-500 uppercase">{errors.titre.message}</p>
                 )}
               </div>
+            </section>
+
+            {/* Critères de notation */}
+            <section className="space-y-6 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <div className="h-0.5 w-6 bg-emerald-500" />
+                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Score de Performance</p>
+                </div>
+                {preview !== null && (
+                  <Badge className={`rounded-lg px-3 py-1 font-black ${
+                      preview >= 75
+                        ? "bg-emerald-500/10 text-emerald-600"
+                        : preview >= 40
+                        ? "bg-amber-500/10 text-amber-600"
+                        : "bg-red-500/10 text-red-600"
+                    }`}
+                  >
+                    PREVIEW: {preview}%
+                  </Badge>
+                )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ScoreInput label="Compétences techniques" name="technique" register={register} />
+                <ScoreInput label="Comportement" name="comportement" register={register} />
+                <ScoreInput label="Ponctualité" name="ponctualite" register={register} />
+                <ScoreInput label="Initiative" name="initiative" register={register} />
+              </div>
+            </section>
+
+            {/* Statut */}
+            <div className="pt-4 border-t border-slate-100">
+              <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Flux initial</label>
+              <select {...register("statut")} className={`mt-2 ${selectClass} h-12 rounded-xl bg-slate-50 border-slate-200 font-bold`}>
+                <option value="PLANIFIEE">À planifier</option>
+                <option value="EN_COURS">Démarrer immédiatement</option>
+                <option value="TERMINEE">Classer comme terminé</option>
+              </select>
             </div>
 
-            <div>
-              <label className="text-sm font-medium">Titre de l'évaluation *</label>
-              <Input
-                {...register("titre")}
-                placeholder="Ex: Évaluation Annuelle 2026"
-                className="mt-1"
-              />
-              {errors.titre && (
-                <p className="mt-1 text-xs text-red-500">{errors.titre.message}</p>
-              )}
-            </div>
-          </section>
-
-          {/* Critères de notation */}
-          <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Critères de notation
-              </p>
-              {preview !== null && (
-                <span
-                  className={`text-sm font-bold ${
-                    preview >= 75
-                      ? "text-emerald-600"
-                      : preview >= 40
-                      ? "text-amber-600"
-                      : "text-red-500"
-                  }`}
-                >
-                  Score moyen : {preview}/100
-                </span>
-              )}
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <ScoreInput label="Compétences techniques" name="technique" register={register} />
-              <ScoreInput label="Comportement" name="comportement" register={register} />
-              <ScoreInput label="Ponctualité" name="ponctualite" register={register} />
-              <ScoreInput label="Initiative" name="initiative" register={register} />
-            </div>
-
-            <p className="text-xs text-muted-foreground">
-              Le score global est la moyenne des critères renseignés.
-            </p>
-          </section>
-
-          {/* Statut */}
-          <div>
-            <label className="text-sm font-medium">Statut initial</label>
-            <select {...register("statut")} className={`mt-1 ${selectClass}`}>
-              <option value="PLANIFIEE">Planifiée</option>
-              <option value="EN_COURS">En cours</option>
-              <option value="TERMINEE">Terminée</option>
-            </select>
-          </div>
-
-          <DialogFooter>
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-              {isSubmitting ? "Enregistrement..." : "Créer l'évaluation"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+               <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-xl font-black uppercase text-[10px] h-12 px-6">
+                 Annuler
+               </Button>
+               <Button type="submit" disabled={isSubmitting} className="rounded-xl font-black uppercase text-[11px] h-12 px-10 shadow-lg shadow-primary/20">
+                {isSubmitting ? "Initialisation..." : "Valider le cycle"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { 
@@ -133,9 +133,9 @@ function StatCard({ title, value, icon, subtitle, colorTheme, trend }: { title: 
           )}
         </div>
         <div className="mt-4">
-          <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1">{title}</p>
+          <p className="text-xs font-black uppercase tracking-widest text-slate-600 mb-1">{title}</p>
           <p className="text-3xl font-black text-slate-800 tracking-tight">{value}</p>
-          {subtitle && <p className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-tighter">{subtitle}</p>}
+          {subtitle && <p className="text-[10px] text-slate-600 mt-2 font-bold uppercase tracking-tighter">{subtitle}</p>}
         </div>
       </CardContent>
     </Card>
@@ -383,7 +383,7 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
             <Activity className="h-5 w-5 text-primary" />
             Cockpit Décisionnel RH
           </h2>
-          <p className="text-sm font-medium text-slate-500">Vision 360° et pilotage de la performance sociale</p>
+          <p className="text-sm font-medium text-slate-600">Vision 360° et pilotage de la performance sociale</p>
         </div>
         <div className="flex gap-2">
           <Button 

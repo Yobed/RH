@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -98,7 +98,7 @@ export function DocumentDrafter() {
         )}
       >
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-600 mb-2">
             Type de document
           </p>
           <select
@@ -118,7 +118,7 @@ export function DocumentDrafter() {
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-600 mb-2">
             Employé concerné
           </p>
           <select
@@ -139,7 +139,7 @@ export function DocumentDrafter() {
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-600 mb-2">
             Contexte / motifs <span className="text-slate-300 dark:text-slate-600">(optionnel)</span>
           </p>
           <textarea
@@ -157,7 +157,7 @@ export function DocumentDrafter() {
           className={cn(
             "w-full rounded-xl py-3 text-sm font-semibold transition-all",
             loading || !docType || !employeeId
-              ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+              ? "bg-slate-100 dark:bg-slate-800 text-slate-600 cursor-not-allowed"
               : "bg-[oklch(0.175_0.04_248)] text-[oklch(0.78_0.13_73)] hover:opacity-90 shadow-sm"
           )}
         >
@@ -169,8 +169,8 @@ export function DocumentDrafter() {
           ) : "Générer le document"}
         </button>
 
-        <p className="text-[10px] text-slate-400 text-center leading-relaxed">
-          Généré par Grok · Conforme Code du Travail CI (Loi 2015-532)
+        <p className="text-[10px] text-slate-600 text-center leading-relaxed">
+          Généré par Gemini · Conforme Code du Travail CI (Loi 2015-532)
         </p>
       </div>
 
@@ -189,7 +189,7 @@ export function DocumentDrafter() {
               </svg>
             </div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sélectionnez un type de document et un employé</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs">
+            <p className="text-xs text-slate-600 dark:text-slate-600 max-w-xs">
               Le document sera rédigé avec les données réelles de l&apos;employé et l&apos;en-tête de votre entreprise
             </p>
           </div>
@@ -199,7 +199,7 @@ export function DocumentDrafter() {
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <span className="h-8 w-8 rounded-full border-2 border-[oklch(0.38_0.10_252)] border-t-transparent animate-spin" />
-              <p className="text-sm text-slate-600 dark:text-slate-400">Rédaction par Grok…</p>
+              <p className="text-sm text-slate-600 dark:text-slate-600">Rédaction par Gemini…</p>
             </div>
           </div>
         )}
@@ -210,7 +210,7 @@ export function DocumentDrafter() {
             <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.18_0.03_248)] gap-2 flex-wrap">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{result.label}</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">{result.employee}</p>
+                <p className="text-[10px] text-slate-600 dark:text-slate-600">{result.employee}</p>
               </div>
               <div className="flex gap-2 shrink-0">
                 {/* Mobile: retour formulaire */}

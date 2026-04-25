@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2">
-      <span className="text-xs font-medium text-slate-400 w-36 shrink-0">{label}</span>
+      <span className="text-xs font-medium text-slate-600 w-36 shrink-0">{label}</span>
       <span className="text-sm text-slate-800">{value ?? <span className="text-slate-300">—</span>}</span>
     </div>
   );
@@ -64,11 +64,11 @@ type StatutKey = "actif" | "inactif" | "suspendu" | "approuve" | "en_attente" | 
 
 const statutConfig: Record<StatutKey, { dot: string; bg: string; text: string; label: string }> = {
   actif: { dot: "bg-emerald-500", bg: "bg-emerald-50", text: "text-emerald-700", label: "Actif" },
-  inactif: { dot: "bg-slate-400", bg: "bg-slate-100", text: "text-slate-500", label: "Inactif" },
+  inactif: { dot: "bg-slate-400", bg: "bg-slate-100", text: "text-slate-600", label: "Inactif" },
   suspendu: { dot: "bg-amber-500", bg: "bg-amber-50", text: "text-amber-700", label: "Suspendu" },
   approuve: { dot: "bg-emerald-500", bg: "bg-emerald-50", text: "text-emerald-700", label: "Approuvé" },
   en_attente: { dot: "bg-amber-500", bg: "bg-amber-50", text: "text-amber-700", label: "En attente" },
-  refuse: { dot: "bg-slate-400", bg: "bg-slate-100", text: "text-slate-500", label: "Refusé" },
+  refuse: { dot: "bg-slate-400", bg: "bg-slate-100", text: "text-slate-600", label: "Refusé" },
 };
 
 function StatutBadge({ statut }: { statut: string | null }) {
@@ -132,7 +132,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
       {/* Navigation retour */}
       <Link
         href="/employes"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-700 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-700 transition-colors group"
       >
         <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" weight="bold" />
         Retour à la liste
@@ -152,15 +152,15 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             <div>
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{emp.full_name}</h1>
               <div className="flex flex-wrap items-center gap-2 mt-1">
-                <span className="text-sm text-slate-500 font-medium">{emp.poste}</span>
+                <span className="text-sm text-slate-600 font-medium">{emp.poste}</span>
                 {emp.departement && (
-                  <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
+                  <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                     {emp.departement}
                   </span>
                 )}
                 <StatutBadge statut={emp.statut} />
               </div>
-              <p className="text-xs text-slate-400 mt-1.5 font-mono tabular-nums">
+              <p className="text-xs text-slate-600 mt-1.5 font-mono tabular-nums">
                 {emp.matricule} · {anciennete}
               </p>
             </div>
@@ -203,7 +203,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             <div className="lg:col-span-2 space-y-6">
               {/* Identité */}
               <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5 space-y-4">
-                <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-3">
+                <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 border-b border-slate-100 pb-3">
                   <User className="h-3.5 w-3.5" weight="bold" />
                   Identité & Contacts
                 </h3>
@@ -243,7 +243,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               {/* Parcours professionnel */}
               <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                     <TrendUp className="h-3.5 w-3.5" weight="bold" />
                     Parcours Professionnel
                   </h3>
@@ -257,12 +257,12 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             <div className="space-y-6">
               {/* Évaluations */}
               <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-                <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-3 mb-4">
+                <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 border-b border-slate-100 pb-3 mb-4">
                   <ChartBar className="h-3.5 w-3.5" weight="bold" />
                   Performance
                 </h3>
                 {!evaluations || evaluations.length === 0 ? (
-                  <p className="text-sm text-slate-400 text-center py-8">Aucune évaluation.</p>
+                  <p className="text-sm text-slate-600 text-center py-8">Aucune évaluation.</p>
                 ) : (
                   <div className="space-y-2">
                     {evaluations.map((ev) => (
@@ -276,7 +276,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                             {ev.score_global}/100
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
+                        <p className="text-[10px] text-slate-600 mt-0.5">
                           {new Date(ev.date_evaluation).toLocaleDateString("fr-CI")}
                         </p>
                       </div>
@@ -292,22 +292,22 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
         <TabsContent value="contracts" className="space-y-6 pt-2">
           <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
             <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
-              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                 <FileText className="h-3.5 w-3.5" weight="bold" />
                 Historique des contrats
               </h3>
             </div>
             {!contracts || contracts.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-400 italic">Aucun contrat.</div>
+              <div className="p-8 text-center text-sm text-slate-600 italic">Aucun contrat.</div>
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type</th>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Période</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Salaire brut</th>
-                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Salaire brut</th>
+                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -317,11 +317,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                         <div className="flex flex-col">
                           <span className="font-semibold text-slate-800">{c.type_contrat}</span>
                           {(c.renouvellement_count ?? 0) > 0 && (
-                            <span className="text-[10px] text-slate-400">{c.renouvellement_count} renouvs.</span>
+                            <span className="text-[10px] text-slate-600">{c.renouvellement_count} renouvs.</span>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-500 font-mono tabular-nums text-xs">
+                      <td className="px-4 py-3 text-slate-600 font-mono tabular-nums text-xs">
                         {new Date(c.date_debut).toLocaleDateString("fr-CI")} → {c.date_fin ? new Date(c.date_fin).toLocaleDateString("fr-CI") : "Indét."}
                       </td>
                       <td className="px-4 py-3 text-right font-mono tabular-nums font-medium text-slate-800">
@@ -344,7 +344,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             {/* Historique Salaire */}
             <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
               <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/60">
-                <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-600">
                   Historique éléments salaire
                 </h3>
               </div>
@@ -352,9 +352,9 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                 <table className="w-full text-xs">
                   <thead className="bg-slate-50/60 sticky top-0 border-b border-slate-100">
                     <tr>
-                      <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Date</th>
-                      <th className="px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Salaire brut</th>
-                      <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Motif</th>
+                      <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Date</th>
+                      <th className="px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Salaire brut</th>
+                      <th className="px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Motif</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -366,7 +366,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                         <td className="px-4 py-2 text-right font-mono tabular-nums font-medium text-slate-800">
                           {new Intl.NumberFormat("fr-CI").format(h.salaire_brut)}
                         </td>
-                        <td className="px-4 py-2 text-slate-400 italic truncate max-w-[150px]">
+                        <td className="px-4 py-2 text-slate-600 italic truncate max-w-[150px]">
                           {h.motif ?? "—"}
                         </td>
                       </tr>
@@ -378,7 +378,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
 
             {/* Coût employeur */}
             <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400 pl-1">
+              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 pl-1">
                 <TrendUp className="h-3.5 w-3.5 text-amber-500" weight="bold" />
                 Détail charges patronales
               </h3>
@@ -402,22 +402,22 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             {/* Solde */}
             <div className="md:col-span-1">
               <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5 text-center space-y-4">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">
                   Solde annuel {anneeEnCours}
                 </p>
                 <div className="py-2">
                   <span className={`text-5xl font-black font-mono tabular-nums ${soldeCalc > 5 ? "text-emerald-600" : "text-amber-600"}`}>
                     {soldeCalc.toFixed(1)}
                   </span>
-                  <span className="text-sm font-bold text-slate-400 ml-1">jours</span>
+                  <span className="text-sm font-bold text-slate-600 ml-1">jours</span>
                 </div>
                 <div className="border-t border-slate-100 pt-4 grid grid-cols-2 text-xs divide-x divide-slate-100">
                   <div>
-                    <p className="text-slate-400 mb-1">Acquis</p>
+                    <p className="text-slate-600 mb-1">Acquis</p>
                     <p className="font-bold font-mono tabular-nums text-slate-800">{joursAcquisCalc.toFixed(1)}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400 mb-1">Pris</p>
+                    <p className="text-slate-600 mb-1">Pris</p>
                     <p className="font-bold font-mono tabular-nums text-amber-600">{jours_pris_final.toFixed(1)}</p>
                   </div>
                 </div>
@@ -427,22 +427,22 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             {/* Congés récents */}
             <div className="md:col-span-3 rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
               <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/60">
-                <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">Congés récents</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-600">Congés récents</h3>
               </div>
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type</th>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Période</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Jours</th>
-                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours</th>
+                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {conges?.map((c) => (
                     <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="px-4 py-3 text-slate-700 capitalize">{c.type}</td>
-                      <td className="px-4 py-3 text-slate-400 font-mono tabular-nums text-xs">
+                      <td className="px-4 py-3 text-slate-600 font-mono tabular-nums text-xs">
                         {new Date(c.date_debut).toLocaleDateString("fr-CI")} → {new Date(c.date_fin).toLocaleDateString("fr-CI")}
                       </td>
                       <td className="px-4 py-3 text-right font-bold font-mono tabular-nums text-slate-800">{c.nb_jours}j</td>
@@ -461,22 +461,22 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
         <TabsContent value="payroll" className="space-y-6 pt-2">
           <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
             <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                 <Money className="h-3.5 w-3.5 text-emerald-600" weight="bold" />
                 Bulletins de paie
               </h3>
             </div>
             {!bulletins || bulletins.length === 0 ? (
-              <div className="p-12 text-center text-slate-400 italic text-sm">Aucun bulletin généré.</div>
+              <div className="p-12 text-center text-slate-600 italic text-sm">Aucun bulletin généré.</div>
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Période</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Brut</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Cotisations</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Net</th>
-                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Brut</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Cotisations</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Net</th>
+                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -508,7 +508,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           <div className="grid gap-6 lg:grid-cols-4">
             {/* Conformité légale */}
             <div className="lg:col-span-1 space-y-3">
-              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-3">
+              <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 border-b border-slate-100 pb-3">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" weight="bold" />
                 Conformité Légale
               </h3>
@@ -541,7 +541,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             {/* Documents */}
             <div className="lg:col-span-3 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                   <FolderOpen className="h-3.5 w-3.5" weight="bold" />
                   Documents archivés
                 </h3>
@@ -549,15 +549,15 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </div>
               <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
                 {!documents || documents.length === 0 ? (
-                  <p className="p-10 text-center text-sm text-slate-400 italic">Espace documentaire vide.</p>
+                  <p className="p-10 text-center text-sm text-slate-600 italic">Espace documentaire vide.</p>
                 ) : (
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50/60 border-b border-slate-100">
                       <tr>
-                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Nom du document</th>
-                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Catégorie</th>
-                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Date</th>
-                        <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400">Action</th>
+                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Nom du document</th>
+                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Catégorie</th>
+                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Date</th>
+                        <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -565,11 +565,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                         <tr key={doc.id} className="hover:bg-slate-50/60 transition-colors">
                           <td className="px-4 py-3 font-medium text-slate-800 max-w-[200px] truncate">{doc.name}</td>
                           <td className="px-4 py-3">
-                            <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
+                            <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                               {doc.famille ?? "GED"}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-slate-400 text-xs">
+                          <td className="px-4 py-3 text-slate-600 text-xs">
                             {new Date(doc.created_at!).toLocaleDateString("fr-CI")}
                           </td>
                           <td className="px-4 py-3 text-right">

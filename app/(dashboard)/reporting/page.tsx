@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { ReportingClient } from "./ReportingClient";
 
 export const dynamic = "force-dynamic";
@@ -94,7 +94,7 @@ export default async function ReportingPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Reporting RH</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-600 mt-1">
           Analytics masse salariale · KPIs RH · Export CSV multi-onglets
         </p>
       </div>

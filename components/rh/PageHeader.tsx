@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+﻿import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
   title: string;
@@ -13,7 +13,7 @@ export function PageHeader({ title, subtitle, action, className }: PageHeaderPro
       <div>
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h1>
         {subtitle && (
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">{subtitle}</p>
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">{subtitle}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}

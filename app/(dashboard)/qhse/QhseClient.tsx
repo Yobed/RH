@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -50,7 +50,7 @@ const statutCnpsConfig = {
   non_declare: { label: "Non déclaré", color: "bg-red-50 text-red-600" },
   declare: { label: "Déclaré", color: "bg-blue-50 text-blue-600" },
   indemnise: { label: "Indemnisé", color: "bg-emerald-50 text-emerald-600" },
-  clos: { label: "Clos", color: "bg-slate-100 text-slate-500" },
+  clos: { label: "Clos", color: "bg-slate-100 text-slate-600" },
 };
 
 const typeVisiteLabel = {
@@ -73,11 +73,11 @@ function StatCard({
         danger ? "border-red-100" : "border-slate-100/80"
       )}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 mb-3">{label}</p>
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600 mb-3">{label}</p>
       <p className={cn("text-3xl font-bold font-mono tabular-nums", danger ? "text-red-600" : "text-slate-900")}>
         {value}
       </p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-slate-600 mt-1">{sub}</p>}
     </motion.div>
   );
 }
@@ -160,7 +160,7 @@ export function QhseClient({
                 "rounded-lg px-4 py-1.5 text-sm font-medium transition-all",
                 tab === t
                   ? "bg-white shadow-sm text-slate-900"
-                  : "text-slate-500 hover:text-slate-700"
+                  : "text-slate-600 hover:text-slate-700"
               )}
             >
               {t === "accidents" ? "Accidents AT" : `Visites médicales${visitesEnRetard.length > 0 ? ` (${visitesEnRetard.length} en retard)` : ""}`}
@@ -183,14 +183,14 @@ export function QhseClient({
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60">
                 {["Date", "Employé", "Description", "Gravité", "Jours arrêt", "Statut CNPS", "Action"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">{h}</th>
+                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {accidents.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-slate-400 text-sm">Aucun accident enregistré</td>
+                  <td colSpan={7} className="px-4 py-10 text-center text-slate-600 text-sm">Aucun accident enregistré</td>
                 </tr>
               )}
               {accidents.map((a) => (
@@ -200,7 +200,7 @@ export function QhseClient({
                   </td>
                   <td className="px-4 py-3">
                     <p className="font-medium text-slate-800 text-xs">{a.employees?.full_name ?? "—"}</p>
-                    <p className="text-[10px] text-slate-400">{a.employees?.poste}</p>
+                    <p className="text-[10px] text-slate-600">{a.employees?.poste}</p>
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-600 max-w-[200px] truncate">{a.description}</td>
                   <td className="px-4 py-3">
@@ -241,21 +241,21 @@ export function QhseClient({
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/60">
                 {["Employé", "Type", "Dernière visite", "Prochaine visite", "Résultat", "Médecin"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">{h}</th>
+                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {visites.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-slate-400 text-sm">Aucune visite médicale enregistrée</td>
+                  <td colSpan={6} className="px-4 py-10 text-center text-slate-600 text-sm">Aucune visite médicale enregistrée</td>
                 </tr>
               )}
               {visites.map((v) => (
                 <tr key={v.id} className={cn("transition-colors", v.en_retard ? "bg-red-50/40 hover:bg-red-50/60" : "hover:bg-slate-50/60")}>
                   <td className="px-4 py-3">
                     <p className="font-medium text-slate-800 text-xs">{v.employees?.full_name ?? "—"}</p>
-                    <p className="text-[10px] text-slate-400">{v.employees?.poste}</p>
+                    <p className="text-[10px] text-slate-600">{v.employees?.poste}</p>
                   </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
@@ -271,7 +271,7 @@ export function QhseClient({
                         {v.en_retard && "⚠ "}{new Date(v.date_prochaine).toLocaleDateString("fr-CI")}
                       </span>
                     ) : (
-                      <span className="text-xs text-slate-400">—</span>
+                      <span className="text-xs text-slate-600">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -286,7 +286,7 @@ export function QhseClient({
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-500">{v.medecin ?? "—"}</td>
+                  <td className="px-4 py-3 text-xs text-slate-600">{v.medecin ?? "—"}</td>
                 </tr>
               ))}
             </tbody>

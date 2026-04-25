@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { QhseClient } from "./QhseClient";
 
 export const dynamic = "force-dynamic";
@@ -67,7 +67,7 @@ export default async function QhsePage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">QHSE</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-600 mt-1">
           Registre accidents du travail · Visites médicales · Indicateurs sinistralité
         </p>
       </div>

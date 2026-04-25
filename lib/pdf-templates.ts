@@ -281,16 +281,29 @@ export const generateEvaluationPDF = ({ evaluation, employee, company }: any) =>
         headStyles: { fillGray: 90, textColor: 255, fontStyle: 'bold' }
     });
     
-    // Scores
+    // scores
     const finalY = (doc as any).lastAutoTable.finalY + 15;
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text(`SCORE GLOBAL : ${evaluation.score_global || 0} / 100`, margin, finalY);
+    doc.text(`SCORE PERFORMANCE : ${evaluation.score_global || 0} / 100`, margin, finalY);
     
+    doc.setFontSize(12);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`SCORE POTENTIEL : ${evaluation.potential_score || "Non évalué"} / 100`, margin, finalY + 8);
+    
+    doc.setTextColor(51, 65, 85);
     doc.setFontSize(11);
-    doc.text("Synthèse de l'évaluateur :", margin, finalY + 15);
+    doc.text("ANALYSE STRATÉGIQUE (IA) :", margin, finalY + 25);
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(10);
+    const synthese = evaluation.synthese_ia || "Aucune analyse IA disponible pour cette session.";
+    doc.text(synthese, margin, finalY + 32, { maxWidth: 170, lineHeightFactor: 1.3 });
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Commentaires de l'évaluateur :", margin, finalY + 60);
     doc.setFont("helvetica", "normal");
-    doc.text(evaluation.commentaire || "Aucun commentaire renseigné.", margin, finalY + 22, { maxWidth: 170 });
+    doc.text(evaluation.commentaire || "Aucun commentaire manuel renseigné.", margin, finalY + 67, { maxWidth: 170 });
     
     setupSignatures(doc, "Signature de l'Évalué", "Signature de l'Évaluateur");
     return doc;

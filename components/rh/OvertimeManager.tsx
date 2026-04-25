@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { format } from "date-fns";
@@ -167,7 +167,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
             <Clock className="w-12 h-12" />
           </div>
           <CardHeader className="pb-2">
-            <CardDescription className="text-slate-400">Total Heures (Mois)</CardDescription>
+            <CardDescription className="text-slate-600">Total Heures (Mois)</CardDescription>
             <CardTitle className="text-3xl font-bold">
               {records.reduce((acc, r) => acc + (format(new Date(r.date), 'MM') === format(new Date(), 'MM') ? r.hours_count : 0), 0)}h
             </CardTitle>
@@ -213,7 +213,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
 
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
           <Input 
             placeholder="Rechercher par nom ou matricule..." 
             className="pl-10 border-slate-200" 
@@ -283,18 +283,18 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
 
               {selectedEmp && hoursCount && (
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-2">
-                  <div className="flex justify-between text-xs text-slate-500 uppercase tracking-wider font-semibold">
+                  <div className="flex justify-between text-xs text-slate-600 uppercase tracking-wider font-semibold">
                     <span>Base de calcul</span>
                     <span>Montant estimé</span>
                   </div>
                   <div className="flex justify-between items-end border-t pt-2 border-slate-100">
                     <div className="text-sm">
                       <p className="font-medium text-slate-900">{fmt(tauxHoraire)} / h</p>
-                      <p className="text-[10px] text-slate-400 uppercase">Taux horaire brut</p>
+                      <p className="text-[10px] text-slate-600 uppercase">Taux horaire brut</p>
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold text-emerald-600">+{fmt(totalImpact)}</p>
-                      <p className="text-[10px] text-slate-400 uppercase">A ajouter sur la paie</p>
+                      <p className="text-[10px] text-slate-600 uppercase">A ajouter sur la paie</p>
                     </div>
                   </div>
                 </div>
@@ -315,19 +315,19 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Employé</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Volume</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Catégorie</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Motif</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Montant</th>
+                <th className="p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Date</th>
+                <th className="p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Employé</th>
+                <th className="p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">Volume</th>
+                <th className="p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider text-center">Catégorie</th>
+                <th className="p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider">Motif</th>
+                <th className="p-4 text-xs font-semibold text-slate-600 uppercase tracking-wider text-right">Montant</th>
                 <th className="p-4"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filteredRecords.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-400 italic">Aucun enregistrement trouvé</td>
+                  <td colSpan={7} className="p-8 text-center text-slate-600 italic">Aucun enregistrement trouvé</td>
                 </tr>
               ) : (
                 filteredRecords.map((record) => {
@@ -340,14 +340,14 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
                     <tr key={record.id} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                          <Calendar className="w-3.5 h-3.5 text-slate-600" />
                           <span className="text-sm font-medium text-slate-700">{format(new Date(record.date), 'dd MMM yyyy', { locale: fr })}</span>
                         </div>
                       </td>
                       <td className="p-4">
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold text-slate-900">{record.employee?.full_name}</span>
-                          <span className="text-[10px] text-slate-400 font-mono tracking-tighter uppercase">{record.employee?.matricule}</span>
+                          <span className="text-[10px] text-slate-600 font-mono tracking-tighter uppercase">{record.employee?.matricule}</span>
                         </div>
                       </td>
                       <td className="p-4 text-center">
@@ -365,7 +365,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
                         </span>
                       </td>
                       <td className="p-4">
-                        <p className="text-xs text-slate-500 max-w-[200px] truncate">{record.reason || '-'}</p>
+                        <p className="text-xs text-slate-600 max-w-[200px] truncate">{record.reason || '-'}</p>
                       </td>
                       <td className="p-4 text-right">
                         <span className="text-sm font-bold text-slate-900">+{fmt(recordAmount)}</span>
@@ -394,7 +394,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
       </Card>
       
       {/* Legend & Compliance Check */}
-      <div className="flex items-center gap-4 text-[10px] uppercase font-bold tracking-widest text-slate-400">
+      <div className="flex items-center gap-4 text-[10px] uppercase font-bold tracking-widest text-slate-600">
         <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-500"></div> 1-8h (15%)</span>
         <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-500"></div> {">"}8h (50%)</span>
         <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-purple-500"></div> Dim/Nuit (75%)</span>

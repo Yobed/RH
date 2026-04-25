@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -87,7 +87,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
         <div className="space-y-3">
           <motion.p
             variants={fadeUp}
-            className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500"
+            className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-600"
           >
             {dateLabel}
           </motion.p>
@@ -112,7 +112,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
                 RH
               </span>
             </h1>
-            <p className="text-sm font-medium text-slate-400 dark:text-slate-500">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-600">
               Capital humain — Côte d&apos;Ivoire · Droit ivoirien
             </p>
           </motion.div>
@@ -144,7 +144,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
                 <span className={`text-xs font-bold tabular-nums ${stat.textColor}`}>
                   {stat.value}
                 </span>
-                <span className="text-[10px] text-slate-400 dark:text-slate-500">{stat.label}</span>
+                <span className="text-[10px] text-slate-600 dark:text-slate-600">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -155,7 +155,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
           variants={scaleIn}
           className="shrink-0 rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] glow-hover min-w-[220px]"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500 mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600 dark:text-slate-600 mb-4">
             Score conformité
           </p>
 
@@ -202,12 +202,12 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               >
                 {complianceScore}
               </span>
-              <span className="text-[9px] text-slate-400 uppercase tracking-wider">/ 100</span>
+              <span className="text-[9px] text-slate-600 uppercase tracking-wider">/ 100</span>
             </div>
           </div>
 
           <AnimatedBar value={complianceScore} delay={0.4} />
-          <p className="mt-2 text-[10px] text-center text-slate-400 dark:text-slate-500">
+          <p className="mt-2 text-[10px] text-center text-slate-600 dark:text-slate-600">
             {complianceScore >= 85
               ? "Excellent"
               : complianceScore >= 70

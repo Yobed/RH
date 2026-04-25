@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -178,13 +178,13 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                     ? "bg-emerald-500 border-emerald-100 text-white" 
                     : isActive 
                       ? "bg-white border-emerald-500 text-emerald-600 shadow-sm" 
-                      : "bg-white border-slate-100 text-slate-400"
+                      : "bg-white border-slate-100 text-slate-600"
                   }`}
                 >
                   {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                 </div>
                 <span className={`mt-3 text-sm font-medium transition-colors duration-300
-                  ${isActive ? "text-slate-900" : isCompleted ? "text-slate-700" : "text-slate-400"}
+                  ${isActive ? "text-slate-900" : isCompleted ? "text-slate-700" : "text-slate-600"}
                 `}>
                   {step.title}
                 </span>
@@ -215,7 +215,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-700">Employé sortant <span className="text-rose-500">*</span></label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <User className="absolute left-3 top-3 h-4 w-4 text-slate-600" />
                   <select 
                     {...register("employee_id")} 
                     className={`${selectClass} pl-10 h-11 border-slate-200 hover:border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20`}
@@ -266,16 +266,16 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                     <label className="text-sm font-semibold text-slate-700">Salaire moyen (12 derniers mois) <span className="text-rose-500">*</span></label>
                     <div className="relative">
                       <Input type="number" step="1000" {...register("salaire_moyen_12_mois")} className="border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20 pr-12" />
-                      <span className="absolute right-3 top-2.5 text-sm text-slate-400 font-medium">FCFA</span>
+                      <span className="absolute right-3 top-2.5 text-sm text-slate-600 font-medium">FCFA</span>
                     </div>
-                    <p className="text-xs text-slate-500">Base du calcul de l'indemnité de licenciement/précarité.</p>
+                    <p className="text-xs text-slate-600">Base du calcul de l'indemnité de licenciement/précarité.</p>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Ancienneté (Années ou fraction) <span className="text-rose-500">*</span></label>
                     <div className="relative">
                       <Input type="number" step="0.01" {...register("anciennete_annees")} className="border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20 pr-12" />
-                      <span className="absolute right-3 top-2.5 text-sm text-slate-400 font-medium">ANS</span>
+                      <span className="absolute right-3 top-2.5 text-sm text-slate-600 font-medium">ANS</span>
                     </div>
                   </div>
 
@@ -284,9 +284,9 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                       <label className="text-sm font-semibold text-slate-700">Somme des salaires bruts du CDD <span className="text-rose-500">*</span></label>
                       <div className="relative">
                         <Input type="number" step="1000" {...register("somme_salaires_bruts_cdd")} className="border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20 pr-12" />
-                        <span className="absolute right-3 top-2.5 text-sm text-slate-400 font-medium">FCFA</span>
+                        <span className="absolute right-3 top-2.5 text-sm text-slate-600 font-medium">FCFA</span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-1">Sert de base à l'indemnité de précarité de 3%.</p>
+                      <p className="text-xs text-slate-600 mt-1">Sert de base à l'indemnité de précarité de 3%.</p>
                     </div>
                   )}
                 </div>
@@ -299,7 +299,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                       <label className="text-sm font-semibold text-slate-700">Jours de congés restants</label>
                       <div className="relative">
                         <Input type="number" step="0.5" {...register("jours_conges_restants")} className="bg-white border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20 pr-16" />
-                        <span className="absolute right-3 top-2.5 text-sm text-slate-400 font-medium">JOURS</span>
+                        <span className="absolute right-3 top-2.5 text-sm text-slate-600 font-medium">JOURS</span>
                       </div>
                     </div>
                     
@@ -307,7 +307,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                       <label className="text-sm font-semibold text-slate-700">Jours de préavis non effectués</label>
                       <div className="relative">
                         <Input type="number" step="1" {...register("jours_preavis_non_effectues")} className="bg-white border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20 pr-16" />
-                        <span className="absolute right-3 top-2.5 text-sm text-slate-400 font-medium">JOURS</span>
+                        <span className="absolute right-3 top-2.5 text-sm text-slate-600 font-medium">JOURS</span>
                       </div>
                     </div>
                   </div>

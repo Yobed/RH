@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic';
+﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { MedicalExamDialog } from "@/components/rh/MedicalExamDialog";
 
@@ -36,7 +36,7 @@ export default async function MedicalPage() {
       <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Santé & Sécurité au Travail</h1>
-          <p className="text-sm text-slate-400 mt-0.5 font-medium">Suivi des visites médicales, aptitudes et recommandations de la médecine du travail</p>
+          <p className="text-sm text-slate-600 mt-0.5 font-medium">Suivi des visites médicales, aptitudes et recommandations de la médecine du travail</p>
         </div>
         <div className="shrink-0">
           <MedicalExamDialog employees={employees ?? []} />
@@ -51,7 +51,7 @@ export default async function MedicalPage() {
           { label: "Inaptes / Réserves", value: inaptes, color: inaptes > 0 ? "text-red-600" : "text-slate-900" },
         ].map(({ label, value, color }) => (
           <div key={label} className="rounded-xl border border-slate-100 bg-white p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1">{label}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1">{label}</p>
             <p className={`text-2xl font-bold tabular-nums ${color}`}>{value}</p>
           </div>
         ))}
@@ -61,18 +61,18 @@ export default async function MedicalPage() {
       <div className="rounded-xl border border-slate-100 bg-white overflow-hidden">
         {!exams || exams.length === 0 ? (
           <div className="p-12 text-center">
-            <p className="text-sm font-medium text-slate-500">Aucun examen médical enregistré</p>
-            <p className="text-xs text-slate-400 mt-1">Cliquez sur «&nbsp;Ajouter&nbsp;» pour enregistrer un examen</p>
+            <p className="text-sm font-medium text-slate-600">Aucun examen médical enregistré</p>
+            <p className="text-xs text-slate-600 mt-1">Cliquez sur «&nbsp;Ajouter&nbsp;» pour enregistrer un examen</p>
           </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type d&apos;examen</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Date</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Résultat</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Prochaine visite</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type d&apos;examen</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Date</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Résultat</th>
+                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Prochaine visite</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -83,10 +83,10 @@ export default async function MedicalPage() {
                   <tr key={exam.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="px-4 py-3">
                       <p className="font-semibold text-slate-800">{emp?.full_name}</p>
-                      <p className="text-xs text-slate-400">{emp?.poste}</p>
+                      <p className="text-xs text-slate-600">{emp?.poste}</p>
                     </td>
                     <td className="px-4 py-3 text-slate-700">{exam.type_examen?.replace(/_/g, " ")}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs tabular-nums">
+                    <td className="px-4 py-3 text-slate-600 text-xs tabular-nums">
                       {new Date(exam.date_examen).toLocaleDateString("fr-CI")}
                     </td>
                     <td className="px-4 py-3">
@@ -96,7 +96,7 @@ export default async function MedicalPage() {
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell text-xs tabular-nums">
                       {exam.prochaine_visite ? (
-                        <span className={overdue ? "text-red-600 font-semibold" : "text-slate-500"}>
+                        <span className={overdue ? "text-red-600 font-semibold" : "text-slate-600"}>
                           {new Date(exam.prochaine_visite).toLocaleDateString("fr-CI")}
                         </span>
                       ) : (

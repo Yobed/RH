@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -94,7 +94,7 @@ export function DocumentTemplateSelector() {
         showResult ? "hidden md:block md:w-80" : "w-full md:w-80"
       )}>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-600 mb-2">
             Modèle de document
           </p>
           <select value={templateId} onChange={(e) => setTemplateId(e.target.value)} className={selectClass}>
@@ -108,12 +108,12 @@ export function DocumentTemplateSelector() {
             ))}
           </select>
           {template && (
-            <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500 italic">{template.description}</p>
+            <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-600 italic">{template.description}</p>
           )}
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-600 mb-2">
             Employé concerné
           </p>
           <select value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} className={selectClass}>
@@ -127,12 +127,12 @@ export function DocumentTemplateSelector() {
         {/* Variables personnalisées */}
         {template && template.variables_custom.length > 0 && (
           <div className="space-y-3">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-600">
               Informations complémentaires
             </p>
             {template.variables_custom.map((v) => (
               <div key={v.key}>
-                <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-600 mb-1">
                   {v.label}{v.required && <span className="text-red-400 ml-0.5">*</span>}
                 </label>
                 <input
@@ -153,7 +153,7 @@ export function DocumentTemplateSelector() {
           className={cn(
             "w-full rounded-xl py-3 text-sm font-semibold transition-all",
             loading || !templateId || !employeeId
-              ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+              ? "bg-slate-100 dark:bg-slate-800 text-slate-600 cursor-not-allowed"
               : "bg-[oklch(0.175_0.04_248)] text-[oklch(0.78_0.13_73)] hover:opacity-90 shadow-sm"
           )}
         >
@@ -165,7 +165,7 @@ export function DocumentTemplateSelector() {
           ) : "Générer le document"}
         </button>
 
-        <p className="text-[10px] text-slate-400 text-center leading-relaxed">
+        <p className="text-[10px] text-slate-600 text-center leading-relaxed">
           Conforme Code du Travail CI (Loi 2015-532) · Données réelles de l&apos;employé
         </p>
       </div>
@@ -180,7 +180,7 @@ export function DocumentTemplateSelector() {
               </svg>
             </div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sélectionnez un modèle et un employé</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs">
+            <p className="text-xs text-slate-500 dark:text-slate-600 max-w-xs">
               {DOCUMENT_TEMPLATES.length} modèles disponibles — données réelles de l&apos;employé
             </p>
           </div>
@@ -190,7 +190,7 @@ export function DocumentTemplateSelector() {
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <span className="h-8 w-8 rounded-full border-2 border-[oklch(0.38_0.10_252)] border-t-transparent animate-spin" />
-              <p className="text-sm text-slate-600 dark:text-slate-400">Génération du document…</p>
+              <p className="text-sm text-slate-600 dark:text-slate-600">Génération du document…</p>
             </div>
           </div>
         )}
@@ -200,7 +200,7 @@ export function DocumentTemplateSelector() {
             <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.18_0.03_248)] gap-2 flex-wrap">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{result.label}</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">{result.employee}</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-600">{result.employee}</p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <button onClick={() => setShowResult(false)} className="md:hidden rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">

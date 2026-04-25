@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef } from "react";
 import { toast } from "sonner";
@@ -76,10 +76,10 @@ export function ImportExcelModal({ onSuccess }: Props) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
           <div>
             <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Import employés</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Excel (.xlsx) ou CSV</p>
+            <p className="text-xs text-slate-500 dark:text-slate-600 mt-0.5">Excel (.xlsx) ou CSV</p>
           </div>
           <button onClick={() => { setOpen(false); reset(); }} className="rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-            <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
@@ -120,8 +120,8 @@ export function ImportExcelModal({ onSuccess }: Props) {
             {file ? (
               <div>
                 <p className="font-semibold text-emerald-700 dark:text-emerald-400">{file.name}</p>
-                <p className="text-xs text-slate-500 mt-1">{(file.size / 1024).toFixed(1)} Ko</p>
-                <button onClick={(e) => { e.stopPropagation(); reset(); }} className="mt-2 text-xs text-slate-400 hover:text-red-500 transition-colors">
+                <p className="text-xs text-slate-600 mt-1">{(file.size / 1024).toFixed(1)} Ko</p>
+                <button onClick={(e) => { e.stopPropagation(); reset(); }} className="mt-2 text-xs text-slate-600 hover:text-red-500 transition-colors">
                   Changer de fichier
                 </button>
               </div>
@@ -130,8 +130,8 @@ export function ImportExcelModal({ onSuccess }: Props) {
                 <svg className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m6.75 12-3-3m0 0-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                 </svg>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Glissez votre fichier ici ou <span className="text-[oklch(0.38_0.10_252)] font-medium">cliquez pour sélectionner</span></p>
-                <p className="text-xs text-slate-400 mt-1">.xlsx, .xls, .csv</p>
+                <p className="text-sm text-slate-500 dark:text-slate-600">Glissez votre fichier ici ou <span className="text-[oklch(0.38_0.10_252)] font-medium">cliquez pour sélectionner</span></p>
+                <p className="text-xs text-slate-600 mt-1">.xlsx, .xls, .csv</p>
               </div>
             )}
           </div>
@@ -160,7 +160,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
           <div className="flex gap-2">
             <button
               onClick={() => { setOpen(false); reset(); }}
-              className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               Fermer
             </button>
@@ -170,7 +170,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
               className={cn(
                 "flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all",
                 !file || loading
-                  ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                  ? "bg-slate-100 dark:bg-slate-800 text-slate-600 cursor-not-allowed"
                   : "bg-[oklch(0.175_0.04_248)] text-[oklch(0.78_0.13_73)] hover:opacity-90"
               )}
             >

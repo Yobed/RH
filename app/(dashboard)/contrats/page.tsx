@@ -33,7 +33,7 @@ const StatutBadge = ({ statut }: { statut: string }) => {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
       <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
       {statut}
     </span>
@@ -41,22 +41,36 @@ const StatutBadge = ({ statut }: { statut: string }) => {
 };
 
 const JoursBadge = ({ jours }: { jours: number }) => {
+  if (jours < 0) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-700 whitespace-nowrap">
+        Dépassé ({Math.abs(jours)}j)
+      </span>
+    );
+  }
+  if (jours === 0) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-700 whitespace-nowrap">
+        Aujourd'hui
+      </span>
+    );
+  }
   if (jours <= 7) {
     return (
-      <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600">
+      <span className="inline-flex items-center rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-600 whitespace-nowrap">
         J-{jours}
       </span>
     );
   }
   if (jours <= 15) {
     return (
-      <span className="inline-flex items-center rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+      <span className="inline-flex items-center rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-600 whitespace-nowrap">
         J-{jours}
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+    <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 whitespace-nowrap">
       J-{jours}
     </span>
   );
@@ -83,7 +97,6 @@ export default async function ContratsPage() {
        employees!inner(id, full_name, poste, manager_id)`
     )
     .eq("statut", "actif")
-    .gte("date_fin", today)
     .lte("date_fin", in30Days)
     .order("date_fin", { ascending: true });
 
@@ -122,7 +135,7 @@ export default async function ContratsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contrats</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-600 mt-0.5">
             Gestion des contrats de travail — CDD, CDI, Stage, Apprentissage
           </p>
         </div>
@@ -132,25 +145,25 @@ export default async function ContratsPage() {
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Contrats actifs</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Contrats actifs</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
             {tousContrats?.filter((c) => c.statut === "actif").length ?? 0}
           </p>
-          <p className="mt-1 text-xs text-slate-400">en cours</p>
+          <p className="mt-1 text-xs text-slate-600">en cours</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Expirant sous 30j</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Expirant sous 30j</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
             {contratsExpirants?.length ?? 0}
           </p>
-          <p className="mt-1 text-xs text-slate-400">à renouveler ou clôturer</p>
+          <p className="mt-1 text-xs text-slate-600">à renouveler ou clôturer</p>
         </div>
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">CDI</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">CDI</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
             {tousContrats?.filter((c) => c.type_contrat?.toUpperCase() === "CDI" && c.statut === "actif").length ?? 0}
           </p>
-          <p className="mt-1 text-xs text-slate-400">contrats permanents</p>
+          <p className="mt-1 text-xs text-slate-600">contrats permanents</p>
         </div>
       </div>
 
@@ -175,7 +188,7 @@ export default async function ContratsPage() {
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <span className="font-semibold text-slate-800">{emp.full_name}</span>
-                      <span className="text-slate-400 ml-2 text-xs">— {emp.poste}</span>
+                      <span className="text-slate-600 ml-2 text-xs">— {emp.poste}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <TypeBadge type={c.type_contrat} />
@@ -204,8 +217,8 @@ export default async function ContratsPage() {
         <h2 className="text-base font-semibold text-slate-700 mb-3">Contrats récents</h2>
         {!tousContrats || tousContrats.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-            <p className="font-medium text-slate-400">Aucun contrat enregistré</p>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="font-medium text-slate-600">Aucun contrat enregistré</p>
+            <p className="mt-1 text-sm text-slate-600">
               Les contrats sont créés automatiquement lors de l&apos;ajout d&apos;un employé.
             </p>
           </div>
@@ -215,14 +228,14 @@ export default async function ContratsPage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50/60 border-b border-slate-100">
                 <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Employé</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Type</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Début</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden md:table-cell">Fin</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Fin essai</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-400 hidden lg:table-cell">Salaire brut</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-400">Statut</th>
-                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-400">Actions</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Début</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Fin</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Fin essai</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Salaire brut</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -245,27 +258,27 @@ export default async function ContratsPage() {
                     <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="px-4 py-3 text-sm">
                         <p className="font-semibold text-slate-800">{employee.full_name}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{employee.poste}</p>
+                        <p className="text-xs text-slate-600 mt-0.5">{employee.poste}</p>
                       </td>
                       <td className="px-4 py-3 text-sm">
                         <TypeBadge type={c.type_contrat} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">
+                      <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">
                         {new Date(c.date_debut).toLocaleDateString("fr-CI")}
                       </td>
                       <td className="px-4 py-3 text-sm hidden md:table-cell">
                         {c.date_fin ? (
                           <div className="flex items-center gap-2">
-                            <span className={isExpiringSoon ? "text-red-600 font-medium" : "text-slate-500"}>
+                            <span className={isExpiringSoon ? "text-red-600 font-medium" : "text-slate-600"}>
                               {new Date(c.date_fin).toLocaleDateString("fr-CI")}
                             </span>
                             {isExpiringSoon && jours !== null && <JoursBadge jours={jours} />}
                           </div>
                         ) : (
-                          <span className="text-slate-400">Indéterminé</span>
+                          <span className="text-slate-600">Indéterminé</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-500 hidden lg:table-cell">
+                      <td className="px-4 py-3 text-sm text-slate-600 hidden lg:table-cell">
                         {c.date_fin_essai
                           ? new Date(c.date_fin_essai).toLocaleDateString("fr-CI")
                           : "—"}

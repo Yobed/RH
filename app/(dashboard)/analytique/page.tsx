@@ -1,4 +1,4 @@
-import { createServerClient } from "@/lib/supabase/server";
+﻿import { createServerClient } from "@/lib/supabase/server";
 import { Suspense } from "react";
 import { AnalytiqueDashboard } from "./AnalytiqueDashboard";
 
@@ -16,7 +16,7 @@ export default async function AnalytiquePage() {
 
   const { data: bulletins, error: errBulletins } = await supabase
     .from("bulletins_paie")
-    .select("id, periode, salaire_brut, salaire_net, its, cnps_salarie, prime_transport, sursalaire, details");
+    .select("id, periode, salaire_brut, salaire_net, its, cnps_salarie, prime_transport, sursalaire");
 
   const { data: contracts, error: errContracts } = await supabase
     .from("contracts")
@@ -55,7 +55,7 @@ export default async function AnalytiquePage() {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Analytique RH</h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-600 mt-0.5">
             Indicateurs de performance, effectifs et masse salariale
           </p>
         </div>
@@ -66,7 +66,7 @@ export default async function AnalytiquePage() {
           <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] p-16 flex items-center justify-center">
             <div className="flex flex-col items-center gap-3">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[oklch(0.175_0.04_248)]" />
-              <p className="text-sm text-slate-400 font-medium">Chargement des graphiques…</p>
+              <p className="text-sm text-slate-600 font-medium">Chargement des graphiques…</p>
             </div>
           </div>
         }
