@@ -35,7 +35,7 @@ export function PaieFilters() {
 
 
 
-  function updateSearch(name: string, value: string) {
+  function updateSearch(name: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString());
     if (value && value !== "all") {
       params.set(name, value);
