@@ -1,5 +1,5 @@
 -- Migration: leave_balances
--- Phase 03 Plan 01 — Solde congés légaux CI (Art. 25 CT-CI : 2,5 j/mois)
+-- Phase 03 Plan 01 — Solde congés légaux CI (Art. 25 CT-CI : 2,2 j/mois)
 -- Date : 2026-04-01
 
 CREATE TABLE IF NOT EXISTS leave_balances (

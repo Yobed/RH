@@ -212,7 +212,7 @@ export function CongesDialog({ employees }: Props) {
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Droit : 2,5 jours/mois = 30 jours/an (Conventionnelle)
+              Droit : 2,2 jours/mois = 26,4 jours/an (Légal)
             </p>
             {errors.nb_jours && (
               <p className="mt-1 text-xs text-red-500">{errors.nb_jours.message}</p>
