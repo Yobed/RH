@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -84,147 +84,206 @@ export function TalentMatrix({ data, onPotentialUpdate }: TalentMatrixProps) {
          </div>
       </div>
 
-      <div className="relative grid grid-cols-3 grid-rows-3 gap-2 bg-slate-100 p-2 rounded-[2.5rem] aspect-square w-full max-w-[700px] mx-auto border-8 border-slate-50 shadow-2xl">
-        {/* Axis Labels unchanged */}
-        <div className="absolute -left-16 top-1/2 -rotate-90 origin-center text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 flex items-center gap-4">
-           Potentiel <div className="h-px w-20 bg-slate-200" />
+      <div className="relative bg-slate-900/5 p-4 rounded-[3.5rem] border border-white aspect-square w-full max-w-[800px] mx-auto shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]">
+        {/* Axis Labels - Vertical */}
+        <div className="absolute -left-20 top-1/2 -rotate-90 origin-center flex flex-col items-center gap-4">
+           <div className="h-40 w-[1px] bg-gradient-to-t from-transparent via-slate-300 to-transparent" />
+           <span className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">Potentiel</span>
+           <div className="h-40 w-[1px] bg-gradient-to-b from-transparent via-slate-300 to-transparent" />
         </div>
 
-        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 flex items-center gap-4">
-           Performance <div className="h-px w-20 bg-slate-200" />
+        {/* Axis Labels - Horizontal */}
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-8 w-full justify-center">
+           <div className="h-[1px] w-48 bg-gradient-to-r from-transparent via-slate-300 to-transparent" />
+           <span className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">Performance</span>
+           <div className="h-[1px] w-48 bg-gradient-to-l from-transparent via-slate-300 to-transparent" />
         </div>
 
-        {/* 9 boxes */}
-        {[2, 1, 0].map((y) => (
-          [0, 1, 2].map((x) => {
-            const boxKey = `${y}-${x}`;
-            const boxInfo = BOX_DESCRIPTIONS[boxKey];
-            const employeesInBox = data.filter(e => getBoxIndex(e.potential) === y && getBoxIndex(e.performance) === x);
+        {/* 9-Box Grid Structure */}
+        <div className="grid grid-cols-3 grid-rows-3 gap-3 h-full w-full">
+          {[2, 1, 0].map((y) => (
+            [0, 1, 2].map((x) => {
+              const boxKey = `${y}-${x}`;
+              const boxInfo = BOX_DESCRIPTIONS[boxKey];
+              const employeesInBox = data.filter(e => getBoxIndex(e.potential) === y && getBoxIndex(e.performance) === x);
 
-            return (
-              <div 
-                key={boxKey} 
-                className={`relative group rounded-2xl bg-white/60 p-4 border border-white/40 transition-all duration-500 overflow-hidden flex flex-col items-center justify-center`}
-              >
-                {/* Background Label */}
-                <div className="absolute top-3 left-3 opacity-20 pointer-events-none">
-                   <div className={`h-1.5 w-1.5 rounded-full ${boxInfo.color} mb-1`} />
-                   <span className="text-[8px] font-black uppercase text-slate-600 leading-none">{boxInfo.label}</span>
-                </div>
+              return (
+                <div 
+                  key={boxKey} 
+                  className="relative group rounded-[2.5rem] bg-white/40 backdrop-blur-sm border border-white/60 p-6 transition-all duration-700 overflow-hidden flex flex-col items-center justify-center hover:bg-white/80 hover:shadow-2xl shadow-slate-200/20"
+                >
+                  {/* Strategic Label Background */}
+                  <div className="absolute top-6 left-6 flex flex-col items-start opacity-30 group-hover:opacity-100 transition-opacity duration-500">
+                     <span className={`text-[9px] font-black uppercase tracking-tighter ${boxInfo.color.replace('bg-', 'text-')}`}>
+                        {boxInfo.label}
+                     </span>
+                     <div className={`h-1.5 w-6 rounded-full ${boxInfo.color} mt-1`} />
+                  </div>
 
-                {/* Employees Bubble Container */}
-                <div className="flex flex-wrap gap-2 justify-center content-center z-10 w-full h-full">
-                  {employeesInBox.map((emp) => (
-                    <Popover key={emp.id}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <PopoverTrigger asChild>
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              whileHover={{ scale: 1.2, zIndex: 50 }}
-                              className={`h-10 w-10 rounded-xl ${boxInfo.color} text-white flex items-center justify-center font-black text-xs shadow-lg cursor-pointer ring-4 ring-white transition-all`}
-                            >
-                              {emp.name.split(' ').map(n => n[0]).join('')}
-                            </motion.div>
-                          </PopoverTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-slate-900 text-white border-none p-4 rounded-2xl shadow-2xl">
-                           <div className="space-y-1">
-                              <p className="font-black text-sm">{emp.name}</p>
-                              <p className="text-[10px] font-bold text-white/50 uppercase">{emp.role}</p>
-                              <div className="flex gap-4 mt-3 border-t border-white/10 pt-3">
-                                 <div>
-                                    <span className="text-[8px] font-black uppercase opacity-50 block">Performance</span>
-                                    <span className="text-sm font-black">{emp.performance}%</span>
+                  {/* Bubbles - Enhanced Physics feel */}
+                  <div className="flex flex-wrap gap-3 justify-center items-center z-10 w-full h-full p-4">
+                    {employeesInBox.map((emp, idx) => (
+                      <Popover key={emp.id}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <PopoverTrigger asChild>
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 20, delay: idx * 0.1 }}
+                                whileHover={{ 
+                                  scale: 1.15, 
+                                  zIndex: 50,
+                                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                                }}
+                                className={`h-14 w-14 rounded-2xl ${boxInfo.color} text-white flex items-center justify-center font-black text-sm cursor-pointer border-4 border-white shadow-xl relative group/bubble`}
+                              >
+                                {emp.name.split(' ').map(n => n[0]).join('')}
+                                {/* Subtle Glow */}
+                                <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover/bubble:opacity-100 transition-opacity" />
+                              </motion.div>
+                            </PopoverTrigger>
+                          </TooltipTrigger>
+                          <TooltipContent className="bg-slate-900 text-white border-none p-6 rounded-[2rem] shadow-3xl min-w-[200px]">
+                             <div className="space-y-4">
+                                <div className="flex items-center gap-4">
+                                   <div className={`h-12 w-12 rounded-xl ${boxInfo.color} flex items-center justify-center font-black text-lg`}>
+                                      {emp.name.charAt(0)}
+                                   </div>
+                                   <div>
+                                      <p className="font-black text-base tracking-tight">{emp.name}</p>
+                                      <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">{emp.role}</p>
+                                   </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+                                   <div className="text-center">
+                                      <span className="text-[9px] font-black uppercase opacity-40 block mb-1">Performance</span>
+                                      <span className="text-xl font-black text-emerald-400">{emp.performance}%</span>
+                                   </div>
+                                   <div className="text-center border-l border-white/10">
+                                      <span className="text-[9px] font-black uppercase opacity-40 block mb-1">Potentiel</span>
+                                      <span className="text-xl font-black text-primary">{emp.potential}%</span>
+                                   </div>
+                                </div>
+                                <p className="text-[9px] font-black text-primary animate-pulse text-center uppercase tracking-widest bg-primary/10 py-2 rounded-xl">Analyse prédictive disponible</p>
+                             </div>
+                          </TooltipContent>
+                        </Tooltip>
+                        <PopoverContent className="w-96 p-8 rounded-[3rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] bg-white border border-slate-100/50">
+                           <div className="space-y-8">
+                              <div className="flex items-center gap-4">
+                                 <div className={`h-14 w-14 rounded-2xl ${boxInfo.color} flex items-center justify-center text-white font-black text-xl shadow-lg`}>
+                                   {emp.name.charAt(0)}
                                  </div>
-                                 <div className="h-8 w-px bg-white/10" />
-                                 <div>
-                                    <span className="text-[8px] font-black uppercase opacity-50 block">Potentiel</span>
-                                    <span className="text-sm font-black">{emp.potential}%</span>
+                                 <div className="space-y-1">
+                                    <h4 className="text-xl font-black text-slate-900 tracking-tight">{emp.name}</h4>
+                                    <Badge variant="secondary" className="text-[10px] font-black uppercase bg-slate-100/50 text-slate-600">Ajustement Stratégique</Badge>
                                  </div>
                               </div>
-                              <p className="text-[8px] font-bold text-primary mt-2 uppercase animate-pulse">Cliquer pour modifier le potentiel</p>
-                           </div>
-                        </TooltipContent>
-                      </Tooltip>
-                      <PopoverContent className="w-80 p-6 rounded-[2rem] shadow-3xl bg-white border-none ring-1 ring-slate-100">
-                         <div className="space-y-4">
-                            <div className="flex items-center gap-3 mb-2">
-                               <div className={`h-10 w-10 rounded-xl ${boxInfo.color} flex items-center justify-center text-white font-black`}>
-                                 {emp.name.charAt(0)}
-                               </div>
-                               <div>
-                                  <h4 className="text-sm font-black text-slate-800">{emp.name}</h4>
-                                  <p className="text-[10px] font-bold text-slate-600 uppercase">Ajustement du Potentiel</p>
-                               </div>
-                            </div>
-                            <div className="space-y-3">
-                               <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-600">
-                                  <span>Potentiel (%)</span>
-                                  <span className="text-primary font-black text-lg">{emp.potential}%</span>
-                               </div>
-                               <input 
-                                 type="range" 
-                                 min="0" 
-                                 max="100" 
-                                 defaultValue={emp.potential}
-                                 className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-primary"
-                                 onChange={(e) => {
-                                   const val = parseInt(e.target.value);
-                                   // Visual feedback usually goes here, but we'll stick to direct update or a "Save" button
-                                 }}
-                                 id={`potential-range-${emp.id}`}
-                               />
-                               <div className="grid grid-cols-3 gap-2">
-                                  {[25, 50, 85].map(v => (
-                                    <Button 
-                                      key={v}
-                                      variant="outline" 
-                                      size="sm" 
-                                      className="text-[9px] font-black uppercase h-8 rounded-lg"
-                                      onClick={() => {
-                                        const input = document.getElementById(`potential-range-${emp.id}`) as HTMLInputElement;
-                                        if (input) input.value = String(v);
-                                      }}
-                                    >
-                                      {v === 25 ? 'Modéré' : v === 50 ? 'Solide' : 'Élevé'}
-                                    </Button>
-                                  ))}
-                               </div>
-                            </div>
-                            <Button 
-                              className="w-full bg-slate-900 text-white font-black uppercase text-[10px] h-11 rounded-xl mt-2"
-                              onClick={() => {
-                                const input = document.getElementById(`potential-range-${emp.id}`) as HTMLInputElement;
-                                if (input && onPotentialUpdate) {
-                                  onPotentialUpdate(emp.id, parseInt(input.value));
-                                }
-                              }}
-                            >
-                               Confirmer l'Ajustement
-                            </Button>
-                         </div>
-                      </PopoverContent>
-                    </Popover>
-                  ))}
-                  {employeesInBox.length === 0 && (
-                     <div className="opacity-5 scale-90 group-hover:scale-110 transition-transform duration-700">
-                        <Users weight="thin" size={48} className="text-slate-200" />
-                     </div>
-                  )}
-                </div>
 
-                <div className="absolute inset-0 bg-slate-900/90 text-white p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500 flex flex-col justify-center">
-                   <h4 className={`text-xs font-black uppercase ${boxInfo.color.replace('bg-', 'text-')} mb-2`}>{boxInfo.label}</h4>
-                   <p className="text-[10px] leading-relaxed font-bold text-white/70">{boxInfo.description}</p>
-                   <p className="mt-4 text-[9px] font-black uppercase tracking-widest text-primary">{employeesInBox.length} COLLABORATEUR(S)</p>
+                              <div className="space-y-6">
+                                 <div className="flex justify-between items-end">
+                                    <div className="space-y-1">
+                                       <span className="text-[11px] font-black uppercase text-slate-400 block tracking-[0.2em]">Cote de Potentiel</span>
+                                       <span className="text-sm font-bold text-slate-600 italic">Basé sur les derniers KPIs</span>
+                                    </div>
+                                    <span className="text-5xl font-black text-primary tracking-tighter">{emp.potential}<span className="text-xl">%</span></span>
+                                 </div>
+
+                                 <div className="relative h-4 w-full bg-slate-100 rounded-full overflow-hidden border-4 border-slate-50">
+                                    <motion.div 
+                                       className={`h-full ${boxInfo.color}`}
+                                       initial={{ width: 0 }}
+                                       animate={{ width: `${emp.potential}%` }}
+                                    />
+                                    <input 
+                                       type="range" 
+                                       min="0" 
+                                       max="100" 
+                                       defaultValue={emp.potential}
+                                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                       onChange={(e) => {
+                                          const val = e.target.value;
+                                          const parent = e.target.parentElement;
+                                          const display = parent?.previousElementSibling?.lastElementChild;
+                                          if (display) display.innerHTML = `${val}<span class="text-xl">%</span>`;
+                                       }}
+                                       id={`potential-range-${emp.id}`}
+                                    />
+                                 </div>
+
+                                 <div className="grid grid-cols-3 gap-3">
+                                    {[30, 60, 90].map(v => (
+                                      <Button 
+                                        key={v}
+                                        variant="outline" 
+                                        size="sm" 
+                                        className={`rounded-2xl font-black text-[10px] uppercase h-12 transition-all hover:scale-105 ${v === 90 ? 'bg-primary/5 border-primary/20 text-primary' : ''}`}
+                                        onClick={() => {
+                                          const input = document.getElementById(`potential-range-${emp.id}`) as HTMLInputElement;
+                                          if (input) {
+                                             input.value = String(v);
+                                             input.dispatchEvent(new Event('change', { bubbles: true }));
+                                          }
+                                        }}
+                                      >
+                                        {v === 30 ? 'Stable' : v === 60 ? 'Croissant' : 'Lead'}
+                                      </Button>
+                                    ))}
+                                 </div>
+                              </div>
+
+                              <div className="flex gap-3">
+                                 <Button 
+                                   variant="ghost"
+                                   className="flex-1 rounded-2xl font-black uppercase text-[10px] h-14 bg-slate-50 hover:bg-slate-100"
+                                   onClick={() => setUpdatingId(null)}
+                                 >
+                                    Sortir
+                                 </Button>
+                                 <Button 
+                                   className="flex-[2] bg-slate-900 text-white hover:bg-black font-black uppercase text-[10px] h-14 rounded-2xl shadow-2xl transition-all hover:-translate-y-1"
+                                   onClick={() => {
+                                     const input = document.getElementById(`potential-range-${emp.id}`) as HTMLInputElement;
+                                     if (input && onPotentialUpdate) {
+                                       onPotentialUpdate(emp.id, parseInt(input.value));
+                                     }
+                                   }}
+                                 >
+                                    Appliquer les Changements
+                                 </Button>
+                              </div>
+                           </div>
+                        </PopoverContent>
+                      </Popover>
+                    ))}
+                  </div>
+
+                  {/* Strategic Hover Info */}
+                  <div className="absolute inset-0 bg-slate-900/95 text-white p-8 translate-y-full group-hover:translate-y-0 transition-transform duration-700 flex flex-col justify-center gap-4">
+                     <div className="space-y-1">
+                        <h4 className={`text-base font-black uppercase tracking-widest ${boxInfo.color.replace('bg-', 'text-')}`}>{boxInfo.label}</h4>
+                        <div className="h-[2px] w-12 bg-white/20" />
+                     </div>
+                     <p className="text-[11px] leading-relaxed font-bold text-white/50 border-white/10">{boxInfo.description}</p>
+                     <div className="flex items-center justify-between mt-4">
+                        <span className="text-[10px] font-black uppercase text-primary bg-primary/10 px-3 py-1 rounded-full">{employeesInBox.length} Profil(s)</span>
+                        <div className="flex -space-x-3">
+                           {employeesInBox.slice(0, 3).map((e, index) => (
+                              <div key={index} className={`h-8 w-8 rounded-full border-2 border-slate-900 ${boxInfo.color} flex items-center justify-center text-[10px] font-black`}>
+                                 {e.name[0]}
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        ))}
+              );
+            })
+          ))}
+        </div>
       </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
          {/* Footer items unchanged */}

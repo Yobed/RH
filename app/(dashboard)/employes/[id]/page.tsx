@@ -1,4 +1,4 @@
-﻿import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
@@ -403,7 +403,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             <div className="md:col-span-1">
               <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5 text-center space-y-4">
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">
-                  Solde annuel {anneeEnCours}
+                  Solde annuel {anneeEnCours} <span className="text-slate-400 font-normal ml-2"> (2,5 j/mois)</span>
                 </p>
                 <div className="py-2">
                   <span className={`text-5xl font-black font-mono tabular-nums ${soldeCalc > 5 ? "text-emerald-600" : "text-amber-600"}`}>

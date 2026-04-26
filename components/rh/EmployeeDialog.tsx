@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlusIcon, PencilIcon, RefreshCw } from "lucide-react";
+import { PencilSimple, Plus, ArrowsClockwise } from "@phosphor-icons/react";
 
 import {
   Dialog,
@@ -229,11 +229,11 @@ export function EmployeeDialog({ employee }: Props) {
         }
       >
         {employee ? (
-          <PencilIcon className="h-4 w-4" />
+          <PencilSimple className="h-4 w-4" weight="bold" />
         ) : (
           <>
-            <PlusIcon className="mr-2 h-4 w-4" />
-            Ajouter un employé
+            <Plus className="mr-2 h-4 w-4" weight="bold" />
+            Ajouter un collaborateur
           </>
         )}
       </DialogTrigger>
@@ -299,7 +299,7 @@ export function EmployeeDialog({ employee }: Props) {
                     onClick={() => setValue("matricule", suggestedMatricule)}
                     title="Utiliser le matricule suggéré"
                   >
-                    <RefreshCw className="h-3.5 w-3.5" />
+                    <ArrowsClockwise className="h-3.5 w-3.5" weight="bold" />
                   </Button>
                 )}
               </div>

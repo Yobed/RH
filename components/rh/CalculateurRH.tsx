@@ -207,7 +207,7 @@ function CalcConges() {
       <div>
         <h2 className="text-base font-semibold">Congés payés</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Art. 25.2 CT-CI / CCI Art. 69 — 2,2 jours ouvrables / mois de service effectif
+          Conventionnelle / Entreprise — 2,2 jours ouvrables / mois de service effectif
         </p>
       </div>
 

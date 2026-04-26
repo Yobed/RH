@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import PerformanceReviewManager from "@/components/rh/PerformanceReviewManager";
 import { Badge } from "@/components/ui/badge";
@@ -71,48 +71,63 @@ export default async function EvaluationsPage() {
   ).length;
 
   return (
-    <div className="p-4 sm:p-8 md:p-12 space-y-12 max-w-[1600px] mx-auto">
-      {/* Premium Hero Section */}
-      <div className="relative group">
-         <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-emerald-500/20 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-40 transition-all duration-1000" />
-         <div className="relative bg-white border border-slate-100 p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col lg:flex-row items-center justify-between gap-8 overflow-hidden">
-            <div className="absolute right-0 top-0 w-1/3 h-full bg-slate-50/50 -skew-x-12 translate-x-1/2" />
-            <div className="relative z-10 space-y-4">
-               <div className="flex items-center gap-3">
-                  <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] uppercase tracking-widest px-3 py-1">Business Intelligence</Badge>
-                  <div className="h-1 w-1 rounded-full bg-slate-300" />
-                  <span className="text-[10px] text-slate-600 font-black uppercase">Cycle Q2 2026</span>
+    <div className="p-4 sm:p-8 md:p-12 space-y-12 max-w-[1700px] mx-auto min-h-screen bg-[#fafbfc]">
+      {/* Premium Hero Section - Refined Glassmorphism */}
+      <div className="relative">
+         {/* Decorative elements */}
+         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+         <div className="absolute top-1/2 -right-24 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl animate-pulse delay-700" />
+         
+         <div className="relative bg-white/80 backdrop-blur-2xl border border-white p-10 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] flex flex-col lg:flex-row items-center justify-between gap-12 overflow-hidden group">
+            {/* Glossy overlay */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-50" />
+            
+            <div className="relative z-10 space-y-6">
+               <div className="flex items-center gap-4">
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none font-black text-[10px] uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-sm">
+                    Intelligence RH v4.0
+                  </Badge>
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Cycle Actif : Q2 2026</span>
+                  </div>
                </div>
-               <h1 className="text-5xl font-black text-slate-900 tracking-tightest leading-none">
-                 Performance <br/>
-                 <span className="text-primary italic">&</span> Évaluations
-               </h1>
-               <p className="text-sm text-slate-600 font-medium max-w-md leading-relaxed">
-                 Analysez le potentiel de vos équipes à travers des indicateurs de performance objectifs et un suivi continu du capital humain.
+               
+               <div className="space-y-2">
+                  <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tightest leading-[0.9] flex flex-col">
+                    <span className="opacity-40">ANALYTICS</span>
+                    <span className="flex items-center gap-4">
+                       Performance
+                       <span className="h-2 w-2 rounded-full bg-primary mt-4" />
+                    </span>
+                  </h1>
+               </div>
+               
+               <p className="text-sm md:text-base text-slate-500 font-medium max-w-md leading-relaxed border-l-2 border-slate-100 pl-6">
+                 Pilotez le capital humain par la donnée. Visualisez les trajectoires de carrière et optimisez les plans de succession.
                </p>
             </div>
 
-            <div className="relative z-10 flex gap-6 sm:gap-12 bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
-               <div className="text-center group/kpi">
-                  <p className="text-[10px] font-black uppercase text-slate-600 tracking-tighter mb-2 group-hover/kpi:text-primary transition-colors">Audit Prévus</p>
-                  <p className="text-5xl font-black text-slate-900 tracking-tighter">{evsCeTrimestre}</p>
-                  <div className="h-1 w-8 bg-primary/20 mx-auto mt-4 rounded-full group-hover/kpi:w-12 transition-all" />
-               </div>
-               <div className="w-px h-16 bg-slate-200 mt-4" />
-               <div className="text-center group/kpi">
-                  <p className="text-[10px] font-black uppercase text-slate-600 tracking-tighter mb-2 group-hover/kpi:text-emerald-500 transition-colors">Score Moyen</p>
-                  <p className="text-5xl font-black text-emerald-600 tracking-tighter">{scoreMoyen != null ? scoreMoyen : "—"}</p>
-                  <div className="h-1 w-8 bg-emerald-500/20 mx-auto mt-4 rounded-full group-hover/kpi:w-12 transition-all" />
-               </div>
-               <div className="w-px h-16 bg-slate-200 mt-4" />
-               <div className="text-center group/kpi">
-                  <p className="text-[10px] font-black uppercase text-slate-600 tracking-tighter mb-2 group-hover/kpi:text-amber-500 transition-colors">En Attente</p>
-                  <p className="text-5xl font-black text-amber-600 tracking-tighter">{enAttente}</p>
-                  <div className="h-1 w-8 bg-amber-500/20 mx-auto mt-4 rounded-full group-hover/kpi:w-12 transition-all" />
+            <div className="relative z-10 w-full lg:w-auto">
+               <div className="grid grid-cols-3 gap-1 md:gap-4 bg-slate-900/5 p-2 rounded-[2.5rem] border border-white/50 backdrop-blur-sm">
+                  {[
+                    { label: 'Audits', value: evsCeTrimestre, color: 'text-primary' },
+                    { label: 'Score', value: scoreMoyen != null ? scoreMoyen : "—", color: 'text-emerald-500' },
+                    { label: 'Pending', value: enAttente, color: 'text-amber-500' }
+                  ].map((kpi, idx) => (
+                    <div key={idx} className="bg-white/90 p-6 md:p-8 rounded-[2rem] shadow-[0_8px_16px_rgba(0,0,0,0.02)] border border-white min-w-[120px] md:min-w-[160px] text-center hover:scale-[1.02] transition-all duration-500 group/item">
+                       <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-3 group-hover/item:text-slate-900 transition-colors uppercase">{kpi.label}</p>
+                       <p className={`text-4xl md:text-6xl font-black ${kpi.color} tracking-tightest`}>{kpi.value}</p>
+                       <div className="flex justify-center mt-4">
+                         <div className="h-1 w-6 bg-slate-100 rounded-full group-hover/item:w-10 group-hover/item:bg-primary transition-all duration-500" />
+                       </div>
+                    </div>
+                  ))}
                </div>
             </div>
          </div>
       </div>
+
 
       {/* Main Content */}
       <Suspense fallback={

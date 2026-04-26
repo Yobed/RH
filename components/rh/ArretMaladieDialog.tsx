@@ -32,8 +32,7 @@ import { Info, Loader2, Stethoscope } from 'lucide-react';
 
 interface Employee {
   id: string;
-  prenom: string;
-  nom: string;
+  full_name: string;
 }
 
 interface ArretMaladieDialogProps {
@@ -185,7 +184,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   <SelectContent>
                     {employees.map((e) => (
                       <SelectItem key={e.id} value={e.id}>
-                        {e.prenom} {e.nom}
+                        {e.full_name}
                       </SelectItem>
                     ))}
                   </SelectContent>

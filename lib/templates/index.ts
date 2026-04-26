@@ -62,7 +62,7 @@ ARTICLE 7 — DURÉE DU TRAVAIL
 La durée du travail est fixée à 40 heures par semaine, soit 173,33 heures par mois, conformément à l'article 21.1 du Code du Travail CI.
 
 ARTICLE 8 — CONGÉS PAYÉS
-${civile(d.employe.genre)} ${d.employe.nom_complet} bénéficie de 2,2 jours ouvrables de congé par mois de service, soit 26,4 jours par an (art. 25.1 CT CI).
+${civile(d.employe.genre)} ${d.employe.nom_complet} bénéficie de 2,2 jours ouvrables de congé par mois de service, soit 26,4 jours par an.
 
 ARTICLE 9 — OBLIGATIONS DES PARTIES
 Le Salarié s'engage à respecter le règlement intérieur de l'entreprise, la convention collective applicable et toutes les instructions données par sa hiérarchie. L'Employeur s'engage à respecter les dispositions du Code du Travail CI.

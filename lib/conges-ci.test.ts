@@ -8,14 +8,12 @@ import {
   PLAFOND_CONGES_BASE,
 } from '@/lib/conges-ci';
 
-// ── Constantes légales ────────────────────────────────────────────────────
-describe('Constantes légales Art. 25.1 CT-CI', () => {
-  it('Taux légal = 2,2 jours/mois (Art. 25.1 CT-CI)', () => {
+describe('Constantes légales', () => {
+  it('Taux = 2,2 jours/mois (Art. 25.1 CT-CI)', () => {
     expect(TAUX_CONGES_PAR_MOIS).toBe(2.2);
   });
-
   it('Plafond base = 26,4 jours/an (2,2 × 12)', () => {
-    expect(PLAFOND_CONGES_BASE).toBeCloseTo(26.4, 5);
+    expect(PLAFOND_CONGES_BASE).toBe(26.4);
   });
 });
 
@@ -45,14 +43,14 @@ describe('bonusCongesAnciennete — Art. 26 CT-CI', () => {
   });
 });
 
-// ── calculerJoursAcquis — Art. 25.1 CT-CI (2,2 j/mois) ──────────────────
-describe('calculerJoursAcquis — Art. 25.1 CT-CI (2,2 j/mois)', () => {
+// ── calculerJoursAcquis — (2,2 j/mois) ────────────────────────────────────
+describe('calculerJoursAcquis — (2,2 j/mois)', () => {
   it('Embauché le 01/07/2025, année 2025 → 6 mois × 2,2 = 13,2 j', () => {
-    expect(calculerJoursAcquis('2025-07-01', 2025)).toBeCloseTo(13.2, 5);
+    expect(calculerJoursAcquis('2025-07-01', 2025)).toBe(13.2);
   });
 
   it('Embauché le 01/01/2025, année 2025 → 12 mois × 2,2 = 26,4 j', () => {
-    expect(calculerJoursAcquis('2025-01-01', 2025)).toBeCloseTo(26.4, 5);
+    expect(calculerJoursAcquis('2025-01-01', 2025)).toBe(26.4);
   });
 
   it('Embauché le 15/12/2025, année 2025 → 0 mois complets = 0 j', () => {
@@ -60,35 +58,34 @@ describe('calculerJoursAcquis — Art. 25.1 CT-CI (2,2 j/mois)', () => {
   });
 
   it('Embauché en 2020, année 2025 → plafond base 26,4 j (sans ancienneté)', () => {
-    expect(calculerJoursAcquis('2020-01-01', 2025, 0)).toBeCloseTo(26.4, 5);
+    expect(calculerJoursAcquis('2020-01-01', 2025, 0)).toBe(26.4);
   });
 
   it('Embauché le 01/09/2025, année 2025 → 4 mois × 2,2 = 8,8 j', () => {
-    expect(calculerJoursAcquis('2025-09-01', 2025)).toBeCloseTo(8.8, 5);
+    expect(calculerJoursAcquis('2025-09-01', 2025)).toBe(8.8);
   });
 
-  it('1 mois travaillé → 2,2 j (Art. 25.1)', () => {
-    expect(calculerJoursAcquis('2025-12-01', 2025)).toBeCloseTo(2.2, 5);
+  it('1 mois travaillé → 2,2 j', () => {
+    expect(calculerJoursAcquis('2025-12-01', 2025)).toBe(2.2);
   });
 });
 
 // ── Majorations ancienneté intégrées ──────────────────────────────────────
-describe('calculerJoursAcquis avec bonus ancienneté Art. 26 CT-CI', () => {
+describe('calculerJoursAcquis avec bonus ancienneté', () => {
   it('12 mois complets, 5 ans ancienneté → 26,4 + 1 = 27,4 j', () => {
-    expect(calculerJoursAcquis('2020-01-01', 2025, 5)).toBeCloseTo(27.4, 5);
+    expect(calculerJoursAcquis('2020-01-01', 2025, 5)).toBe(27.4);
   });
 
   it('12 mois complets, 10 ans ancienneté → 26,4 + 2 = 28,4 j', () => {
-    expect(calculerJoursAcquis('2015-01-01', 2025, 10)).toBeCloseTo(28.4, 5);
+    expect(calculerJoursAcquis('2015-01-01', 2025, 10)).toBe(28.4);
   });
 
   it('12 mois complets, 25 ans ancienneté → 26,4 + 7 = 33,4 j', () => {
-    expect(calculerJoursAcquis('2000-01-01', 2025, 25)).toBeCloseTo(33.4, 5);
+    expect(calculerJoursAcquis('2000-01-01', 2025, 25)).toBe(33.4);
   });
 
   it('6 mois complets, 10 ans ancienneté → (6×2,2) + (2×6/12) = 13,2 + 1 = 14,2 j', () => {
-    // Prorata bonus : 2 jours × (6/12) = 1 jour
-    expect(calculerJoursAcquis('2025-07-01', 2025, 10)).toBeCloseTo(14.2, 5);
+    expect(calculerJoursAcquis('2025-07-01', 2025, 10)).toBe(14.2);
   });
 });
 

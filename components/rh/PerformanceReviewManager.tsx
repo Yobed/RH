@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -175,92 +175,103 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
         </div>
       </div>
 
-      {/* KPI Cards with Premium Glassmorphism */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-slate-900 text-white border-none shadow-[0_20px_50px_rgba(0,0,0,0.2)] relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 opacity-10 group-hover:scale-125 transition-all duration-700">
-             <Target weight="duotone" size={140} />
-          </div>
-          <CardHeader className="pb-2">
-            <CardDescription className="text-white/50 text-[10px] font-black uppercase tracking-[0.2em]">Campagnes Actives</CardDescription>
-            <CardTitle className="text-5xl font-black tracking-tighter">{pendingCount}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[10px] font-black text-white/70 flex items-center gap-2 uppercase">
-              <Clock weight="fill" className="h-4 w-4 text-primary" />
-              Cycle mensuel en cours
-            </p>
-          </CardContent>
-          <div className="h-0.5 w-full bg-primary/30 absolute bottom-0 left-0" />
-        </Card>
-
-        <Card className="border-[1.5px] border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group bg-white">
-           <div className="absolute -right-6 -top-6 opacity-5 group-hover:scale-125 transition-all duration-700 text-emerald-500">
-             <TrendUp weight="duotone" size={140} />
-          </div>
-          <CardHeader className="pb-2">
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Taux de Réussite</CardDescription>
-            <CardTitle className="text-5xl font-black tracking-tighter text-emerald-600">
-              {evaluations.length > 0 ? Math.round((completedCount / evaluations.length) * 100) : 0}%
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between gap-3">
-               <p className="text-[10px] text-slate-600 font-bold uppercase tracking-tight">Objectifs atteints</p>
-               <Progress value={evaluations.length > 0 ? (completedCount / evaluations.length) * 100 : 0} className="h-1.5 w-20 bg-emerald-50" />
+      {/* KPI Cards with Premium Glassmorphism - Refined */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card className="bg-slate-950 text-white border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] relative overflow-hidden group h-full rounded-[2.5rem]">
+            <div className="absolute -right-8 -top-8 opacity-10 group-hover:scale-125 transition-all duration-1000 rotate-12">
+               <Target weight="duotone" size={160} />
             </div>
-          </CardContent>
-        </Card>
+            <CardHeader className="pb-2 p-8">
+               <div className="flex items-center gap-3 mb-4">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <CardDescription className="text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">Campaign Focus</CardDescription>
+               </div>
+               <CardTitle className="text-6xl font-black tracking-tightest leading-none">{pendingCount}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 pt-0">
+               <p className="text-[11px] font-black text-white/50 flex items-center gap-2 uppercase tracking-wide">
+                  Active Reviews In-Flight
+               </p>
+            </CardContent>
+            <div className="h-1.5 w-full bg-gradient-to-r from-primary/50 to-primary absolute bottom-0 left-0" />
+          </Card>
+        </motion.div>
 
-        <Card className="border-[1.5px] border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group bg-white">
-          <div className="absolute -right-6 -top-6 opacity-5 group-hover:scale-125 transition-all duration-700 text-amber-500">
-             <Trophy weight="duotone" size={140} />
-          </div>
-          <CardHeader className="pb-2">
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Top Performers</CardDescription>
-            <CardTitle className="text-5xl font-black tracking-tighter text-amber-600">{highPerformers}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[10px] text-slate-600 font-black uppercase flex items-center gap-2">
-              <Star weight="fill" className="h-4 w-4 text-amber-400" />
-              Élite prête pour promotion
-            </p>
-          </CardContent>
-        </Card>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Card className="border-none shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)] relative overflow-hidden group bg-white h-full rounded-[2.5rem] ring-1 ring-slate-100">
+             <div className="absolute -right-8 -top-8 opacity-5 group-hover:scale-125 transition-all duration-1000 text-emerald-500 -rotate-12">
+               <TrendUp weight="duotone" size={160} />
+            </div>
+            <CardHeader className="pb-2 p-8">
+               <CardDescription className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">Completion Velocity</CardDescription>
+               <CardTitle className="text-6xl font-black tracking-tightest text-slate-900 leading-none">
+                 {evaluations.length > 0 ? Math.round((completedCount / evaluations.length) * 100) : 0}<span className="text-2xl text-emerald-500">%</span>
+               </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 pt-0">
+               <div className="space-y-4">
+                  <Progress value={evaluations.length > 0 ? (completedCount / evaluations.length) * 100 : 0} className="h-2 bg-slate-50" />
+                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-tight">Milestones Achieved</p>
+               </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card className={`border-[1.5px] relative overflow-hidden group transition-all duration-300 ${trialAlerts > 0 ? 'border-red-100 bg-red-50/20 shadow-red-100/50' : 'border-slate-100 bg-white shadow-slate-100/50'}`}>
-          <div className="absolute -right-6 -top-6 opacity-10 group-hover:scale-125 transition-all duration-700 text-red-500">
-             <Warning weight="duotone" size={140} />
-          </div>
-          <CardHeader className="pb-2">
-            <CardDescription className={`text-[10px] font-black uppercase tracking-[0.2em] ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-600'}`}>Points de Rupture</CardDescription>
-            <CardTitle className={`text-5xl font-black tracking-tighter ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-600'}`}>{trialAlerts}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className={`text-[10px] font-black uppercase flex items-center gap-2 ${trialAlerts > 0 ? 'text-red-700' : 'text-slate-600'}`}>
-              <Warning weight="fill" className="h-4 w-4" />
-              {trialAlerts > 0 ? 'Décisions Période d’essai' : 'Aucune alerte légale'}
-            </p>
-          </CardContent>
-          {trialAlerts > 0 && <div className="h-1 w-full bg-red-500/20 absolute bottom-0 left-0 animate-pulse" />}
-        </Card>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card className="border-none shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)] relative overflow-hidden group bg-white h-full rounded-[2.5rem] ring-1 ring-slate-100">
+            <div className="absolute -right-8 -top-8 opacity-5 group-hover:scale-125 transition-all duration-1000 text-amber-500 rotate-45">
+               <Trophy weight="duotone" size={160} />
+            </div>
+            <CardHeader className="pb-2 p-8">
+               <CardDescription className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">Top Talent Pool</CardDescription>
+               <CardTitle className="text-6xl font-black tracking-tightest text-slate-900 leading-none">{highPerformers}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 pt-0">
+               <p className="text-[10px] text-slate-500 font-black uppercase flex items-center gap-2 tracking-wide">
+                  <Star weight="fill" className="h-4 w-4 text-amber-400" />
+                  Performance Leaders
+               </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <Card className={`border-none relative overflow-hidden group transition-all duration-500 h-full rounded-[2.5rem] ring-1 ${trialAlerts > 0 ? 'ring-red-100 bg-red-50/10 shadow-[0_24px_48px_-12px_rgba(239,68,68,0.1)]' : 'ring-slate-100 bg-white shadow-[0_24px_48px_-12px_rgba(0,0,0,0.06)]'}`}>
+            <div className="absolute -right-8 -top-8 opacity-5 group-hover:scale-125 transition-all duration-1000 text-red-500">
+               <Warning weight="duotone" size={160} />
+            </div>
+            <CardHeader className="pb-2 p-8">
+               <CardDescription className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${trialAlerts > 0 ? 'text-red-500' : 'text-slate-400'}`}>Critical Alerts</CardDescription>
+               <CardTitle className={`text-6xl font-black tracking-tightest leading-none ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-900'}`}>{trialAlerts}</CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 pt-0">
+               <p className={`text-[10px] font-black uppercase flex items-center gap-2 tracking-wide ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-500'}`}>
+                  {trialAlerts > 0 ? 'Trial Period Decisions' : 'Compliance Verified'}
+               </p>
+            </CardContent>
+            {trialAlerts > 0 && <div className="h-1.5 w-full bg-red-500 absolute bottom-0 left-0 animate-pulse" />}
+          </Card>
+        </motion.div>
       </div>
 
+
       <Tabs defaultValue="upcoming" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="flex w-fit mb-10 bg-slate-100/80 p-1.5 h-14 rounded-2xl backdrop-blur-md border border-white">
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-white data-[state=active]:shadow-lg font-black text-[11px] uppercase tracking-wider px-8 rounded-xl gap-3 transition-all">
+        <TabsList className="flex w-fit mb-12 bg-white/50 p-2 h-16 rounded-[2rem] backdrop-blur-xl border border-white shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+          <TabsTrigger value="upcoming" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-black text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
             <Clock weight="bold" className="h-4 w-4" />
-            Flux de Travail
+            Workflow Actif
           </TabsTrigger>
-          <TabsTrigger value="completed" className="data-[state=active]:bg-white data-[state=active]:shadow-lg font-black text-[11px] uppercase tracking-wider px-8 rounded-xl gap-3 transition-all">
+          <TabsTrigger value="completed" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-black text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
             <ClockCounterClockwise weight="bold" className="h-4 w-4" />
-            Archives RH
+            Historique Audit
           </TabsTrigger>
-          <TabsTrigger value="mobility" className="data-[state=active]:bg-white data-[state=active]:shadow-lg font-black text-[11px] uppercase tracking-wider px-8 rounded-xl gap-3 transition-all">
+          <TabsTrigger value="mobility" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-black text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
             <ArrowsLeftRight weight="bold" className="h-4 w-4" />
-            Stratégie Talents
+            Talent Strategy
           </TabsTrigger>
         </TabsList>
+
 
         <AnimatePresence mode="wait">
           <TabsContent value="upcoming" key="upcoming">

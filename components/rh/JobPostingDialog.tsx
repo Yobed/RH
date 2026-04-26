@@ -6,7 +6,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlusIcon, X } from "lucide-react";
+import { 
+  Plus, 
+  X, 
+  Briefcase, 
+  Calendar, 
+  CurrencyCircleDollar, 
+  ChartBar,
+  Stack,
+  CheckCircle,
+  FileText
+} from "@phosphor-icons/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   Dialog,
@@ -19,6 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 const schema = z.object({
   titre: z.string().min(2, "Titre obligatoire").max(200),
@@ -35,7 +47,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const selectClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
+  "w-full rounded-xl border-slate-200 bg-white/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300";
+
+const labelClass = "text-sm font-semibold text-slate-700 flex items-center gap-2 mb-1.5";
 
 export function JobPostingDialog() {
   const [open, setOpen] = useState(false);
@@ -84,192 +98,291 @@ export function JobPostingDialog() {
       is_internal: data.is_internal ?? false,
     };
 
-    const res = await fetch("/api/recrutement/postes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch("/api/recrutement/postes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) {
-      const err = (await res.json()) as { error?: string };
-      toast.error(err.error ?? "Erreur serveur");
-      return;
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
+        toast.error(err.error ?? "Erreur serveur");
+        return;
+      }
+
+      toast.success("Offre d'emploi créée avec succès", {
+        icon: <CheckCircle weight="fill" className="text-green-500 w-5 h-5" />,
+        className: "rounded-2xl border-none shadow-2xl bg-white",
+      });
+      setOpen(false);
+      reset();
+      setCompetences([]);
+      router.refresh();
+    } catch (error) {
+      toast.error("Une erreur est survenue");
     }
-
-    toast.success("Offre d'emploi créée");
-    setOpen(false);
-    reset();
-    setCompetences([]);
-    router.refresh();
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={<Button />}>
-        <PlusIcon className="mr-2 h-4 w-4" />
-        Nouvelle offre
+      <DialogTrigger asChild>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 transition-all duration-200 gap-2"
+        >
+          <Plus weight="bold" className="h-4 w-4" />
+          <span>Nouvelle offre</span>
+        </motion.button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>Nouvelle offre d'emploi</DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-2">
-          {/* Informations principales */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Poste
-            </p>
-
-            <div>
-              <label className="text-sm font-medium">Intitulé du poste *</label>
-              <Input {...register("titre")} placeholder="Comptable Senior" className="mt-1" />
-              {errors.titre && (
-                <p className="mt-1 text-xs text-red-500">{errors.titre.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Description *</label>
-              <Textarea
-                {...register("description")}
-                placeholder="Décrivez les missions, responsabilités et profil recherché..."
-                className="mt-1 min-h-[120px]"
-              />
-              {errors.description && (
-                <p className="mt-1 text-xs text-red-500">{errors.description.message}</p>
-              )}
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Type de contrat</label>
-                <select {...register("type_contrat")} className={`mt-1 ${selectClass}`}>
-                  <option value="">— Choisir —</option>
-                  <option value="CDI">CDI</option>
-                  <option value="CDD">CDD</option>
-                  <option value="Stage">Stage</option>
-                  <option value="Apprentissage">Apprentissage</option>
-                </select>
+      <DialogContent className="sm:max-w-3xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
+        <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
+          
+          <DialogHeader className="p-8 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-slate-900/5 text-slate-900">
+                <Briefcase size={28} weight="duotone" />
               </div>
               <div>
-                <label className="text-sm font-medium">Expérience minimum (ans)</label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="30"
-                  {...register("experience_min")}
-                  placeholder="2"
-                  className="mt-1"
-                />
+                <DialogTitle className="text-2xl font-bold tracking-tight text-slate-900">
+                  Publier une offre
+                </DialogTitle>
+                <p className="text-sm text-slate-500 mt-1">
+                  Créez une nouvelle opportunité de carrière
+                </p>
               </div>
             </div>
-          </section>
+          </DialogHeader>
 
-          {/* Compétences */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Compétences requises
-            </p>
-            <div className="flex gap-2">
-              <Input
-                value={competenceInput}
-                onChange={(e) => setCompetenceInput(e.target.value)}
-                onKeyDown={handleCompetenceKeyDown}
-                placeholder="Ex: Excel, Sage Comptabilité… (Entrée pour ajouter)"
-                className="flex-1"
-              />
-              <Button type="button" variant="outline" onClick={addCompetence}>
-                Ajouter
-              </Button>
+          <form onSubmit={handleSubmit(onSubmit)} className="px-8 pb-8 flex-1 overflow-y-auto space-y-8 scrollbar-hide">
+            {/* Informations principales */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                Informations du Poste
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>
+                    <FileText weight="duotone" />
+                    Intitulé du poste
+                  </label>
+                  <Input 
+                    {...register("titre")} 
+                    placeholder="ex: Design Lead, Fullstack Dev..." 
+                    className="rounded-xl bg-white/50 border-slate-200 focus:bg-white transition-all h-11"
+                  />
+                  {errors.titre && (
+                    <p className="mt-1.5 text-xs font-medium text-red-500 flex items-center gap-1">
+                      <X className="w-3 h-3" /> {errors.titre.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className={labelClass}>
+                    <Stack weight="duotone" />
+                    Description détaillée
+                  </label>
+                  <Textarea
+                    {...register("description")}
+                    placeholder="Missions, responsabilités, environnement technique..."
+                    className="rounded-xl bg-white/50 border-slate-200 min-h-[160px] focus:bg-white transition-all"
+                  />
+                  {errors.description && (
+                    <p className="mt-1.5 text-xs font-medium text-red-500 flex items-center gap-1">
+                      <X className="w-3 h-3" /> {errors.description.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelClass}>
+                      <Briefcase weight="duotone" />
+                      Contrat
+                    </label>
+                    <select {...register("type_contrat")} className={selectClass}>
+                      <option value="">— Sélectionner —</option>
+                      <option value="CDI">CDI</option>
+                      <option value="CDD">CDD</option>
+                      <option value="Stage">Stage</option>
+                      <option value="Apprentissage">Apprentissage</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>
+                      <ChartBar weight="duotone" />
+                      Expérience (ans)
+                    </label>
+                    <Input
+                      type="number"
+                      min="0"
+                      {...register("experience_min")}
+                      placeholder="ex: 3"
+                      className="rounded-xl h-11"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-            {competences.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {competences.map((c) => (
-                  <span
-                    key={c}
-                    className="inline-flex items-center gap-1 rounded-full border bg-muted px-2.5 py-0.5 text-xs"
+
+            {/* Compétences */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                Compétences techniques
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex gap-2 p-1.5 rounded-2xl bg-slate-50 border border-slate-100">
+                  <Input
+                    value={competenceInput}
+                    onChange={(e) => setCompetenceInput(e.target.value)}
+                    onKeyDown={handleCompetenceKeyDown}
+                    placeholder="ex: React, Tailwind, SQL..."
+                    className="flex-1 bg-white border-none shadow-sm h-10"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    onClick={addCompetence}
+                    className="rounded-xl h-10 hover:bg-slate-200"
                   >
-                    {c}
-                    <button
-                      type="button"
-                      onClick={() => removeCompetence(c)}
-                      className="text-muted-foreground hover:text-foreground"
+                    <Plus weight="bold" />
+                  </Button>
+                </div>
+
+                <AnimatePresence>
+                  {competences.length > 0 && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex flex-wrap gap-2"
                     >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* Conditions */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Conditions & Statut
-            </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Salaire min (FCFA)</label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="5000"
-                  {...register("salaire_min")}
-                  placeholder="150 000"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Salaire max (FCFA)</label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="5000"
-                  {...register("salaire_max")}
-                  placeholder="300 000"
-                  className="mt-1"
-                />
+                      {competences.map((c) => (
+                        <motion.span
+                          key={c}
+                          layout
+                          initial={{ scale: 0.8 }}
+                          animate={{ scale: 1 }}
+                          exit={{ scale: 0.8, opacity: 0 }}
+                          className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-1 text-xs font-medium"
+                        >
+                          {c}
+                          <button
+                            type="button"
+                            onClick={() => removeCompetence(c)}
+                            className="hover:text-red-300 transition-colors"
+                          >
+                            <X weight="bold" size={12} />
+                          </button>
+                        </motion.span>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Date limite de candidature</label>
-                <Input type="date" {...register("date_limite")} className="mt-1" />
+            {/* Rémunération & Statut */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                Détails & Conditions
               </div>
-              <div>
-                <label className="text-sm font-medium">Statut</label>
-                <select {...register("statut")} className={`mt-1 ${selectClass}`}>
-                  <option value="ouvert">Ouvert</option>
-                  <option value="brouillon">Brouillon</option>
-                  <option value="fermé">Fermé</option>
-                </select>
-              </div>
-            </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="is_internal"
-                {...register("is_internal")}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label htmlFor="is_internal" className="text-sm font-medium leading-none">
-                Poste réservé au recrutement interne (Mobilité)
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <CurrencyCircleDollar weight="duotone" />
+                    Fourchette Salariale (Min)
+                  </label>
+                  <Input
+                    type="number"
+                    {...register("salaire_min")}
+                    placeholder="Min"
+                    className="rounded-xl h-11"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <div className="w-5" />
+                    Salaire (Max)
+                  </label>
+                  <Input
+                    type="number"
+                    {...register("salaire_max")}
+                    placeholder="Max"
+                    className="rounded-xl h-11"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <Calendar weight="duotone" />
+                    Date limite
+                  </label>
+                  <Input type="date" {...register("date_limite")} className="rounded-xl h-11" />
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <Stack weight="duotone" />
+                    Publication
+                  </label>
+                  <select {...register("statut")} className={selectClass}>
+                    <option value="ouvert">Public (Ouvert)</option>
+                    <option value="brouillon">Brouillon</option>
+                    <option value="fermé">Fermé</option>
+                  </select>
+                </div>
+              </div>
+
+              <label className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50/50 border border-blue-100/50 cursor-pointer hover:bg-blue-50 transition-colors group">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    {...register("is_internal")}
+                    className="peer appearance-none h-5 w-5 rounded border-slate-300 bg-white checked:bg-slate-900 checked:border-slate-900 transition-all cursor-pointer"
+                  />
+                  <CheckCircle 
+                    weight="bold"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" 
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-slate-900">Recrutement interne uniquement</span>
+                  <span className="text-xs text-slate-500">Ce poste ne sera visible que pour les employés actuels (mobilité).</span>
+                </div>
               </label>
             </div>
-          </section>
 
-          <DialogFooter>
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-              {isSubmitting ? "Création..." : "Créer l'offre"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-4 sticky bottom-0 bg-white/5 backdrop-blur-sm -mx-8 px-8 mt-4 border-t border-slate-100">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting} 
+                className="w-full h-12 rounded-2xl bg-slate-900 text-white font-bold hover:bg-slate-800 shadow-xl transition-all hover:scale-[1.01] active:scale-[0.99]"
+              >
+                {isSubmitting ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                  >
+                    <ChartBar size={20} weight="bold" />
+                  </motion.div>
+                ) : (
+                  "Publier l'offre"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

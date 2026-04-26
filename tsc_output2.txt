@@ -1,4 +1,0 @@
-components/rh/ArretMaladieDialog.tsx(160,22): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
-  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.
-components/rh/ArretMaladieDialog.tsx(256,33): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
-  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.

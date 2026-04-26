@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { CaretDown, CircleNotch } from "@phosphor-icons/react";
+import { cn } from "@/lib/utils";
 
 const STATUTS = [
   { value: "nouveau", label: "Nouveau" },
@@ -14,9 +16,6 @@ const STATUTS = [
   { value: "refus", label: "Refusé" },
 ];
 
-const selectClass =
-  "rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50";
-
 interface Props {
   candidateId: string;
   currentStatut: string;
@@ -27,36 +26,57 @@ export function CandidateStatusSelect({ candidateId, currentStatut }: Props) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const newStatut = e.target.value;
+  async function handleChange(newStatut: string) {
+    if (newStatut === statut) return;
+    
     setStatut(newStatut);
     setLoading(true);
 
-    const res = await fetch(`/api/recrutement/candidats/${candidateId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ statut: newStatut }),
-    });
-    setLoading(false);
+    try {
+      const res = await fetch(`/api/recrutement/candidats/${candidateId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ statut: newStatut }),
+      });
 
-    if (!res.ok) {
+      if (!res.ok) throw new Error();
+      
+      toast.success("Statut mis à jour", { 
+        className: "rounded-2xl border-slate-100",
+      });
+      router.refresh();
+    } catch (error) {
       toast.error("Erreur mise à jour statut");
       setStatut(currentStatut);
-      return;
+    } finally {
+      setLoading(false);
     }
-    router.refresh();
   }
 
   return (
-    <select
-      value={statut}
-      onChange={handleChange}
-      disabled={loading}
-      className={selectClass}
-    >
-      {STATUTS.map((s) => (
-        <option key={s.value} value={s.value}>{s.label}</option>
-      ))}
-    </select>
+    <div className="relative inline-block w-full">
+      <select
+        value={statut}
+        onChange={(e) => handleChange(e.target.value)}
+        disabled={loading}
+        className={cn(
+          "w-full appearance-none rounded-xl border border-slate-200 bg-white/50 backdrop-blur-sm px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 outline-none transition-all hover:border-slate-300 focus:border-indigo-300 focus:ring-4 focus:ring-indigo-50/50 disabled:opacity-50 cursor-pointer",
+          loading && "pr-8"
+        )}
+      >
+        {STATUTS.map((s) => (
+          <option key={s.value} value={s.value} className="bg-white text-slate-900 font-sans">
+            {s.label}
+          </option>
+        ))}
+      </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-slate-400">
+        {loading ? (
+          <CircleNotch size={14} weight="bold" className="animate-spin" />
+        ) : (
+          <CaretDown size={14} weight="bold" />
+        )}
+      </div>
+    </div>
   );
 }

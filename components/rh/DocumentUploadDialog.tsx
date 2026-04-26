@@ -15,7 +15,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 import { createClientSupabase } from "@/lib/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const FAMILLES = [
   "Contrat",
@@ -40,9 +48,6 @@ interface Props {
   employeeId?: string;
   companyId: string;
 }
-
-const selectClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
 
 export function DocumentUploadDialog({ employeeId, companyId }: Props) {
   const [open, setOpen] = useState(false);
@@ -132,9 +137,11 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={<Button variant="outline" />}>
-        <Upload className="mr-2 h-4 w-4" />
-        Archiver un document
+        <DialogTrigger asChild>
+        <Button variant="outline" className="gap-2">
+          <Upload className="h-4 w-4" />
+          Archiver un document
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
@@ -148,12 +155,12 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="cursor-pointer rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 text-center hover:border-primary/40 hover:bg-muted/20 transition-colors"
+            className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center hover:border-indigo-400 hover:bg-slate-50 transition-all group"
           >
             {file ? (
               <div className="flex items-center justify-center gap-2 text-sm">
-                <FileText className="h-5 w-5 text-primary" />
-                <span className="font-medium">{file.name}</span>
+                <FileText className="h-5 w-5 text-indigo-600" />
+                <span className="font-semibold text-slate-800">{file.name}</span>
                 <button
                   type="button"
                   onClick={(e) => {
@@ -161,19 +168,20 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
                     setFile(null);
                     if (fileRef.current) fileRef.current.value = "";
                   }}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-slate-400 hover:text-rose-500 transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
             ) : (
               <div>
-                <Upload className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
-                <p className="text-sm text-muted-foreground">
-                  Glissez un fichier ici ou{" "}
-                  <span className="text-primary underline">parcourez</span>
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                  <Upload className="h-5 w-5" />
+                </div>
+                <p className="text-sm font-medium text-slate-800">
+                  Cliquez ou glissez un fichier
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs text-slate-500">
                   PDF, Word, Excel, images — max 10 Mo
                 </p>
               </div>
@@ -188,43 +196,57 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
           </div>
 
           {/* Nom du document */}
-          <div>
-            <label className="text-sm font-medium">Nom du document *</label>
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Nom du document *</label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Contrat CDI - Kouassi Jean"
-              className="mt-1"
+              placeholder="Ex: Contrat CDI - Kouassi Jean"
+              className="bg-slate-50/50 border-slate-100"
             />
           </div>
 
           {/* Famille */}
-          <div>
-            <label className="text-sm font-medium">Famille *</label>
-            <select
-              value={famille}
-              onChange={(e) => setFamille(e.target.value as Famille)}
-              className={`mt-1 ${selectClass}`}
-            >
-              {FAMILLES.map((f) => (
-                <option key={f} value={f}>
-                  {f}
-                </option>
-              ))}
-            </select>
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Famille *</label>
+            <Select value={famille} onValueChange={(v) => setFamille(v as Famille)}>
+              <SelectTrigger className="bg-slate-50/50 border-slate-100">
+                <SelectValue placeholder="Choisir une famille" />
+              </SelectTrigger>
+              <SelectContent>
+                {FAMILLES.map((f) => (
+                  <SelectItem key={f} value={f}>
+                    {f}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="sm:justify-end gap-2 pt-2">
+           <Button
+            variant="ghost"
+            onClick={() => setOpen(false)}
+            disabled={uploading}
+          >
+            Annuler
+          </Button>
           <Button
             onClick={handleUpload}
             disabled={uploading || !file || !name.trim()}
-            className="w-full sm:w-auto"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[120px]"
           >
-            {uploading ? "Upload en cours..." : "Archiver"}
+            {uploading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Transfert...
+              </>
+            ) : "Archiver"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
   );
 }

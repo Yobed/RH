@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 export const dynamic = 'force-dynamic';
 
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
     tableRows.push(["Indemnité compensatrice de congés payés", `${new Intl.NumberFormat("fr-CI").format(resultat.indemnite_compensatrice_conges)} FCFA`]);
     tableRows.push(["Indemnité de préavis", `${new Intl.NumberFormat("fr-CI").format(resultat.indemnite_preavis)} FCFA`]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 90,
       head: [["Désignation des indemnités", "Montant Brut"]],
       body: tableRows,

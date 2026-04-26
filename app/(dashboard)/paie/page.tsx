@@ -5,6 +5,7 @@ import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
 import Link from "next/link";
 import { PaieExportButton } from "@/components/rh/PaieExportButton";
 import { LivrePaieButton } from "@/components/rh/LivrePaieButton";
+import { PaieFilters } from "@/components/rh/PaieFilters";
 
 export const metadata = { title: "Paie — RH Manager CI" };
 
@@ -44,28 +45,46 @@ const formatPeriode = (p: string) => {
   return `${m} ${yyyy}`;
 };
 
-export default async function PaiePage() {
+export default async function PaiePage({
+  searchParams,
+}: {
+  searchParams: { mois?: string; annee?: string };
+}) {
   const supabase = createServerClient();
+  const { mois, annee } = searchParams;
+
+  let query = supabase
+    .from("bulletins_paie")
+    .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
+             sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
+             prime_depassement, prime_fonction, prime_transport, details,
+             employee_id, employees(full_name, poste, matricule)`)
+    .order("periode", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (annee && mois) {
+    query = query.eq("periode", `${annee}-${mois}`);
+  } else if (annee) {
+    query = query.gte("periode", `${annee}-01`).lte("periode", `${annee}-12`);
+  } else if (mois) {
+    query = query.ilike("periode", `%-${mois}`);
+  }
 
   const [{ data: bulletins }, { data: employees }, { data: company }] = await Promise.all([
-    supabase
-      .from("bulletins_paie")
-      .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
-               sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
-               prime_depassement, prime_fonction, prime_transport, details,
-               employee_id, employees(full_name, poste, matricule)`)
-      .order("periode", { ascending: false })
-      .order("created_at", { ascending: false }),
+    query,
     supabase
       .from("employees")
       .select("id, full_name, matricule, salaire_brut, date_embauche, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
       .eq("statut", "actif")
       .order("full_name"),
-    supabase.from("companies").select("*").single(),
+    supabase.from("columns").select("*").single().then(() => supabase.from("companies").select("*").single()), // keep same promise structure
   ]);
 
-  const currentPeriode = new Date().toISOString().slice(0, 7);
-  const bulletinsMois = bulletins?.filter((b) => b.periode === currentPeriode) ?? [];
+  const now = new Date();
+  const defaultPeriode = now.toISOString().slice(0, 7);
+  const currentPeriode = annee && mois ? `${annee}-${mois}` : defaultPeriode;
+  
+  const bulletinsMois = bulletins?.filter((b) => b.periode === currentPeriode) ?? bulletins ?? [];
   const masseSalariale = bulletinsMois.reduce((s, b) => s + Number(b.salaire_net), 0);
   const masseCharges = bulletinsMois.reduce((s, b) => s + Number(b.cnps_salarie) + Number(b.its), 0);
   const nbPayes = bulletinsMois.filter((b) => b.statut === "payé").length;
@@ -86,6 +105,9 @@ export default async function PaiePage() {
           <PaieDialog employees={employees ?? []} company={company} />
         </div>
       </div>
+
+      {/* Filters */}
+      <PaieFilters />
 
       {/* KPI mois courant */}
       {bulletinsMois.length > 0 && (

@@ -1,11 +1,23 @@
-﻿"use client";
+"use client";
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { MagnifyingGlass, Users, ArrowRight } from "@phosphor-icons/react";
+import { 
+  MagnifyingGlass, 
+  Users, 
+  ArrowRight, 
+  Funnel,
+  IdentificationCard,
+  Briefcase,
+  Buildings,
+  CurrencyCircleDollar,
+  UserCircle,
+  CaretDown
+} from "@phosphor-icons/react";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { Tables } from "@/types/supabase";
+import { cn } from "@/lib/utils";
 
 type Employee = Tables<"employees">;
 
@@ -26,24 +38,27 @@ function getInitials(name: string): string {
 
 type StatutKey = "actif" | "inactif" | "suspendu";
 
-const statutConfig: Record<StatutKey, { label: string; dot: string; bg: string; text: string }> = {
+const statutConfig: Record<StatutKey, { label: string; dot: string; bg: string; text: string; oklch: string }> = {
   actif: {
     label: "Actif",
     dot: "bg-emerald-500",
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-600",
+    oklch: "oklch(0.55 0.18 155)"
   },
   inactif: {
     label: "Inactif",
     dot: "bg-slate-400",
-    bg: "bg-slate-100",
+    bg: "bg-slate-400/10",
     text: "text-slate-600",
+    oklch: "oklch(0.55 0.02 248)"
   },
   suspendu: {
     label: "Suspendu",
     dot: "bg-amber-500",
-    bg: "bg-amber-50",
-    text: "text-amber-700",
+    bg: "bg-amber-500/10",
+    text: "text-amber-600",
+    oklch: "oklch(0.78 0.13 73)"
   },
 };
 
@@ -52,16 +67,17 @@ function StatutBadge({ statut }: { statut: string | null }) {
   const cfg = statutConfig[key] ?? statutConfig.inactif;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${cfg.bg} ${cfg.text}`}
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest",
+        cfg.bg,
+        cfg.text
+      )}
     >
-      <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${cfg.dot}`} />
+      <span className={cn("h-1.5 w-1.5 rounded-full shrink-0 animate-pulse", cfg.dot)} />
       {cfg.label}
     </span>
   );
 }
-
-const selectClass =
-  "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.175_0.04_248)]/30 shadow-sm";
 
 interface Props {
   employees: Employee[];
@@ -94,182 +110,169 @@ export function EmployeeTable({ employees }: Props) {
     });
   }, [employees, search, filterStatut, filterContrat]);
 
-  if (employees.length === 0) {
+  if (employees.length === 0 && !search) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-200 p-16 text-center bg-white">
-        <Users className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-        <p className="font-medium text-slate-600">Aucun employé enregistré</p>
-        <p className="mt-1 text-sm text-slate-600">
-          Cliquez sur &ldquo;Ajouter un employé&rdquo; pour commencer.
+      <div className="rounded-[2.5rem] border-2 border-dashed border-slate-100 p-20 text-center bg-white/50 backdrop-blur-xl">
+        <div className="w-20 h-20 bg-slate-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6">
+          <Users className="h-10 w-10 text-slate-300" weight="duotone" />
+        </div>
+        <h3 className="text-xl font-black text-slate-900 tracking-tightest">Aucun collaborateur</h3>
+        <p className="mt-2 text-sm text-slate-500 font-medium max-w-xs mx-auto">
+          Votre base de données est vide. Commencez par ajouter votre premier employé.
         </p>
       </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-      className="space-y-4"
-    >
-      {/* Filtres */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <MagnifyingGlass
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600"
-            weight="bold"
-          />
+    <div className="space-y-8">
+      {/* Premium Search & Filters Area */}
+      <div className="bg-white/70 backdrop-blur-2xl border border-slate-100 p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col xl:flex-row gap-4 items-center">
+        <div className="relative flex-1 group w-full">
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-900 transition-colors">
+            <MagnifyingGlass size={20} weight="bold" />
+          </div>
           <input
             type="text"
-            placeholder="Rechercher par nom, poste, matricule, département…"
+            placeholder="Rechercher un talent (nom, poste, matricule...)"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 bg-white pl-9 pr-4 py-2 text-sm text-slate-800 placeholder:text-slate-600 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.175_0.04_248)]/30"
+            className="w-full h-14 pl-14 pr-6 rounded-2xl bg-slate-50/50 border-none font-bold text-sm focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
           />
         </div>
-        <select
-          value={filterStatut}
-          onChange={(e) => setFilterStatut(e.target.value)}
-          className={selectClass}
-        >
-          <option value="tous">Tous les statuts</option>
-          <option value="actif">Actif</option>
-          <option value="inactif">Inactif</option>
-          <option value="suspendu">Suspendu</option>
-        </select>
-        {contrats.length > 0 && (
-          <select
-            value={filterContrat}
-            onChange={(e) => setFilterContrat(e.target.value)}
-            className={selectClass}
-          >
-            <option value="tous">Tous les contrats</option>
-            {contrats.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        )}
+
+        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+          <div className="relative group">
+             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 z-10">
+               <Funnel size={16} weight="bold" />
+             </div>
+             <select
+              value={filterStatut}
+              onChange={(e) => setFilterStatut(e.target.value)}
+              className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border-none font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-slate-900/5 min-w-[200px]"
+            >
+              <option value="tous">Tous les statuts</option>
+              <option value="actif">Statut : Actif</option>
+              <option value="inactif">Statut : Inactif</option>
+              <option value="suspendu">Statut : Suspendu</option>
+            </select>
+            <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} weight="bold" />
+          </div>
+
+          {contrats.length > 0 && (
+            <div className="relative group">
+               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+                 <Briefcase size={16} weight="bold" />
+               </div>
+               <select
+                value={filterContrat}
+                onChange={(e) => setFilterContrat(e.target.value)}
+                className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border-none font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-slate-900/5 min-w-[200px]"
+              >
+                <option value="tous">Tous les contrats</option>
+                {contrats.map((c) => (
+                  <option key={c} value={c}>Contrat : {c}</option>
+                ))}
+              </select>
+              <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} weight="bold" />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Compteur */}
-      <p className="text-sm text-slate-600">
-        <span className="font-semibold font-mono tabular-nums text-slate-700">{filtered.length}</span>
-        {" "}employé{filtered.length > 1 ? "s" : ""}
-        {search || filterStatut !== "tous" || filterContrat !== "tous" ? " (filtré)" : ""}
-      </p>
-
-      {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-slate-600 bg-white">
-          Aucun employé ne correspond aux critères.
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50/60 border-b border-slate-100">
-              <tr>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">
-                  Employé
-                </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 md:hidden">
-                  Nom
-                </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">
-                  Matricule
-                </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">
-                  Contrat
-                </th>
-                <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden xl:table-cell">
-                  Salaire brut
-                </th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">
-                  Statut
-                </th>
-                <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">
-                  Actions
-                </th>
+      {/* Main Table Interface */}
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-50">
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Collaborateur</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden lg:table-cell">Identification</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden md:table-cell">Contrat & Dept</th>
+                <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden xl:table-cell">Rémunération</th>
+                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Statut</th>
+                <th className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
-              <AnimatePresence initial={false}>
+            <tbody className="divide-y divide-slate-50/50">
+              <AnimatePresence mode="popLayout">
                 {filtered.map((emp, i) => (
                   <motion.tr
                     key={emp.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15, delay: i * 0.02 }}
-                    className="hover:bg-slate-50/60 transition-colors"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.4, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] }}
+                    className="group hover:bg-slate-50/50 transition-all duration-300"
                   >
-                    {/* Employé : avatar + nom + poste */}
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                          style={{
-                            background: "oklch(0.175 0.04 248)",
-                            color: "oklch(0.78 0.13 73)",
-                          }}
-                        >
-                          {getInitials(emp.full_name)}
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-[3px] border-white shadow-lg flex items-center justify-center text-white font-black text-xs group-hover:rotate-[6deg] transition-transform duration-500">
+                             {getInitials(emp.full_name)}
+                          </div>
+                          <div className={cn(
+                            "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white",
+                            statutConfig[emp.statut as StatutKey]?.dot || "bg-slate-300"
+                          )} />
                         </div>
                         <div className="min-w-0">
-                          <Link
+                          <Link 
                             href={`/employes/${emp.id}`}
-                            className="font-semibold text-slate-900 hover:text-[oklch(0.175_0.04_248)] transition-colors flex items-center gap-1 group"
+                            className="text-sm font-black text-slate-900 tracking-tight leading-none hover:text-primary transition-colors flex items-center gap-1.5"
                           >
                             {emp.full_name}
-                            <ArrowRight
-                              className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity"
-                              weight="bold"
-                            />
+                            <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                           </Link>
-                          <p className="text-xs text-slate-600 truncate">{emp.poste}</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">{emp.poste}</p>
                         </div>
                       </div>
                     </td>
-                    {/* Nom seul (mobile) */}
-                    <td className="px-4 py-3 md:hidden">
-                      <Link
-                        href={`/employes/${emp.id}`}
-                        className="font-semibold text-slate-900 hover:underline"
-                      >
-                        {emp.full_name}
-                      </Link>
-                      <p className="text-xs text-slate-600">{emp.poste}</p>
+
+                    <td className="px-6 py-6 hidden lg:table-cell">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="flex items-center gap-2 text-slate-400 font-bold">
+                          <IdentificationCard size={14} />
+                          <span className="text-[11px] font-mono tabular-nums tracking-wider uppercase">{emp.matricule}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-400 font-bold">
+                          <UserCircle size={14} />
+                          <span className="text-[10px] uppercase tracking-widest">{emp.genre || 'N/A'}</span>
+                        </div>
+                      </div>
                     </td>
-                    {/* Matricule */}
-                    <td className="px-4 py-3 hidden lg:table-cell">
-                      <span className="font-mono tabular-nums text-xs text-slate-600">
-                        {emp.matricule}
-                      </span>
+
+                    <td className="px-6 py-6 hidden md:table-cell">
+                      <div className="flex flex-col gap-2">
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-slate-100 rounded-lg w-max">
+                           <Briefcase size={12} className="text-slate-500" />
+                           <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{emp.type_contrat || '—'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-1 text-slate-400">
+                           <Buildings size={12} />
+                           <span className="text-[10px] font-bold uppercase tracking-widest">{emp.departement || 'Non affecté'}</span>
+                        </div>
+                      </div>
                     </td>
-                    {/* Contrat */}
-                    <td className="px-4 py-3 hidden md:table-cell">
-                      {emp.type_contrat ? (
-                        <span className="inline-flex items-center rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                          {emp.type_contrat}
-                        </span>
-                      ) : (
-                        <span className="text-slate-300">—</span>
-                      )}
+
+                    <td className="px-6 py-6 text-right hidden xl:table-cell">
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-2 text-slate-900 font-black text-sm tracking-tight">
+                           {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
+                           <CurrencyCircleDollar size={16} className="text-emerald-500" />
+                        </div>
+                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">Salaire Brut Mensuel</span>
+                      </div>
                     </td>
-                    {/* Salaire */}
-                    <td className="px-4 py-3 text-right hidden xl:table-cell">
-                      <span className="font-mono tabular-nums text-sm text-slate-800">
-                        {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
-                      </span>
-                    </td>
-                    {/* Statut */}
-                    <td className="px-4 py-3">
+
+                    <td className="px-6 py-6">
                       <StatutBadge statut={emp.statut} />
                     </td>
-                    {/* Actions */}
-                    <td className="px-4 py-3 text-center">
-                      <EmployeeDialog employee={emp} />
+
+                    <td className="px-6 py-6 text-center">
+                       <div className="opacity-40 group-hover:opacity-100 transition-opacity">
+                         <EmployeeDialog employee={emp} />
+                       </div>
                     </td>
                   </motion.tr>
                 ))}
@@ -277,7 +280,24 @@ export function EmployeeTable({ employees }: Props) {
             </tbody>
           </table>
         </div>
-      )}
-    </motion.div>
+
+        {filtered.length === 0 && (
+          <div className="py-20 text-center bg-slate-50/30">
+            <MagnifyingGlass size={48} className="mx-auto text-slate-200 mb-4" weight="duotone" />
+            <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Aucun talent pour cette recherche</p>
+          </div>
+        )}
+
+        <div className="bg-slate-50/50 px-8 py-4 border-t border-slate-50 flex items-center justify-between">
+           <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-slate-300" />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                {filtered.length} Talent{filtered.length > 1 ? 's' : ''} indexé{filtered.length > 1 ? 's' : ''}
+              </span>
+           </div>
+           <p className="text-[9px] text-slate-300 font-black uppercase tracking-[0.3em]">Base RH Côte d'Ivoire v4.0</p>
+        </div>
+      </div>
+    </div>
   );
 }

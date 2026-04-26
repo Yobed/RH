@@ -19,6 +19,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Controller } from "react-hook-form";
 import type { Tables } from "@/types/supabase";
 
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule">;
@@ -60,6 +69,7 @@ export function CongesDialog({ employees }: Props) {
     reset,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -101,9 +111,11 @@ export function CongesDialog({ employees }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>
-        <PlusIcon className="mr-2 h-4 w-4" />
-        Nouvelle demande
+      <DialogTrigger asChild>
+        <Button>
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Nouvelle demande
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg overflow-y-auto max-h-[90vh]">
@@ -112,28 +124,49 @@ export function CongesDialog({ employees }: Props) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
-          <div>
-            <label className="text-sm font-medium">Employé *</label>
-            <select {...register("employee_id")} className={`mt-1 ${selectClass}`}>
-              <option value="">— Sélectionner —</option>
-              {employees.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.full_name} ({e.matricule})
-                </option>
-              ))}
-            </select>
+          <div className="space-y-1">
+            <Label>Employé *</Label>
+            <Controller
+              control={control}
+              name="employee_id"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Sélectionner un employé" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {employees.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.full_name} ({e.matricule})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.employee_id && (
               <p className="mt-1 text-xs text-red-500">{errors.employee_id.message}</p>
             )}
           </div>
 
-          <div>
-            <label className="text-sm font-medium">Type de congé *</label>
-            <select {...register("type")} className={`mt-1 ${selectClass}`}>
-              {Object.entries(TYPE_LABELS).map(([val, label]) => (
-                <option key={val} value={val}>{label}</option>
-              ))}
-            </select>
+          <div className="space-y-1">
+            <Label>Type de congé *</Label>
+            <Controller
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(TYPE_LABELS).map(([val, label]) => (
+                      <SelectItem key={val} value={val}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -179,7 +212,7 @@ export function CongesDialog({ employees }: Props) {
               className="mt-1"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Droit : 2,2 jours/mois = 26,4 jours/an (Art. 25 CT-CI)
+              Droit : 2,5 jours/mois = 30 jours/an (Conventionnelle)
             </p>
             {errors.nb_jours && (
               <p className="mt-1 text-xs text-red-500">{errors.nb_jours.message}</p>

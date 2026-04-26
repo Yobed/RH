@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   SquaresFour,
   Users,
@@ -25,27 +25,28 @@ import {
   ChatCircleText,
 } from "@phosphor-icons/react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/rh", label: "Tableau de bord", icon: SquaresFour, exact: true },
+  { href: "/rh", label: "Dashboard", icon: SquaresFour, exact: true },
   { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: false },
-  { href: "/employes", label: "Employés", icon: Users, exact: false },
-  { href: "/contrats", label: "Contrats", icon: FileText, exact: false },
-  { href: "/conges", label: "Congés", icon: CalendarBlank, exact: false },
-  { href: "/paie", label: "Paie", icon: Money, exact: true },
-  { href: "/rh/heures-sup", label: "Heures supplémentaires", icon: Clock, exact: false },
-  { href: "/rh/analyses", label: "Analyses & Finance", icon: ChartBar, exact: false },
+  { href: "/employes", label: "Collaborateurs", icon: Users, exact: false },
+  { href: "/contrats", label: "Gestion Contrats", icon: FileText, exact: false },
+  { href: "/conges", label: "Absences", icon: CalendarBlank, exact: false },
+  { href: "/paie", label: "Paie & Salaires", icon: Money, exact: true },
+  { href: "/heures-sup", label: "Heures Sup.", icon: Clock, exact: false },
+  { href: "/analyses", label: "Finance & Data", icon: ChartBar, exact: false },
   { href: "/paie/fin-de-contrat", label: "Fin de contrat", icon: FileText, exact: false },
-  { href: "/recrutement", label: "Recrutement", icon: UserPlus, exact: false },
-  { href: "/evaluations", label: "Évaluations", icon: ChartLineUp, exact: false },
+  { href: "/recrutement", label: "Talent Acquisition", icon: UserPlus, exact: false },
+  { href: "/evaluations", label: "Performance", icon: ChartLineUp, exact: false },
   { href: "/contentieux", label: "Contentieux", icon: Scales, exact: false },
-  { href: "/qhse", label: "QHSE", icon: FirstAid, exact: false },
-  { href: "/reporting", label: "Reporting", icon: Presentation, exact: false },
-  { href: "/messages", label: "Messagerie", icon: ChatCircleText, exact: false },
-  { href: "/notifications", label: "Notifications", icon: Bell, exact: false },
-  { href: "/archives", label: "Archives", icon: Archive, exact: false },
-  { href: "/agent-juridique", label: "Agent Juridique", icon: Robot, exact: false },
-  { href: "/calculateur", label: "Calculateur RH", icon: Calculator, exact: false },
+  { href: "/qhse", label: "QHSE & Risques", icon: FirstAid, exact: false },
+  { href: "/reporting", label: "Reporting RH", icon: Presentation, exact: false },
+  { href: "/messages", label: "Internal Comms", icon: ChatCircleText, exact: false },
+  { href: "/notifications", label: "Flux Alerts", icon: Bell, exact: false },
+  { href: "/archives", label: "Documents", icon: Archive, exact: false },
+  { href: "/agent-juridique", label: "Legal AI", icon: Robot, exact: false },
+  { href: "/calculateur", label: "Smart Calculator", icon: Calculator, exact: false },
 ];
 
 const bottomItems = [
@@ -70,66 +71,73 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium outline-none transition-colors"
-      style={{
-        color: isActive ? "var(--sidebar-primary-foreground)" : "var(--sidebar-foreground)",
-      }}
+      className={cn(
+        "group relative flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-300",
+        isActive 
+          ? "bg-slate-900 text-white shadow-[0_10px_20px_-5px_rgba(0,0,0,0.15)]" 
+          : "text-slate-600 hover:text-slate-900"
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Animated Background Highlight */}
-      {isActive && (
-        <motion.div
-          layoutId="sidebar-active-highlight"
-          className="absolute inset-0 rounded-lg"
-          style={{ background: "var(--sidebar-primary)" }}
-          initial={false}
-          transition={{ type: "spring", stiffness: 350, damping: 30 }}
-        />
-      )}
-      {!isActive && isHovered && (
-        <motion.div
-          layoutId="sidebar-hover-highlight"
-          className="absolute inset-0 rounded-lg"
-          style={{ background: "var(--sidebar-accent)" }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-        />
-      )}
+      <AnimatePresence>
+        {!isActive && isHovered && (
+          <motion.div
+            layoutId="sidebar-hover"
+            className="absolute inset-0 rounded-xl bg-slate-100/80 -z-10"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Content */}
-      <span className="relative z-10 flex items-center gap-3 w-full">
-        <Icon weight={isActive ? "fill" : "regular"} className="h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110" />
+      <div className="relative z-10 flex items-center gap-3 w-full">
+        <Icon 
+          weight={isActive ? "duotone" : "bold"} 
+          className={cn(
+            "h-5 w-5 shrink-0 transition-all duration-500",
+            isActive ? "text-amber-400 group-hover:rotate-[12deg]" : "text-slate-400 group-hover:text-slate-900"
+          )} 
+        />
         <span
-          className="truncate"
-          style={{
-            fontWeight: isActive ? 600 : 500,
-            opacity: isActive ? 1 : 0.75,
-            transition: "opacity 0.2s"
-          }}
+          className={cn(
+            "truncate tracking-tight",
+            isActive ? "font-black" : "font-bold"
+          )}
         >
           {label}
         </span>
-      </span>
+
+        {isActive && (
+          <motion.div 
+            layoutId="active-dot"
+            className="w-1 h-4 bg-amber-400 rounded-full ml-auto"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          />
+        )}
+      </div>
     </Link>
   );
 }
 
 export function SidebarNav() {
   return (
-    <div className="flex flex-col gap-1 w-full">
-      <nav className="space-y-1 relative w-full">
+    <div className="flex flex-col gap-8 w-full">
+      <nav className="flex flex-col gap-1 relative w-full pt-2">
         {navItems.map((item) => (
           <NavLink key={item.href} {...item} />
         ))}
       </nav>
-      <div className="mt-4 border-t border-sidebar-border pt-4 w-full">
-        <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--sidebar-foreground)", opacity: 0.4 }}>
-          Système
-        </p>
-        <nav className="space-y-1 relative w-full">
+      
+      <div className="w-full">
+        <div className="px-4 mb-4">
+           <div className="h-[1px] w-full bg-slate-100 flex items-center justify-center">
+             <span className="bg-white px-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-300">Système</span>
+           </div>
+        </div>
+        <nav className="flex flex-col gap-1 relative w-full">
           {bottomItems.map((item) => (
             <NavLink key={item.href} {...item} />
           ))}

@@ -1,5 +1,5 @@
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { ResultatPaieComplet, LignesBulletin } from "./paie-ci";
 
 export interface CompanyInfo {
@@ -268,7 +268,7 @@ export const generateEvaluationPDF = ({ evaluation, employee, company }: any) =>
     doc.setTextColor(51, 65, 85);
     
     // Header infos
-    doc.autoTable({
+    autoTable(doc, {
         startY: startY,
         head: [['EMPLOYÉ', 'PÉRIODE', 'DATE RÉALISATION', 'STATUT']],
         body: [[
@@ -278,7 +278,7 @@ export const generateEvaluationPDF = ({ evaluation, employee, company }: any) =>
             evaluation.statut
         ]],
         theme: 'grid',
-        headStyles: { fillGray: 90, textColor: 255, fontStyle: 'bold' }
+        headStyles: { fillColor: [200, 200, 200], textColor: 255, fontStyle: 'bold' }
     });
     
     // scores
@@ -378,13 +378,13 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
     if (lines.avances) body.push(["500", "Avance sur salaire", "", "", "", fmt(lines.avances)]);
     if (lines.autres_retenues) body.push(["501", "Autres retenues", "", "", "", fmt(lines.autres_retenues)]);
 
-    doc.autoTable({
+    autoTable(doc, {
         startY: 65,
         head: [['Code', 'Désignation', 'Base', 'Taux', 'Gains', 'Retenues']],
         body: body,
         theme: 'grid',
         styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillGray: 90, textColor: 255, halign: 'center' },
+        headStyles: { fillColor: [200, 200, 200], textColor: 255, halign: 'center' },
         columnStyles: {
             0: { halign: 'center', cellWidth: 15 },
             2: { halign: 'right', cellWidth: 30 },
@@ -437,7 +437,8 @@ export const generateSTCPDF = ({ stcResult, employee, company, params }: any) =>
     
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    const totalFmt = new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(stcResult.total_brut_stc);
+    const totalV = stcResult?.total_brut_stc ?? 0;
+    const totalFmt = new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(totalV);
     doc.text(totalFmt, pageWidth / 2, startY + 40, { align: "center" });
 
     doc.setFontSize(10);
@@ -445,14 +446,14 @@ export const generateSTCPDF = ({ stcResult, employee, company, params }: any) =>
     doc.text("Cette somme se décompose comme suit :", margin, startY + 55);
 
     const body = [
-        ["Indemnité de licenciement", `${new Intl.NumberFormat("fr-CI").format(stcResult.indemnite_licenciement)} FCFA`],
-        ["Indemnité de précarité (CDD)", `${new Intl.NumberFormat("fr-CI").format(stcResult.indemnite_precarite)} FCFA`],
-        ["Indemnité compensatrice de congés", `${new Intl.NumberFormat("fr-CI").format(stcResult.indemnite_compensatrice_conges)} FCFA`],
-        ["Indemnité de préavis", `${new Intl.NumberFormat("fr-CI").format(stcResult.indemnite_preavis)} FCFA`],
-        ["TOTAL BRUT STC", `${new Intl.NumberFormat("fr-CI").format(stcResult.total_brut_stc)} FCFA`]
+        ["Indemnité de licenciement", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_licenciement ?? 0)} FCFA`],
+        ["Indemnité de précarité (CDD)", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_precarite ?? 0)} FCFA`],
+        ["Indemnité compensatrice de congés", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_compensatrice_conges ?? 0)} FCFA`],
+        ["Indemnité de préavis", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_preavis ?? 0)} FCFA`],
+        ["TOTAL BRUT STC", `${new Intl.NumberFormat("fr-CI").format(stcResult?.total_brut_stc ?? 0)} FCFA`]
     ];
 
-    doc.autoTable({
+    autoTable(doc, {
         startY: startY + 60,
         body: body,
         theme: 'grid',
@@ -510,13 +511,13 @@ export const generatePayrollReportPDF = ({ bulletins, company, period }: any) =>
         { content: '', styles: { fillGray: 240 } }
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
         startY: startY + 5,
         head: [['EMPLOYÉ', 'MATRICULE', 'SALAIRE BRUT', 'CNPS 6.3%', 'I.T.S.', 'NET À PAYER', 'STATUT']],
         body: tableBody,
         theme: 'grid',
         styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillGray: 40, textColor: 255 },
+        headStyles: { fillColor: [100, 100, 100], textColor: 255 },
         columnStyles: {
             2: { halign: 'right' },
             3: { halign: 'right' },
@@ -585,7 +586,7 @@ export const generateContratPDF = ({ employee, company, type_contrat = 'CDI' }: 
         ["ARTICLE 4 : CONGÉS", "L'employé a droit à un congé payé conformément aux dispositions du Code du Travail de Côte d'Ivoire."]
     ];
 
-    doc.autoTable({
+    autoTable(doc, {
         startY: startY + 85,
         body: sections,
         theme: 'plain',
@@ -622,12 +623,12 @@ export const generateFichePostePDF = ({ employee, company, mission = "", respons
         ? responsabilites.map((r: string, i: number) => [i + 1, r])
         : [[1, "Exécuter les ordres de la hiérarchie"], [2, "Assurer la qualité du travail rendu"], [3, "Respecter le règlement intérieur"]];
 
-    doc.autoTable({
+    autoTable(doc, {
         startY: startY + 45,
         head: [['#', 'RESPONSABILITÉS ET MISSIONS PRINCIPALES']],
         body: tableBody,
         theme: 'striped',
-        headStyles: { fillGray: 80, textColor: 255 }
+        headStyles: { fillColor: [150, 150, 150], textColor: 255 }
     });
     
     return doc;

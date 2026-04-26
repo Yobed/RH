@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { createClientSupabase } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { LogOut, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { SignOut, UserCircleGear } from "@phosphor-icons/react";
+import { cn } from "@/lib/utils";
 
 interface UserMenuProps {
   fullName: string | null;
@@ -23,34 +23,42 @@ export function UserMenu({ fullName, role }: UserMenuProps) {
   }
 
   const roleLabel: Record<string, string> = {
-    admin: "Administrateur",
-    rh: "Responsable RH",
-    manager: "Manager",
-    employee: "Employé",
+    admin: "Executive Admin",
+    rh: "HR Director",
+    manager: "Ops Manager",
+    employee: "Staff Member",
   };
 
   return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2 min-w-0">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-          <User className="h-4 w-4 text-muted-foreground" />
+    <div className="group relative">
+      <div className={cn(
+        "flex items-center gap-4 p-4 rounded-[1.25rem] transition-all duration-500",
+        "bg-slate-50 border border-slate-100/50 hover:bg-white hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.06)]"
+      )}>
+        <div className="relative">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-900 border-2 border-white shadow-sm transition-transform duration-500 group-hover:scale-105">
+            <UserCircleGear weight="duotone" className="h-6 w-6 text-amber-400" />
+          </div>
+          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
         </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{fullName ?? "Utilisateur"}</p>
-          <p className="text-xs text-muted-foreground">
-            {role ? (roleLabel[role] ?? role) : ""}
+        
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-black text-slate-900 tracking-tightest leading-none">
+            {fullName ?? "Ghost User"}
+          </p>
+          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 leading-none">
+            {role ? (roleLabel[role] ?? role) : "Guest"}
           </p>
         </div>
+
+        <button
+          onClick={handleLogout}
+          className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-rose-500 hover:text-white transition-all duration-300"
+          title="Sign Out"
+        >
+          <SignOut weight="bold" className="h-4 w-4" />
+        </button>
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={handleLogout}
-        className="shrink-0 text-muted-foreground hover:text-foreground"
-        title="Se déconnecter"
-      >
-        <LogOut className="h-4 w-4" />
-      </Button>
     </div>
   );
 }

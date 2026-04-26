@@ -194,8 +194,8 @@ export default async function CongesPage() {
       .order("created_at", { ascending: false }),
     supabase
       .from("employees")
-      .select("id, prenom, nom, full_name, matricule")
-      .eq("statut", "actif")
+      .select("id, full_name, matricule")
+      .neq("statut", "inactif") // On permet actif et suspendu
       .order("full_name"),
   ]);
 
@@ -208,8 +208,7 @@ export default async function CongesPage() {
 
   const employeesForArret = (employees ?? []).map((e) => ({
     id: e.id,
-    prenom: (e as { prenom?: string }).prenom ?? e.full_name?.split(' ')[0] ?? '',
-    nom: (e as { nom?: string }).nom ?? e.full_name?.split(' ').slice(1).join(' ') ?? '',
+    full_name: e.full_name,
   }));
 
   // KPI
@@ -225,7 +224,7 @@ export default async function CongesPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gestion des Congés</h1>
-          <p className="text-sm text-slate-600 mt-0.5">Droit : 2,5 jours/mois (Art. 25 CT-CI)</p>
+          <p className="text-sm text-slate-600 mt-0.5">Droit : 2,2 jours/mois (Légal)</p>
         </div>
         <div className="flex gap-2">
           <ArretMaladieDialog employees={employeesForArret} />
@@ -256,7 +255,7 @@ export default async function CongesPage() {
       <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-800">
         <p className="font-semibold mb-1">Droits légaux — Code du Travail ivoirien</p>
         <div className="flex flex-wrap gap-4 text-xs">
-          <span>Annuel : <strong>30 jours/an max</strong> (2,5j × 12 mois)</span>
+          <span>Annuel : <strong>26,4 jours/an base</strong> (2,2j × 12 mois)</span>
           <span>Maternité : <strong>14 semaines</strong></span>
           <span>Paternité : <strong>10 jours</strong></span>
         </div>

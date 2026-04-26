@@ -22,7 +22,7 @@
  * Dernière mise à jour : mars 2026
  */
 
-// Taux légal Art. 25.1 CT-CI : 2,2 jours ouvrables/mois de travail effectif
+// Taux d'acquisition légal : 2,2 jours ouvrables/mois (Art. 25.1 CT-CI)
 export const TAUX_CONGES_PAR_MOIS = 2.2;
 
 // Plafond annuel de base (12 mois × 2,2 j) sans bonus ancienneté
@@ -80,7 +80,7 @@ export function calculerJoursAcquis(
     }
   }
 
-  // Art. 25.1 CT-CI : 2,2 j ouvrables × mois complets
+  // Acquisition : 2,2 j ouvrables × mois complets
   const joursBase = moisComplets * TAUX_CONGES_PAR_MOIS;
 
   // Prorata du bonus ancienneté selon les mois travaillés dans l'année
