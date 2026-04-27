@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { 
@@ -14,8 +14,25 @@ import {
   ShieldCheck,
   Briefcase,
   Calendar,
-  Banknote
+  Banknote,
+  Info,
+  ExternalLink,
+  Target,
+  GraduationCap,
+  Trophy,
+  Smile,
+  Zap,
+  HelpCircle,
+  MoreHorizontal
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   BarChart,
   Bar,
@@ -109,7 +126,23 @@ const fmtCurrency = (n: number) =>
     minimumFractionDigits: 0,
   }).format(n);
 
-function StatCard({ title, value, icon, subtitle, colorTheme, trend }: { title: string, value: string | number, icon: any, subtitle?: string, colorTheme: "sky" | "emerald" | "rose" | "violet" | "amber" | "indigo", trend?: { value: string, isUp: boolean } }) {
+function StatCard({ 
+  title, 
+  value, 
+  icon, 
+  subtitle, 
+  colorTheme, 
+  trend,
+  calculationDetails 
+}: { 
+  title: string, 
+  value: string | number, 
+  icon: any, 
+  subtitle?: string, 
+  colorTheme: "sky" | "emerald" | "rose" | "violet" | "amber" | "indigo", 
+  trend?: { value: string, isUp: boolean },
+  calculationDetails?: { formula: string, utility: string }
+}) {
   const themes = {
     sky: "text-sky-700 bg-sky-100 border-sky-200",
     emerald: "text-emerald-700 bg-emerald-100 border-emerald-200",
@@ -123,8 +156,40 @@ function StatCard({ title, value, icon, subtitle, colorTheme, trend }: { title: 
       <div className={`absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-5 group-hover:scale-150 transition-transform duration-500 ${themes[colorTheme].split(" ")[1]}`} />
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
-          <div className={`p-3 rounded-2xl ${themes[colorTheme].split(" ")[1]} ${themes[colorTheme].split(" ")[0]}`}>
-            {icon}
+          <div className="flex items-start gap-4">
+            <div className={`p-3 rounded-2xl ${themes[colorTheme].split(" ")[1]} ${themes[colorTheme].split(" ")[0]}`}>
+              {icon}
+            </div>
+            {calculationDetails && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-slate-100 text-slate-400">
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-black flex items-center gap-2">
+                      <HelpCircle className={`h-5 w-5 ${themes[colorTheme].split(" ")[0]}`} />
+                      {title}
+                    </DialogTitle>
+                    <DialogDescription className="font-bold text-slate-500 uppercase tracking-tighter pt-1">
+                      Comprendre cet indicateur
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-6 py-4">
+                    <div className="p-4 rounded-2xl bg-slate-50 border-2 border-slate-100">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Méthode de Calcul</h4>
+                      <p className="text-sm font-bold text-slate-700 leading-relaxed">{calculationDetails.formula}</p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-primary/5 border-2 border-primary/10">
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-primary/60 mb-2">Utilité Stratégique</h4>
+                      <p className="text-sm font-bold text-slate-700 leading-relaxed">{calculationDetails.utility}</p>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
           {trend && (
             <Badge variant={trend.isUp ? "default" : "destructive"} className={`text-[10px] font-black ${trend.isUp ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-rose-100 text-rose-700 border-rose-200'} hover:opacity-100`}>
@@ -406,6 +471,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           colorTheme="sky" 
           subtitle="Collaborateurs sous contrat"
           trend={{ value: `${entriesThisYear} entrées`, isUp: true }}
+          calculationDetails={{
+            formula: "Nombre total de contrats actifs à la date de consultation.",
+            utility: "Permet de dimensionner la structure organisationnelle et de piloter les besoins en ressources."
+          }}
         />
         <StatCard 
           title="Masse Nette" 
@@ -413,6 +482,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<Banknote className="w-5 h-5" />} 
           colorTheme="emerald" 
           subtitle="Débours mensuel net"
+          calculationDetails={{
+            formula: "Σ des Salaires Nets à Payer (Bulletins du dernier cycle validé).",
+            utility: "Indicateur critique pour la gestion de la trésorerie et le pilotage des coûts directs."
+          }}
         />
         <StatCard 
           title="TCO Mensuel" 
@@ -420,6 +493,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<TrendingUp className="w-5 h-5" />} 
           colorTheme="violet" 
           subtitle="Total Cost of Ownership"
+          calculationDetails={{
+            formula: "Salaire Brut + Charges Patronales (Simulées à 21% du Brut pour CI).",
+            utility: "Indicateur du coût réel d'un employé pour l'entreprise incluant les charges sociales."
+          }}
         />
         <StatCard 
           title="H. Sup" 
@@ -427,6 +504,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<Clock className="w-5 h-5" />} 
           colorTheme="amber" 
           subtitle="Impact productivité"
+          calculationDetails={{
+            formula: "Σ des Heures supplémentaires effectuées sur le cycle de paie.",
+            utility: "Mesure la flexibilité de l'organisation et identifie les surcharges de travail."
+          }}
         />
       </div>
 
@@ -438,6 +519,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<UserMinus className="w-5 h-5" />} 
           colorTheme="rose" 
           subtitle="Perte de capacité"
+          calculationDetails={{
+            formula: "(Nombre de jours d'absence / Nombre de jours travaillés théoriques) × 100",
+            utility: "Alerte sur le climat social et l'engagement. Impacte directement la productivité opérationnelle."
+          }}
         />
         <StatCard 
           title="Turnover" 
@@ -445,6 +530,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<TrendingUp className="w-5 h-5" />} 
           colorTheme="amber" 
           subtitle="Stabilité du capital humain"
+          calculationDetails={{
+            formula: "(Nombre de départs / Effectif moyen) × 100",
+            utility: "Évalue la stabilité des effectifs et le risque de fuite des compétences."
+          }}
         />
         <StatCard 
           title="Conformité" 
@@ -452,6 +541,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<ShieldCheck className="w-5 h-5" />} 
           colorTheme="sky" 
           subtitle="Sceaux médicaux validés"
+          calculationDetails={{
+            formula: "(Nombre d'employés avec examen médical valide / Effectif actif) × 100",
+            utility: "Mesure la conformité légale et la gestion de la santé/sécurité au travail."
+          }}
         />
         <StatCard 
           title="Âge Moyen" 
@@ -459,6 +552,10 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           icon={<Presentation className="w-5 h-5" />} 
           colorTheme="indigo" 
           subtitle="Maturité de l'effectif"
+          calculationDetails={{
+            formula: "Σ des âges des employés actifs / Effectif actif",
+            utility: "Aide à la planification de la relève et à l'équilibre intergénérationnel."
+          }}
         />
       </div>
 
@@ -617,6 +714,96 @@ export function AnalytiqueDashboard({ employees, bulletins, contracts, conges, m
           </CardContent>
         </Card>
       </div>
+
+      {/* HR Analytics Reference Guide */}
+      <Card className="border-none shadow-2xl overflow-hidden bg-slate-900 text-white rounded-[2rem]">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -mr-32 -mt-32" />
+        <CardHeader className="relative p-8 border-b border-white/10">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
+              <GraduationCap className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-black tracking-tight">Référentiel des Indicateurs RH</CardTitle>
+              <CardDescription className="text-white/60 font-bold uppercase tracking-widest text-[10px]">Méthodologies de calcul & Utilité stratégique</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="relative p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <section className="space-y-4">
+              <h3 className="text-primary font-black flex items-center gap-2 uppercase tracking-widest text-xs">
+                <Target className="h-4 w-4" /> Recrutement & Effectifs
+              </h3>
+              <div className="space-y-3">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-colors">
+                  <p className="font-black text-sm mb-1">Taux de recrutement</p>
+                  <p className="text-[10px] text-white/40 mb-2 font-mono uppercase">(Recrutements / Postes ouverts) × 100</p>
+                  <p className="text-xs text-white/70 leading-relaxed">Mesure l&apos;efficacité du processus de recrutement et la capacité à pourvoir les postes.</p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-colors">
+                  <p className="font-black text-sm mb-1">Coût par recrutement</p>
+                  <p className="text-[10px] text-white/40 mb-2 font-mono uppercase">Coût total / Nombre de recrutements</p>
+                  <p className="text-xs text-white/70 leading-relaxed">Mesure l&apos;efficacité financière des canaux d&apos;acquisition de talents.</p>
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <h3 className="text-rose-400 font-black flex items-center gap-2 uppercase tracking-widest text-xs">
+                <Zap className="h-4 w-4" /> Performance & Formation
+              </h3>
+              <div className="space-y-3">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-colors">
+                  <p className="font-black text-sm mb-1">Taux de formation</p>
+                  <p className="text-[10px] text-white/40 mb-2 font-mono uppercase">(Salariés formés / Effectif total) × 100</p>
+                  <p className="text-xs text-white/70 leading-relaxed">Indicateur d&apos;investissement dans le capital humain et l&apos;évolution des compétences.</p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-colors">
+                  <p className="font-black text-sm mb-1">ROI de la formation</p>
+                  <p className="text-[10px] text-white/40 mb-2 font-mono uppercase">(Gain de productivité - Coût) / Coût</p>
+                  <p className="text-xs text-white/70 leading-relaxed">Évalue la rentabilité économique des actions de montée en compétences.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div className="space-y-6">
+            <section className="space-y-4">
+              <h3 className="text-emerald-400 font-black flex items-center gap-2 uppercase tracking-widest text-xs">
+                <Smile className="h-4 w-4" /> Fidélisation & Climat
+              </h3>
+              <div className="space-y-3">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-colors">
+                  <p className="font-black text-sm mb-1">Taux de Turnover</p>
+                  <p className="text-[10px] text-white/40 mb-2 font-mono uppercase">(Départs N / Effectif moyen) × 100</p>
+                  <p className="text-xs text-white/70 leading-relaxed">Indice de stabilité du capital humain et d&apos;attractivité de la marque employeur.</p>
+                </div>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/20 transition-colors">
+                  <p className="font-black text-sm mb-1">Taux d&apos;Ancienneté Moyenne</p>
+                  <p className="text-[10px] text-white/40 mb-2 font-mono uppercase">Σ Ancienneté / Effectif total</p>
+                  <p className="text-xs text-white/70 leading-relaxed">Reflète l&apos;expérience accumulée et la loyauté des collaborateurs envers l&apos;entreprise.</p>
+                </div>
+              </div>
+            </section>
+
+            <div className="p-6 bg-primary/10 rounded-3xl border border-primary/20 backdrop-blur-md">
+              <div className="flex items-start gap-4">
+                <Trophy className="h-10 w-10 text-primary shrink-0" />
+                <div>
+                  <h4 className="font-black text-lg mb-2 italic">Optimisation Stratégique</h4>
+                  <p className="text-xs text-white/60 leading-relaxed font-bold uppercase tracking-tighter">
+                    L&apos;utilisation systématique de ces indicateurs permet de passer d&apos;une gestion administrative des RH à un pilotage stratégique basé sur la donnée (Data-Driven HR).
+                  </p>
+                  <Button variant="link" className="text-primary p-0 h-auto mt-4 font-black">
+                    Consulter la documentation complète <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
