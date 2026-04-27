@@ -11,7 +11,8 @@ import {
 import {
   applyFilters, computeEffectif, computeAgePyramid, computePayroll,
   computeTurnover, computeAbsenteeism, computeMedical, computeRecruitment,
-  computePerformance, computeSafety, listDepartments, listCategories, FMT,
+  computePerformance, computeSafety, listDepartments, listCategories,
+  listYears, getReferenceDate, MONTH_LABELS, FMT,
   type RhEmployee, type RhBulletin, type RhContract, type RhConge, type RhMedical,
   type RhJob, type RhCandidate, type RhEvaluation, type RhAccident,
 } from "@/lib/analytics-rh";
@@ -131,9 +132,90 @@ function Insight({ kind, title, body }: { kind: "positive" | "negative" | "warn"
 
 // ── Composant principal ────────────────────────────────────────────────────
 
+// ── Composants segments ────────────────────────────────────────────────────
+
+function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[11px] uppercase tracking-wider text-slate-400 font-medium whitespace-nowrap">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function SegmentBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={[
+        "h-7 px-3 rounded text-xs font-medium tabular-nums transition-colors whitespace-nowrap",
+        active ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
+      ].join(" ")}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SegmentedYear({ value, onChange, years }: {
+  value: number | null; onChange: (v: number | null) => void; years: number[];
+}) {
+  const visible = years.slice(0, 4);
+  const hidden = years.slice(4);
+  return (
+    <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5">
+      <SegmentBtn active={value === null} onClick={() => onChange(null)}>Toutes</SegmentBtn>
+      {visible.map(y => (
+        <SegmentBtn key={y} active={value === y} onClick={() => onChange(y)}>{y}</SegmentBtn>
+      ))}
+      {hidden.length > 0 && (
+        <select
+          value={hidden.includes(value || 0) ? String(value) : ""}
+          onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
+          className="h-7 rounded border-0 bg-transparent text-xs text-slate-700 px-1 focus:outline-none focus:ring-1 focus:ring-slate-300"
+        >
+          <option value="">…</option>
+          {hidden.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+      )}
+    </div>
+  );
+}
+
+function SegmentedMonth({ value, onChange, disabled }: {
+  value: number | null; onChange: (v: number | null) => void; disabled?: boolean;
+}) {
+  return (
+    <select
+      value={value ?? ""}
+      onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
+      disabled={disabled}
+      className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <option value="">Tous</option>
+      <option value="1">Janv.</option>
+      <option value="2">Févr.</option>
+      <option value="3">Mars</option>
+      <option value="4">Avril</option>
+      <option value="5">Mai</option>
+      <option value="6">Juin</option>
+      <option value="7">Juil.</option>
+      <option value="8">Août</option>
+      <option value="9">Sept.</option>
+      <option value="10">Oct.</option>
+      <option value="11">Nov.</option>
+      <option value="12">Déc.</option>
+    </select>
+  );
+}
+
+// ── Composant principal ────────────────────────────────────────────────────
+
 export function AnalytiqueFocus(props: Props) {
   const [departement, setDepartement] = useState("Tous");
   const [categorie, setCategorie] = useState("Tous");
+  const [annee, setAnnee] = useState<number | null>(null);
+  const [mois, setMois] = useState<number | null>(null);
   const [axe, setAxe] = useState<AxeId>("talent");
 
   const dataset = useMemo(() => ({
@@ -150,36 +232,78 @@ export function AnalytiqueFocus(props: Props) {
 
   const departements = useMemo(() => listDepartments(props.employees), [props.employees]);
   const categories = useMemo(() => listCategories(props.employees), [props.employees]);
-  const filtered = useMemo(() => applyFilters(dataset, { departement, categorie }), [dataset, departement, categorie]);
+  const annees = useMemo(() => listYears(dataset), [dataset]);
+  const filtered = useMemo(
+    () => applyFilters(dataset, { departement, categorie, annee, mois }),
+    [dataset, departement, categorie, annee, mois]
+  );
+  const refDate = useMemo(() => getReferenceDate(annee, mois), [annee, mois]);
+
+  const periodLabel = useMemo(() => {
+    if (annee && mois) return `${MONTH_LABELS[mois - 1]} ${annee}`;
+    if (annee) return `Année ${annee}`;
+    return "12 mois glissants";
+  }, [annee, mois]);
+
+  const isFiltered = departement !== "Tous" || categorie !== "Tous" || annee !== null || mois !== null;
+  const resetFilters = () => {
+    setDepartement("Tous"); setCategorie("Tous"); setAnnee(null); setMois(null);
+  };
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto">
       {/* ── Header ─────────────────────────────────────────── */}
-      <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 pb-4 border-b border-slate-200">
-        <div>
-          <Link href="/analytique" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
-            <ArrowLeft className="h-3 w-3" /> Retour à l'analytique
-          </Link>
-          <h1 className="text-2xl font-semibold text-slate-900 mt-2">Focus stratégique</h1>
-          <p className="text-sm text-slate-500 mt-1.5">
-            Lecture détaillée par axe — données synchronisées avec la vue d'ensemble.
-          </p>
+      <header className="flex flex-col gap-5 pb-4 border-b border-slate-200">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <Link href="/analytique" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
+              <ArrowLeft className="h-3 w-3" /> Retour à l'analytique
+            </Link>
+            <h1 className="text-2xl font-semibold text-slate-900 mt-2">Focus stratégique</h1>
+            <p className="text-sm text-slate-500 mt-1.5">
+              Lecture détaillée par axe — données synchronisées.
+              <span className="text-slate-700 font-medium ml-1">· {periodLabel}</span>
+            </p>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={departement}
-            onChange={e => setDepartement(e.target.value)}
-            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
-          >
-            {departements.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
-          <select
-            value={categorie}
-            onChange={e => setCategorie(e.target.value)}
-            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
-          >
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <FilterField label="Département">
+            <select
+              value={departement}
+              onChange={e => setDepartement(e.target.value)}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+            >
+              {departements.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </FilterField>
+          <FilterField label="Catégorie">
+            <select
+              value={categorie}
+              onChange={e => setCategorie(e.target.value)}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+            >
+              {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </FilterField>
+
+          <div className="h-8 w-px bg-slate-200" />
+
+          <FilterField label="Année">
+            <SegmentedYear value={annee} onChange={setAnnee} years={annees} />
+          </FilterField>
+          <FilterField label="Mois">
+            <SegmentedMonth value={mois} onChange={setMois} disabled={annee === null} />
+          </FilterField>
+
+          {isFiltered && (
+            <button
+              onClick={resetFilters}
+              className="text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 ml-auto"
+            >
+              Réinitialiser
+            </button>
+          )}
         </div>
       </header>
 
@@ -208,10 +332,10 @@ export function AnalytiqueFocus(props: Props) {
       </nav>
 
       {/* ── Contenu par axe ─────────────────────────────── */}
-      {axe === "talent" && <AxeTalent dataset={filtered} />}
-      {axe === "remuneration" && <AxeRemuneration dataset={filtered} />}
+      {axe === "talent" && <AxeTalent dataset={filtered} refDate={refDate} />}
+      {axe === "remuneration" && <AxeRemuneration dataset={filtered} refDate={refDate} />}
       {axe === "recrutement" && <AxeRecrutement dataset={filtered} />}
-      {axe === "climat" && <AxeClimat dataset={filtered} />}
+      {axe === "climat" && <AxeClimat dataset={filtered} refDate={refDate} />}
       {axe === "performance" && <AxePerformance dataset={filtered} />}
     </div>
   );
@@ -219,10 +343,10 @@ export function AnalytiqueFocus(props: Props) {
 
 // ── Axe Talent ─────────────────────────────────────────────────────────────
 
-function AxeTalent({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
-  const eff = useMemo(() => computeEffectif(dataset), [dataset]);
-  const age = useMemo(() => computeAgePyramid(dataset), [dataset]);
-  const turnover = useMemo(() => computeTurnover(dataset), [dataset]);
+function AxeTalent({ dataset, refDate }: { dataset: ReturnType<typeof applyFilters>; refDate: Date }) {
+  const eff = useMemo(() => computeEffectif(dataset, refDate), [dataset, refDate]);
+  const age = useMemo(() => computeAgePyramid(dataset, refDate), [dataset, refDate]);
+  const turnover = useMemo(() => computeTurnover(dataset, refDate), [dataset, refDate]);
   const pyramidData = age.pyramid.map(b => ({ ...b, Hommes: -b.Hommes }));
 
   return (
@@ -311,9 +435,9 @@ function AxeTalent({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
 
 // ── Axe Rémunération ───────────────────────────────────────────────────────
 
-function AxeRemuneration({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
-  const payroll = useMemo(() => computePayroll(dataset), [dataset]);
-  const eff = useMemo(() => computeEffectif(dataset), [dataset]);
+function AxeRemuneration({ dataset, refDate }: { dataset: ReturnType<typeof applyFilters>; refDate: Date }) {
+  const payroll = useMemo(() => computePayroll(dataset, refDate), [dataset, refDate]);
+  const eff = useMemo(() => computeEffectif(dataset, refDate), [dataset, refDate]);
 
   const ratioNetBrut = !payroll.current || payroll.current.brut === 0
     ? 0
@@ -474,10 +598,10 @@ function AxeRecrutement({ dataset }: { dataset: ReturnType<typeof applyFilters> 
 
 // ── Axe Climat ─────────────────────────────────────────────────────────────
 
-function AxeClimat({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
-  const abs = useMemo(() => computeAbsenteeism(dataset), [dataset]);
-  const med = useMemo(() => computeMedical(dataset), [dataset]);
-  const safety = useMemo(() => computeSafety(dataset), [dataset]);
+function AxeClimat({ dataset, refDate }: { dataset: ReturnType<typeof applyFilters>; refDate: Date }) {
+  const abs = useMemo(() => computeAbsenteeism(dataset, refDate), [dataset, refDate]);
+  const med = useMemo(() => computeMedical(dataset, refDate), [dataset, refDate]);
+  const safety = useMemo(() => computeSafety(dataset, refDate), [dataset, refDate]);
 
   return (
     <div className="space-y-5">

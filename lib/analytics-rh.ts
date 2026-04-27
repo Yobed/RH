@@ -112,7 +112,54 @@ export interface RhFilters {
   departement?: string; // "Tous" / nom
   categorie?: string;
   statut?: string;      // "actif" / "inactif" / "Tous"
+  annee?: number | null; // null/undefined = toutes années
+  mois?: number | null;  // 1-12 ; null/undefined = tous mois
 }
+
+/**
+ * Date de référence dérivée des filtres temporels.
+ * - annee + mois : dernier jour du mois choisi (ou aujourd'hui si futur)
+ * - annee seule : 31 déc de cette année (ou aujourd'hui si année courante / futur)
+ * - rien : aujourd'hui
+ */
+export function getReferenceDate(annee?: number | null, mois?: number | null): Date {
+  const today = new Date();
+  if (!annee) return today;
+  if (mois && mois >= 1 && mois <= 12) {
+    const lastDay = new Date(annee, mois, 0); // jour 0 du mois suivant = dernier jour
+    return lastDay > today ? today : lastDay;
+  }
+  const dec31 = new Date(annee, 11, 31);
+  return dec31 > today ? today : dec31;
+}
+
+/** Liste des années présentes dans le dataset (depuis date_embauche, periode des bulletins, accidents, conges) */
+export function listYears(d: RhDataset): number[] {
+  const years = new Set<number>();
+  for (const e of d.employees) {
+    if (e.date_embauche) years.add(new Date(e.date_embauche).getFullYear());
+  }
+  for (const b of d.bulletins) {
+    if (b.periode && b.periode.length >= 4) years.add(parseInt(b.periode.substring(0, 4), 10));
+  }
+  for (const c of d.contracts) {
+    if (c.date_debut) years.add(new Date(c.date_debut).getFullYear());
+    if (c.date_fin) years.add(new Date(c.date_fin).getFullYear());
+  }
+  for (const c of d.conges) {
+    if (c.date_debut) years.add(new Date(c.date_debut).getFullYear());
+  }
+  for (const a of d.accidents) {
+    if (a.date_accident) years.add(new Date(a.date_accident).getFullYear());
+  }
+  years.add(new Date().getFullYear());
+  return Array.from(years).filter(y => !isNaN(y) && y > 1990 && y < 2100).sort((a, b) => b - a);
+}
+
+export const MONTH_LABELS = [
+  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+];
 
 // ── Utils ──────────────────────────────────────────────────────────────────
 const ABSENTEEISM_TYPES = new Set([
@@ -136,6 +183,26 @@ const fmtNumber = (n: number, digits = 0) =>
 export const FMT = { currency: fmtCurrency, number: fmtNumber };
 
 // ── Application des filtres ────────────────────────────────────────────────
+function isInPeriod(dateStr: string | null | undefined, annee?: number | null, mois?: number | null): boolean {
+  if (!annee) return true;
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return false;
+  if (d.getFullYear() !== annee) return false;
+  if (mois && (d.getMonth() + 1) !== mois) return false;
+  return true;
+}
+
+function bulletinInPeriod(periode: string, annee?: number | null, mois?: number | null): boolean {
+  if (!annee) return true;
+  if (!periode || periode.length < 7) return false;
+  const y = parseInt(periode.substring(0, 4), 10);
+  const m = parseInt(periode.substring(5, 7), 10);
+  if (y !== annee) return false;
+  if (mois && m !== mois) return false;
+  return true;
+}
+
 export function applyFilters(dataset: RhDataset, filters: RhFilters): RhDataset {
   const employees = dataset.employees.filter(e => {
     const matchDept = !filters.departement || filters.departement === "Tous" ||
@@ -146,16 +213,31 @@ export function applyFilters(dataset: RhDataset, filters: RhFilters): RhDataset 
   });
 
   const employeeIds = new Set(employees.map(e => e.id));
+  const { annee, mois } = filters;
+
   return {
     employees,
-    bulletins: dataset.bulletins.filter(b => employeeIds.has(b.employee_id)),
+    bulletins: dataset.bulletins.filter(b =>
+      employeeIds.has(b.employee_id) && bulletinInPeriod(b.periode, annee, mois)
+    ),
     contracts: dataset.contracts.filter(c => employeeIds.has(c.employee_id)),
-    conges: dataset.conges.filter(c => employeeIds.has(c.employee_id)),
+    conges: dataset.conges.filter(c =>
+      employeeIds.has(c.employee_id) && isInPeriod(c.date_debut, annee, mois)
+    ),
     medical: dataset.medical.filter(m => employeeIds.has(m.employee_id)),
-    jobPostings: dataset.jobPostings,
-    candidates: dataset.candidates,
-    evaluations: dataset.evaluations.filter(ev => employeeIds.has(ev.employee_id)),
-    accidents: dataset.accidents.filter(a => employeeIds.has(a.employee_id)),
+    jobPostings: !annee
+      ? dataset.jobPostings
+      : dataset.jobPostings.filter(j => isInPeriod(j.created_at, annee, mois)),
+    candidates: !annee
+      ? dataset.candidates
+      : dataset.candidates.filter(c => isInPeriod(c.created_at, annee, mois)),
+    evaluations: dataset.evaluations.filter(ev =>
+      employeeIds.has(ev.employee_id) &&
+      (!annee || isInPeriod(ev.date_realisation, annee, mois))
+    ),
+    accidents: dataset.accidents.filter(a =>
+      employeeIds.has(a.employee_id) && isInPeriod(a.date_accident, annee, mois)
+    ),
   };
 }
 
@@ -174,8 +256,8 @@ export interface EffectifKpi {
   byCategory: { name: string; count: number }[];
 }
 
-export function computeEffectif(d: RhDataset): EffectifKpi {
-  const year = new Date().getFullYear();
+export function computeEffectif(d: RhDataset, ref: Date = new Date()): EffectifKpi {
+  const year = ref.getFullYear();
   const actifs = d.employees.filter(e => e.statut === "actif");
   const total = d.employees.length;
   const hommes = actifs.filter(e => e.genre?.toUpperCase() === "M").length;
@@ -224,7 +306,7 @@ export interface AgePyramidBin {
   Femmes: number;
 }
 
-export function computeAgePyramid(d: RhDataset): { pyramid: AgePyramidBin[]; averageAge: number } {
+export function computeAgePyramid(d: RhDataset, ref: Date = new Date()): { pyramid: AgePyramidBin[]; averageAge: number } {
   const bins: AgePyramidBin[] = [
     { range: "18–25", Hommes: 0, Femmes: 0 },
     { range: "26–35", Hommes: 0, Femmes: 0 },
@@ -239,7 +321,7 @@ export function computeAgePyramid(d: RhDataset): { pyramid: AgePyramidBin[]; ave
 
   for (const e of d.employees) {
     if (e.statut !== "actif" || !e.date_naissance) continue;
-    const age = differenceInYears(new Date(), parseISO(e.date_naissance));
+    const age = differenceInYears(ref, parseISO(e.date_naissance));
     totalAge += age;
     withAge++;
     const isFemme = e.genre?.toUpperCase() === "F";
@@ -278,9 +360,9 @@ export interface PayrollKpi {
   averageBrutPerEmployee: number; // sur le mois courant
 }
 
-export function computePayroll(d: RhDataset): PayrollKpi {
+export function computePayroll(d: RhDataset, ref: Date = new Date()): PayrollKpi {
   const months: string[] = [];
-  for (let i = 11; i >= 0; i--) months.push(format(subMonths(new Date(), i), "yyyy-MM"));
+  for (let i = 11; i >= 0; i--) months.push(format(subMonths(ref, i), "yyyy-MM"));
 
   const series: PayrollMonthPoint[] = months.map(m => {
     const monthBulletins = d.bulletins.filter(b => b.periode === m);
@@ -306,7 +388,7 @@ export function computePayroll(d: RhDataset): PayrollKpi {
     ? 0
     : Math.round(((current!.brut - previous.brut) / previous.brut) * 1000) / 10;
 
-  const year = new Date().getFullYear();
+  const year = ref.getFullYear();
   const ytdBulletins = d.bulletins.filter(b => b.periode.startsWith(`${year}-`));
   const ytdBrut = ytdBulletins.reduce((s, b) => s + Number(b.salaire_brut || 0), 0);
   const ytdCoutTotal = ytdBrut * (1 + COUT_PATRONAL_RATE);
@@ -334,9 +416,9 @@ export interface TurnoverKpi {
   departuresYear: number;
 }
 
-export function computeTurnover(d: RhDataset): TurnoverKpi {
+export function computeTurnover(d: RhDataset, ref: Date = new Date()): TurnoverKpi {
   const months: string[] = [];
-  for (let i = 11; i >= 0; i--) months.push(format(subMonths(new Date(), i), "yyyy-MM"));
+  for (let i = 11; i >= 0; i--) months.push(format(subMonths(ref, i), "yyyy-MM"));
 
   const series: TurnoverPoint[] = months.map(m => {
     const entrees = d.employees.filter(e => e.date_embauche.startsWith(m)).length;
@@ -357,7 +439,7 @@ export function computeTurnover(d: RhDataset): TurnoverKpi {
     };
   });
 
-  const eff = computeEffectif(d);
+  const eff = computeEffectif(d, ref);
   const avgEffectif = (eff.actifs + Math.max(0, eff.actifs - eff.entriesYear + eff.departuresYear)) / 2;
   const rateYear = avgEffectif === 0 ? 0 : Math.round((eff.departuresYear / avgEffectif) * 1000) / 10;
 
@@ -371,10 +453,10 @@ export interface AbsenteeismKpi {
   byType: { type: string; days: number }[];
 }
 
-export function computeAbsenteeism(d: RhDataset): AbsenteeismKpi {
-  const eff = computeEffectif(d);
-  const month = new Date().getMonth();
-  const year = new Date().getFullYear();
+export function computeAbsenteeism(d: RhDataset, ref: Date = new Date()): AbsenteeismKpi {
+  const eff = computeEffectif(d, ref);
+  const month = ref.getMonth();
+  const year = ref.getFullYear();
   const theoreticalDays = eff.actifs * 22;
 
   let total = 0;
@@ -404,12 +486,12 @@ export interface MedicalKpi {
   overdue: number;          // visites passées
 }
 
-export function computeMedical(d: RhDataset): MedicalKpi {
-  const eff = computeEffectif(d);
+export function computeMedical(d: RhDataset, ref: Date = new Date()): MedicalKpi {
+  const eff = computeEffectif(d, ref);
   if (eff.actifs === 0) return { complianceRate: 0, expiringSoon: 0, overdue: 0 };
 
-  const now = new Date();
-  const soon = new Date();
+  const now = new Date(ref);
+  const soon = new Date(ref);
   soon.setDate(soon.getDate() + 60);
 
   let compliant = 0;
@@ -524,8 +606,8 @@ export interface SafetyKpi {
   byGravity: { gravite: string; count: number }[];
 }
 
-export function computeSafety(d: RhDataset): SafetyKpi {
-  const eff = computeEffectif(d);
+export function computeSafety(d: RhDataset, ref: Date = new Date()): SafetyKpi {
+  const eff = computeEffectif(d, ref);
   const count = d.accidents.length;
   const joursPerdus = d.accidents.reduce((s, a) => s + (a.jours_arret || 0), 0);
   const theoreticalHours = eff.actifs * HEURES_MENSUELLES * 12;

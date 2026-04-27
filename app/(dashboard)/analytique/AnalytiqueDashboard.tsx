@@ -13,7 +13,8 @@ import {
 import {
   applyFilters, computeEffectif, computeAgePyramid, computePayroll,
   computeTurnover, computeAbsenteeism, computeMedical, computeRecruitment,
-  computeSafety, listDepartments, listCategories, FMT,
+  computeSafety, listDepartments, listCategories, listYears, getReferenceDate,
+  MONTH_LABELS, FMT,
   type RhEmployee, type RhBulletin, type RhContract, type RhConge, type RhMedical,
   type RhJob, type RhCandidate, type RhEvaluation, type RhAccident,
 } from "@/lib/analytics-rh";
@@ -112,6 +113,84 @@ function CardTitle({ children, sub, action }: { children: React.ReactNode; sub?:
   );
 }
 
+function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[11px] uppercase tracking-wider text-slate-400 font-medium whitespace-nowrap">{label}</span>
+      {children}
+    </div>
+  );
+}
+
+function SegmentedYear({ value, onChange, years }: {
+  value: number | null; onChange: (v: number | null) => void; years: number[];
+}) {
+  // On limite à 4 années récentes + bouton "Toutes". Si plus, dropdown.
+  const visible = years.slice(0, 4);
+  const hidden = years.slice(4);
+  return (
+    <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5">
+      <SegmentBtn active={value === null} onClick={() => onChange(null)}>Toutes</SegmentBtn>
+      {visible.map(y => (
+        <SegmentBtn key={y} active={value === y} onClick={() => onChange(y)}>{y}</SegmentBtn>
+      ))}
+      {hidden.length > 0 && (
+        <select
+          value={hidden.includes(value || 0) ? String(value) : ""}
+          onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
+          className="h-7 rounded border-0 bg-transparent text-xs text-slate-700 px-1 focus:outline-none focus:ring-1 focus:ring-slate-300"
+        >
+          <option value="">…</option>
+          {hidden.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+      )}
+    </div>
+  );
+}
+
+function SegmentedMonth({ value, onChange, disabled }: {
+  value: number | null; onChange: (v: number | null) => void; disabled?: boolean;
+}) {
+  return (
+    <select
+      value={value ?? ""}
+      onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
+      disabled={disabled}
+      className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <option value="">Tous</option>
+      <option value="1">Janv.</option>
+      <option value="2">Févr.</option>
+      <option value="3">Mars</option>
+      <option value="4">Avril</option>
+      <option value="5">Mai</option>
+      <option value="6">Juin</option>
+      <option value="7">Juil.</option>
+      <option value="8">Août</option>
+      <option value="9">Sept.</option>
+      <option value="10">Oct.</option>
+      <option value="11">Nov.</option>
+      <option value="12">Déc.</option>
+    </select>
+  );
+}
+
+function SegmentBtn({ active, onClick, children }: {
+  active: boolean; onClick: () => void; children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={[
+        "h-7 px-3 rounded text-xs font-medium tabular-nums transition-colors whitespace-nowrap",
+        active ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
+      ].join(" ")}
+    >
+      {children}
+    </button>
+  );
+}
+
 const TOOLTIP_STYLE = {
   background: "white",
   border: "1px solid #e2e8f0",
@@ -126,6 +205,8 @@ const TOOLTIP_STYLE = {
 export function AnalytiqueDashboard(props: Props) {
   const [departement, setDepartement] = useState("Tous");
   const [categorie, setCategorie] = useState("Tous");
+  const [annee, setAnnee] = useState<number | null>(null);  // null = toutes
+  const [mois, setMois] = useState<number | null>(null);    // null = tous
   const [exporting, setExporting] = useState(false);
 
   const dataset = useMemo(() => ({
@@ -142,16 +223,32 @@ export function AnalytiqueDashboard(props: Props) {
 
   const departements = useMemo(() => listDepartments(props.employees), [props.employees]);
   const categories = useMemo(() => listCategories(props.employees), [props.employees]);
-  const filtered = useMemo(() => applyFilters(dataset, { departement, categorie }), [dataset, departement, categorie]);
+  const annees = useMemo(() => listYears(dataset), [dataset]);
+  const filtered = useMemo(
+    () => applyFilters(dataset, { departement, categorie, annee, mois }),
+    [dataset, departement, categorie, annee, mois]
+  );
+  const refDate = useMemo(() => getReferenceDate(annee, mois), [annee, mois]);
 
-  const effectif = useMemo(() => computeEffectif(filtered), [filtered]);
-  const ageData = useMemo(() => computeAgePyramid(filtered), [filtered]);
-  const payroll = useMemo(() => computePayroll(filtered), [filtered]);
-  const turnover = useMemo(() => computeTurnover(filtered), [filtered]);
-  const absenteeism = useMemo(() => computeAbsenteeism(filtered), [filtered]);
-  const medicalKpi = useMemo(() => computeMedical(filtered), [filtered]);
+  const effectif = useMemo(() => computeEffectif(filtered, refDate), [filtered, refDate]);
+  const ageData = useMemo(() => computeAgePyramid(filtered, refDate), [filtered, refDate]);
+  const payroll = useMemo(() => computePayroll(filtered, refDate), [filtered, refDate]);
+  const turnover = useMemo(() => computeTurnover(filtered, refDate), [filtered, refDate]);
+  const absenteeism = useMemo(() => computeAbsenteeism(filtered, refDate), [filtered, refDate]);
+  const medicalKpi = useMemo(() => computeMedical(filtered, refDate), [filtered, refDate]);
   const recruitment = useMemo(() => computeRecruitment(filtered), [filtered]);
-  const safety = useMemo(() => computeSafety(filtered), [filtered]);
+  const safety = useMemo(() => computeSafety(filtered, refDate), [filtered, refDate]);
+
+  const periodLabel = useMemo(() => {
+    if (annee && mois) return `${MONTH_LABELS[mois - 1]} ${annee}`;
+    if (annee) return `Année ${annee}`;
+    return "12 mois glissants";
+  }, [annee, mois]);
+
+  const isFiltered = departement !== "Tous" || categorie !== "Tous" || annee !== null || mois !== null;
+  const resetFilters = () => {
+    setDepartement("Tous"); setCategorie("Tous"); setAnnee(null); setMois(null);
+  };
 
   // Pyramide : Hommes en valeurs négatives pour affichage symétrique
   const pyramidData = useMemo(
@@ -199,45 +296,73 @@ export function AnalytiqueDashboard(props: Props) {
   return (
     <div className="space-y-8 max-w-[1400px] mx-auto">
       {/* ── Header + filtres ─────────────────────────────────────────── */}
-      <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 pb-4 border-b border-slate-200">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Vue d'ensemble</p>
-          <h1 className="text-2xl font-semibold text-slate-900 mt-1">Analytique RH</h1>
-          <p className="text-sm text-slate-500 mt-1.5">
-            Synthèse consolidée des indicateurs sociaux, financiers et de performance.
-          </p>
+      <header className="flex flex-col gap-5 pb-4 border-b border-slate-200">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Vue d'ensemble</p>
+            <h1 className="text-2xl font-semibold text-slate-900 mt-1">Analytique RH</h1>
+            <p className="text-sm text-slate-500 mt-1.5">
+              Synthèse consolidée des indicateurs sociaux, financiers et de performance.
+              <span className="text-slate-700 font-medium ml-1">· {periodLabel}</span>
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleExportPdf}
+              disabled={exporting}
+              className="h-9 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
+              <Download className="h-3.5 w-3.5" />
+              {exporting ? "Export..." : "Exporter"}
+            </button>
+            <Link
+              href="/analytique/focus"
+              className="h-9 inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 text-sm font-medium text-white hover:bg-slate-800"
+            >
+              Focus stratégique
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <select
-            value={departement}
-            onChange={e => setDepartement(e.target.value)}
-            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
-          >
-            {departements.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
-          <select
-            value={categorie}
-            onChange={e => setCategorie(e.target.value)}
-            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
-          >
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <button
-            onClick={handleExportPdf}
-            disabled={exporting}
-            className="h-9 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-          >
-            <Download className="h-3.5 w-3.5" />
-            {exporting ? "Export..." : "Exporter"}
-          </button>
-          <Link
-            href="/analytique/focus"
-            className="h-9 inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 text-sm font-medium text-white hover:bg-slate-800"
-          >
-            Focus stratégique
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+        {/* Barre de filtres */}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <FilterField label="Département">
+            <select
+              value={departement}
+              onChange={e => setDepartement(e.target.value)}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+            >
+              {departements.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </FilterField>
+          <FilterField label="Catégorie">
+            <select
+              value={categorie}
+              onChange={e => setCategorie(e.target.value)}
+              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+            >
+              {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </FilterField>
+
+          <div className="h-8 w-px bg-slate-200" />
+
+          <FilterField label="Année">
+            <SegmentedYear value={annee} onChange={setAnnee} years={annees} />
+          </FilterField>
+          <FilterField label="Mois">
+            <SegmentedMonth value={mois} onChange={setMois} disabled={annee === null} />
+          </FilterField>
+
+          {isFiltered && (
+            <button
+              onClick={resetFilters}
+              className="text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 ml-auto"
+            >
+              Réinitialiser
+            </button>
+          )}
         </div>
       </header>
 
