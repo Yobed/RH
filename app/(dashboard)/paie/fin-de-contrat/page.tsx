@@ -100,10 +100,10 @@ export default async function FinDeContratPage({
                              <FilePdf weight="duotone" size={28} />
                           </div>
                           <div>
-                             <h4 className="font-black text-slate-900 tracking-tight leading-none mb-1">
+                             <h4 className="font-black text-slate-900 tracking-tight leading-tight mb-1">
                                {doc.employees?.full_name || "Employé Inconnu"}
                              </h4>
-                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400" suppressHydrationWarning>
                                Archivé le {format(new Date(doc.created_at), "PPP", { locale: fr })}
                              </p>
                           </div>

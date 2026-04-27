@@ -352,11 +352,11 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs transition-colors duration-500
                                       ${empId === e.id ? "bg-white/10 text-white" : "bg-slate-100 text-slate-400"}
                                     `}>
-                                      {e.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                                      {(e.full_name || "Employé").split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                                     </div>
                                     <div className="space-y-1">
-                                      <div className={`font-black text-lg tracking-tight leading-none ${empId === e.id ? "text-white" : "text-slate-900"}`}>
-                                        {e.full_name}
+                                      <div className={`font-black text-lg tracking-tight leading-tight ${empId === e.id ? "text-white" : "text-slate-900"}`}>
+                                        {e.full_name || "Chargement..."}
                                       </div>
                                       <div className={`text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 ${empId === e.id ? "text-slate-400" : "text-slate-400"}`}>
                                         <span className={empId === e.id ? "text-emerald-400" : "text-slate-300"}>#{e.matricule}</span>
@@ -405,7 +405,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
                                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Date Embauche</span>
-                                   <span className="text-xs font-black text-slate-900">{selectedEmp.date_embauche ? new Date(selectedEmp.date_embauche).toLocaleDateString('fr-CI') : '-'}</span>
+                                   <span className="text-xs font-black text-slate-900" suppressHydrationWarning>{selectedEmp.date_embauche ? new Date(selectedEmp.date_embauche).toLocaleDateString('fr-CI') : '-'}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/10">
                                    <span className="text-[10px] font-black uppercase text-emerald-100 tracking-widest">Salaire Actuel</span>
@@ -608,7 +608,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                             params: formValues
                           });
                           
-                          exportPDF(doc, `STC_${selectedEmp.full_name.replace(/ /g, "_")}_${new Date().getFullYear()}`);
+                          exportPDF(doc, `STC_${(selectedEmp.full_name || "Export").replace(/ /g, "_")}_${new Date().getFullYear()}`);
                           toast.success("PDF généré avec succès");
                         } catch (err) {
                           console.error("Export PDF error:", err);
