@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -66,10 +66,9 @@ const steps = [
 
 export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: Props) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [resultat, setResultat] = useState<ResultatSoldeDeCompte | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
   const [isArchiving, setIsArchiving] = useState(false);
   const [archived, setArchived] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { register, watch, setValue, trigger, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -83,22 +82,27 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
   });
 
   const empId = watch("employee_id");
-  const filteredEmployees = employees.filter(e => {
-    if (!searchTerm.trim()) return true;
+  const salaireMoyenField = watch("salaire_moyen_12_mois");
+  const ancienneteField = watch("anciennete_annees");
+  const cddMasseField = watch("somme_salaires_bruts_cdd");
+  const congesField = watch("jours_conges_restants");
+  const preavisField = watch("jours_preavis_non_effectues");
+
+  const filteredEmployees = useMemo(() => {
+    if (!searchTerm.trim()) return employees;
     
     const search = searchTerm.toLowerCase().trim();
-    const name = (e.full_name || "").toLowerCase();
-    const mat = (e.matricule || "").toLowerCase();
-    
-    // Split search into individual terms for multi-word matching
     const terms = search.split(/\s+/);
-    return terms.every(term => name.includes(term) || mat.includes(term));
-  });
+    
+    return employees.filter(e => {
+      const name = (e.full_name || "").toLowerCase();
+      const mat = (e.matricule || "").toLowerCase();
+      return terms.every(term => name.includes(term) || mat.includes(term));
+    });
+  }, [searchTerm, employees]);
   const selectedEmp = employees.find(e => e.id === empId);
   const typeContrat = (selectedEmp?.type_contrat || 'CDI').toUpperCase();
   const isCDD = typeContrat === 'CDD';
-
-  const formValues = watch();
 
   useEffect(() => {
     if (!selectedEmp) return;
@@ -124,20 +128,17 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
     }
   }, [selectedEmp, setValue]);
 
-  useEffect(() => {
-    if (!selectedEmp) {
-      setResultat(null);
-      return;
-    }
+  const resultat = useMemo(() => {
+    if (!selectedEmp) return null;
 
-    const sm = Number(formValues.salaire_moyen_12_mois) || 0;
-    const anc = Number(formValues.anciennete_annees) || 0;
-    const ssbCdd = Number(formValues.somme_salaires_bruts_cdd) || 0;
-    const conges = Number(formValues.jours_conges_restants) || 0;
-    const preavis = Number(formValues.jours_preavis_non_effectues) || 0;
+    const sm = Number(salaireMoyenField) || 0;
+    const anc = Number(ancienneteField) || 0;
+    const ssbCdd = Number(cddMasseField) || 0;
+    const conges = Number(congesField) || 0;
+    const preavis = Number(preavisField) || 0;
     const saa = Number(selectedEmp.salaire_brut) || sm;
 
-    const res = calculerSoldeDeCompte({
+    return calculerSoldeDeCompte({
       type_contrat: isCDD ? 'CDD' : 'CDI',
       salaire_moyen_12_mois: sm,
       somme_salaires_bruts_cdd: ssbCdd,
@@ -146,9 +147,15 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
       jours_preavis_non_effectues: preavis,
       salaire_mensuel_actuel: saa
     });
-
-    setResultat(res);
-  }, [formValues, selectedEmp, isCDD]);
+  }, [
+    selectedEmp, 
+    isCDD, 
+    salaireMoyenField, 
+    ancienneteField, 
+    cddMasseField, 
+    congesField, 
+    preavisField
+  ]);
 
   const handleNext = async () => {
     let isValid = false;
@@ -179,7 +186,13 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
         body: JSON.stringify({
           employee_id: selectedEmp.id,
           resultat: resultat,
-          parametres: formValues
+          parametres: {
+            salaire_moyen_12_mois: salaireMoyenField,
+            anciennete_annees: ancienneteField,
+            somme_salaires_bruts_cdd: cddMasseField,
+            jours_conges_restants: congesField,
+            jours_preavis_non_effectues: preavisField
+          }
         })
       });
 
@@ -386,62 +399,62 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                       </ScrollArea>
                     </div>
 
-                    <div className="lg:col-span-2 relative">
-                      <AnimatePresence mode="wait">
-                        {selectedEmp ? (
-                          <motion.div 
-                            key={selectedEmp.id}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-0"
-                          >
-                             <div className="flex flex-col items-center text-center space-y-4 mb-8">
-                                <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-slate-900/5 ring-1 ring-slate-100">
-                                   <User className="w-12 h-12 text-slate-300" />
-                                </div>
-                                <div className="space-y-1">
-                                  <h4 className="text-xl font-black text-slate-900 tracking-tight">{selectedEmp.full_name}</h4>
-                                  <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] uppercase px-4 py-1.5 rounded-full">{selectedEmp.type_contrat}</Badge>
-                                </div>
-                             </div>
+                        <div className="lg:col-span-2 relative">
+                          <AnimatePresence mode="wait">
+                            {selectedEmp ? (
+                              <motion.div 
+                                key={selectedEmp.id}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-0"
+                              >
+                                 <div className="flex flex-col items-center text-center space-y-4 mb-8">
+                                    <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-slate-900/5 ring-1 ring-slate-100">
+                                       <User className="w-12 h-12 text-slate-300" />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <h4 className="text-xl font-black text-slate-900 tracking-tight">{selectedEmp.full_name}</h4>
+                                      <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] uppercase px-4 py-1.5 rounded-full">{selectedEmp.type_contrat}</Badge>
+                                    </div>
+                                 </div>
 
-                             <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
-                                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Matricule</span>
-                                   <span className="text-xs font-black text-slate-900">{selectedEmp.matricule}</span>
-                                </div>
-                                <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
-                                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Date Embauche</span>
-                                   <span className="text-xs font-black text-slate-900" suppressHydrationWarning>{safeFormatDate(selectedEmp.date_embauche)}</span>
-                                </div>
-                                <div className="flex items-center justify-between p-4 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/10">
-                                   <span className="text-[10px] font-black uppercase text-emerald-100 tracking-widest">Salaire Actuel</span>
-                                   <span className="text-sm font-black text-white">{fmt(selectedEmp.salaire_brut || 0)}</span>
-                                </div>
-                             </div>
-                          </motion.div>
-                        ) : (
-                          <div className="h-full flex flex-col items-center justify-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100 p-8 text-center space-y-4">
-                             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                                <ArrowRightCircle className="w-8 h-8 text-slate-200" />
-                             </div>
-                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Sélectionnez un employé pour <br/> voir ses détails contractuels</p>
-                          </div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
+                                 <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
+                                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Matricule</span>
+                                       <span className="text-xs font-black text-slate-900">{selectedEmp.matricule}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
+                                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Date Embauche</span>
+                                       <span className="text-xs font-black text-slate-900" suppressHydrationWarning>{safeFormatDate(selectedEmp.date_embauche)}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between p-4 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/10">
+                                       <span className="text-[10px] font-black uppercase text-emerald-100 tracking-widest">Salaire Actuel</span>
+                                       <span className="text-sm font-black text-white">{fmt(selectedEmp.salaire_brut || 0)}</span>
+                                    </div>
+                                 </div>
+                              </motion.div>
+                            ) : (
+                              <div className="h-full flex flex-col items-center justify-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100 p-8 text-center space-y-4">
+                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                                    <ArrowRightCircle className="w-8 h-8 text-slate-200" />
+                                 </div>
+                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Sélectionnez un employé pour <br/> voir ses détails contractuels</p>
+                              </div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                   </div>
                 </div>
               )}
 
               {/* STEP 2: Parameters */}
-              {currentStep === 2 && selectedEmp && (
-                <div className="space-y-10 animate-in fade-in duration-500">
-                  <div className="grid md:grid-cols-2 gap-10">
+              {currentStep === 2 && (
+                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <div className="space-y-6">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] ml-1">Salaire moyen (12 derniers mois)</Label>
+                        <Label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] ml-1">Salaire Moyen (12 mois)</Label>
                         <div className="relative group">
                           <Input type="number" step="1000" {...register("salaire_moyen_12_mois")} className="h-14 border-slate-100 rounded-2xl bg-slate-50/50 focus:bg-white focus:ring-primary/20 text-lg font-black pr-16" />
                           <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">FCFA</span>
@@ -613,7 +626,13 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                             employee: selectedEmp,
                             stcResult: resultat,
                             company: company || { name: "ENTREPRISE", id: "temp" },
-                            params: formValues
+                            params: {
+                              salaire_moyen_12_mois: salaireMoyenField,
+                              anciennete_annees: ancienneteField,
+                              somme_salaires_bruts_cdd: cddMasseField,
+                              jours_conges_restants: congesField,
+                              jours_preavis_non_effectues: preavisField
+                            }
                           });
                           
                           exportPDF(doc, `STC_${(selectedEmp.full_name || "Export").replace(/ /g, "_")}_${new Date().getFullYear()}`);

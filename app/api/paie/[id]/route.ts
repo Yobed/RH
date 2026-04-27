@@ -30,7 +30,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
   const { data: profile } = await supabase
-    .from("profiles").select("company_id").eq("id", user.id).single();
+    .from("profiles").select("company_id").eq("id", user.id).limit(1).maybeSingle();
   if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 403 });
 
   let body: unknown;
@@ -47,7 +47,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     .eq("id", params.id)
     .eq("company_id", profile.company_id)
     .select()
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
@@ -63,7 +64,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     .from("bulletins_paie")
     .select("statut, company_id")
     .eq("id", params.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (!existing) return NextResponse.json({ error: "Bulletin introuvable" }, { status: 404 });
   if (existing.statut !== "brouillon")
@@ -127,7 +129,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     .eq("id", params.id)
     .eq("company_id", existing.company_id)
     .select()
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

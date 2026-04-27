@@ -4,17 +4,12 @@ import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { safeFormatDate } from "@/lib/paie-ci";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FilePdf, ClockCounterClockwise } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, FilePdf, ClockCounterClockwise, Calculator } from "@phosphor-icons/react/dist/ssr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
 
-// Hydration safety helper
-function ClientOnly({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="h-[600px] w-full bg-slate-50/50 animate-pulse rounded-[3rem]" />;
-  return <>{children}</>;
-}
+// Separate components used to have hooks but they must be in "use client" files or separated.
+// Since SoldeToutCompteForm is already "use client", it will handle hydration on its own.
 
 export const metadata = { title: "Solde de Tout Compte — RH Manager CI" };
 
@@ -27,120 +22,135 @@ export default async function FinDeContratPage({
   const params = await searchParams;
   const defaultEmployeeId = params?.employeeId;
 
-  const [{ data: employees }, { data: company }, { data: archivedSTCs }] = await Promise.all([
+  // We wrap the queries to be more resilient
+  const [
+    { data: employees, error: empErr }, 
+    { data: company, error: compErr }, 
+    { data: archivedSTCs, error: stcErr }
+  ] = await Promise.all([
     supabase
       .from("employees")
       .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche")
       .eq("statut", "actif")
       .order("full_name"),
-    supabase.from("companies").select("*").limit(1).maybeSingle(),
+    supabase
+      .from("companies")
+      .select("*")
+      .limit(1)
+      .maybeSingle(),
     supabase
       .from("documents")
       .select("*, employees(full_name, matricule)")
-      .eq("famille", "Paie")
-      .ilike("name", "%Solde de Tout Compte%")
+      .eq("famille", "Paie") // Adjusted to use 'Paie' as STC is not in enum, or we can use another filter
       .order("created_at", { ascending: false })
-      .limit(10),
+      .limit(10)
   ]);
 
-  return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-slate-100 pb-10">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-             <Badge className="bg-emerald-500/10 text-emerald-600 border-none text-[10px] font-black uppercase px-3 py-1">Fin de Contrat</Badge>
-             <div className="h-1 w-1 rounded-full bg-slate-300" />
-             <span className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">Solde de Tout Compte</span>
-          </div>
-          <h2 className="text-5xl font-black tracking-tightest leading-none text-slate-900 animate-in slide-in-from-left duration-700">
-            Clôture du <br/>
-            <span className="text-emerald-500 italic font-serif">Contrat</span> Travail
-          </h2>
-          <p className="text-muted-foreground text-sm font-medium max-w-xl leading-relaxed">
-            Simulez et archivez précisément les indemnités de fin de contrat (précarité, licenciement, congés) selon les lois ivoiriennes.
-          </p>
-        </div>
+  if (stcErr) console.error("Error fetching archives:", stcErr);
 
-        <Link
-          href="/paie"
-          className="h-14 px-8 rounded-[1.25rem] bg-white border border-slate-100 text-slate-900 font-black uppercase text-[11px] tracking-widest shadow-sm hover:bg-slate-50 transition-all flex items-center gap-3"
-        >
-          <ArrowLeft weight="bold" className="w-4 h-4" /> Retour à la paie
-        </Link>
+  // Filter archivedSTCs to only those with 'Solde de Tout Compte' in the name if needed, 
+  // or keep as is if 'Paie' is the standard for STCs.
+  const displayArchives = archivedSTCs?.filter(doc => doc.name?.includes("Solde de Tout Compte")) || [];
+
+  return (
+    <div className="container mx-auto py-10 px-6 space-y-12">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-4">
+           <div className="flex items-center gap-3">
+              <Link 
+                href="/paie" 
+                className="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm"
+              >
+                <ArrowLeft size={20} />
+              </Link>
+              <Badge className="bg-slate-900 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-md">
+                Module de Paie
+              </Badge>
+           </div>
+           <h1 className="text-5xl font-black text-slate-900 tracking-tightest leading-none">
+             Fin de <span className="text-primary italic">Contrat</span>
+           </h1>
+           <p className="text-slate-500 font-medium max-w-xl border-l-2 border-primary/20 pl-4">
+             Générez, simulez et archivez les soldes de tout compte conformément à la législation ivoirienne (Article 25.1).
+           </p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+           <div className="h-20 w-px bg-slate-100" />
+           <div className="text-right">
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Statut Réglementaire</p>
+             <div className="flex items-center gap-2 text-emerald-500 font-bold justify-end">
+               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+               À Jour • Mars 2026
+             </div>
+           </div>
+        </div>
       </div>
 
-      <Tabs defaultValue="simulator" className="space-y-8">
-        <TabsList className="bg-slate-100/50 p-1.5 rounded-[1.25rem] border border-slate-100 flex items-center w-fit shadow-inner">
-          <TabsTrigger 
-            value="simulator" 
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-lg text-[10px] font-black uppercase tracking-widest transition-all"
-          >
-            Simulateur STC
+      <Tabs defaultValue="calculateur" className="space-y-10">
+        <TabsList className="bg-slate-100/50 p-1.5 rounded-2xl border border-slate-100 gap-1">
+          <TabsTrigger value="calculateur" className="rounded-xl px-10 py-3 font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-slate-900 text-slate-400 gap-2">
+             <Calculator size={16} weight="bold" /> Calculateur
           </TabsTrigger>
-          <TabsTrigger 
-            value="history" 
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
-          >
-            <ClockCounterClockwise weight="bold" size={14} /> Historique & Archive
+          <TabsTrigger value="archives" className="rounded-xl px-10 py-3 font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-slate-900 text-slate-400 gap-2">
+             <ClockCounterClockwise size={16} weight="bold" /> Historique
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="simulator">
-          <ClientOnly>
-            <SoldeToutCompteForm
-              employees={employees ?? []}
-              company={company}
-              defaultEmployeeId={defaultEmployeeId}
-            />
-          </ClientOnly>
+        <TabsContent value="calculateur" className="m-0 focus-visible:outline-none">
+          <SoldeToutCompteForm 
+            employees={employees || []} 
+            defaultEmployeeId={defaultEmployeeId}
+            company={company}
+          />
         </TabsContent>
 
-        <TabsContent value="history">
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.04)] overflow-hidden">
-             <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/20">
-                <h3 className="text-xl font-black text-slate-900 tracking-tightest">Récemment Archivés</h3>
-             </div>
-             
-             {archivedSTCs && archivedSTCs.length > 0 ? (
-               <div className="divide-y divide-slate-50">
-                  {archivedSTCs.map((doc: any) => (
-                    <div key={doc.id} className="p-8 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
-                       <div className="flex items-center gap-6">
-                          <div className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-100 group-hover:scale-110 transition-transform">
-                             <FilePdf weight="duotone" size={28} />
-                          </div>
-                          <div>
-                             <h4 className="font-black text-slate-900 tracking-tight leading-tight mb-1">
-                               {doc.employees?.full_name || "Employé Inconnu"}
-                             </h4>
-                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400" suppressHydrationWarning>
-                                Archivé le {safeFormatDate(doc.created_at, "PPP")}
-                             </p>
-                          </div>
-                       </div>
+        <TabsContent value="archives" className="m-0 focus-visible:outline-none">
+           <div className="bg-white border border-slate-100 rounded-[3rem] overflow-hidden shadow-sm">
+              <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/20">
+                 <h3 className="text-xl font-black text-slate-900 tracking-tightest">Récemment Archivés</h3>
+              </div>
+              
+              {displayArchives.length > 0 ? (
+                <div className="divide-y divide-slate-50">
+                   {displayArchives.map((doc: any) => (
+                     <div key={doc.id} className="p-8 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
+                        <div className="flex items-center gap-6">
+                           <div className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-100 group-hover:scale-110 transition-transform">
+                              <FilePdf weight="duotone" size={28} />
+                           </div>
+                           <div>
+                              <h4 className="font-black text-slate-900 tracking-tight leading-tight mb-1">
+                                {doc.employees?.full_name || "Employé Inconnu"}
+                              </h4>
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400" suppressHydrationWarning>
+                                 Archivé le {safeFormatDate(doc.created_at, "PPP")}
+                              </p>
+                           </div>
+                        </div>
 
-                       <div className="flex items-center gap-3">
-                          <a 
-                            href={doc.file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="h-10 px-6 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-slate-800 transition-all flex items-center gap-2"
-                          >
-                            <FilePdf weight="bold" size={14} /> Voir le document
-                          </a>
-                       </div>
-                    </div>
-                  ))}
-               </div>
-             ) : (
-               <div className="p-20 text-center">
-                  <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                     <FilePdf className="h-10 w-10 text-slate-200" weight="duotone" />
-                  </div>
-                  <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Aucune archive disponible</p>
-               </div>
-             )}
-          </div>
+                        <div className="flex items-center gap-3">
+                           <a 
+                             href={doc.file_url}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="h-10 px-6 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-slate-800 transition-all flex items-center gap-2"
+                           >
+                             <FilePdf weight="bold" size={14} /> Voir le document
+                           </a>
+                        </div>
+                     </div>
+                   ))}
+                </div>
+              ) : (
+                <div className="p-20 text-center">
+                   <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <FilePdf className="h-10 w-10 text-slate-200" weight="duotone" />
+                   </div>
+                   <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Aucune archive disponible</p>
+                </div>
+              )}
+           </div>
         </TabsContent>
       </Tabs>
     </div>

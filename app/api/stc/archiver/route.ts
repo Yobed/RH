@@ -24,17 +24,32 @@ export async function POST(req: Request) {
     }
 
     // Récupérer les infos de l'employé et de l'entreprise
+    console.log("Archivage STC pour employee_id:", employee_id);
+    
     const { data: employee, error: empError } = await supabase
       .from("employees")
       .select("*, companies(*)")
       .eq("id", employee_id)
-      .single();
+      .limit(1)
+      .maybeSingle();
+
+    console.log("Données employé récupérées:", JSON.stringify(employee, null, 2));
 
     if (empError || !employee) {
-      return NextResponse.json({ error: "Employé non trouvé" }, { status: 404 });
+      console.error("Employé non trouvé:", empError);
+      return NextResponse.json({ error: `Employé non trouvé (${employee_id})` }, { status: 404 });
     }
 
     const company = employee.companies;
+    console.log("Données entreprise récupérées via jointure:", JSON.stringify(company, null, 2));
+
+    if (!company) {
+      console.error("DEBUG: company_id de l'employé:", employee.company_id);
+      return NextResponse.json({ 
+        error: "Entreprise introuvable pour cet employé",
+        details: { company_id: employee.company_id, full_name: employee.full_name }
+      }, { status: 404 });
+    }
 
     // Créer le PDF
     const doc = new jsPDF() as jsPDFWithAutoTable;
@@ -165,7 +180,8 @@ export async function POST(req: Request) {
         file_size_kb: Math.round(buffer.length / 1024)
       })
       .select()
-      .single();
+      .limit(1)
+      .maybeSingle();
 
     if (docDbError) {
       console.error("Erreur DB documents:", docDbError);

@@ -77,7 +77,8 @@ export async function PUT(
     .from("employees")
     .select("company_id, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
     .eq("id", params.id)
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   // Si au moins un champ salaire a changé → archiver l'ancienne situation
   if (current) {
@@ -110,7 +111,8 @@ export async function PUT(
     .update(updateData)
     .eq("id", params.id)
     .select()
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

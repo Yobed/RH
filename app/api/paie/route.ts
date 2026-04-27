@@ -52,7 +52,7 @@ export async function POST(req: Request) {
   }
 
   const { data: profile } = await supabase
-    .from("profiles").select("company_id").eq("id", user.id).single();
+    .from("profiles").select("company_id").eq("id", user.id).limit(1).maybeSingle();
   if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 403 });
 
   const d = parsed.data;
@@ -106,7 +106,8 @@ export async function POST(req: Request) {
       }
     })
     .select()
-    .single();
+    .limit(1)
+    .maybeSingle();
 
   if (error) {
     if (error.code === "23505")
