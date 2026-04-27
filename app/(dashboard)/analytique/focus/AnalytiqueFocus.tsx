@@ -286,7 +286,7 @@ export function AnalytiqueFocus({
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Slicers</span>
           </div>
 
-          <Select value={selectedDept} onValueChange={setSelectedDept}>
+          <Select value={selectedDept} onValueChange={(val) => setSelectedDept(val as string)}>
             <SelectTrigger className="w-[140px] h-8 bg-transparent border-none text-xs font-black text-slate-700 outline-none shadow-none focus:ring-0">
               <SelectValue placeholder="Départements" />
             </SelectTrigger>
@@ -301,7 +301,7 @@ export function AnalytiqueFocus({
 
           <div className="w-[1px] h-4 bg-slate-200" />
 
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <Select value={selectedCategory} onValueChange={(val) => setSelectedCategory(val as string)}>
             <SelectTrigger className="w-[140px] h-8 bg-transparent border-none text-xs font-black text-slate-700 outline-none shadow-none focus:ring-0">
               <SelectValue placeholder="Catégories" />
             </SelectTrigger>
