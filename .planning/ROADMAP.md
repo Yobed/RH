@@ -17,7 +17,7 @@
 - [ ] **Phase 5: Évaluations & Discipline** — Évaluations configurables et processus disciplinaire complet conforme CT-CI
 - [ ] **Phase 6: QHSE & Sécurité au Travail** — Déclarations AT, visites médicales, registre QHSE
 - [ ] **Phase 7: Agent IA & Reporting** — RAG droit du travail CI, tableaux de bord analytiques, communication interne
-- [ ] **Phase 8: Import Paie Sage** — Importation du Livre de Paie Sage avec template de mapping, traitement Python et traçabilité dans payroll_logs
+- [x] **Phase 8: Import Paie Sage** — Importation du Livre de Paie Sage avec template de mapping, traitement Python et traçabilité dans payroll_logs
 
 ---
 
@@ -190,11 +190,11 @@ Plans:
 **Goal:** Les RH utilisant Sage Paie peuvent importer leur Livre de Paie mensuel dans Antigravity via un template de mapping adaptatif — sans changer leur processus Sage — avec traçabilité complète dans `payroll_logs` et validation des données avant tout import.
 **Depends on:** Phase 2
 **Covers:** ISP-01, ISP-02, ISP-03, ISP-04, ISP-05
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans executed
 Plans:
 - [x] 08-01-PLAN.md — Migration payroll_logs + lib/paie-sage-import.ts (parseNumericFR) + tests TDD
-- [ ] 08-02-PLAN.md — API routes GET template + POST import (validation + insert payroll_logs)
-- [ ] 08-03-PLAN.md — Page /paie/import-sage + SageImportDropzone + entree SidebarNav
+- [x] 08-02-PLAN.md — API routes GET template + POST import (validation + insert payroll_logs)
+- [x] 08-03-PLAN.md — Page /paie/import-sage + SageImportDropzone + entree SidebarNav
 
 **Success Criteria** (what must be TRUE):
 
@@ -219,7 +219,7 @@ Plans:
 | 5. Evaluations & Discipline | 0/4 | Not started | - |
 | 6. QHSE & Sécurité au Travail | 0/3 | Not started | - |
 | 7. Agent IA & Reporting | 0/4 | Not started | - |
-| 8. Import Paie Sage | 1/3 | In Progress|  |
+| 8. Import Paie Sage | 3/3 | Completed | 27 avril 2026 |
 
 ---
 
@@ -273,11 +273,11 @@ Plans:
 | REP-04 | Phase 7 | Pending |
 | COM-01 | Phase 7 | Pending |
 | COM-02 | Phase 7 | Pending |
-| ISP-01 | Phase 8 | Pending |
-| ISP-02 | Phase 8 | Pending |
-| ISP-03 | Phase 8 | Pending |
-| ISP-04 | Phase 8 | Pending |
-| ISP-05 | Phase 8 | Pending |
+| ISP-01 | Phase 8 | Completed |
+| ISP-02 | Phase 8 | Completed |
+| ISP-03 | Phase 8 | Completed |
+| ISP-04 | Phase 8 | Completed |
+| ISP-05 | Phase 8 | Completed |
 
 **Total v1 mappées : 52/52** *(42 exigences originales + 5 issues de dette CONCERNS.md absorbées dans SOC-01 à SOC-04 et Phase 1)*
 
