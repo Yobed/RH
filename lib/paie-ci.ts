@@ -298,6 +298,7 @@ export interface LignesBulletin {
   prime_depassement?: number;
   prime_fonction?: number;
   prime_transport?: number;
+  vacation_allowance?: number; // Indemnité congés payés (Sage)
   heures_sup?: {
     h15: number;
     h50: number;
@@ -306,7 +307,7 @@ export interface LignesBulletin {
   taux_horaire?: number;
   autres_retenues?: number;
   avances?: number;
-  nb_jours_absence?: number; // jours absence non justifiée (retenue proportionnelle)
+  nb_jours_absence?: number;
 }
 
 // Taux Contribution Nationale CI — solidarité employé
@@ -350,7 +351,8 @@ export function calculerRetenuAbsence(nbJoursAbsence: number, salaireBrut: numbe
 
 export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieComplet {
   const primeTransport = lignes.prime_transport ?? 0;
-  
+  const vacationAllowance = lignes.vacation_allowance ?? 0;
+
   const taux_horaire = lignes.taux_horaire ?? Math.round(((lignes.salaire_brut ?? 0) + (lignes.sursalaire ?? 0)) / 173.33);
   const heures_sup_montant = lignes.heures_sup
     ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, taux_horaire)
@@ -364,10 +366,11 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     + (lignes.prime_depassement ?? 0)
     + (lignes.prime_fonction ?? 0)
     + heures_sup_montant
-    + primeTransport;
+    + primeTransport
+    + vacationAllowance;
 
-  // Prime transport non soumise à ITS
-  const total_imposable = Math.max(0, total_brut - primeTransport);
+  // Prime transport + indemnité congés payés non soumises à ITS
+  const total_imposable = Math.max(0, total_brut - primeTransport - vacationAllowance);
 
   // CNPS plafonné
   const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
@@ -393,7 +396,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   const salaire_net = Math.max(0, total_brut - total_retenues);
 
   // Colonnes Sage
-  const exempt_indemnity = primeTransport;
+  const exempt_indemnity = primeTransport + vacationAllowance;
   const gross_salary = total_brut;
   const fiscal_gross = total_imposable;
   const social_gross = total_brut - exempt_indemnity;

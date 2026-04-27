@@ -65,6 +65,7 @@ const schema = z.object({
   prime_depassement:     z.string().optional(),
   prime_fonction:        z.string().optional(),
   prime_transport:       z.string().optional(),
+  vacation_allowance:    z.string().optional(),
   heures_sup_h15:        z.string().optional(),
   heures_sup_h50:        z.string().optional(),
   heures_sup_h75:        z.string().optional(),
@@ -123,7 +124,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
         periode: currentPeriode(),
         sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
         prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
-        prime_transport: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
+        prime_transport: "0", vacation_allowance: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
         nb_jours_absence: "0",
       },
     });
@@ -172,6 +173,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
     prime_depassement:    Number(watch("prime_depassement")) || 0,
     prime_fonction:       Number(watch("prime_fonction")) || 0,
     prime_transport:      Number(watch("prime_transport")) || 0,
+    vacation_allowance:   Number(watch("vacation_allowance")) || 0,
     heures_sup:           {
       h15: Number(watch("heures_sup_h15")) || 0,
       h50: Number(watch("heures_sup_h50")) || 0,
@@ -193,6 +195,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
       prime_depassement:    Number(data.prime_depassement) || 0,
       prime_fonction:       Number(data.prime_fonction) || 0,
       prime_transport:      Number(data.prime_transport) || 0,
+      vacation_allowance:   Number(data.vacation_allowance) || 0,
       heures_sup_h15:       Number(data.heures_sup_h15) || 0,
       heures_sup_h50:       Number(data.heures_sup_h50) || 0,
       heures_sup_h75:       Number(data.heures_sup_h75) || 0,
@@ -370,6 +373,15 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 </label>
                 <Input type="number" min="0" step="1000" {...register("prime_transport")} className="mt-1" />
               </div>
+
+              {/* 09 */}
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">09</span> Indemnité congés payés
+                  <span className="ml-1 text-[10px] text-emerald-600 font-normal">(exonérée)</span>
+                </label>
+                <Input type="number" min="0" step="1000" {...register("vacation_allowance")} className="mt-1" />
+              </div>
             </div>
           </div>
 
@@ -421,17 +433,17 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
             </div>
           </div>
 
-          {/* ── APERÇU ───────────────────────────────────────────────── */}
+          {/* ── APERÇU SAGE ──────────────────────────────────────────── */}
           {preview && (
-            <div className="rounded-lg border bg-slate-50 p-4 space-y-1.5 text-sm">
-              <div className="flex justify-between items-center mb-2">
+            <div className="rounded-lg border bg-slate-50 p-4 space-y-1 text-sm">
+              <div className="flex justify-between items-center mb-3">
                 <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
-                  Aperçu du bulletin
+                  Aperçu bulletin — nomenclature Sage
                 </p>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={handleDownloadPDF}
                   className="h-7 text-[10px] gap-1.5"
                 >
@@ -439,59 +451,107 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   PDF
                 </Button>
               </div>
-              <div className="flex justify-between border-b pb-1.5 mb-1">
-                <span className="text-muted-foreground">Total brut imposable</span>
-                <span className="font-medium">{fmt(preview.total_imposable)}</span>
+
+              {/* GAINS */}
+              <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest mb-1">Gains</p>
+              <div className="flex justify-between text-slate-600">
+                <span>Salaire de base</span>
+                <span>{fmt(nums.salaire_brut)}</span>
               </div>
-              {(preview.heures_sup_montant ?? 0) > 0 && (
-                <div className="flex justify-between text-slate-700">
-                  <span>+ Heures Supplémentaires</span>
-                  <span>{fmt(preview.heures_sup_montant!)}</span>
+              {(nums.sursalaire ?? 0) > 0 && (
+                <div className="flex justify-between text-slate-600">
+                  <span>Sursalaire</span>
+                  <span>{fmt(nums.sursalaire)}</span>
+                </div>
+              )}
+              {(nums.prime_anciennete ?? 0) > 0 && (
+                <div className="flex justify-between text-slate-600">
+                  <span>Prime d&apos;ancienneté</span>
+                  <span>{fmt(nums.prime_anciennete)}</span>
+                </div>
+              )}
+              {(nums.vacation_allowance ?? 0) > 0 && (
+                <div className="flex justify-between text-emerald-600">
+                  <span>Indemnité congés payés <span className="text-[10px]">(exon.)</span></span>
+                  <span>{fmt(nums.vacation_allowance)}</span>
                 </div>
               )}
               {nums.prime_transport > 0 && (
                 <div className="flex justify-between text-emerald-600">
-                  <span>+ Transport (non imposable)</span>
+                  <span>Indemnité de transport <span className="text-[10px]">(exon.)</span></span>
                   <span>{fmt(nums.prime_transport)}</span>
                 </div>
               )}
-              <div className="flex justify-between font-semibold">
-                <span>Total gains</span>
-                <span>{fmt(preview.total_brut)}</span>
+              {preview.overtime_pay > 0 && (
+                <div className="flex justify-between text-slate-600">
+                  <span>Heures supplémentaires</span>
+                  <span>{fmt(preview.overtime_pay)}</span>
+                </div>
+              )}
+              <div className="flex justify-between font-semibold border-t pt-1 mt-1">
+                <span>*** SALAIRE BRUT ***</span>
+                <span>{fmt(preview.gross_salary)}</span>
+              </div>
+              {preview.exempt_indemnity > 0 && (
+                <div className="flex justify-between text-emerald-700 text-xs">
+                  <span>*** INDEMNITE EXONEREE ***</span>
+                  <span>{fmt(preview.exempt_indemnity)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-xs text-slate-500">
+                <span>*** BRUT FISCAL ***</span>
+                <span>{fmt(preview.fiscal_gross)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-slate-500">
+                <span>*** BRUT SOCIAL ***</span>
+                <span>{fmt(preview.social_gross)}</span>
+              </div>
+
+              {/* RETENUES */}
+              <p className="text-[10px] font-semibold uppercase text-slate-400 tracking-widest mt-3 mb-1">Retenues salariales</p>
+              <div className="flex justify-between text-red-600">
+                <span>Retenue CNPS (6,3% + CMU)</span>
+                <span>{fmt(preview.withholding_cnps)}</span>
               </div>
               <div className="flex justify-between text-red-600">
-                <span>− CNPS retraite (6,3%)</span>
-                <span>{fmt(preview.cnps_salarie)}</span>
+                <span>Contribution nationale CN (1,5%)</span>
+                <span>{fmt(preview.tax_cn)}</span>
               </div>
               <div className="flex justify-between text-red-600">
-                <span>− CMU salariale (forfait)</span>
-                <span>{fmt(preview.cmu)}</span>
-              </div>
-              <div className="flex justify-between text-red-600">
-                <span>− ITS (barème progressif)</span>
-                <span>{fmt(preview.its)}</span>
+                <span>IGR — barème progressif</span>
+                <span>{fmt(preview.tax_igr)}</span>
               </div>
               {nums.autres_retenues > 0 && (
                 <div className="flex justify-between text-red-600">
-                  <span>− Autres retenues</span>
+                  <span>Autres retenues</span>
                   <span>{fmt(nums.autres_retenues)}</span>
                 </div>
               )}
               {nums.avances > 0 && (
                 <div className="flex justify-between text-red-600">
-                  <span>− Avances / Acomptes</span>
+                  <span>Avances / Acomptes</span>
                   <span>{fmt(nums.avances)}</span>
                 </div>
               )}
-              {nums.nb_jours_absence > 0 && (preview?.retenu_absence ?? 0) > 0 && (
+              {nums.nb_jours_absence > 0 && (preview.retenu_absence ?? 0) > 0 && (
                 <div className="flex justify-between text-red-600">
-                  <span>− Retenue absence ({nums.nb_jours_absence}j)</span>
-                  <span>{fmt(preview!.retenu_absence)}</span>
+                  <span>Retenue absence ({nums.nb_jours_absence}j)</span>
+                  <span>{fmt(preview.retenu_absence)}</span>
                 </div>
               )}
-              <div className="border-t pt-2 flex justify-between font-bold text-emerald-700 text-base">
-                <span>Net à payer</span>
-                <span>{fmt(preview.salaire_net)}</span>
+              <div className="flex justify-between text-xs text-slate-500 border-t pt-1 mt-1">
+                <span>*** TOTAL DES COTISATIONS ***</span>
+                <span>{fmt(preview.total_contributions)}</span>
+              </div>
+              <div className="flex justify-between text-xs text-slate-500">
+                <span>*** NET AVANT RETENUE ***</span>
+                <span>{fmt(preview.net_before_withholding)}</span>
+              </div>
+
+              {/* NET À PAYER */}
+              <div className="border-t pt-2 mt-2 flex justify-between font-bold text-emerald-700 text-base">
+                <span>NET A PAYER</span>
+                <span>{fmt(preview.net_to_pay)}</span>
               </div>
             </div>
           )}

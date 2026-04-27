@@ -16,6 +16,7 @@ const schema = z.object({
   prime_depassement: z.number().min(0).default(0),                   // Ligne 06
   prime_fonction: z.number().min(0).default(0),                      // Ligne 07
   prime_transport: z.number().min(0).default(0),                     // Ligne 08 — Non imposable
+  vacation_allowance: z.number().min(0).default(0),                  // Indemnité congés payés — Sage
   heures_sup_h15: z.number().min(0).default(0),
   heures_sup_h50: z.number().min(0).default(0),
   heures_sup_h75: z.number().min(0).default(0),
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
     prime_depassement: d.prime_depassement,
     prime_fonction: d.prime_fonction,
     prime_transport: d.prime_transport,
+    vacation_allowance: d.vacation_allowance,
     heures_sup: {
       h15: d.heures_sup_h15,
       h50: d.heures_sup_h50,
@@ -89,6 +91,7 @@ export async function POST(req: Request) {
       prime_depassement: d.prime_depassement,
       prime_fonction: d.prime_fonction,
       prime_transport: d.prime_transport,
+      vacation_allowance: d.vacation_allowance,
       cnps_salarie: calc.cnps_salarie,
       its: calc.its,
       autres_retenues: d.autres_retenues,

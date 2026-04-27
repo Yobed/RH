@@ -5,6 +5,7 @@ import {
   PLAFOND_CNPS_MENSUEL,
   CMU_MENSUEL,
   TAUX_ABATTEMENT_ITS,
+  TAUX_CN,
   CHARGES_PATRONALES_TAUX,
   calculerChargesPatronales,
 } from "@/lib/paie-ci";
@@ -153,58 +154,73 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
         )}
       </Section>
 
-      {/* 2. Retenues salariales */}
-      <Section title="② Retenues salariales (part salarié)">
+      {/* 2. Retenues salariales — nomenclature Sage */}
+      <Section title="② Retenues salariales — nomenclature Sage CI">
         <Row
-          label="CNPS Retraite salariale"
-          formula={`${pct(TAUX_CNPS_RETRAITE_SALARIE)} × min(Base imposable, plafond ${fmt(PLAFOND_CNPS_MENSUEL)})`}
+          label="Retenue CNPS — retraite salariale (6,3%)"
+          formula={`${pct(TAUX_CNPS_RETRAITE_SALARIE)} × min(Brut Social, plafond ${fmt(PLAFOND_CNPS_MENSUEL)})`}
           result={fmt(cnpsRetraite)}
-          note={`Base plafonnée : ${fmt(baseCnps)} → Art. CNPS CI — Décret retraite 2026`}
+          note={`Base plafonnée : ${fmt(baseCnps)} — CNPS CI Décret retraite 2026`}
         />
         <Row
-          label="CMU salariale"
-          formula="Forfait mensuel fixe"
+          label="Retenue CNPS — CMU salariale (forfait)"
+          formula="Forfait mensuel fixe — CNAM CI"
           result={fmt(cmu)}
-          note="Couverture Maladie Universelle — CNAM CI"
         />
         <Row
-          label="Total CNPS salarié (retraite + CMU)"
+          label="Retenue CNPS (total)"
           formula={`${fmt(cnpsRetraite)} + ${fmt(cmu)}`}
           result={fmt(cnpsRetraite + cmu)}
           highlight
         />
         <Row
-          label="Base ITS avant abattement"
-          formula={`Base imposable (${fmt(totalImposable)}) − CNPS retraite (${fmt(cnpsRetraite)})`}
+          label="Base avant abattement (Brut Fiscal − CNPS retraite)"
+          formula={`${fmt(totalImposable)} − ${fmt(cnpsRetraite)}`}
           result={fmt(baseItsAvantAbattement)}
         />
         <Row
-          label="Abattement ITS forfaitaire"
-          formula={`${pct(TAUX_ABATTEMENT_ITS)} × ${fmt(baseItsAvantAbattement)}`}
+          label="Abattement forfaitaire (15%)"
+          formula={`${pct(TAUX_ABATTEMENT_ITS)} × ${fmt(baseItsAvantAbattement)} — CGI CI Art. 116`}
           result={fmt(Math.round(baseItsAvantAbattement * TAUX_ABATTEMENT_ITS))}
-          note="Abattement CGI CI Art. 116 — déductible de la base ITS"
         />
         <Row
-          label="Base ITS nette (après abattement)"
+          label="Base nette après abattement"
           formula={`${fmt(baseItsAvantAbattement)} × ${pct(1 - TAUX_ABATTEMENT_ITS)}`}
           result={fmt(baseIts)}
         />
         <Row
-          label="ITS — Impôt sur Traitement et Salaires"
-          formula={`Barème progressif CGI Art. 116 : 0% → 12% → 18% → 25% → 32%`}
+          label="Contribution Nationale CN (1,5%)"
+          formula={`${pct(TAUX_CN)} × Brut Fiscal (${fmt(totalImposable)})`}
+          result={fmt(Math.round(totalImposable * TAUX_CN))}
+          note="Contribution de solidarité — salarié"
+        />
+        <Row
+          label="IGR — Impôt Général sur le Revenu (barème progressif)"
+          formula="Barème mensuel CGI Art. 116 : 0% → 16% → 21% → 24% → 28% → 32%"
           result={fmt(b.its)}
           highlight
-          note="Barème mensuel : 0–75k = 0% · 75–200k = 12% · 200–350k = 18% · 350–600k = 25% · >600k = 32%"
+          note="Barème mensuel progressif sur base nette après abattement"
         />
         {(b.autres_retenues ?? 0) > 0 && (
-          <Row label="Autres retenues" formula="Retenues diverses (avances, etc.)" result={fmt(b.autres_retenues ?? 0)} />
+          <Row label="Autres retenues" formula="Retenues diverses" result={fmt(b.autres_retenues ?? 0)} />
         )}
         {(b.avances ?? 0) > 0 && (
-          <Row label="Avances sur salaire" formula="Remboursement d'avances accordées" result={fmt(b.avances ?? 0)} />
+          <Row label="Avance paie négative" formula="Remboursement avances accordées" result={fmt(b.avances ?? 0)} />
         )}
         <Row
-          label="Net à payer"
-          formula={`Brut (${fmt(totalBrut)}) − CNPS (${fmt(cnpsRetraite + cmu)}) − ITS (${fmt(b.its)})`}
+          label="*** TOTAL DES COTISATIONS ***"
+          formula={`CNPS (${fmt(cnpsRetraite + cmu)}) + CN (${fmt(Math.round(totalImposable * TAUX_CN))}) + IGR (${fmt(b.its)})`}
+          result={fmt(cnpsRetraite + cmu + Math.round(totalImposable * TAUX_CN) + b.its)}
+          highlight
+        />
+        <Row
+          label="*** NET AVANT RETENUE ***"
+          formula={`*** SALAIRE BRUT *** (${fmt(totalBrut)}) − TOTAL COTISATIONS`}
+          result={fmt(totalBrut - (cnpsRetraite + cmu + Math.round(totalImposable * TAUX_CN) + b.its))}
+        />
+        <Row
+          label="NET A PAYER"
+          formula="Net avant retenue − avances − autres retenues"
           result={fmt(b.salaire_net)}
           highlight
         />
