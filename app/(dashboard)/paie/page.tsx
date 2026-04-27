@@ -57,7 +57,9 @@ export default async function PaiePage({
     .from("bulletins_paie")
     .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
              sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
-             prime_depassement, prime_fonction, prime_transport, details,
+             prime_depassement, prime_fonction, prime_transport, vacation_allowance, details,
+             gross_salary, fiscal_gross, social_gross, tax_cn, tax_igr, withholding_cnps,
+             total_contributions, net_before_withholding, net_to_pay,
              employee_id, employees(full_name, poste, matricule)`)
     .order("periode", { ascending: false })
     .order("created_at", { ascending: false });
@@ -85,8 +87,8 @@ export default async function PaiePage({
   const currentPeriode = annee && mois ? `${annee}-${mois}` : defaultPeriode;
   
   const bulletinsMois = bulletins?.filter((b) => b.periode === currentPeriode) ?? bulletins ?? [];
-  const masseSalariale = bulletinsMois.reduce((s, b) => s + Number(b.salaire_net), 0);
-  const masseCharges = bulletinsMois.reduce((s, b) => s + Number(b.cnps_salarie) + Number(b.its), 0);
+  const masseSalariale = bulletinsMois.reduce((s, b) => s + Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net), 0);
+  const masseCharges = bulletinsMois.reduce((s, b) => s + Number((b as Record<string, unknown>).total_contributions ?? (Number(b.cnps_salarie) + Number(b.its))), 0);
   const nbPayes = bulletinsMois.filter((b) => b.statut === "payé").length;
 
   return (
@@ -96,7 +98,7 @@ export default async function PaiePage({
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
           <p className="text-sm text-slate-600 mt-0.5">
-            CNPS retraite 6,3% + CMU 1 600 FCFA + ITS barème progressif — Législation 2024-2025
+            CNPS retraite 6,3% + CMU 1 600 FCFA + CN 1,5% + IGR barème progressif — Nomenclature Sage CI 2026
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -118,9 +120,9 @@ export default async function PaiePage({
             <p className="mt-1 text-xs text-slate-600">{bulletinsMois.length} bulletin(s) · {currentPeriode}</p>
           </div>
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total charges (CNPS + ITS)</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total cotisations (CNPS + CN + IGR)</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseCharges)}</p>
-            <p className="mt-1 text-xs text-slate-600">Retenues salariales du mois</p>
+            <p className="mt-1 text-xs text-slate-600">*** TOTAL DES COTISATIONS *** du mois</p>
           </div>
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Bulletins payés</p>
@@ -136,7 +138,7 @@ export default async function PaiePage({
         <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2 md:grid-cols-3">
           <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 3 375 000 FCFA/mois)</span>
           <span>CMU (CNAM) salariale : <strong>1 600 FCFA</strong> forfait/mois</span>
-          <span>ITS : barème progressif (0% → 12% → 18% → 25% → 32%)</span>
+          <span>IGR : barème progressif (0% → 16% → 21% → 24% → 28% → 32%)</span>
           <span>Abattement ITS : <strong>15%</strong> charges professionnelles</span>
           <span>Charges patronales : <strong>~{Math.round((0.05 + 0.0075 + 0.077 + 0.03 + 0.01) * 100)}%</strong> + CMU 1 600 FCFA</span>
           <span>TFC (FDFP) : <strong>1,2%</strong> + Taxe Apprentissage : <strong>0,4%</strong></span>
@@ -160,10 +162,10 @@ export default async function PaiePage({
                 <tr>
                   <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
                   <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Brut</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">CNPS</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">ITS</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Net</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">*** BRUT ***</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Ret. CNPS</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">IGR</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">NET A PAYER</th>
                   <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 min-w-[130px]"></th>
                 </tr>
@@ -182,10 +184,10 @@ export default async function PaiePage({
                       <td className="px-4 py-3 text-sm font-mono tabular-nums text-xs uppercase tracking-wider text-slate-600">
                         {formatPeriode(b.periode)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">{fmt(b.salaire_brut)}</td>
-                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(b.cnps_salarie)}</td>
-                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(b.its)}</td>
-                      <td className="px-4 py-3 text-sm text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(b.salaire_net)}</td>
+                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">{fmt(Number((b as Record<string, unknown>).gross_salary ?? b.salaire_brut))}</td>
+                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).withholding_cnps ?? b.cnps_salarie))}</td>
+                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).tax_igr ?? b.its))}</td>
+                      <td className="px-4 py-3 text-sm text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net))}</td>
                       <td className="px-4 py-3 text-sm">
                         <StatutBadge statut={b.statut ?? "brouillon"} />
                       </td>
@@ -208,6 +210,7 @@ export default async function PaiePage({
                                 prime_depassement: Number((b as Record<string, unknown>).prime_depassement ?? 0),
                                 prime_fonction: Number((b as Record<string, unknown>).prime_fonction ?? 0),
                                 prime_transport: Number((b as Record<string, unknown>).prime_transport ?? 0),
+                                vacation_allowance: Number((b as Record<string, unknown>).vacation_allowance ?? 0),
                                 heures_sup_h15: detailsObj?.heures_sup?.h15 ?? 0,
                                 heures_sup_h50: detailsObj?.heures_sup?.h50 ?? 0,
                                 heures_sup_h75: detailsObj?.heures_sup?.h75 ?? 0,

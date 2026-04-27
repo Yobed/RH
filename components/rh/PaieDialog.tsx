@@ -44,6 +44,7 @@ export interface BulletinEditable {
   prime_depassement?: number | null;
   prime_fonction?: number | null;
   prime_transport?: number | null;
+  vacation_allowance?: number | null;
   heures_sup_h15?: number | null;
   heures_sup_h50?: number | null;
   heures_sup_h75?: number | null;

@@ -113,7 +113,9 @@ export default async function PrintBulletinPage({
     .select(
       `id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
        sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
-       prime_depassement, prime_fonction, prime_transport,
+       prime_depassement, prime_fonction, prime_transport, vacation_allowance,
+       gross_salary, fiscal_gross, social_gross, tax_cn, tax_igr, withholding_cnps,
+       total_contributions, net_before_withholding, net_to_pay,
        employees!inner(
          id, full_name, poste, matricule, date_embauche, departement, type_contrat, company_id,
          civilite, nb_enfants, etat_civil, categorie, num_cnps
@@ -166,16 +168,26 @@ export default async function PrintBulletinPage({
   const total_imposable = sal_cat + sursalaire + prime_anc + prime_excep + prime_sal + prime_dep + prime_fonc;
   const total_gains = total_imposable + prime_transp;
 
-  // Salariales
+  // Salariales — utilise les colonnes Sage stockées si disponibles, sinon recalcule
   const baseCNPS = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
   const cnps_retraite_sal = Math.round(baseCNPS * TAUX_CNPS_RETRAITE_SALARIE);
   const cmu_sal = CMU_MENSUEL;
   const abattement = Math.round(total_imposable * 0.15);
   const base_its = Math.max(0, total_imposable - cnps_retraite_sal - abattement);
-  const its = calculerITS(base_its);
-  const total_retenues_sal = cnps_retraite_sal + cmu_sal + its + autresRetenues + avances;
-  const net_a_payer = Math.max(0, total_gains - total_retenues_sal);
-  // Alias pour backward compat (anciens bulletins sans primes → total_imposable = sal_cat)
+  const its_calc = calculerITS(base_its);
+
+  const b = bulletin as Record<string, unknown>;
+  const tax_igr   = Number(b.tax_igr   ?? its_calc);
+  const tax_cn    = Number(b.tax_cn    ?? Math.round(total_imposable * 0.015));
+  const withholding_cnps = Number(b.withholding_cnps ?? (cnps_retraite_sal + cmu_sal));
+  const net_to_pay_stored = Number(b.net_to_pay ?? 0);
+  const total_contributions_stored = Number(b.total_contributions ?? 0);
+
+  const total_retenues_sal = withholding_cnps + tax_cn + tax_igr + autresRetenues + avances;
+  const net_a_payer = net_to_pay_stored > 0
+    ? net_to_pay_stored
+    : Math.max(0, total_gains - total_retenues_sal);
+
   const brut = total_imposable;
 
   // Patronales
@@ -193,8 +205,8 @@ export default async function PrintBulletinPage({
   // Cumuls
   const nbMois = bulletinsAnnee?.length ?? 1;
   const cumBrutSocial = bulletinsAnnee?.reduce((s, b) => s + Number(b.salaire_brut), 0) ?? brut;
-  const cumIts = bulletinsAnnee?.reduce((s, b) => s + Number(b.its), 0) ?? its;
-  const cumCnps = bulletinsAnnee?.reduce((s, b) => s + Number(b.cnps_salarie), 0) ?? (cnps_retraite_sal + cmu_sal);
+  const cumIts = bulletinsAnnee?.reduce((s, b) => s + Number(b.its), 0) ?? tax_igr;
+  const cumCnps = bulletinsAnnee?.reduce((s, b) => s + Number(b.cnps_salarie), 0) ?? withholding_cnps;
   const cumNet = bulletinsAnnee?.reduce((s, b) => s + Number(b.salaire_net), 0) ?? net_a_payer;
 
   // Parts IGR
@@ -476,14 +488,26 @@ export default async function PrintBulletinPage({
               {/* Ligne vide */}
               <EmptyRow />
 
-              {/* ── 34 — ITS ── */}
+              {/* ── 34 — CN (Contribution Nationale 1,5%) ── */}
               <tr>
                 <Td className="text-center">34</Td>
-                <Td>ITS, Imp. sur Trait. et Sal.</Td>
+                <Td>Contribution Nationale (CN)</Td>
+                <Td right>{n(total_imposable)}</Td>
+                <Td right>1,50</Td>
+                <Td />
+                <Td right>{n(tax_cn)}</Td>
+                <Td />
+                <Td />
+              </tr>
+
+              {/* ── 34b — IGR (barème progressif) ── */}
+              <tr>
+                <Td className="text-center">34b</Td>
+                <Td>IGR, Imp. Général sur le Revenu</Td>
                 <Td right>{n(total_imposable)}</Td>
                 <Td />
                 <Td />
-                <Td right>{n(its)}</Td>
+                <Td right>{n(tax_igr)}</Td>
                 <Td />
                 <Td />
               </tr>
@@ -498,6 +522,17 @@ export default async function PrintBulletinPage({
                 <Td right>{n(cnps_retraite_sal)}</Td>
                 <Td right>7,70</Td>
                 <Td right>{n(cnps_retraite_pat)}</Td>
+              </tr>
+              {/* ── 35b — CMU salariale ── */}
+              <tr>
+                <Td className="text-center">35b</Td>
+                <Td>CMU salariale (CNAM)</Td>
+                <Td />
+                <Td />
+                <Td />
+                <Td right>{n(cmu_sal)}</Td>
+                <Td />
+                <Td />
               </tr>
 
               {/* ── 36 — CNPS Accident Travail ── */}
@@ -540,14 +575,14 @@ export default async function PrintBulletinPage({
                 <Td right>{n(fdfp_tfc)}</Td>
               </tr>
 
-              {/* ── 43 — CMU ── */}
+              {/* ── 43 — CMU patronale ── */}
               <tr>
                 <Td className="text-center">43</Td>
-                <Td>CMU (CNAM)</Td>
+                <Td>CMU patronale (CNAM)</Td>
                 <Td />
                 <Td />
                 <Td />
-                <Td right>{n(cmu_sal)}</Td>
+                <Td />
                 <Td />
                 <Td right>{n(cmu_pat)}</Td>
               </tr>
@@ -659,7 +694,7 @@ export default async function PrintBulletinPage({
                   Brut fiscal
                 </td>
                 <td className="border border-gray-400 px-1 py-0.5 text-center font-semibold">
-                  ITS
+                  IGR
                 </td>
                 <td className="border border-gray-400 px-1 py-0.5 text-center font-semibold">
                   Retraite
@@ -694,7 +729,7 @@ export default async function PrintBulletinPage({
                 <td className="border border-gray-400 px-1" />
                 <td className="border border-gray-400 px-1 py-0.5 text-right">{n(brut)}</td>
                 <td className="border border-gray-400 px-1 py-0.5 text-right">{n(brut)}</td>
-                <td className="border border-gray-400 px-1 py-0.5 text-right">{n(its)}</td>
+                <td className="border border-gray-400 px-1 py-0.5 text-right">{n(tax_igr)}</td>
                 <td className="border border-gray-400 px-1 py-0.5 text-right">{n(cnps_retraite_sal)}</td>
                 <td className="border border-gray-400 px-1" />
               </tr>
@@ -712,7 +747,7 @@ export default async function PrintBulletinPage({
                 <td className="border border-gray-400 px-1 py-0.5 text-right">{n(cumBrutSocial)}</td>
                 <td className="border border-gray-400 px-1 py-0.5 text-right">{n(cumBrutSocial)}</td>
                 <td className="border border-gray-400 px-1 py-0.5 text-right">{n(cumIts)}</td>
-                <td className="border border-gray-400 px-1 py-0.5 text-right">{n(cumCnps - CMU_MENSUEL * nbMois)}</td>
+                <td className="border border-gray-400 px-1 py-0.5 text-right">{n(Math.max(0, cumCnps - CMU_MENSUEL * nbMois))}</td>
                 <td className="border border-gray-400 px-1" />
               </tr>
             </tbody>
@@ -722,7 +757,7 @@ export default async function PrintBulletinPage({
           <p className="text-center text-[8.5px] text-gray-500 mt-3 border-t border-gray-200 pt-2">
             Pour vous aider à faire valoir vos droits, conservez ce bulletin sans limitation de durée.
             &nbsp;|&nbsp;
-            ITS : Barème CGI CI Art. 116 — CNPS retraite : 6,30% sal. / 7,70% pat. — CMU : forfait {n(CMU_MENSUEL)} FCFA/mois
+            IGR : Barème CGI CI Art. 116 — CN : 1,5% brut fiscal — CNPS retraite : 6,30% sal. / 7,70% pat. — CMU : forfait {n(CMU_MENSUEL)} FCFA/mois
           </p>
 
         </div>
@@ -740,8 +775,8 @@ export default async function PrintBulletinPage({
             prime_depassement: prime_dep,
             prime_fonction: prime_fonc,
             prime_transport: prime_transp,
-            cnps_salarie: cnps_retraite_sal + cmu_sal,
-            its,
+            cnps_salarie: withholding_cnps,
+            its: tax_igr,
             salaire_net: net_a_payer,
             autres_retenues: autresRetenues,
             avances,
