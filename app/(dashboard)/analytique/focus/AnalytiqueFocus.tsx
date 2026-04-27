@@ -1,556 +1,641 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
-import { 
-  ChartLineUp, 
-  Users, 
-  TrendUp, 
-  TrendDown, 
-  Target, 
-  Eye, 
-  Lightbulb, 
-  CaretRight,
-  ChartPieSlice,
-  ArrowsClockwise,
-  UserGear,
-  Buildings,
-  GraduationCap,
-  CalendarCheck,
-  Money,
-  Info,
-  ArrowCircleRight,
-  Robot,
-  Presentation,
-  CheckCircle,
-  WarningCircle,
-  ChartBar,
-  Funnel,
-  TrendUp as TrendUpIcon,
-  TrendDown as TrendDownIcon,
-  Calculator,
-  ArrowUpRight,
-  ArrowDownRight,
-  Quotes,
-  SealCheck,
-  Hourglass,
-  Coins,
-  GenderIntersex,
-  BookOpen
-} from "@phosphor-icons/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
-  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend, RadarChart, 
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar 
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import {
+  ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, LineChart, Line, Legend, RadialBarChart, RadialBar,
+  PieChart, Pie, Cell,
 } from "recharts";
-import { cn } from "@/lib/utils";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { 
-  subMonths, 
-  subYears, 
-  isWithinInterval, 
-  startOfMonth, 
-  endOfMonth, 
-  startOfYear, 
-  endOfYear,
-  isAfter,
-  isBefore,
-  format,
-  differenceInDays
-} from "date-fns";
-import { fr } from "date-fns/locale";
+import {
+  applyFilters, computeEffectif, computeAgePyramid, computePayroll,
+  computeTurnover, computeAbsenteeism, computeMedical, computeRecruitment,
+  computePerformance, computeSafety, listDepartments, listCategories, FMT,
+  type RhEmployee, type RhBulletin, type RhContract, type RhConge, type RhMedical,
+  type RhJob, type RhCandidate, type RhEvaluation, type RhAccident,
+} from "@/lib/analytics-rh";
 
-interface AnalytiqueFocusProps {
-  employees: any[];
-  bulletins: any[];
-  contracts: any[];
-  conges: any[];
-  medical: any[];
-  jobPostings: any[];
-  candidates: any[];
-  evaluations: any[];
-  accidents: any[];
+interface Props {
+  employees: RhEmployee[];
+  bulletins: RhBulletin[];
+  contracts: RhContract[];
+  conges: RhConge[];
+  medical: RhMedical[];
+  jobPostings: RhJob[];
+  candidates: RhCandidate[];
+  evaluations: RhEvaluation[];
+  accidents: RhAccident[];
 }
 
-export function AnalytiqueFocus({
-  employees = [],
-  bulletins = [],
-  contracts = [],
-  conges = [],
-  medical = [],
-  jobPostings = [],
-  candidates = [],
-  evaluations = [],
-  accidents = []
-}: AnalytiqueFocusProps) {
-  // --- States for Slices ---
-  const [selectedDept, setSelectedDept] = useState<string>("ALL");
-  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
-  const [activeTab, setActiveTab] = useState<"talent" | "recrutement" | "payroll" | "climat" | "formation">("talent");
-  const [showCalculation, setShowCalculation] = useState<string | null>(null);
+type AxeId = "talent" | "remuneration" | "recrutement" | "climat" | "performance";
 
-  const now = new Date();
-  const currentMonthStart = startOfMonth(now);
-  const prevMonthStart = startOfMonth(subMonths(now, 1));
-  const currentYearStart = startOfYear(now);
-  const prevYearStart = startOfYear(subYears(now, 1));
+const AXES: { id: AxeId; label: string; subtitle: string }[] = [
+  { id: "talent",       label: "Talent",       subtitle: "Effectif, parité, démographie, rétention" },
+  { id: "remuneration", label: "Rémunération", subtitle: "Masse salariale, coût total, équité" },
+  { id: "recrutement",  label: "Recrutement",  subtitle: "Pipeline, fill rate, délai, qualité" },
+  { id: "climat",       label: "Climat",       subtitle: "Absentéisme, médical, sécurité" },
+  { id: "performance",  label: "Performance",  subtitle: "Évaluations, scoring, potentiel" },
+];
 
-  // --- Synchronized Filtering Logic ---
-  const departments = useMemo(() => {
-    return ["ALL", ...Array.from(new Set(employees.map(e => e.departement).filter(Boolean)))].sort();
-  }, [employees]);
+// ── UI sobre ───────────────────────────────────────────────────────────────
 
-  const availableCategories = useMemo(() => {
-    const deptEmployees = selectedDept === "ALL" 
-      ? employees 
-      : employees.filter(e => e.departement === selectedDept);
-    
-    return ["ALL", ...Array.from(new Set(deptEmployees.map(e => e.categorie).filter(Boolean)))].sort();
-  }, [employees, selectedDept]);
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-lg border border-slate-200 bg-white ${className}`}>{children}</div>;
+}
 
-  useEffect(() => {
-    if (selectedCategory !== "ALL" && !availableCategories.includes(selectedCategory)) {
-      setSelectedCategory("ALL");
-    }
-  }, [selectedDept, availableCategories, selectedCategory]);
-
-  const filteredEmployees = useMemo(() => {
-    return employees.filter(e => 
-      (selectedDept === "ALL" || e.departement === selectedDept) &&
-      (selectedCategory === "ALL" || e.categorie === selectedCategory)
-    );
-  }, [employees, selectedDept, selectedCategory]);
-
-  const employeeIds = useMemo(() => filteredEmployees.map(e => e.id), [filteredEmployees]);
-  
-  // --- Global Analytics Engine (Calculations RH Expert) ---
-
-  const analytics = useMemo(() => {
-    const fE = filteredEmployees;
-    const fIds = employeeIds;
-
-    // 1. RECRUTEMENT
-    const totalPostings = jobPostings.length;
-    const filledPostings = jobPostings.filter(p => p.statut === "Clôturé" || p.statut === "Terminé").length;
-    const recruitmentRate = totalPostings > 0 ? (filledPostings / totalPostings) * 100 : 0;
-    
-    const completedPostings = jobPostings.filter(p => (p.statut === "Clôturé" || p.statut === "Terminé") && p.created_at && p.updated_at);
-    const avgLeadTime = completedPostings.length > 0 
-      ? completedPostings.reduce((acc, p) => acc + differenceInDays(new Date(p.updated_at), new Date(p.created_at)), 0) / completedPostings.length
-      : 22;
-
-    const costPerHire = filledPostings > 0 ? (totalPostings * 150000) / filledPostings : 450000;
-
-    // 2. TURNOVER (N / N-1)
-    const calculateTurnover = (yearDate: Date) => {
-      const yearStart = startOfYear(yearDate);
-      const yearEnd = endOfYear(yearDate);
-      
-      const effectifDebut = fE.filter(e => {
-        const dateEmb = e.date_embauche ? new Date(e.date_embauche) : null;
-        return dateEmb && isBefore(dateEmb, yearStart) && e.statut === "actif";
-      }).length || 1;
-
-      const arrivees = fE.filter(e => {
-        const d = e.date_embauche ? new Date(e.date_embauche) : null;
-        return d && isWithinInterval(d, { start: yearStart, end: yearEnd });
-      }).length;
-
-      const departs = contracts.filter(c => {
-         if (!fIds.includes(c.employee_id)) return false;
-         const d = c.date_fin ? new Date(c.date_fin) : null;
-         return d && isWithinInterval(d, { start: yearStart, end: yearEnd });
-      }).length;
-
-      const rate = (((arrivees + departs) / 2) / effectifDebut) * 100;
-      return { rate, arrivees, departs, effectifDebut };
-    };
-
-    const turnoverN = calculateTurnover(now);
-    const turnoverN1 = calculateTurnover(subYears(now, 1));
-    const turnoverVar = turnoverN1.rate > 0 ? ((turnoverN.rate - turnoverN1.rate) / turnoverN1.rate) * 100 : 0;
-
-    // 3. ABSENTÉISME
-    const calculateAbs = (monthDate: Date) => {
-      const start = startOfMonth(monthDate);
-      const end = endOfMonth(monthDate);
-      const daysAbs = conges.filter(c => 
-        fIds.includes(c.employee_id) && 
-        isWithinInterval(new Date(c.date_debut), { start, end }) &&
-        (c.type === "Maladie" || c.type === "Exceptionnel")
-      ).reduce((acc, curr) => acc + (curr.nombre_jours || 0), 0);
-
-      const theoreticalDays = fE.length * 22;
-      return (daysAbs / (theoreticalDays || 1)) * 100;
-    };
-
-    const absM = calculateAbs(now);
-    const absM1 = calculateAbs(subMonths(now, 1));
-
-    // 4. PAYROLL
-    const calculatePayroll = (monthDate: Date) => {
-      const monthStr = format(monthDate, "MM/yyyy");
-      const bills = bulletins.filter(b => fIds.includes(b.employee_id) && b.periode === monthStr);
-      const totalBrut = bills.reduce((acc, curr) => acc + (curr.salaire_brut || 0), 0);
-      const avgNet = bills.length > 0 ? bills.reduce((acc, curr) => acc + (curr.salaire_net || 0), 0) / bills.length : 0;
-      return { totalBrut, avgNet, count: bills.length };
-    };
-
-    const payM = calculatePayroll(now);
-    const payM1 = calculatePayroll(subMonths(now, 1));
-    const payrollVar = payM1.totalBrut > 0 ? ((payM.totalBrut - payM1.totalBrut) / payM1.totalBrut) * 100 : 0;
-
-    // 5. FORMATION (Indicatif)
-    const accessRate = fE.filter(e => e.last_evaluation_date).length > 0 ? (fE.filter(e => e.last_evaluation_date).length / fE.length) * 100 : 15;
-    const trainingCostPerEmpl = 125000;
-
-    // 6. PARITE
-    const femaleCount = fE.filter(e => e.genre === "Féminin" || e.sexe === "F").length;
-    const parityRatio = (femaleCount / (fE.length || 1)) * 100;
-
-    return {
-      turnover: { current: turnoverN.rate, prev: turnoverN1.rate, var: turnoverVar },
-      absenteeism: { current: absM, prev: absM1 },
-      payroll: { current: payM.totalBrut, prev: payM1.totalBrut, var: payrollVar, avgNet: payM.avgNet },
-      recruitment: { 
-        rate: recruitmentRate, 
-        leadTime: avgLeadTime,
-        costPerHire: costPerHire
-      },
-      formation: {
-        accessRate: accessRate,
-        cost: trainingCostPerEmpl
-      },
-      parity: parityRatio
-    };
-  }, [filteredEmployees, employeeIds, jobPostings, conges, bulletins, accidents, contracts, now]);
-
-  // --- Expert Commentary Engine ---
-  const commentary = useMemo(() => {
-    if (activeTab === "talent") {
-      const evals = evaluations.filter(ev => employeeIds.includes(ev.employee_id));
-      const avg = evals.length > 0 ? evals.reduce((acc, curr) => acc + (curr.score_global || 0), 0) / evals.length : 0;
-      if (avg > 80) return "Excellence opérationnelle détectée. Le pool de talents est hautement qualifié. Focus : Plan de succession et rétention des hauts potentiels.";
-      if (avg > 60) return "Performance stable mais hétérogène. Des gisements de productivité existent dans le segment. Recommandation : Plan de formation technique ciblé.";
-      return "Alerte de performance : Le score moyen est sous les standards. Un audit organisationnel et des entretiens de recadrage sont nécessaires.";
-    }
-    
-    if (activeTab === "recrutement") {
-      if (analytics.recruitment.rate < 50) return "Tension critique sur les recrutements. Le 'Time-to-Fill' s'allonge. Vérifiez l'adéquation des grilles salariales avec le marché Ivoirien.";
-      if (analytics.recruitment.leadTime > 30) return "Alerte Délai : Le processus de recrutement est trop lent (" + analytics.recruitment.leadTime.toFixed(0) + "j). Risque de perte des candidats.";
-      return "Flux de recrutement maîtrisé. Le sourcing est efficace. Maintenez la dynamique pour anticiper la croissance organique du segment.";
-    }
-
-    if (activeTab === "payroll") {
-      if (analytics.payroll.var > 5) return "Dérive de la masse salariale constatée (+"+analytics.payroll.var.toFixed(1)+"%). Analysez la part des heures supplémentaires et des primes.";
-      return "Maîtrise rigoureuse des coûts salariaux. L'évolution est cohérente avec l'inflation et les performances du département.";
-    }
-
-    if (activeTab === "climat") {
-      if (analytics.turnover.current > 15) return "Alerte Turnover : Risque de fuite des compétences. Le climat social semble dégradé. Lancez une enquête de satisfaction.";
-      return "Stabilité sociale exemplaire. Le sentiment d'appartenance est fort. Continuez les actions de 'Team Building'.";
-    }
-
-    if (activeTab === "formation") {
-      if (analytics.formation.accessRate < 20) return "Taux d'accès à la formation trop faible ("+analytics.formation.accessRate.toFixed(1)+"%). Risque d'obsolescence des compétences techniques.";
-      return "Investissement capital humain soutenu. La montée en compétences est au cœur de la stratégie de ce département.";
-    }
-
-    return "";
-  }, [activeTab, evaluations, employeeIds, analytics]);
-
+function CardTitle({ children, sub, action }: { children: React.ReactNode; sub?: string; action?: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-8 pb-12 overflow-x-hidden min-h-screen bg-[#FDFDFD]">
-      
-      {/* --- HEADER & SLICERS --- */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-slate-900 text-white rounded-2xl shadow-lg">
-            <Presentation size={24} weight="fill" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tightest leading-none uppercase">Analytique Focus</h1>
-            <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mt-1 italic">Expert Data Analyst RH • Pilotage Stratégique</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 bg-slate-50 p-1.5 rounded-[1.5rem] border border-slate-200 shadow-inner">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-            <Funnel size={14} weight="fill" className="text-amber-500" />
-            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Slicers</span>
-          </div>
-
-          <Select value={selectedDept} onValueChange={(val) => setSelectedDept(val as string)}>
-            <SelectTrigger className="w-[140px] h-8 bg-transparent border-none text-xs font-black text-slate-700 outline-none shadow-none focus:ring-0">
-              <SelectValue placeholder="Départements" />
-            </SelectTrigger>
-            <SelectContent className="z-[50] bg-white dark:bg-slate-900 border-slate-200">
-              {departments.map((d) => (
-                <SelectItem key={d} value={d} className="text-xs font-bold uppercase tracking-widest">
-                  {d === "ALL" ? "Tous Départements" : d}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="w-[1px] h-4 bg-slate-200" />
-
-          <Select value={selectedCategory} onValueChange={(val) => setSelectedCategory(val as string)}>
-            <SelectTrigger className="w-[140px] h-8 bg-transparent border-none text-xs font-black text-slate-700 outline-none shadow-none focus:ring-0">
-              <SelectValue placeholder="Catégories" />
-            </SelectTrigger>
-            <SelectContent className="z-[50] bg-white dark:bg-slate-900 border-slate-200">
-              {availableCategories.map((c) => (
-                <SelectItem key={c} value={c} className="text-xs font-bold uppercase tracking-widest">
-                  {c === "ALL" ? "Toutes Catégories" : c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="ml-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black flex items-center gap-2">
-            <Users size={12} weight="bold" />
-            {filteredEmployees.length} COLLAB.
-          </div>
-        </div>
-      </header>
-
-      <div className="flex flex-col lg:flex-row gap-8 px-8 max-w-screen-2xl mx-auto w-full">
-        {/* --- SIDE TABS --- */}
-        <aside className="lg:w-72 flex flex-col gap-2">
-          {[
-            { id: "talent", label: "Talent & Potentiel", icon: Target, desc: "Performance" },
-            { id: "recrutement", label: "Recrutement", icon: Users, desc: "Efficacité" },
-            { id: "payroll", label: "Masse Salariale", icon: Money, desc: "Contrôle Costs" },
-            { id: "climat", label: "Climat Social", icon: ArrowsClockwise, desc: "Turnover" },
-            { id: "formation", label: "Formation", icon: BookOpen, desc: "Capital Humain" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
-              className={cn(
-                "group flex flex-col gap-1 p-6 rounded-[2rem] transition-all duration-300 text-left border relative",
-                activeTab === item.id ? "bg-white border-slate-200 shadow-xl" : "bg-transparent border-transparent text-slate-400 hover:bg-slate-50"
-              )}
-            >
-              {activeTab === item.id && <div className="absolute left-0 top-0 bottom-0 w-2 bg-amber-400" />}
-              <div className="flex items-center gap-3">
-                <item.icon size={24} weight={activeTab === item.id ? "fill" : "bold"} className={activeTab === item.id ? "text-slate-900" : "text-slate-300"} />
-                <span className={cn("text-xs font-black uppercase tracking-[0.1em]", activeTab === item.id ? "text-slate-900" : "text-slate-400")}>{item.label}</span>
-              </div>
-              <p className={cn("text-[9px] font-bold ml-9 uppercase tracking-widest", activeTab === item.id ? "text-slate-400" : "text-slate-300")}>{item.desc}</p>
-            </button>
-          ))}
-
-          <div className="mt-8 p-8 bg-slate-900 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden group">
-            <Robot size={60} className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-1000" />
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-3">Audit Parité</h4>
-            <div className="flex items-baseline gap-2">
-               <span className="text-3xl font-black">{analytics.parity.toFixed(0)}%</span>
-               <span className="text-[10px] font-black uppercase text-slate-400">Femmes</span>
-            </div>
-            <p className="text-[9px] font-bold text-slate-400 mt-2 uppercase">Indice de diversité segmentaire</p>
-          </div>
-        </aside>
-
-        {/* --- MAIN DASHBOARD --- */}
-        <main className="flex-1 min-w-0 flex flex-col gap-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             {activeTab === "talent" && (
-                <>
-                  <MetricCard title="Maturité Score" val={(evaluations.reduce((acc, curr) => acc + (curr.score_global || 0), 0) / (evaluations.length || 1)).toFixed(1)} unit="%" trend="+2.4%" label="Performance Moyenne" color="amber" onClickMethod={() => setShowCalculation("talent")} />
-                  <MetricCard title="Hauts Potentiels" val={evaluations.filter(ev => (ev.potential_score || 0) >= 80).length} unit="HP" trend="+1" label="Elite Segment" color="emerald" />
-                  <MetricCard title="Taux de Revues" val={((evaluations.length / (filteredEmployees.length || 1)) * 100).toFixed(0)} unit="%" trend="Stable" label="Couverture Audit" color="sky" />
-                </>
-             )}
-             {activeTab === "recrutement" && (
-                <>
-                  <MetricCard title="Efficiency Rate" val={analytics.recruitment.rate.toFixed(1)} unit="%" trend="-2.4%" label="Taux de Succès" color="sky" onClickMethod={() => setShowCalculation("recrutement")} />
-                  <MetricCard title="Lead Time" val={analytics.recruitment.leadTime.toFixed(0)} unit="j" trend="+2j" label="Délai Moyen" color="amber" />
-                  <MetricCard title="Recruit Cost" val={(analytics.recruitment.costPerHire / 1000).toFixed(0)} unit="K" trend="Minimisé" label="Budget/Poste" color="emerald" />
-                </>
-             )}
-             {activeTab === "payroll" && (
-                <>
-                  <MetricCard title="Masse Salariale" val={(analytics.payroll.current / 1000000).toFixed(1)} unit="M" trend={analytics.payroll.var > 0 ? `+${analytics.payroll.var.toFixed(1)}%` : `${analytics.payroll.var.toFixed(1)}%`} label="Vs Mois Précédent" color="amber" onClickMethod={() => setShowCalculation("payroll")} />
-                  <MetricCard title="Rémun. Moyenne" val={(analytics.payroll.current / (filteredEmployees.length || 1) / 1000).toFixed(0)} unit="K" trend="+3.2%" label="Coût/Salarié" color="emerald" />
-                  <MetricCard title="Net Moyen" val={(analytics.payroll.avgNet / 1000).toFixed(0)} unit="K" trend="Stable" label="Pouvoir d'Achat" color="sky" />
-                </>
-             )}
-             {activeTab === "climat" && (
-                <>
-                  <MetricCard title="Taux Turnover" val={analytics.turnover.current.toFixed(1)} unit="%" trend={analytics.turnover.var > 0 ? `+${analytics.turnover.var.toFixed(1)}%` : `${analytics.turnover.var.toFixed(1)}%`} label="Rotation Annuelle" color="rose" onClickMethod={() => setShowCalculation("climat")} />
-                  <MetricCard title="Absentéisme" val={analytics.absenteeism.current.toFixed(1)} unit="%" trend="Calculé" label="Incidence Maladie" color="amber" />
-                  <MetricCard title="Stability Index" val={(100 - analytics.turnover.current - analytics.absenteeism.current).toFixed(0)} unit="pts" trend="Optimal" label="Index Social" color="emerald" />
-                </>
-             )}
-             {activeTab === "formation" && (
-                <>
-                  <MetricCard title="Taux d'accès" val={analytics.formation.accessRate.toFixed(1)} unit="%" trend="+5%" label="Collaborateurs Formés" color="sky" onClickMethod={() => setShowCalculation("formation")} />
-                  <MetricCard title="Investissement" val={(analytics.formation.cost / 1000).toFixed(0)} unit="K" trend="Planifié" label="Coût/Salarié" color="emerald" />
-                  <MetricCard title="Compétences" val="B+" unit="Grade" trend="Up" label="Index Savoir" color="amber" />
-                </>
-             )}
-          </div>
-
-          <section className="bg-white rounded-[3rem] border border-slate-100 shadow-xl p-12 flex flex-col gap-10">
-             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                  <h2 className="text-3xl font-black text-slate-900 tracking-tightest uppercase leading-none">Perspective Expert</h2>
-                  <p className="text-slate-400 font-bold text-xs mt-3 uppercase tracking-widest flex items-center gap-2">
-                     <Quotes size={16} weight="fill" className="text-amber-400" />
-                     Analyse générée par le rapport de pilotage
-                  </p>
-                </div>
-                <div className="h-12 px-6 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3">
-                   <SealCheck size={18} weight="fill" className="text-amber-400" /> Certification IA
-                </div>
-             </div>
-
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6">
-                   <motion.div key={activeTab} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 italic relative">
-                      <Quotes size={60} className="absolute -top-4 -left-4 text-slate-200 opacity-20" weight="fill" />
-                      <p className="text-xl font-bold text-slate-800 leading-relaxed">"{commentary}"</p>
-                   </motion.div>
-                   
-                   <div className="flex flex-col gap-4">
-                      <div className="flex items-center gap-4 group cursor-pointer">
-                         <div className="w-10 h-10 bg-emerald-500/10 text-emerald-600 rounded-xl flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                            <CheckCircle size={20} weight="bold" />
-                         </div>
-                         <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Levier de croissance identifié</span>
-                      </div>
-                      <div className="flex items-center gap-4 group cursor-pointer">
-                         <div className="w-10 h-10 bg-amber-500/10 text-amber-600 rounded-xl flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
-                            <WarningCircle size={20} weight="bold" />
-                         </div>
-                         <span className="text-[11px] font-black text-slate-600 uppercase tracking-widest">Risque opérationnel modéré</span>
-                      </div>
-                   </div>
-                </div>
-
-                <div className="h-[300px] w-full bg-slate-50 rounded-[2.5rem] p-6 border border-slate-100">
-                   <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={[
-                        { n: 'M-5', v: 40 }, { n: 'M-4', v: 55 }, { n: 'M-3', v: 45 }, { n: 'M-2', v: 70 }, { n: 'M-1', v: 65 }, { n: 'NOW', v: 80 }
-                      ]}>
-                        <defs>
-                          <linearGradient id="colorVar" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#0f172a" stopOpacity={0.1}/>
-                            <stop offset="95%" stopColor="#0f172a" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                        <XAxis dataKey="n" stroke="#94A3B8" fontSize={9} fontWeight="black" axisLine={false} />
-                        <YAxis hide />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="v" stroke="#0f172a" strokeWidth={4} fill="url(#colorVar)" />
-                      </AreaChart>
-                   </ResponsiveContainer>
-                </div>
-             </div>
-          </section>
-
-          <footer className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <FooterInfo icon={Hourglass} color="amber" title="Recruit Lead Time" value={analytics.recruitment.leadTime.toFixed(0) + " j"} desc="Vitesse d'embauche" />
-            <FooterInfo icon={Coins} color="emerald" title="Coût par Salarié" value={(analytics.formation.cost / 1000).toFixed(0) + " K"} desc="Budget Formation" />
-            <FooterInfo icon={ChartLineUp} color="sky" title="Access Rate" value={analytics.formation.accessRate.toFixed(0) + "%"} desc="Audit Compétences" />
-            <FooterInfo icon={GenderIntersex} color="rose" title="Parité Sociale" value={analytics.parity.toFixed(0) + "%"} desc="Indice Diversité" />
-          </footer>
-
-        </main>
+    <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-slate-100">
+      <div>
+        <h3 className="text-sm font-semibold text-slate-900">{children}</h3>
+        {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
       </div>
-
-      {/* --- METHODOLOGY OVERLAY --- */}
-      <AnimatePresence>
-        {showCalculation && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-xl px-4" onClick={() => setShowCalculation(null)}>
-            <motion.div initial={{ scale: 0.9, y: 50 }} animate={{ scale: 1, y: 0 }} className="bg-white rounded-[4rem] p-16 max-w-3xl w-full shadow-2xl relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
-              <Calculator size={300} className="absolute top-0 right-0 opacity-5 -mr-20 -mt-20" />
-              <div className="flex flex-col gap-10 items-center text-center">
-                 <div className="p-8 bg-amber-400 text-slate-900 rounded-[2.5rem] shadow-xl"><GraduationCap size={60} weight="fill" /></div>
-                 <h3 className="text-4xl font-black text-slate-900 tracking-tightest leading-none">Détails de Calcul <br/> <span className="text-amber-500 italic font-serif">Expertise RH</span></h3>
-                 
-                 <div className="w-full space-y-8 text-left">
-                    <div className="p-10 bg-slate-900 rounded-[2.5rem] text-center">
-                       <code className="text-amber-400 text-2xl font-black tracking-tight">
-                          {showCalculation === 'recrutement' && "Taux = (Recrutements / Postes Ouverts) x 100"}
-                          {showCalculation === 'talent' && "Score = Σ (Résultats_Revues) / Nombre_Salariés"}
-                          {showCalculation === 'payroll' && "Masse Salariale = Σ (Salaires Bruts + Charges)"}
-                          {showCalculation === 'climat' && "Turnover = ((Nb Entrées + Nb Sorties) / 2) / Effectif"}
-                          {showCalculation === 'formation' && "Taux Accès = (Nb Salariés Formés / Effectif) x 100"}
-                       </code>
-                    </div>
-                    
-                    <div className="space-y-4">
-                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Utilité Stratégique</span>
-                       <p className="text-lg font-bold text-slate-700 leading-snug">
-                          {showCalculation === 'recrutement' && "Mesure l'attractivité de l'entreprise et l'adéquation du budget sourcing aux besoins du marché."}
-                          {showCalculation === 'talent' && "Permet d'identifier les hauts potentiels (HiPo) et de piloter les plans de succession critiques."}
-                          {showCalculation === 'payroll' && "Contrôle les dérives budgétaires et assure la soutenabilité financière des engagements sociaux."}
-                          {showCalculation === 'climat' && "Indique le niveau d'instabilité sociale et les risques de perte de capital intellectuel."}
-                          {showCalculation === 'formation' && "Garantit le maintien de l'employabilité et l'adaptation aux évolutions technologiques."}
-                       </p>
-                    </div>
-                 </div>
-
-                 <button onClick={() => setShowCalculation(null)} className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase text-xs tracking-widest hover:scale-[1.02] transition-all">Fermer la vue experte</button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {action}
     </div>
   );
 }
 
-function MetricCard({ title, val, unit, label, trend, color, onClickMethod }: any) {
-  const isUp = trend.includes('+');
-  const isNeutral = trend === "Stable" || trend === "Calculé" || trend === "Optimal" || trend === "Minimisé" || trend === "Planifié" || trend === "Up";
-  
+function StatRow({ label, value, sub, accent }: {
+  label: string; value: string; sub?: string;
+  accent?: "neutral" | "positive" | "negative" | "warn";
+}) {
+  const dot = {
+    neutral: "bg-slate-300",
+    positive: "bg-emerald-500",
+    negative: "bg-rose-500",
+    warn: "bg-amber-500",
+  }[accent || "neutral"];
   return (
-    <motion.div whileHover={{ y: -5 }} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col gap-6 relative overflow-hidden group">
-       <div className="flex items-center justify-between">
-          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{title}</h4>
-          <div className={cn("px-3 py-1 rounded-lg text-[9px] font-black flex items-center gap-1", isNeutral ? "bg-slate-100 text-slate-500" : isUp ? "bg-emerald-500 text-white" : "bg-rose-500 text-white")}>
-             {trend}
-          </div>
-       </div>
-       <div className="flex items-baseline gap-1">
-          <span className="text-5xl font-black text-slate-900 tracking-tightest">{val}</span>
-          <span className="text-xl font-black text-slate-300 uppercase">{unit}</span>
-       </div>
-       <div className="flex items-center justify-between pt-2">
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{label}</span>
-          {onClickMethod && <button onClick={onClickMethod} className="h-8 w-8 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-xl flex items-center justify-center transition-all shadow-inner"><Info size={14} /></button>}
-       </div>
-    </motion.div>
+    <div className="flex items-baseline justify-between py-2.5 border-b border-slate-100 last:border-0">
+      <div className="flex items-center gap-2">
+        <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+        <span className="text-sm text-slate-700">{label}</span>
+      </div>
+      <div className="text-right">
+        <span className="text-sm font-semibold text-slate-900 tabular-nums">{value}</span>
+        {sub && <span className="text-xs text-slate-400 ml-2">{sub}</span>}
+      </div>
+    </div>
   );
 }
 
-function FooterInfo({ icon: Icon, color, title, value, desc }: any) {
-  const cMap = {
-    emerald: "bg-emerald-500 text-white",
-    amber: "bg-amber-400 text-slate-900",
-    rose: "bg-rose-500 text-white",
-    sky: "bg-slate-900 text-white"
-  };
+function HeroKpi({
+  kicker, value, sub, signal,
+}: {
+  kicker: string; value: string; sub?: string;
+  signal?: { delta: number; label: string };
+}) {
+  const sigColor = !signal ? "" :
+    signal.delta > 0 ? "text-emerald-600" : signal.delta < 0 ? "text-rose-600" : "text-slate-400";
+  const Icon = signal && signal.delta > 0 ? ArrowUpRight : signal && signal.delta < 0 ? ArrowDownRight : null;
   return (
-    <div className="bg-white border border-slate-100 p-6 rounded-[2rem] flex items-center gap-5 shadow-sm">
-       <div className={cn("p-4 rounded-xl", cMap[color as keyof typeof cMap])}><Icon size={24} weight="fill" /></div>
-       <div>
-          <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</h4>
-          <span className="text-xl font-black text-slate-900 tracking-tightest block leading-none">{value}</span>
-          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 block opacity-60">{desc}</span>
-       </div>
+    <div className="rounded-lg border border-slate-200 bg-white p-6">
+      <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">{kicker}</p>
+      <p className="mt-2 text-4xl font-semibold text-slate-900 tabular-nums tracking-tight">{value}</p>
+      <div className="mt-2 flex items-center gap-3 text-xs">
+        {sub && <span className="text-slate-500">{sub}</span>}
+        {signal && Icon && (
+          <span className={`inline-flex items-center gap-1 ${sigColor} font-medium`}>
+            <Icon className="h-3 w-3" /> {Math.abs(signal.delta).toFixed(1)}% <span className="text-slate-400 font-normal">{signal.label}</span>
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const TOOLTIP_STYLE = {
+  background: "white",
+  border: "1px solid #e2e8f0",
+  borderRadius: 6,
+  fontSize: 12,
+  padding: "8px 10px",
+  boxShadow: "0 4px 12px -2px rgba(0,0,0,0.05)",
+};
+
+function Insight({ kind, title, body }: { kind: "positive" | "negative" | "warn" | "neutral"; title: string; body: string }) {
+  const style = {
+    positive: "border-emerald-200 bg-emerald-50/60 text-emerald-900",
+    negative: "border-rose-200 bg-rose-50/60 text-rose-900",
+    warn: "border-amber-200 bg-amber-50/60 text-amber-900",
+    neutral: "border-slate-200 bg-slate-50 text-slate-900",
+  }[kind];
+  return (
+    <div className={`rounded-md border px-4 py-3 ${style}`}>
+      <p className="text-xs font-semibold">{title}</p>
+      <p className="text-xs mt-1 opacity-80 leading-relaxed">{body}</p>
+    </div>
+  );
+}
+
+// ── Composant principal ────────────────────────────────────────────────────
+
+export function AnalytiqueFocus(props: Props) {
+  const [departement, setDepartement] = useState("Tous");
+  const [categorie, setCategorie] = useState("Tous");
+  const [axe, setAxe] = useState<AxeId>("talent");
+
+  const dataset = useMemo(() => ({
+    employees: props.employees,
+    bulletins: props.bulletins,
+    contracts: props.contracts,
+    conges: props.conges,
+    medical: props.medical,
+    jobPostings: props.jobPostings,
+    candidates: props.candidates,
+    evaluations: props.evaluations,
+    accidents: props.accidents,
+  }), [props]);
+
+  const departements = useMemo(() => listDepartments(props.employees), [props.employees]);
+  const categories = useMemo(() => listCategories(props.employees), [props.employees]);
+  const filtered = useMemo(() => applyFilters(dataset, { departement, categorie }), [dataset, departement, categorie]);
+
+  return (
+    <div className="space-y-6 max-w-[1400px] mx-auto">
+      {/* ── Header ─────────────────────────────────────────── */}
+      <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 pb-4 border-b border-slate-200">
+        <div>
+          <Link href="/analytique" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
+            <ArrowLeft className="h-3 w-3" /> Retour à l'analytique
+          </Link>
+          <h1 className="text-2xl font-semibold text-slate-900 mt-2">Focus stratégique</h1>
+          <p className="text-sm text-slate-500 mt-1.5">
+            Lecture détaillée par axe — données synchronisées avec la vue d'ensemble.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={departement}
+            onChange={e => setDepartement(e.target.value)}
+            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+          >
+            {departements.map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+          <select
+            value={categorie}
+            onChange={e => setCategorie(e.target.value)}
+            className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+          >
+            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+      </header>
+
+      {/* ── Tabs axes ─────────────────────────────────────── */}
+      <nav className="border-b border-slate-200">
+        <div className="flex gap-1 overflow-x-auto -mb-px">
+          {AXES.map(a => {
+            const active = axe === a.id;
+            return (
+              <button
+                key={a.id}
+                onClick={() => setAxe(a.id)}
+                className={[
+                  "px-4 py-2.5 text-sm whitespace-nowrap border-b-2 transition-colors",
+                  active
+                    ? "border-slate-900 text-slate-900 font-semibold"
+                    : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300",
+                ].join(" ")}
+              >
+                {a.label}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-3 text-xs text-slate-500">{AXES.find(a => a.id === axe)?.subtitle}</p>
+      </nav>
+
+      {/* ── Contenu par axe ─────────────────────────────── */}
+      {axe === "talent" && <AxeTalent dataset={filtered} />}
+      {axe === "remuneration" && <AxeRemuneration dataset={filtered} />}
+      {axe === "recrutement" && <AxeRecrutement dataset={filtered} />}
+      {axe === "climat" && <AxeClimat dataset={filtered} />}
+      {axe === "performance" && <AxePerformance dataset={filtered} />}
+    </div>
+  );
+}
+
+// ── Axe Talent ─────────────────────────────────────────────────────────────
+
+function AxeTalent({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
+  const eff = useMemo(() => computeEffectif(dataset), [dataset]);
+  const age = useMemo(() => computeAgePyramid(dataset), [dataset]);
+  const turnover = useMemo(() => computeTurnover(dataset), [dataset]);
+  const pyramidData = age.pyramid.map(b => ({ ...b, Hommes: -b.Hommes }));
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HeroKpi
+          kicker="Effectif actif"
+          value={eff.actifs.toString()}
+          sub={`Total ${eff.total} · ${eff.suspendus} suspendus`}
+        />
+        <HeroKpi
+          kicker="Parité femmes"
+          value={`${eff.parityRate}%`}
+          sub={`${eff.femmes} F / ${eff.hommes} H`}
+        />
+        <HeroKpi
+          kicker="Turnover annuel"
+          value={`${turnover.rateYear}%`}
+          sub={`${turnover.entriesYear} entrées · ${turnover.departuresYear} sorties`}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <Card className="lg:col-span-2">
+          <CardTitle sub={`Âge moyen ${age.averageAge} ans`}>Pyramide des âges</CardTitle>
+          <div className="p-5">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={pyramidData} layout="vertical" stackOffset="sign" margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                <XAxis type="number" tickFormatter={(v: number) => Math.abs(v).toString()} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+                <YAxis dataKey="range" type="category" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} width={50} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v, name) => [`${Math.abs(Number(v))} pers.`, String(name)]} />
+                <Bar dataKey="Hommes" stackId="x" fill="#475569" radius={[0, 0, 0, 3]} />
+                <Bar dataKey="Femmes" stackId="x" fill="#f97316" radius={[0, 3, 3, 0]} />
+                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="square" iconSize={10} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <CardTitle sub="Répartition statutaire">Statut</CardTitle>
+          <div className="p-5">
+            <StatRow label="Actifs" value={eff.actifs.toString()} accent="positive" />
+            <StatRow label="Suspendus" value={eff.suspendus.toString()} accent="warn" />
+            <StatRow label="Inactifs" value={eff.inactifs.toString()} accent="neutral" />
+            <StatRow label="Total" value={eff.total.toString()} accent="neutral" />
+          </div>
+        </Card>
+      </div>
+
+      <Card>
+        <CardTitle sub="Mouvements mensuels — 12 derniers mois">Évolution effectif</CardTitle>
+        <div className="p-5">
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={turnover.series} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} allowDecimals={false} />
+              <Tooltip contentStyle={TOOLTIP_STYLE} />
+              <Bar dataKey="entrees" name="Entrées" fill="#10b981" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="sorties" name="Sorties" fill="#f43f5e" radius={[3, 3, 0, 0]} />
+              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="square" iconSize={10} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {turnover.rateYear > 15 && (
+        <Insight
+          kind="negative"
+          title="Turnover élevé"
+          body={`Le taux de rotation atteint ${turnover.rateYear}% (seuil critique > 15%). Investiguer les causes de départ et l'engagement managérial sur les 12 derniers mois.`}
+        />
+      )}
+      {eff.parityRate < 30 && eff.actifs > 5 && (
+        <Insight
+          kind="warn"
+          title="Sous-représentation féminine"
+          body={`Avec ${eff.parityRate}% de femmes, la mixité reste éloignée de l'équilibre attendu. Examiner le pipeline de recrutement et la rétention par genre.`}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Axe Rémunération ───────────────────────────────────────────────────────
+
+function AxeRemuneration({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
+  const payroll = useMemo(() => computePayroll(dataset), [dataset]);
+  const eff = useMemo(() => computeEffectif(dataset), [dataset]);
+
+  const ratioNetBrut = !payroll.current || payroll.current.brut === 0
+    ? 0
+    : Math.round((payroll.current.net / payroll.current.brut) * 1000) / 10;
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HeroKpi
+          kicker="Masse salariale (mois)"
+          value={FMT.currency(payroll.current?.brut || 0)}
+          sub={`Coût total ${FMT.currency(payroll.current?.coutTotal || 0)}`}
+          signal={{ delta: payroll.deltaPct, label: "vs M-1" }}
+        />
+        <HeroKpi
+          kicker="Brut moyen / salarié"
+          value={FMT.currency(payroll.averageBrutPerEmployee)}
+          sub={`Sur ${eff.actifs} actifs`}
+        />
+        <HeroKpi
+          kicker="YTD cumulé"
+          value={FMT.currency(payroll.ytdBrut)}
+          sub={`Coût total ${FMT.currency(payroll.ytdCoutTotal)}`}
+        />
+      </div>
+
+      <Card>
+        <CardTitle sub="Brut, net et coût total employeur — 12 derniers mois">Trajectoire de la masse salariale</CardTitle>
+        <div className="p-5">
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={payroll.series} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="grad-brut-focus" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0f172a" stopOpacity={0.18} />
+                  <stop offset="100%" stopColor="#0f172a" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+              <YAxis
+                tickFormatter={(v: number) => v >= 1_000_000 ? `${(v / 1_000_000).toFixed(1)}M` : `${(v / 1000).toFixed(0)}k`}
+                tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false}
+              />
+              <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v) => FMT.currency(Number(v))} />
+              <Area type="monotone" dataKey="coutTotal" name="Coût total employeur" stroke="#94a3b8" strokeWidth={1.5} fill="none" strokeDasharray="4 4" />
+              <Area type="monotone" dataKey="brut" name="Salaire brut" stroke="#0f172a" strokeWidth={2} fill="url(#grad-brut-focus)" />
+              <Area type="monotone" dataKey="net" name="Salaire net" stroke="#10b981" strokeWidth={1.5} fill="none" />
+              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="line" iconSize={14} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <Card>
+          <CardTitle sub="Décomposition brut / charges / net">Structure du coût</CardTitle>
+          <div className="p-5">
+            <StatRow label="Salaire brut (mois)" value={FMT.currency(payroll.current?.brut || 0)} />
+            <StatRow label="Charges patronales (≈ 21 %)" value={FMT.currency((payroll.current?.coutTotal || 0) - (payroll.current?.brut || 0))} />
+            <StatRow label="Coût total employeur" value={FMT.currency(payroll.current?.coutTotal || 0)} accent="warn" />
+            <StatRow label="Salaire net versé" value={FMT.currency(payroll.current?.net || 0)} accent="positive" />
+            <StatRow label="Ratio net / brut" value={`${ratioNetBrut}%`} />
+          </div>
+        </Card>
+
+        <Card>
+          <CardTitle sub="Heures supplémentaires consommées (mois)">Heures sup.</CardTitle>
+          <div className="p-5">
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={payroll.series} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
+                <Line type="monotone" dataKey="hsHeures" name="Heures sup." stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
+
+      {Math.abs(payroll.deltaPct) > 5 && (
+        <Insight
+          kind={payroll.deltaPct > 0 ? "warn" : "neutral"}
+          title={`Variation mensuelle ${payroll.deltaPct > 0 ? "à la hausse" : "à la baisse"}`}
+          body={`La masse salariale brute a évolué de ${payroll.deltaPct > 0 ? "+" : ""}${payroll.deltaPct}% par rapport au mois précédent. Vérifier les recrutements, départs et primes exceptionnelles.`}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Axe Recrutement ────────────────────────────────────────────────────────
+
+function AxeRecrutement({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
+  const r = useMemo(() => computeRecruitment(dataset), [dataset]);
+
+  const pipelineData = [
+    { stage: "Postes", count: r.jobsTotal, fill: "#0f172a" },
+    { stage: "Candidats", count: r.candidatesTotal, fill: "#475569" },
+    { stage: "Recrutés", count: r.candidatesHired, fill: "#10b981" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <HeroKpi kicker="Postes ouverts" value={r.jobsOpen.toString()} sub={`${r.jobsTotal} au total`} />
+        <HeroKpi kicker="Candidats" value={r.candidatesTotal.toString()} sub={`${r.candidatesHired} recrutés`} />
+        <HeroKpi kicker="Fill rate" value={`${r.fillRate}%`} sub="Recrutements / postes" />
+        <HeroKpi kicker="Délai moyen" value={`${r.avgHiringDays}j`} sub="Création du poste → recrutement" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <Card className="lg:col-span-2">
+          <CardTitle sub="De l'ouverture du poste au recrutement effectif">Pipeline de recrutement</CardTitle>
+          <div className="p-5">
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={pipelineData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="stage" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} />
+                <Bar dataKey="count" name="Volume" radius={[4, 4, 0, 0]}>
+                  {pipelineData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <CardTitle sub="Indicateurs qualitatifs">Qualité du sourcing</CardTitle>
+          <div className="p-5">
+            <StatRow label="Score IA moyen" value={`${r.avgScoreIa}/100`} accent={r.avgScoreIa >= 70 ? "positive" : r.avgScoreIa >= 50 ? "warn" : "negative"} />
+            <StatRow label="Taux de transformation" value={`${r.candidatesTotal === 0 ? 0 : Math.round((r.candidatesHired / r.candidatesTotal) * 1000) / 10}%`} />
+            <StatRow label="Postes restants à pourvoir" value={(r.jobsTotal - r.candidatesHired).toString()} accent="warn" />
+          </div>
+        </Card>
+      </div>
+
+      {r.avgHiringDays > 60 && (
+        <Insight
+          kind="warn"
+          title="Délai de recrutement élevé"
+          body={`${r.avgHiringDays} jours en moyenne pour pourvoir un poste — au-delà de 60 jours, vérifier la définition du besoin, le canal de sourcing et la disponibilité des décisionnaires.`}
+        />
+      )}
+      {r.fillRate < 40 && r.jobsTotal > 0 && (
+        <Insight
+          kind="negative"
+          title="Faible taux de couverture"
+          body={`Seulement ${r.fillRate}% des postes ont été pourvus. Repenser l'attractivité de l'offre et la qualité du pipeline candidats.`}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Axe Climat ─────────────────────────────────────────────────────────────
+
+function AxeClimat({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
+  const abs = useMemo(() => computeAbsenteeism(dataset), [dataset]);
+  const med = useMemo(() => computeMedical(dataset), [dataset]);
+  const safety = useMemo(() => computeSafety(dataset), [dataset]);
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HeroKpi
+          kicker="Absentéisme (mois)"
+          value={`${abs.rateMonth}%`}
+          sub={`${abs.totalDaysMonth} jours non travaillés`}
+        />
+        <HeroKpi
+          kicker="Conformité médicale"
+          value={`${med.complianceRate}%`}
+          sub={`${med.overdue} en retard · ${med.expiringSoon} sous 60j`}
+        />
+        <HeroKpi
+          kicker="Accidents (cumul)"
+          value={safety.count.toString()}
+          sub={`${safety.joursPerdus}j d'arrêt cumulés`}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <Card>
+          <CardTitle sub="Causes d'absence — mois courant">Absentéisme par type</CardTitle>
+          <div className="p-5">
+            {abs.byType.length === 0 ? (
+              <p className="text-sm text-slate-400 py-8 text-center">Aucune absence enregistrée ce mois</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie data={abs.byType} dataKey="days" nameKey="type" cx="50%" cy="50%" innerRadius={50} outerRadius={90} paddingAngle={1}>
+                    {abs.byType.map((_, i) => (
+                      <Cell key={i} fill={["#0f172a", "#475569", "#f59e0b", "#f43f5e", "#10b981"][i % 5]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v) => `${Number(v)} j`} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} iconType="circle" iconSize={8} />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Card>
+
+        <Card>
+          <CardTitle sub="Indicateurs sécurité">Détail sécurité</CardTitle>
+          <div className="p-5">
+            <StatRow label="Accidents recensés" value={safety.count.toString()} accent={safety.count === 0 ? "positive" : "warn"} />
+            <StatRow label="Jours d'arrêt" value={safety.joursPerdus.toString()} />
+            <StatRow label="Taux de fréquence" value={safety.freqRate.toString()} sub="/M h" />
+            <StatRow label="Taux de gravité" value={safety.severityRate.toString()} sub="/k h" />
+            {safety.byGravity.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-slate-100">
+                <p className="text-xs uppercase tracking-wider text-slate-400 mb-2">Par gravité</p>
+                {safety.byGravity.map(g => (
+                  <div key={g.gravite} className="flex justify-between text-xs py-1">
+                    <span className="text-slate-600 capitalize">{g.gravite}</span>
+                    <span className="text-slate-900 font-medium tabular-nums">{g.count}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+
+      {abs.rateMonth > 8 && (
+        <Insight
+          kind="negative"
+          title="Absentéisme critique"
+          body={`Le taux d'absentéisme est de ${abs.rateMonth}% ce mois — au-delà de 8%, prioriser une analyse RH (charge de travail, climat, encadrement).`}
+        />
+      )}
+      {med.overdue > 0 && (
+        <Insight
+          kind="warn"
+          title="Visites médicales à régulariser"
+          body={`${med.overdue} visite(s) périodique(s) sont déjà échues. Risque de contestation prud'homale et obligation de moyens (Art. 41 CT-CI).`}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Axe Performance ────────────────────────────────────────────────────────
+
+function AxePerformance({ dataset }: { dataset: ReturnType<typeof applyFilters> }) {
+  const perf = useMemo(() => computePerformance(dataset), [dataset]);
+
+  // Distribution simple : performance vs potentiel pour chaque catégorie (matrice 9-box simplifiée)
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <HeroKpi
+          kicker="Évaluations validées"
+          value={perf.validated.toString()}
+          sub={`${perf.total - perf.validated} en cours / brouillon`}
+        />
+        <HeroKpi
+          kicker="Score moyen"
+          value={`${perf.avgScore}/5`}
+          sub="Performance globale"
+        />
+        <HeroKpi
+          kicker="Potentiel moyen"
+          value={`${perf.avgPotential}/5`}
+          sub="Capacité d'évolution"
+        />
+      </div>
+
+      <Card>
+        <CardTitle sub="Score moyen par catégorie professionnelle">Performance par catégorie</CardTitle>
+        <div className="p-5">
+          {perf.byCategory.length === 0 ? (
+            <p className="text-sm text-slate-400 py-8 text-center">
+              Aucune évaluation validée pour ce périmètre.
+            </p>
+          ) : (
+            <ul className="divide-y divide-slate-100">
+              {perf.byCategory.map(c => {
+                const pct = Math.round((c.avgScore / 5) * 100);
+                const color = c.avgScore >= 4 ? "bg-emerald-500" : c.avgScore >= 3 ? "bg-slate-700" : c.avgScore >= 2 ? "bg-amber-500" : "bg-rose-500";
+                return (
+                  <li key={c.category} className="py-3 flex items-center gap-3">
+                    <span className="flex-1 text-sm text-slate-700 truncate">{c.category}</span>
+                    <span className="text-xs text-slate-400 tabular-nums w-12 text-right">{c.count} éval.</span>
+                    <div className="flex-1 max-w-[200px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full ${color} rounded-full`} style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-900 tabular-nums w-12 text-right">{c.avgScore}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </Card>
+
+      {perf.validated === 0 && (
+        <Insight
+          kind="warn"
+          title="Aucune évaluation validée"
+          body="Lancer la campagne d'évaluation pour disposer d'un référentiel performance/potentiel exploitable."
+        />
+      )}
+      {perf.validated > 0 && perf.avgScore < 3 && (
+        <Insight
+          kind="negative"
+          title="Performance moyenne en alerte"
+          body={`Le score global moyen (${perf.avgScore}/5) est en dessous du palier attendu. Examiner les plans d'amélioration et l'alignement objectifs/moyens.`}
+        />
+      )}
+      {perf.avgPotential > perf.avgScore + 0.7 && perf.validated > 0 && (
+        <Insight
+          kind="positive"
+          title="Potentiel sous-exploité"
+          body={`Le potentiel moyen (${perf.avgPotential}/5) dépasse la performance actuelle (${perf.avgScore}/5). Opportunité d'accélérer la mobilité interne et la formation.`}
+        />
+      )}
     </div>
   );
 }
