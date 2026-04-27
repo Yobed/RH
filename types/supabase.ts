@@ -978,6 +978,105 @@ export type Database = {
           },
         ]
       }
+      payroll_logs: {
+        Row: {
+          id: string;
+          company_id: string;
+          employee_id: string;
+          employee_name: string | null;
+          days_worked: number | null;
+          base_salary: number | null;
+          bonus_salary: number | null;
+          seniority_premium: number | null;
+          transport_allowance: number | null;
+          vacation_allowance: number | null;
+          overtime_pay: number | null;
+          gross_salary: number | null;
+          exempt_indemnity: number | null;
+          fiscal_gross: number | null;
+          social_gross: number | null;
+          tax_is: number | null;
+          tax_cn: number | null;
+          tax_igr: number | null;
+          withholding_cnps: number | null;
+          total_contributions: number | null;
+          net_before_withholding: number | null;
+          adjustment_m_minus_1: number | null;
+          negative_pay_adjustment: number | null;
+          negative_advance: number | null;
+          rounding_adjustment: number | null;
+          net_to_pay: number | null;
+          periode: string | null;
+          import_source: string;
+          imported_at: string;
+          imported_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          employee_id: string;
+          employee_name?: string | null;
+          days_worked?: number | null;
+          base_salary?: number | null;
+          bonus_salary?: number | null;
+          seniority_premium?: number | null;
+          transport_allowance?: number | null;
+          vacation_allowance?: number | null;
+          overtime_pay?: number | null;
+          gross_salary?: number | null;
+          exempt_indemnity?: number | null;
+          fiscal_gross?: number | null;
+          social_gross?: number | null;
+          tax_is?: number | null;
+          tax_cn?: number | null;
+          tax_igr?: number | null;
+          withholding_cnps?: number | null;
+          total_contributions?: number | null;
+          net_before_withholding?: number | null;
+          adjustment_m_minus_1?: number | null;
+          negative_pay_adjustment?: number | null;
+          negative_advance?: number | null;
+          rounding_adjustment?: number | null;
+          net_to_pay?: number | null;
+          periode?: string | null;
+          import_source?: string;
+          imported_at?: string;
+          imported_by?: string | null;
+        };
+        Update: Partial<{
+          id: string;
+          company_id: string;
+          employee_id: string;
+          employee_name: string | null;
+          days_worked: number | null;
+          base_salary: number | null;
+          bonus_salary: number | null;
+          seniority_premium: number | null;
+          transport_allowance: number | null;
+          vacation_allowance: number | null;
+          overtime_pay: number | null;
+          gross_salary: number | null;
+          exempt_indemnity: number | null;
+          fiscal_gross: number | null;
+          social_gross: number | null;
+          tax_is: number | null;
+          tax_cn: number | null;
+          tax_igr: number | null;
+          withholding_cnps: number | null;
+          total_contributions: number | null;
+          net_before_withholding: number | null;
+          adjustment_m_minus_1: number | null;
+          negative_pay_adjustment: number | null;
+          negative_advance: number | null;
+          rounding_adjustment: number | null;
+          net_to_pay: number | null;
+          periode: string | null;
+          import_source: string;
+          imported_at: string;
+          imported_by: string | null;
+        }>;
+        Relationships: [];
+      }
       profiles: {
         Row: {
           company_id: string
