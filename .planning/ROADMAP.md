@@ -198,9 +198,9 @@ Plans:
 **Goal:** Les RH utilisant Sage Paie peuvent importer leur Livre de Paie mensuel dans Antigravity via un template de mapping adaptatif — sans changer leur processus Sage — avec traçabilité complète dans `payroll_logs` et validation des données avant tout import.
 **Depends on:** Phase 2
 **Covers:** ISP-01, ISP-02, ISP-03, ISP-04, ISP-05
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 Plans:
-- [ ] 08-01-PLAN.md — Migration payroll_logs + lib/paie-sage-import.ts (parseNumericFR) + tests TDD
+- [x] 08-01-PLAN.md — Migration payroll_logs + lib/paie-sage-import.ts (parseNumericFR) + tests TDD
 - [ ] 08-02-PLAN.md — API routes GET template + POST import (validation + insert payroll_logs)
 - [ ] 08-03-PLAN.md — Page /paie/import-sage + SageImportDropzone + entree SidebarNav
 
@@ -227,7 +227,7 @@ Plans:
 | 5. Evaluations & Discipline | 0/4 | Not started | - |
 | 6. QHSE & Sécurité au Travail | 0/3 | Not started | - |
 | 7. Agent IA & Reporting | 0/4 | Not started | - |
-| 8. Import Paie Sage | 0/3 | Not started | - |
+| 8. Import Paie Sage | 1/3 | In Progress|  |
 
 ---
 

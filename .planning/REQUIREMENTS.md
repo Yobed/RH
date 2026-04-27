@@ -83,6 +83,14 @@
 - [ ] **COM-01** : Messagerie interne employé ↔ RH
 - [ ] **COM-02** : Notifications automatiques (bulletin disponible, congés validés, évaluation)
 
+### Import Paie Sage
+
+- [ ] **ISP-01** : Page dédiée "Import Paie Sage" avec UX drag-and-drop et téléchargement de template de mapping
+- [ ] **ISP-02** : Template de mapping téléchargeable (colonnes SIRH) que le RH remplit depuis son export Sage
+- [x] **ISP-03** : Script de traitement Python (pandas) : nettoyage des espaces insécables, virgules décimales, mapping colonnes Sage → SIRH
+- [x] **ISP-04** : Écriture dans `payroll_logs` uniquement (aucune modification des tables existantes) avec traçabilité complète
+- [x] **ISP-05** : Validation du fichier avant import — erreur explicite si colonnes manquantes ou données incohérentes, sans écriture en base
+
 ---
 
 ## v2 Requirements

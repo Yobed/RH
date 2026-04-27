@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 03
-last_updated: "2026-04-02T16:08:21.329Z"
+status: Executing Phase 08
+last_updated: "2026-04-27T11:17:17.807Z"
 progress:
-  total_phases: 7
-  completed_phases: 1
-  total_plans: 19
-  completed_plans: 14
+  total_phases: 8
+  completed_phases: 2
+  total_plans: 24
+  completed_plans: 16
 ---
 
 # STATE.md — FichePaie RH
@@ -18,6 +18,7 @@ progress:
 Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 
 **Valeur principale :** Éditer un bulletin conforme CI, gérer le dossier salarié complet, obtenir une réponse juridique fiable — sans formation technique.
+
 ## Project Status
 
 - **Current Phase**: Phase 4 (Dossier Personnel & Cycle Contractuel)
@@ -115,6 +116,9 @@ Voir : `.planning/PROJECT.md` (mis à jour le 30 mars 2026)
 | Données congés chargées côté serveur + passées en props Client | 03-03 | Pas de fetch client — évite appels RLS répétés côté navigateur |
 | Navigation mois = état local + URL sync router.push | 03-03 | Permet partage de lien et retour navigateur fonctionnel |
 | useMemo sur buildJoursCouvertsParEmploye | 03-03 | O(n×31) calculé une seule fois par [conges, moisAffiche] |
+| employee_id TEXT NOT NULL dans payroll_logs (pas UUID FK) | 08-01 | Valeur brute Sage — matricule Sage peut diverger de l'UUID SIRH |
+| Colonnes numériques payroll_logs NULLABLE | 08-01 | Champ absent dans fichier Sage reste NULL (pas de valeur par défaut 0) |
+| REQUIRED_COLUMNS = [NET A PAYER, Salaire de base] | 08-01 | Colonnes minimales pour un import valide — validation côté serveur |
 
 ## Plan 01-02 Completion Note
 
