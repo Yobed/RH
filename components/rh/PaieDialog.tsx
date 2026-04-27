@@ -45,6 +45,10 @@ export interface BulletinEditable {
   prime_fonction?: number | null;
   prime_transport?: number | null;
   vacation_allowance?: number | null;
+  prime_logement?: number | null;
+  prime_responsabilite?: number | null;
+  remboursement_frais?: number | null;
+  heures_normales?: number | null;
   heures_sup_h15?: number | null;
   heures_sup_h50?: number | null;
   heures_sup_h75?: number | null;
@@ -67,6 +71,10 @@ const schema = z.object({
   prime_fonction:        z.string().optional(),
   prime_transport:       z.string().optional(),
   vacation_allowance:    z.string().optional(),
+  prime_logement:        z.string().optional(),
+  prime_responsabilite:  z.string().optional(),
+  remboursement_frais:   z.string().optional(),
+  heures_normales:       z.string().optional(),
   heures_sup_h15:        z.string().optional(),
   heures_sup_h50:        z.string().optional(),
   heures_sup_h75:        z.string().optional(),
@@ -116,6 +124,10 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
         prime_fonction:      String(bulletin.prime_fonction ?? 0),
         prime_transport:     String(bulletin.prime_transport ?? 0),
         vacation_allowance:  String(bulletin.vacation_allowance ?? 0),
+        prime_logement:      String(bulletin.prime_logement ?? 0),
+        prime_responsabilite: String(bulletin.prime_responsabilite ?? 0),
+        remboursement_frais: String(bulletin.remboursement_frais ?? 0),
+        heures_normales:     String(bulletin.heures_normales ?? 173.33),
         heures_sup_h15:      String(bulletin.heures_sup_h15 ?? 0),
         heures_sup_h50:      String(bulletin.heures_sup_h50 ?? 0),
         heures_sup_h75:      String(bulletin.heures_sup_h75 ?? 0),
@@ -126,8 +138,11 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
         periode: currentPeriode(),
         sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
         prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
-        prime_transport: "0", vacation_allowance: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
-        nb_jours_absence: "0",
+        prime_transport: "0", vacation_allowance: "0",
+        prime_logement: "0", prime_responsabilite: "0", remboursement_frais: "0",
+        heures_normales: "173.33",
+        heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0",
+        autres_retenues: "0", avances: "0", nb_jours_absence: "0",
       },
     });
 
@@ -176,6 +191,10 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
     prime_fonction:       Number(watch("prime_fonction")) || 0,
     prime_transport:      Number(watch("prime_transport")) || 0,
     vacation_allowance:   Number(watch("vacation_allowance")) || 0,
+    prime_logement:       Number(watch("prime_logement")) || 0,
+    prime_responsabilite: Number(watch("prime_responsabilite")) || 0,
+    remboursement_frais:  Number(watch("remboursement_frais")) || 0,
+    heures_normales:      Number(watch("heures_normales")) || 173.33,
     heures_sup:           {
       h15: Number(watch("heures_sup_h15")) || 0,
       h50: Number(watch("heures_sup_h50")) || 0,
@@ -198,6 +217,10 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
       prime_fonction:       Number(data.prime_fonction) || 0,
       prime_transport:      Number(data.prime_transport) || 0,
       vacation_allowance:   Number(data.vacation_allowance) || 0,
+      prime_logement:       Number(data.prime_logement) || 0,
+      prime_responsabilite: Number(data.prime_responsabilite) || 0,
+      remboursement_frais:  Number(data.remboursement_frais) || 0,
+      heures_normales:      Number(data.heures_normales) || 173.33,
       heures_sup_h15:       Number(data.heures_sup_h15) || 0,
       heures_sup_h50:       Number(data.heures_sup_h50) || 0,
       heures_sup_h75:       Number(data.heures_sup_h75) || 0,
@@ -230,8 +253,11 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
       periode: currentPeriode(),
       sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
       prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
-      prime_transport: "0", vacation_allowance: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
-      nb_jours_absence: "0",
+      prime_transport: "0", vacation_allowance: "0",
+      prime_logement: "0", prime_responsabilite: "0", remboursement_frais: "0",
+      heures_normales: "173.33",
+      heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0",
+      autres_retenues: "0", avances: "0", nb_jours_absence: "0",
     });
     router.refresh();
   }
@@ -384,6 +410,40 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 </label>
                 <Input type="number" min="0" step="1000" {...register("vacation_allowance")} className="mt-1" />
               </div>
+
+              {/* 10 */}
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">10</span> Prime de logement
+                  <span className="ml-1 text-[10px] text-emerald-600 font-normal">(exonérée CI)</span>
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_logement")} className="mt-1" />
+              </div>
+
+              {/* 11 */}
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">11</span> Prime de responsabilité
+                  <span className="ml-1 text-[10px] text-slate-400 font-normal">(imposable)</span>
+                </label>
+                <Input type="number" min="0" step="1000" {...register("prime_responsabilite")} className="mt-1" />
+              </div>
+
+              {/* 12 */}
+              <div>
+                <label className="text-xs font-medium text-slate-700">
+                  <span className="font-mono text-muted-foreground mr-1">12</span> Remboursement de frais
+                  <span className="ml-1 text-[10px] text-emerald-600 font-normal">(exonéré)</span>
+                </label>
+                <Input type="number" min="0" step="1000" {...register("remboursement_frais")} className="mt-1" />
+              </div>
+
+              {/* Heures normales */}
+              <div>
+                <label className="text-xs font-medium text-slate-700">Heures normales du mois</label>
+                <Input type="number" min="0" step="0.01" {...register("heures_normales")} className="mt-1" />
+                <p className="text-[10px] text-muted-foreground mt-0.5">Base taux horaire (défaut 173,33h)</p>
+              </div>
             </div>
           </div>
 
@@ -472,6 +532,12 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span>{fmt(nums.prime_anciennete)}</span>
                 </div>
               )}
+              {nums.prime_responsabilite > 0 && (
+                <div className="flex justify-between text-slate-600">
+                  <span>Prime de responsabilité</span>
+                  <span>{fmt(nums.prime_responsabilite)}</span>
+                </div>
+              )}
               {(nums.vacation_allowance ?? 0) > 0 && (
                 <div className="flex justify-between text-emerald-600">
                   <span>Indemnité congés payés <span className="text-[10px]">(exon.)</span></span>
@@ -484,6 +550,23 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span>{fmt(nums.prime_transport)}</span>
                 </div>
               )}
+              {nums.prime_logement > 0 && (
+                <div className="flex justify-between text-emerald-600">
+                  <span>Prime de logement <span className="text-[10px]">(exon.)</span></span>
+                  <span>{fmt(nums.prime_logement)}</span>
+                </div>
+              )}
+              {nums.remboursement_frais > 0 && (
+                <div className="flex justify-between text-emerald-600">
+                  <span>Remboursement de frais <span className="text-[10px]">(exon.)</span></span>
+                  <span>{fmt(nums.remboursement_frais)}</span>
+                </div>
+              )}
+              {/* Taux horaire — info */}
+              <div className="flex justify-between text-[10px] text-slate-400 italic pt-1">
+                <span>Taux horaire ({nums.heures_normales}h)</span>
+                <span>{fmt(Math.round((nums.salaire_brut + nums.sursalaire) / nums.heures_normales))}/h</span>
+              </div>
               {preview.overtime_pay > 0 && (
                 <div className="flex justify-between text-slate-600">
                   <span>Heures supplémentaires</span>

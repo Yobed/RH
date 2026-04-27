@@ -298,7 +298,11 @@ export interface LignesBulletin {
   prime_depassement?: number;
   prime_fonction?: number;
   prime_transport?: number;
-  vacation_allowance?: number; // Indemnité congés payés (Sage)
+  vacation_allowance?: number;     // Indemnité congés payés (Sage) — exonérée
+  prime_logement?: number;         // Prime de logement — exonérée CI
+  prime_responsabilite?: number;   // Prime de responsabilité — imposable
+  remboursement_frais?: number;    // Remboursement de frais — exonéré
+  heures_normales?: number;        // Heures normales du mois (affichage bulletin)
   heures_sup?: {
     h15: number;
     h50: number;
@@ -352,8 +356,12 @@ export function calculerRetenuAbsence(nbJoursAbsence: number, salaireBrut: numbe
 export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieComplet {
   const primeTransport = lignes.prime_transport ?? 0;
   const vacationAllowance = lignes.vacation_allowance ?? 0;
+  const primeLogement = lignes.prime_logement ?? 0;
+  const remboursementFrais = lignes.remboursement_frais ?? 0;
+  const primeResponsabilite = lignes.prime_responsabilite ?? 0;
 
-  const taux_horaire = lignes.taux_horaire ?? Math.round(((lignes.salaire_brut ?? 0) + (lignes.sursalaire ?? 0)) / 173.33);
+  const heures_normales = lignes.heures_normales ?? 173.33;
+  const taux_horaire = lignes.taux_horaire ?? Math.round(((lignes.salaire_brut ?? 0) + (lignes.sursalaire ?? 0)) / heures_normales);
   const heures_sup_montant = lignes.heures_sup
     ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, taux_horaire)
     : 0;
@@ -365,12 +373,15 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     + (lignes.prime_salissure ?? 0)
     + (lignes.prime_depassement ?? 0)
     + (lignes.prime_fonction ?? 0)
+    + primeResponsabilite
     + heures_sup_montant
     + primeTransport
-    + vacationAllowance;
+    + vacationAllowance
+    + primeLogement
+    + remboursementFrais;
 
-  // Prime transport + indemnité congés payés non soumises à ITS
-  const total_imposable = Math.max(0, total_brut - primeTransport - vacationAllowance);
+  // Éléments non soumis à ITS : transport + congés payés + logement + remboursements
+  const total_imposable = Math.max(0, total_brut - primeTransport - vacationAllowance - primeLogement - remboursementFrais);
 
   // CNPS plafonné
   const base_cnps = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
@@ -396,7 +407,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   const salaire_net = Math.max(0, total_brut - total_retenues);
 
   // Colonnes Sage
-  const exempt_indemnity = primeTransport + vacationAllowance;
+  const exempt_indemnity = primeTransport + vacationAllowance + primeLogement + remboursementFrais;
   const gross_salary = total_brut;
   const fiscal_gross = total_imposable;
   const social_gross = total_brut - exempt_indemnity;

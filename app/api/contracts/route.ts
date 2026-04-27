@@ -13,6 +13,17 @@ const contractSchema = z
     date_fin_essai: z.string().nullable().optional(),
     salaire_brut: z.coerce.number().min(0, "Salaire invalide"),
     renouvellement_count: z.coerce.number().int().min(0).default(0),
+    // Nouveaux champs
+    lieu_travail:           z.string().max(150).nullable().optional(),
+    duree_hebdo:            z.coerce.number().min(0).max(60).default(40),
+    description_poste:      z.string().nullable().optional(),
+    convention_collective:  z.string().max(100).nullable().optional(),
+    clause_non_concurrence: z.boolean().default(false),
+    clause_confidentialite: z.boolean().default(false),
+    avantages_nature:       z.string().nullable().optional(),
+    motif_cdd:              z.string().nullable().optional(),
+    signataire_nom:         z.string().max(100).nullable().optional(),
+    date_signature:         z.string().nullable().optional(),
   })
   .refine(
     (data) => {

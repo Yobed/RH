@@ -11,6 +11,17 @@ const updateSchema = z
     salaire_brut: z.coerce.number().min(0).optional(),
     renouvellement_count: z.coerce.number().int().min(0).optional(),
     statut: z.enum(["actif", "terminé", "suspendu"]).optional(),
+    // Nouveaux champs
+    lieu_travail:           z.string().max(150).nullable().optional(),
+    duree_hebdo:            z.coerce.number().min(0).max(60).optional(),
+    description_poste:      z.string().nullable().optional(),
+    convention_collective:  z.string().max(100).nullable().optional(),
+    clause_non_concurrence: z.boolean().optional(),
+    clause_confidentialite: z.boolean().optional(),
+    avantages_nature:       z.string().nullable().optional(),
+    motif_cdd:              z.string().nullable().optional(),
+    signataire_nom:         z.string().max(100).nullable().optional(),
+    date_signature:         z.string().nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.date_fin && data.date_debut && data.date_fin <= data.date_debut) {

@@ -30,6 +30,21 @@ const createSchema = z.object({
   prime_depassement:    z.coerce.number().min(0).nullable().optional(),
   prime_fonction:       z.coerce.number().min(0).nullable().optional(),
   prime_transport:      z.coerce.number().min(0).nullable().optional(),
+  // Nouveaux champs
+  lieu_naissance:         z.string().max(100).nullable().optional(),
+  num_cni:                z.string().max(30).nullable().optional(),
+  date_expiration_cni:    z.string().nullable().optional(),
+  adresse:                z.string().max(255).nullable().optional(),
+  situation_logement:     z.string().max(30).nullable().optional(),
+  rib:                    z.string().max(50).nullable().optional(),
+  mobile_money:           z.string().max(30).nullable().optional(),
+  contact_urgence_nom:    z.string().max(100).nullable().optional(),
+  contact_urgence_tel:    z.string().max(20).nullable().optional(),
+  anciennete_anterieure:  z.coerce.number().int().min(0).nullable().optional(),
+  groupe_sanguin:         z.string().max(5).nullable().optional(),
+  convention_collective:  z.string().max(100).nullable().optional(),
+  site_travail:           z.string().max(100).nullable().optional(),
+  nb_personnes_charge:    z.coerce.number().int().min(0).nullable().optional(),
 });
 
 export async function GET(req: Request) {

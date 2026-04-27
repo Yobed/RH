@@ -81,6 +81,11 @@ export type Database = {
           negative_advance: number | null
           rounding_adjustment: number | null
           net_to_pay: number | null
+          // Nouveaux champs
+          heures_normales: number | null
+          prime_logement: number | null
+          prime_responsabilite: number | null
+          remboursement_frais: number | null
         }
         Insert: {
           autres_retenues?: number
@@ -121,6 +126,10 @@ export type Database = {
           negative_advance?: number | null
           rounding_adjustment?: number | null
           net_to_pay?: number | null
+          heures_normales?: number | null
+          prime_logement?: number | null
+          prime_responsabilite?: number | null
+          remboursement_frais?: number | null
         }
         Update: {
           autres_retenues?: number
@@ -161,6 +170,10 @@ export type Database = {
           negative_advance?: number | null
           rounding_adjustment?: number | null
           net_to_pay?: number | null
+          heures_normales?: number | null
+          prime_logement?: number | null
+          prime_responsabilite?: number | null
+          remboursement_frais?: number | null
         }
         Relationships: [
           {
@@ -295,6 +308,11 @@ export type Database = {
           validated_by_manager_id: string | null
           validated_by_rh_at: string | null
           validated_by_rh_id: string | null
+          // Nouveaux champs
+          conge_fractionne: boolean | null
+          date_reprise: string | null
+          remplacant_id: string | null
+          justificatif_url: string | null
         }
         Insert: {
           commentaire?: string | null
@@ -312,6 +330,10 @@ export type Database = {
           validated_by_manager_id?: string | null
           validated_by_rh_at?: string | null
           validated_by_rh_id?: string | null
+          conge_fractionne?: boolean | null
+          date_reprise?: string | null
+          remplacant_id?: string | null
+          justificatif_url?: string | null
         }
         Update: {
           commentaire?: string | null
@@ -329,6 +351,10 @@ export type Database = {
           validated_by_manager_id?: string | null
           validated_by_rh_at?: string | null
           validated_by_rh_id?: string | null
+          conge_fractionne?: boolean | null
+          date_reprise?: string | null
+          remplacant_id?: string | null
+          justificatif_url?: string | null
         }
         Relationships: [
           {
@@ -403,6 +429,17 @@ export type Database = {
           salaire_brut: number
           statut: string | null
           type_contrat: string
+          // Nouveaux champs
+          lieu_travail: string | null
+          duree_hebdo: number | null
+          description_poste: string | null
+          convention_collective: string | null
+          clause_non_concurrence: boolean | null
+          clause_confidentialite: boolean | null
+          avantages_nature: string | null
+          motif_cdd: string | null
+          signataire_nom: string | null
+          date_signature: string | null
         }
         Insert: {
           company_id: string
@@ -417,6 +454,16 @@ export type Database = {
           salaire_brut: number
           statut?: string | null
           type_contrat: string
+          lieu_travail?: string | null
+          duree_hebdo?: number | null
+          description_poste?: string | null
+          convention_collective?: string | null
+          clause_non_concurrence?: boolean | null
+          clause_confidentialite?: boolean | null
+          avantages_nature?: string | null
+          motif_cdd?: string | null
+          signataire_nom?: string | null
+          date_signature?: string | null
         }
         Update: {
           company_id?: string
@@ -431,6 +478,16 @@ export type Database = {
           salaire_brut?: number
           statut?: string | null
           type_contrat?: string
+          lieu_travail?: string | null
+          duree_hebdo?: number | null
+          description_poste?: string | null
+          convention_collective?: string | null
+          clause_non_concurrence?: boolean | null
+          clause_confidentialite?: boolean | null
+          avantages_nature?: string | null
+          motif_cdd?: string | null
+          signataire_nom?: string | null
+          date_signature?: string | null
         }
         Relationships: [
           {
@@ -587,6 +644,21 @@ export type Database = {
           statut: string | null
           sursalaire: number | null
           type_contrat: string | null
+          // Nouveaux champs
+          lieu_naissance: string | null
+          num_cni: string | null
+          date_expiration_cni: string | null
+          adresse: string | null
+          situation_logement: string | null
+          rib: string | null
+          mobile_money: string | null
+          contact_urgence_nom: string | null
+          contact_urgence_tel: string | null
+          anciennete_anterieure: number | null
+          groupe_sanguin: string | null
+          convention_collective: string | null
+          site_travail: string | null
+          nb_personnes_charge: number | null
         }
         Insert: {
           categorie?: string | null
@@ -618,6 +690,20 @@ export type Database = {
           statut?: string | null
           sursalaire?: number | null
           type_contrat?: string | null
+          lieu_naissance?: string | null
+          num_cni?: string | null
+          date_expiration_cni?: string | null
+          adresse?: string | null
+          situation_logement?: string | null
+          rib?: string | null
+          mobile_money?: string | null
+          contact_urgence_nom?: string | null
+          contact_urgence_tel?: string | null
+          anciennete_anterieure?: number | null
+          groupe_sanguin?: string | null
+          convention_collective?: string | null
+          site_travail?: string | null
+          nb_personnes_charge?: number | null
         }
         Update: {
           categorie?: string | null
@@ -649,6 +735,20 @@ export type Database = {
           statut?: string | null
           sursalaire?: number | null
           type_contrat?: string | null
+          lieu_naissance?: string | null
+          num_cni?: string | null
+          date_expiration_cni?: string | null
+          adresse?: string | null
+          situation_logement?: string | null
+          rib?: string | null
+          mobile_money?: string | null
+          contact_urgence_nom?: string | null
+          contact_urgence_tel?: string | null
+          anciennete_anterieure?: number | null
+          groupe_sanguin?: string | null
+          convention_collective?: string | null
+          site_travail?: string | null
+          nb_personnes_charge?: number | null
         }
         Relationships: [
           {

@@ -11,6 +11,10 @@ const schema = z.object({
   date_fin: z.string().min(1),
   nb_jours: z.number().positive(),
   commentaire: z.string().max(500).optional(),
+  conge_fractionne: z.boolean().optional(),
+  date_reprise: z.string().nullable().optional(),
+  remplacant_id: z.string().uuid().nullable().optional(),
+  justificatif_url: z.string().max(500).nullable().optional(),
 });
 
 export async function GET() {
