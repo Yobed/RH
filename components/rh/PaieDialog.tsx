@@ -115,6 +115,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
         prime_depassement:   String(bulletin.prime_depassement ?? 0),
         prime_fonction:      String(bulletin.prime_fonction ?? 0),
         prime_transport:     String(bulletin.prime_transport ?? 0),
+        vacation_allowance:  String(bulletin.vacation_allowance ?? 0),
         heures_sup_h15:      String(bulletin.heures_sup_h15 ?? 0),
         heures_sup_h50:      String(bulletin.heures_sup_h50 ?? 0),
         heures_sup_h75:      String(bulletin.heures_sup_h75 ?? 0),
@@ -229,7 +230,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
       periode: currentPeriode(),
       sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
       prime_salissure: "0", prime_depassement: "0", prime_fonction: "0",
-      prime_transport: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
+      prime_transport: "0", vacation_allowance: "0", heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0", autres_retenues: "0", avances: "0",
       nb_jours_absence: "0",
     });
     router.refresh();

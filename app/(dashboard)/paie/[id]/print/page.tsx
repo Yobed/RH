@@ -161,12 +161,20 @@ export default async function PrintBulletinPage({
                         Number((bulletin as Record<string, unknown>).prime_depassement ?? 0);
   const prime_fonc    = Number((bulletin as Record<string, unknown>).prime_fonction ?? 0);
   const prime_transp  = Number((bulletin as Record<string, unknown>).prime_transport ?? 0);
+  const vacation_allw = Number((bulletin as Record<string, unknown>).vacation_allowance ?? 0);
+  const overtime_pay_db = Number((bulletin as Record<string, unknown>).overtime_pay ?? 0);
   const autresRetenues = Number(bulletin.autres_retenues ?? 0);
   const avances = Number(bulletin.avances ?? 0);
 
-  // Total imposable (transport exclu)
-  const total_imposable = sal_cat + sursalaire + prime_anc + prime_excep + prime_sal + prime_dep + prime_fonc;
-  const total_gains = total_imposable + prime_transp;
+  // Utilise gross_salary stocké si disponible (inclut toutes les lignes Sage)
+  const gross_salary_db = Number((bulletin as Record<string, unknown>).gross_salary ?? 0);
+
+  const total_imposable_calc = sal_cat + sursalaire + prime_anc + prime_excep + prime_sal + prime_dep + prime_fonc + overtime_pay_db;
+  const total_gains_calc = total_imposable_calc + prime_transp + vacation_allw;
+  const total_gains = gross_salary_db > 0 ? gross_salary_db : total_gains_calc;
+  const total_imposable = gross_salary_db > 0
+    ? (Number((bulletin as Record<string, unknown>).fiscal_gross ?? total_imposable_calc))
+    : total_imposable_calc;
 
   // Salariales — utilise les colonnes Sage stockées si disponibles, sinon recalcule
   const baseCNPS = Math.min(total_imposable, PLAFOND_CNPS_MENSUEL);
@@ -451,6 +459,30 @@ export default async function PrintBulletinPage({
                 </tr>
               ) : <EmptyRow />}
 
+              {/* ── 09 — Indemnité congés payés (exonérée) ── */}
+              {vacation_allw > 0 ? (
+                <tr>
+                  <Td className="text-center">09</Td>
+                  <Td>Indemnité Congés Payés <span className="text-gray-400">(exon.)</span></Td>
+                  <Td right>{n(vacation_allw)}</Td>
+                  <Td />
+                  <Td right>{n(vacation_allw)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
+              {/* ── HS — Heures supplémentaires ── */}
+              {overtime_pay_db > 0 ? (
+                <tr>
+                  <Td className="text-center">HS</Td>
+                  <Td>Heures Supplémentaires</Td>
+                  <Td />
+                  <Td />
+                  <Td right>{n(overtime_pay_db)}</Td>
+                  <Td /><Td /><Td />
+                </tr>
+              ) : <EmptyRow />}
+
               {/* ── 30 — Total brut ── */}
               <tr className="border-t-2 border-gray-700">
                 <Td className="text-center" bold>30</Td>
@@ -464,24 +496,24 @@ export default async function PrintBulletinPage({
               {/* ── 31 — Brut fiscal employé ── */}
               <tr>
                 <Td className="text-center">31</Td>
-                <Td>Brut fiscal employé</Td>
+                <Td>*** BRUT FISCAL ***</Td>
                 <Td right>{n(total_imposable)}</Td>
                 <Td /><Td /><Td /><Td /><Td />
               </tr>
 
-              {/* ── 32 — Brut fiscal employeur ── */}
+              {/* ── 32 — Indemnité exonérée ── */}
               <tr>
                 <Td className="text-center">32</Td>
-                <Td>Brut fiscal employeur</Td>
-                <Td right>{n(total_imposable)}</Td>
+                <Td>*** INDEMNITE EXONEREE ***</Td>
+                <Td right>{n(prime_transp + vacation_allw)}</Td>
                 <Td /><Td /><Td /><Td /><Td />
               </tr>
 
               {/* ── 33 — Brut social ── */}
               <tr>
                 <Td className="text-center">33</Td>
-                <Td>Brut social</Td>
-                <Td right>{n(total_imposable)}</Td>
+                <Td>*** BRUT SOCIAL ***</Td>
+                <Td right>{n(Math.max(0, total_gains - prime_transp - vacation_allw))}</Td>
                 <Td /><Td /><Td /><Td /><Td />
               </tr>
 
@@ -775,6 +807,8 @@ export default async function PrintBulletinPage({
             prime_depassement: prime_dep,
             prime_fonction: prime_fonc,
             prime_transport: prime_transp,
+            vacation_allowance: vacation_allw,
+            overtime_pay: overtime_pay_db,
             cnps_salarie: withholding_cnps,
             its: tax_igr,
             salaire_net: net_a_payer,

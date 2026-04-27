@@ -20,6 +20,8 @@ interface Props {
     prime_depassement?: number | null;
     prime_fonction?: number | null;
     prime_transport?: number | null;
+    vacation_allowance?: number | null;
+    overtime_pay?: number | null;
     cnps_salarie: number;
     its: number;
     salaire_net: number;
@@ -79,6 +81,8 @@ function Row({
 
 export function BulletinFormuleDetail({ bulletin: b }: Props) {
   const primeTransport = b.prime_transport ?? 0;
+  const vacationAllowance = b.vacation_allowance ?? 0;
+  const overtimePay = b.overtime_pay ?? 0;
   const sursalaire = b.sursalaire ?? 0;
   const primeAnciennete = b.prime_anciennete ?? 0;
   const primeExceptionnelle = b.prime_exceptionnelle ?? 0;
@@ -87,8 +91,10 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
   const primeFonction = b.prime_fonction ?? 0;
 
   const totalBrut = b.salaire_brut + sursalaire + primeAnciennete + primeExceptionnelle
-    + primeSalissure + primeDepassement + primeFonction + primeTransport;
-  const totalImposable = Math.max(0, totalBrut - primeTransport);
+    + primeSalissure + primeDepassement + primeFonction + primeTransport
+    + vacationAllowance + overtimePay;
+  // Transport et indemnité congés payés sont exonérés
+  const totalImposable = Math.max(0, totalBrut - primeTransport - vacationAllowance);
 
   const baseCnps = Math.min(totalImposable, PLAFOND_CNPS_MENSUEL);
   const cnpsRetraite = Math.round(baseCnps * TAUX_CNPS_RETRAITE_SALARIE);
@@ -139,16 +145,31 @@ export function BulletinFormuleDetail({ bulletin: b }: Props) {
             note="Exonérée de cotisations sociales et d'impôt"
           />
         )}
+        {vacationAllowance > 0 && (
+          <Row
+            label="Indemnité congés payés"
+            formula="Ligne 09 — NON soumise à CNPS ni IGR"
+            result={fmt(vacationAllowance)}
+            note="Exonérée — *** INDEMNITE EXONEREE *** (nomenclature Sage)"
+          />
+        )}
+        {overtimePay > 0 && (
+          <Row
+            label="Heures supplémentaires"
+            formula="Majorations 15% / 50% / 75% × taux horaire (Décret n°96-203)"
+            result={fmt(overtimePay)}
+          />
+        )}
         <Row
           label="Total brut"
           formula={`Σ lignes 01→08 = ${fmt(totalBrut)}`}
           result={fmt(totalBrut)}
           highlight
         />
-        {primeTransport > 0 && (
+        {(primeTransport > 0 || vacationAllowance > 0) && (
           <Row
-            label="Base imposable (brut − transport)"
-            formula={`${fmt(totalBrut)} − ${fmt(primeTransport)}`}
+            label="Base imposable (brut − exonérations)"
+            formula={`${fmt(totalBrut)} − ${fmt(primeTransport + vacationAllowance)} = *** BRUT FISCAL ***`}
             result={fmt(totalImposable)}
           />
         )}
