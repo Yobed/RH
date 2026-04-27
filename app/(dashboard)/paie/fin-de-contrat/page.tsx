@@ -3,7 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FilePdf, MagnifyingGlass, ClockCounterClockwise } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, FilePdf, ClockCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -13,10 +13,11 @@ export const metadata = { title: "Solde de Tout Compte — RH Manager CI" };
 export default async function FinDeContratPage({
   searchParams,
 }: {
-  searchParams: { employeeId?: string };
+  searchParams: Promise<{ employeeId?: string }>;
 }) {
   const supabase = createServerClient();
-  const defaultEmployeeId = searchParams?.employeeId;
+  const params = await searchParams;
+  const defaultEmployeeId = params?.employeeId;
 
   const [{ data: employees }, { data: company }, { data: archivedSTCs }] = await Promise.all([
     supabase
