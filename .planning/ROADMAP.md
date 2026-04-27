@@ -1,4 +1,4 @@
-# Roadmap: FichePaie RH
+﻿# Roadmap: FichePaie RH
 
 **Milestone:** v1.0 — SaaS RH Ivoirien Complet
 **Started:** 30 mars 2026
@@ -105,20 +105,12 @@ Plans:
 **Goal:** Le dossier RH complet d'un salarié est consultable en un seul endroit — documents classés, attestations générées en un clic, historique de carrière traçable, alertes sur les échéances contractuelles.
 **Depends on:** Phase 1
 **Covers:** DOS-01, DOS-02, DOS-03, DOS-04, DOS-05
-**Plans:**
-
-- [ ] 04-01: GED légère — étendre le module `/archives` existant avec classification par famille (contrat, avenant, bulletin, attestation, disciplinaire, médical, autre) ; pagination complète (remplacer `.limit(20)` par pagination UI) ; recherche par nom de document
-- [ ] 04-02: Génération automatique d'attestations — endpoint `POST /api/documents/attestation` générant un PDF (attestation de travail, attestation de salaire) avec les données de l'employé et l'en-tête de l'entreprise ; téléchargement direct depuis la fiche employé
-- [ ] 04-03: Suivi de carrière — migration SQL : table `career_events` (company_id, employee_id, type [promotion/mutation/formation/avenant], date, description, salaire_avant, salaire_apres) ; affichage timeline sur la fiche employé
-- [ ] 04-04: Gestion des avenants et alertes contractuelles — formulaire de renouvellement/avenant dans `ContractDialog` ; notifications automatiques 30/15/7 jours avant expiration CDD ou fin période d'essai ; sync dans `POST /api/notifications/sync`
-
-**Success Criteria** (what must be TRUE):
-
-1. Tous les documents d'un employé sont accessibles depuis sa fiche, filtrables par famille, sans limite de nombre affiché
-2. Un RH peut générer et télécharger une attestation de travail ou de salaire en moins de 10 secondes depuis la fiche employé, avec le nom légal et les numéros CNPS/NCC de l'entreprise pré-remplis
-3. La fiche employé affiche la chronologie des promotions, mutations et avenants avec les dates et variations de salaire
-4. Une notification apparaît automatiquement 30 jours avant la fin d'un CDD et disparaît une fois l'avenant ou la conversion CDI enregistrés
-**Plans:** TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 04-01-PLAN.md — GED onglet fiche employe : filtre famille en memoire + badges colores (GedTabClient)
+- [ ] 04-02-PLAN.md — Attestations PDF : boutons prominents dans GED tab + archivage Supabase Storage
+- [ ] 04-03-PLAN.md — Migration career_events + types/supabase.ts + route API Zod (prerequis blocking)
+- [ ] 04-04-PLAN.md — Renouvellement CDD : ContractDialog mode renewFrom + nettoyage notifications
 **UI hint**: yes
 
 ---
