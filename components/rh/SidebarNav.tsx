@@ -23,13 +23,15 @@ import {
   FirstAid,
   Presentation,
   ChatCircleText,
+  Target
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/rh", label: "Dashboard", icon: SquaresFour, exact: true },
-  { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: false },
+  { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
+  { href: "/analytique/focus", label: "Focus Stratégique", icon: Target, exact: false },
   { href: "/employes", label: "Collaborateurs", icon: Users, exact: false },
   { href: "/contrats", label: "Gestion Contrats", icon: FileText, exact: false },
   { href: "/conges", label: "Absences", icon: CalendarBlank, exact: false },

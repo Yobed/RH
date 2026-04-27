@@ -768,6 +768,13 @@ export function AnalytiqueDashboard({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Button
+            onClick={() => window.location.href = "/analytique/focus"}
+            className="rounded-2xl bg-amber-400 text-slate-900 hover:bg-amber-500 font-black shadow-lg shadow-amber-100 px-6 h-12 gap-2 transition-all duration-300 hover:translate-y-[-2px]"
+          >
+            <Zap className="h-5 w-5 fill-current" />
+            VUE FOCUS STRATÉGIQUE
+          </Button>
           <Button 
             onClick={exportPDF} 
             disabled={isExporting}
