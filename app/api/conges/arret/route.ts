@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!company_id) {
-    const { data: firstCompany } = await supabase.from('companies').select('id').limit(1).single();
+    const { data: firstCompany } = await supabase.from('companies').select('id').limit(1).maybeSingle();
     if (firstCompany) {
       company_id = firstCompany.id;
     }

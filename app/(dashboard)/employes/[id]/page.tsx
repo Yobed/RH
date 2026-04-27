@@ -129,7 +129,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
     supabase.from("leave_balances").select("jours_acquis, jours_pris, solde, annee").eq("employee_id", params.id).eq("annee", anneeEnCours).single(),
     supabase.from("conges").select("nb_jours").eq("employee_id", params.id).eq("type", "annuel").eq("statut", "approuve").gte("date_debut", `${anneeEnCours}-01-01`).lte("date_debut", `${anneeEnCours}-12-31`),
     supabase.from("career_events").select("*").eq("employee_id", params.id).order("date_event", { ascending: false }),
-    supabase.from("companies").select("*").single(),
+    supabase.from("companies").select("*").limit(1).maybeSingle(),
   ]);
 
   if (!emp) notFound();

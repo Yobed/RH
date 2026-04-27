@@ -77,7 +77,7 @@ export default async function PaiePage({
       .select("id, full_name, matricule, salaire_brut, date_embauche, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
       .eq("statut", "actif")
       .order("full_name"),
-    supabase.from("columns").select("*").single().then(() => supabase.from("companies").select("*").single()), // keep same promise structure
+    supabase.from("companies").select("*").limit(1).maybeSingle(),
   ]);
 
   const now = new Date();
