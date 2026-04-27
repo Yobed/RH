@@ -37,8 +37,8 @@ export default async function FinDeContratPage({
     supabase
       .from("documents")
       .select("*, employees(full_name, matricule)")
-      .eq("type", "Paie")
-      .ilike("title", "%Solde de Tout Compte%")
+      .eq("famille", "Paie")
+      .ilike("name", "%Solde de Tout Compte%")
       .order("created_at", { ascending: false })
       .limit(10),
   ]);
@@ -121,7 +121,7 @@ export default async function FinDeContratPage({
 
                        <div className="flex items-center gap-3">
                           <a 
-                            href={supabase.storage.from("rh-documents").getPublicUrl(doc.file_path).data.publicUrl}
+                            href={doc.file_url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="h-10 px-6 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-slate-800 transition-all flex items-center gap-2"
