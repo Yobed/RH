@@ -436,7 +436,7 @@ export function AnalytiqueFocus({
 
           <footer className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <FooterInfo icon={Hourglass} color="amber" title="Recruit Lead Time" value={analytics.recruitment.leadTime.toFixed(0) + " j"} desc="Vitesse d'embauche" />
-            <FooterInfo icon={Coins} color="emerald" title="Coût par Salarié" value={(trainingCostPerEmpl / 1000).toFixed(0) + " K"} desc="Budget Formation" />
+            <FooterInfo icon={Coins} color="emerald" title="Coût par Salarié" value={(analytics.formation.cost / 1000).toFixed(0) + " K"} desc="Budget Formation" />
             <FooterInfo icon={ChartLineUp} color="sky" title="Access Rate" value={analytics.formation.accessRate.toFixed(0) + "%"} desc="Audit Compétences" />
             <FooterInfo icon={GenderIntersex} color="rose" title="Parité Sociale" value={analytics.parity.toFixed(0) + "%"} desc="Indice Diversité" />
           </footer>

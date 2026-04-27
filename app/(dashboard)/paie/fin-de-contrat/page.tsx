@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, FilePdf, ClockCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React from "react";
-import { ErrorBoundary } from "react-error-boundary";
 
 // Hydration safety helper
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -88,13 +87,11 @@ export default async function FinDeContratPage({
 
         <TabsContent value="simulator">
           <ClientOnly>
-            <ErrorBoundary fallback={<div className="p-12 text-center bg-rose-50 rounded-[2.5rem] border border-rose-100"><p className="text-rose-600 font-black uppercase text-xs">Erreur de rendu du simulateur. Veuillez contacter l'administrateur.</p></div>}>
-              <SoldeToutCompteForm
-                employees={employees ?? []}
-                company={company}
-                defaultEmployeeId={defaultEmployeeId}
-              />
-            </ErrorBoundary>
+            <SoldeToutCompteForm
+              employees={employees ?? []}
+              company={company}
+              defaultEmployeeId={defaultEmployeeId}
+            />
           </ClientOnly>
         </TabsContent>
 
