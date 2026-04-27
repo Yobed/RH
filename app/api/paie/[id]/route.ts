@@ -115,6 +115,20 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       autres_retenues: d.autres_retenues,
       avances: d.avances,
       salaire_net: calc.salaire_net,
+      // Colonnes Sage 22
+      overtime_pay: calc.overtime_pay,
+      gross_salary: calc.gross_salary,
+      exempt_indemnity: calc.exempt_indemnity,
+      fiscal_gross: calc.fiscal_gross,
+      social_gross: calc.social_gross,
+      tax_is: calc.tax_is,
+      tax_cn: calc.tax_cn,
+      tax_igr: calc.tax_igr,
+      withholding_cnps: calc.withholding_cnps,
+      total_contributions: calc.total_contributions,
+      net_before_withholding: calc.net_before_withholding,
+      net_to_pay: calc.net_to_pay,
+      negative_advance: d.avances,
       details: {
         heures_sup: {
           h15: d.heures_sup_h15,

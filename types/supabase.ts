@@ -62,6 +62,25 @@ export type Database = {
           salaire_net: number
           sursalaire: number | null
           details: Json | null
+          // Colonnes Sage 22
+          days_worked: number | null
+          vacation_allowance: number | null
+          overtime_pay: number | null
+          gross_salary: number | null
+          exempt_indemnity: number | null
+          fiscal_gross: number | null
+          social_gross: number | null
+          tax_is: number | null
+          tax_cn: number | null
+          tax_igr: number | null
+          withholding_cnps: number | null
+          total_contributions: number | null
+          net_before_withholding: number | null
+          adjustment_m_minus_1: number | null
+          negative_pay_adjustment: number | null
+          negative_advance: number | null
+          rounding_adjustment: number | null
+          net_to_pay: number | null
         }
         Insert: {
           autres_retenues?: number
@@ -83,6 +102,25 @@ export type Database = {
           salaire_net: number
           sursalaire?: number | null
           details?: Json | null
+          // Colonnes Sage 22
+          days_worked?: number | null
+          vacation_allowance?: number | null
+          overtime_pay?: number | null
+          gross_salary?: number | null
+          exempt_indemnity?: number | null
+          fiscal_gross?: number | null
+          social_gross?: number | null
+          tax_is?: number | null
+          tax_cn?: number | null
+          tax_igr?: number | null
+          withholding_cnps?: number | null
+          total_contributions?: number | null
+          net_before_withholding?: number | null
+          adjustment_m_minus_1?: number | null
+          negative_pay_adjustment?: number | null
+          negative_advance?: number | null
+          rounding_adjustment?: number | null
+          net_to_pay?: number | null
         }
         Update: {
           autres_retenues?: number
@@ -104,6 +142,25 @@ export type Database = {
           salaire_net?: number
           sursalaire?: number | null
           details?: Json | null
+          // Colonnes Sage 22
+          days_worked?: number | null
+          vacation_allowance?: number | null
+          overtime_pay?: number | null
+          gross_salary?: number | null
+          exempt_indemnity?: number | null
+          fiscal_gross?: number | null
+          social_gross?: number | null
+          tax_is?: number | null
+          tax_cn?: number | null
+          tax_igr?: number | null
+          withholding_cnps?: number | null
+          total_contributions?: number | null
+          net_before_withholding?: number | null
+          adjustment_m_minus_1?: number | null
+          negative_pay_adjustment?: number | null
+          negative_advance?: number | null
+          rounding_adjustment?: number | null
+          net_to_pay?: number | null
         }
         Relationships: [
           {

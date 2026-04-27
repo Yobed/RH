@@ -309,17 +309,34 @@ export interface LignesBulletin {
   nb_jours_absence?: number; // jours absence non justifiée (retenue proportionnelle)
 }
 
+// Taux Contribution Nationale CI — solidarité employé
+export const TAUX_CN = 0.015;
+
 export interface ResultatPaieComplet {
+  // Colonnes existantes (rétrocompatibilité)
   total_brut: number;
   total_imposable: number;
-  cnps_retraite: number; // Part retraite 6.3%
-  cmu: number;           // Part CMU
-  cnps_salarie: number;  // Total CNPS + CMU
-  its: number;           // Impôt sur le revenu
+  cnps_retraite: number;
+  cmu: number;
+  cnps_salarie: number;
+  its: number;
   total_retenues: number;
   salaire_net: number;
   heures_sup_montant: number;
-  retenu_absence: number; // retenue pour absence non justifiée
+  retenu_absence: number;
+  // Colonnes Sage (22 colonnes)
+  gross_salary: number;           // *** SALAIRE BRUT *** = total_brut
+  exempt_indemnity: number;       // *** INDEMNITE EXONEREE *** = prime_transport
+  fiscal_gross: number;           // *** BRUT FISCAL *** = total_imposable
+  social_gross: number;           // *** BRUT SOCIAL *** = total_brut - exempt_indemnity
+  tax_is: number;                 // IS patronal — non retenu sur salarié = 0
+  tax_cn: number;                 // Contribution Nationale 1,5%
+  tax_igr: number;                // IGR (barème progressif = its existant)
+  withholding_cnps: number;       // Retenue CNPS salariale = cnps_salarie
+  total_contributions: number;    // Total cotisations = cnps_salarie + tax_cn + tax_igr
+  net_before_withholding: number; // NET AVANT RETENUE = gross_salary - total_contributions
+  net_to_pay: number;             // NET A PAYER = salaire_net final
+  overtime_pay: number;           // Heures supplémentaires montant
 }
 
 /**
@@ -375,17 +392,42 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
 
   const salaire_net = Math.max(0, total_brut - total_retenues);
 
-  return { 
-    total_brut, 
-    total_imposable, 
-    cnps_retraite, 
-    cmu, 
+  // Colonnes Sage
+  const exempt_indemnity = primeTransport;
+  const gross_salary = total_brut;
+  const fiscal_gross = total_imposable;
+  const social_gross = total_brut - exempt_indemnity;
+  const tax_is = 0; // IS = charge patronale, non retenue sur le salarié
+  const tax_cn = Math.round(fiscal_gross * TAUX_CN);
+  const tax_igr = its; // IGR = barème progressif existant
+  const withholding_cnps = cnps_salarie;
+  const total_contributions = withholding_cnps + tax_cn + tax_igr;
+  const net_before_withholding = gross_salary - total_contributions;
+  const net_to_pay = Math.max(0, gross_salary - total_contributions - (lignes.autres_retenues ?? 0) - (lignes.avances ?? 0) - retenu_absence);
+
+  return {
+    total_brut,
+    total_imposable,
+    cnps_retraite,
+    cmu,
     cnps_salarie,
-    its, 
-    total_retenues, 
-    salaire_net, 
-    heures_sup_montant, 
-    retenu_absence 
+    its,
+    total_retenues,
+    salaire_net,
+    heures_sup_montant,
+    retenu_absence,
+    gross_salary,
+    exempt_indemnity,
+    fiscal_gross,
+    social_gross,
+    tax_is,
+    tax_cn,
+    tax_igr,
+    withholding_cnps,
+    total_contributions,
+    net_before_withholding,
+    net_to_pay,
+    overtime_pay: heures_sup_montant,
   };
 }
 
