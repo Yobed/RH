@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { calculerSoldeDeCompte, ResultatSoldeDeCompte } from "@/lib/paie-ci";
+import { calculerSoldeDeCompte, ResultatSoldeDeCompte, safeFormatDate } from "@/lib/paie-ci";
 import { exportPDF, generateSTCPDF, type CompanyInfo } from "@/lib/pdf-templates";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,13 +105,22 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
     if (!selectedEmp) return;
     setValue("salaire_moyen_12_mois", String(selectedEmp.salaire_brut ?? 0));
     
-    if (selectedEmp.date_embauche) {
-      const debut = new Date(selectedEmp.date_embauche);
-      const now = new Date();
-      const diffTime = Math.abs(now.getTime() - debut.getTime());
-      const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
-      setValue("anciennete_annees", diffYears.toFixed(2));
-    } else {
+    try {
+      if (selectedEmp.date_embauche) {
+        const debut = new Date(selectedEmp.date_embauche);
+        if (isNaN(debut.getTime())) {
+          setValue("anciennete_annees", "0");
+          return;
+        }
+        const now = new Date();
+        const diffTime = Math.abs(now.getTime() - debut.getTime());
+        const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+        setValue("anciennete_annees", diffYears.toFixed(2));
+      } else {
+        setValue("anciennete_annees", "0");
+      }
+    } catch (err) {
+      console.error("Error calculating seniority:", err);
       setValue("anciennete_annees", "0");
     }
   }, [selectedEmp, setValue]);
@@ -405,7 +414,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
                                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Date Embauche</span>
-                                   <span className="text-xs font-black text-slate-900" suppressHydrationWarning>{selectedEmp.date_embauche ? new Date(selectedEmp.date_embauche).toLocaleDateString('fr-CI') : '-'}</span>
+                                   <span className="text-xs font-black text-slate-900" suppressHydrationWarning>{safeFormatDate(selectedEmp.date_embauche)}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/10">
                                    <span className="text-[10px] font-black uppercase text-emerald-100 tracking-widest">Salaire Actuel</span>

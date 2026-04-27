@@ -1,12 +1,21 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
+import { safeFormatDate } from "@/lib/paie-ci";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, FilePdf, ClockCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import React from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
+// Hydration safety helper
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="h-[600px] w-full bg-slate-50/50 animate-pulse rounded-[3rem]" />;
+  return <>{children}</>;
+}
 
 export const metadata = { title: "Solde de Tout Compte — RH Manager CI" };
 
@@ -78,11 +87,15 @@ export default async function FinDeContratPage({
         </TabsList>
 
         <TabsContent value="simulator">
-          <SoldeToutCompteForm
-            employees={employees ?? []}
-            company={company}
-            defaultEmployeeId={defaultEmployeeId}
-          />
+          <ClientOnly>
+            <ErrorBoundary fallback={<div className="p-12 text-center bg-rose-50 rounded-[2.5rem] border border-rose-100"><p className="text-rose-600 font-black uppercase text-xs">Erreur de rendu du simulateur. Veuillez contacter l'administrateur.</p></div>}>
+              <SoldeToutCompteForm
+                employees={employees ?? []}
+                company={company}
+                defaultEmployeeId={defaultEmployeeId}
+              />
+            </ErrorBoundary>
+          </ClientOnly>
         </TabsContent>
 
         <TabsContent value="history">
@@ -104,7 +117,7 @@ export default async function FinDeContratPage({
                                {doc.employees?.full_name || "Employé Inconnu"}
                              </h4>
                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400" suppressHydrationWarning>
-                               Archivé le {format(new Date(doc.created_at), "PPP", { locale: fr })}
+                                Archivé le {safeFormatDate(doc.created_at, "PPP")}
                              </p>
                           </div>
                        </div>

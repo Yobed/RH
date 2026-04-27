@@ -63,14 +63,19 @@ export function bonusCongesAnciennete(annees: number): number {
  * @returns Nombre de jours ouvrables acquis (base + bonus ancienneté)
  */
 export function calculerJoursAcquis(
-  dateEmbauche: string,
+  dateEmbauche: string | null | undefined,
   annee: number,
   ancienneteAns = 0,
 ): number {
+  if (!dateEmbauche) return 0;
   const parts = dateEmbauche.split('-');
+  if (parts.length < 3) return 0;
+  
   const anneeEmbauche = parseInt(parts[0], 10);
   const moisEmbauche  = parseInt(parts[1], 10); // 1-12
   const jourEmbauche  = parseInt(parts[2], 10);
+  
+  if (isNaN(anneeEmbauche) || isNaN(moisEmbauche) || isNaN(jourEmbauche)) return 0;
 
   let moisComplets = 0;
 

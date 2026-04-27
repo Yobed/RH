@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { Briefcase, TrendingUp, MapPin, GraduationCap, FileEdit } from "lucide-react";
 import { format } from "date-fns";
@@ -52,6 +52,13 @@ export function CareerTimeline({ events }: { events: CareerEvent[] }) {
     }
   };
 
+  const safeFormatDate = (dateStr: string | null | undefined, fmtStr: string) => {
+    if (!dateStr) return "Date indét.";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "Date invalide";
+    return format(d, fmtStr, { locale: fr });
+  };
+
   return (
     <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-slate-200 py-4">
       {events.map((event) => (
@@ -69,7 +76,7 @@ export function CareerTimeline({ events }: { events: CareerEvent[] }) {
                 {event.event_type}
               </span>
               <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-600">
-                {format(new Date(event.date_event), "d MMM yyyy", { locale: fr })}
+                {safeFormatDate(event.date_event, "d MMM yyyy")}
               </span>
             </div>
             <p className="text-sm text-slate-600">{event.description}</p>

@@ -17,6 +17,23 @@
  */
 
 import { calculerICCP } from '@/lib/conges-ci';
+import { format, isValid, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
+
+/**
+ * Formate une date de manière sécurisée pour l'affichage.
+ * Gère les valeurs nulles, indéfinies et invalides sans planter.
+ */
+export function safeFormatDate(date: any, formatStr: string = "dd/MM/yyyy"): string {
+  if (!date) return "-";
+  try {
+    const d = typeof date === 'string' ? parseISO(date) : new Date(date);
+    if (!isValid(d)) return "-";
+    return format(d, formatStr, { locale: fr });
+  } catch (e) {
+    return "-";
+  }
+}
 
 // SMIG mensuel en vigueur depuis le 01/01/2023
 // Source : Décret n°2022-986 du Ministère de l'Emploi CI
@@ -173,8 +190,11 @@ export function calculerProvision13e(salaireBrut: number): number {
 // Taux : 1% du salaire catégoriel par année d'ancienneté révolue
 // Plafond : 25% (atteint après 25 ans de présence)
 // Source : Convention Collective Interprofessionnelle CI
-export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string, convention: string = 'Interprofessionnelle'): number {
+export function calculerPrimeAnciennete(salaireCat: number, dateEmbauche: string | null | undefined, convention: string = 'Interprofessionnelle'): number {
+  if (!dateEmbauche) return 0;
   const debut = new Date(dateEmbauche);
+  if (isNaN(debut.getTime())) return 0;
+  
   const now = new Date();
   // Années complètes de service
   let annees = now.getFullYear() - debut.getFullYear();
@@ -369,11 +389,14 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   };
 }
 
-export function formatAnciennete(dateEmbauche: string): string {
-  const [y, m, dstr] = dateEmbauche.split("-");
-  if (!y || !m || !dstr) return "0 jour";
+export function formatAnciennete(dateEmbauche: string | null | undefined): string {
+  if (!dateEmbauche) return "0 jour";
+  const parts = dateEmbauche.split("-");
+  if (parts.length < 3) return "0 jour";
   
+  const [y, m, dstr] = parts;
   const debut = new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(dstr.substring(0, 2), 10));
+  if (isNaN(debut.getTime())) return "0 jour";
   const now = new Date();
   
   let years = now.getFullYear() - debut.getFullYear();

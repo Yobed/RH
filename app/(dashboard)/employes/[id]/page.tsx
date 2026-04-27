@@ -53,11 +53,24 @@ function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 function getInitials(name: string): string {
+  if (!name) return "??";
   return name
     .split(" ")
+    .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? "")
     .join("");
+}
+
+function safeFormatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return "—";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "—";
+    return d.toLocaleDateString("fr-CI");
+  } catch {
+    return "—";
+  }
 }
 
 type StatutKey = "actif" | "inactif" | "suspendu" | "approuve" | "en_attente" | "refuse";
@@ -232,7 +245,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   <InfoRow label="Genre" value={emp.genre === "M" ? "Masculin" : emp.genre === "F" ? "Féminin" : null} />
                   <InfoRow
                     label="Date de naissance"
-                    value={emp.date_naissance ? new Date(emp.date_naissance).toLocaleDateString("fr-CI") : null}
+                    value={safeFormatDate(emp.date_naissance)}
                   />
                   <InfoRow label="Nationalité" value={emp.nationalite} />
                   <InfoRow label="État civil" value={emp.etat_civil} />
@@ -277,7 +290,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                           </span>
                         </div>
                         <p className="text-[10px] text-slate-600 mt-0.5">
-                          {new Date(ev.date_evaluation).toLocaleDateString("fr-CI")}
+                          {safeFormatDate(ev.date_evaluation)}
                         </p>
                       </div>
                     ))}
@@ -322,7 +335,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                         </div>
                       </td>
                       <td className="px-4 py-3 text-slate-600 font-mono tabular-nums text-xs">
-                        {new Date(c.date_debut).toLocaleDateString("fr-CI")} → {c.date_fin ? new Date(c.date_fin).toLocaleDateString("fr-CI") : "Indét."}
+                        {safeFormatDate(c.date_debut)} → {c.date_fin ? safeFormatDate(c.date_fin) : "Indét."}
                       </td>
                       <td className="px-4 py-3 text-right font-mono tabular-nums font-medium text-slate-800">
                         {fmtXOF(c.salaire_brut)}
@@ -361,7 +374,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                     {salaryHistory?.map((h) => (
                       <tr key={h.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="px-4 py-2 text-slate-600">
-                          {new Date(h.date_effet).toLocaleDateString("fr-CI")}
+                          {safeFormatDate(h.date_effet)}
                         </td>
                         <td className="px-4 py-2 text-right font-mono tabular-nums font-medium text-slate-800">
                           {new Intl.NumberFormat("fr-CI").format(h.salaire_brut)}
@@ -443,7 +456,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                     <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
                       <td className="px-4 py-3 text-slate-700 capitalize">{c.type}</td>
                       <td className="px-4 py-3 text-slate-600 font-mono tabular-nums text-xs">
-                        {new Date(c.date_debut).toLocaleDateString("fr-CI")} → {new Date(c.date_fin).toLocaleDateString("fr-CI")}
+                        {safeFormatDate(c.date_debut)} → {safeFormatDate(c.date_fin)}
                       </td>
                       <td className="px-4 py-3 text-right font-bold font-mono tabular-nums text-slate-800">{c.nb_jours}j</td>
                       <td className="px-4 py-3 text-center">
@@ -570,7 +583,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                             </span>
                           </td>
                           <td className="px-4 py-3 text-slate-600 text-xs">
-                            {new Date(doc.created_at!).toLocaleDateString("fr-CI")}
+                            {safeFormatDate(doc.created_at)}
                           </td>
                           <td className="px-4 py-3 text-right">
                             <a
