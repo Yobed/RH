@@ -33,7 +33,7 @@ export default async function FinDeContratPage({
       .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche")
       .eq("statut", "actif")
       .order("full_name"),
-    supabase.from("companies").select("*").single(),
+    supabase.from("companies").select("*").limit(1).maybeSingle(),
     supabase
       .from("documents")
       .select("*, employees(full_name, matricule)")
