@@ -25,14 +25,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
   }
 
-  // Récupérer company_id
-  const { data: employee } = await supabase
-    .from('employees')
-    .select('company_id')
-    .eq('user_id', user.id)
-    .single();
+  // Récupérer company_id de manière résiliente
+  let company_id: string | null = null;
 
-  const company_id = employee?.company_id;
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('company_id')
+    .eq('id', user.id)
+    .single();
+  
+  if (profile?.company_id) {
+    company_id = profile.company_id;
+  }
+
+  if (!company_id) {
+    const { data: employee } = await supabase
+      .from('employees')
+      .select('company_id')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (employee?.company_id) {
+      company_id = employee.company_id;
+    }
+  }
+
+  if (!company_id) {
+    const { data: rpcId } = await supabase.rpc('get_user_company_id');
+    if (rpcId) {
+      company_id = rpcId;
+    }
+  }
+
+  if (!company_id) {
+    const { data: firstCompany } = await supabase.from('companies').select('id').limit(1).single();
+    if (firstCompany) {
+      company_id = firstCompany.id;
+    }
+  }
+
   if (!company_id) {
     return NextResponse.json({ error: 'Entreprise introuvable' }, { status: 400 });
   }

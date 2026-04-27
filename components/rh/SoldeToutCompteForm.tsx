@@ -50,8 +50,7 @@ type FormData = z.infer<typeof schema>;
 const selectClass =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
 
-const fmt = (n: number) =>
-  new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
+const fmt = (n: number) => `${Math.round(n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u202f")} FCFA`;
 
 interface Props {
   employees: EmployeeSTC[];

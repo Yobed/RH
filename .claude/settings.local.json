@@ -106,7 +106,12 @@
       "Bash(cat .vercel/project.json)",
       "Bash(cat lib/claude.ts)",
       "Bash(cat lib/anthropic.ts)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(python3 -)",
+      "Bash(powershell -Command ' *)"
     ],
     "additionalDirectories": [
       "c:\\Users\\WILFRIED\\OneDrive - Gravel Ivoire\\Bureau\\Ressource Humaine\\app\\api\\qhse\\accidents",

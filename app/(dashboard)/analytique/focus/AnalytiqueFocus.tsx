@@ -45,6 +45,13 @@ import {
 } from "recharts";
 import { cn } from "@/lib/utils";
 import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
   subMonths, 
   subYears, 
   isWithinInterval, 
@@ -279,15 +286,33 @@ export function AnalytiqueFocus({
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Slicers</span>
           </div>
 
-          <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="bg-transparent border-none text-xs font-black text-slate-700 outline-none">
-            {departments.map(d => <option key={d} value={d}>{d === "ALL" ? "Départements" : d}</option>)}
-          </select>
+          <Select value={selectedDept} onValueChange={setSelectedDept}>
+            <SelectTrigger className="w-[140px] h-8 bg-transparent border-none text-xs font-black text-slate-700 outline-none shadow-none focus:ring-0">
+              <SelectValue placeholder="Départements" />
+            </SelectTrigger>
+            <SelectContent className="z-[50] bg-white dark:bg-slate-900 border-slate-200">
+              {departments.map((d) => (
+                <SelectItem key={d} value={d} className="text-xs font-bold uppercase tracking-widest">
+                  {d === "ALL" ? "Tous Départements" : d}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <div className="w-[1px] h-4 bg-slate-200" />
 
-          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="bg-transparent border-none text-xs font-black text-slate-700 outline-none">
-            {availableCategories.map(c => <option key={c} value={c}>{c === "ALL" ? "Catégories" : c}</option>)}
-          </select>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-[140px] h-8 bg-transparent border-none text-xs font-black text-slate-700 outline-none shadow-none focus:ring-0">
+              <SelectValue placeholder="Catégories" />
+            </SelectTrigger>
+            <SelectContent className="z-[50] bg-white dark:bg-slate-900 border-slate-200">
+              {availableCategories.map((c) => (
+                <SelectItem key={c} value={c} className="text-xs font-bold uppercase tracking-widest">
+                  {c === "ALL" ? "Toutes Catégories" : c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <div className="ml-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black flex items-center gap-2">
             <Users size={12} weight="bold" />
