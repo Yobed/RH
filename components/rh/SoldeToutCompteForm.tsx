@@ -1,56 +1,16 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { calculerSoldeDeCompte, ResultatSoldeDeCompte, safeFormatDate } from "@/lib/paie-ci";
+import { Search, Download, Save, CheckCircle2, AlertTriangle, Calendar } from "lucide-react";
+import { calculerSoldeDeCompte, safeFormatDate, type ResultatSoldeDeCompte } from "@/lib/paie-ci";
 import { exportPDF, generateSTCPDF, type CompanyInfo } from "@/lib/pdf-templates";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { 
-  User, 
-  Calculator, 
-  FileText, 
-  CheckCircle2, 
-  ArrowRight, 
-  ArrowLeft, 
-  Download, 
-  Save,
-  Search,
-  Clock,
-  Calendar,
-  AlertTriangle,
-  ArrowRightCircle,
-  FileCheck,
-  UserCheck,
-  XCircle
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import type { Tables } from "@/types/supabase";
 
-export type EmployeeSTC = Pick<Tables<"employees">, "id" | "full_name" | "matricule" | "salaire_brut" | "type_contrat" | "date_embauche">;
-
-const schema = z.object({
-  employee_id: z.string().uuid("Sélectionnez un employé"),
-  salaire_moyen_12_mois: z.string().min(1, "Le salaire moyen est requis"),
-  somme_salaires_bruts_cdd: z.string().optional(),
-  anciennete_annees: z.string().min(1, "L'ancienneté est requise"),
-  jours_conges_restants: z.string().optional(),
-  jours_preavis_non_effectues: z.string().optional(),
-});
-
-type FormData = z.infer<typeof schema>;
-
-const selectClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
-
-const fmt = (n: number) => `${Math.round(n || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u202f")} FCFA`;
+export type EmployeeSTC = Pick<
+  Tables<"employees">,
+  "id" | "full_name" | "matricule" | "salaire_brut" | "type_contrat" | "date_embauche"
+>;
 
 interface Props {
   employees: EmployeeSTC[];
@@ -58,619 +18,439 @@ interface Props {
   defaultEmployeeId?: string;
 }
 
-const steps = [
-  { id: 1, title: "Employé", icon: User },
-  { id: 2, title: "Paramètres", icon: Calculator },
-  { id: 3, title: "Validation", icon: FileText },
-];
+const fmt = (n: number): string =>
+  new Intl.NumberFormat("fr-CI", {
+    style: "currency",
+    currency: "XOF",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(Math.round(n || 0));
+
+function computeSeniorityYears(dateEmbauche: string | null | undefined): string {
+  if (!dateEmbauche) return "0";
+  const debut = new Date(dateEmbauche);
+  if (isNaN(debut.getTime())) return "0";
+  const diffMs = Date.now() - debut.getTime();
+  const years = diffMs / (1000 * 60 * 60 * 24 * 365.25);
+  return years > 0 ? years.toFixed(2) : "0";
+}
+
+function getErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
 
 export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: Props) {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isArchiving, setIsArchiving] = useState(false);
+  const [employeeId, setEmployeeId] = useState<string>(defaultEmployeeId ?? "");
+  const [employeeSearch, setEmployeeSearch] = useState("");
+
+  const [salaireMoyen, setSalaireMoyen] = useState<string>("");
+  const [anciennete, setAnciennete] = useState<string>("");
+  const [sommeBrutsCdd, setSommeBrutsCdd] = useState<string>("0");
+  const [joursConges, setJoursConges] = useState<string>("0");
+  const [joursPreavis, setJoursPreavis] = useState<string>("0");
+
+  const [archiving, setArchiving] = useState(false);
   const [archived, setArchived] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [exporting, setExporting] = useState(false);
 
-  const { register, watch, setValue, trigger, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    mode: "onChange",
-    defaultValues: {
-      employee_id: defaultEmployeeId || "",
-      jours_conges_restants: "0",
-      jours_preavis_non_effectues: "0",
-      somme_salaires_bruts_cdd: "0"
-    }
-  });
-
-  const empId = watch("employee_id");
-  const salaireMoyenField = watch("salaire_moyen_12_mois");
-  const ancienneteField = watch("anciennete_annees");
-  const cddMasseField = watch("somme_salaires_bruts_cdd");
-  const congesField = watch("jours_conges_restants");
-  const preavisField = watch("jours_preavis_non_effectues");
-
-  const filteredEmployees = useMemo(() => {
-    if (!searchTerm.trim()) return employees;
-    
-    const search = searchTerm.toLowerCase().trim();
-    const terms = search.split(/\s+/);
-    
+  const filteredEmployees = useMemo<EmployeeSTC[]>(() => {
+    const q = employeeSearch.toLowerCase().trim();
+    if (!q) return employees;
     return employees.filter(e => {
       const name = (e.full_name || "").toLowerCase();
       const mat = (e.matricule || "").toLowerCase();
-      return terms.every(term => name.includes(term) || mat.includes(term));
+      return name.includes(q) || mat.includes(q);
     });
-  }, [searchTerm, employees]);
-  const selectedEmp = employees.find(e => e.id === empId);
-  const typeContrat = (selectedEmp?.type_contrat || 'CDI').toUpperCase();
-  const isCDD = typeContrat === 'CDD';
+  }, [employees, employeeSearch]);
 
+  const selectedEmployee = useMemo<EmployeeSTC | undefined>(
+    () => employees.find(e => e.id === employeeId),
+    [employees, employeeId]
+  );
+
+  const isCdd = (selectedEmployee?.type_contrat || "CDI").toUpperCase() === "CDD";
+
+  // Pré-remplissage automatique quand un employé est sélectionné
   useEffect(() => {
-    if (!selectedEmp) return;
-    setValue("salaire_moyen_12_mois", String(selectedEmp.salaire_brut ?? 0));
-    
-    try {
-      if (selectedEmp.date_embauche) {
-        const debut = new Date(selectedEmp.date_embauche);
-        if (isNaN(debut.getTime())) {
-          setValue("anciennete_annees", "0");
-          return;
-        }
-        const now = new Date();
-        const diffTime = Math.abs(now.getTime() - debut.getTime());
-        const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
-        setValue("anciennete_annees", diffYears.toFixed(2));
-      } else {
-        setValue("anciennete_annees", "0");
-      }
-    } catch (err) {
-      console.error("Error calculating seniority:", err);
-      setValue("anciennete_annees", "0");
-    }
-  }, [selectedEmp, setValue]);
+    if (!selectedEmployee) return;
+    setSalaireMoyen(String(selectedEmployee.salaire_brut ?? 0));
+    setAnciennete(computeSeniorityYears(selectedEmployee.date_embauche));
+    setArchived(false);
+  }, [selectedEmployee]);
 
-  const resultat = useMemo(() => {
-    if (!selectedEmp) return null;
-
-    const sm = Number(salaireMoyenField) || 0;
-    const anc = Number(ancienneteField) || 0;
-    const ssbCdd = Number(cddMasseField) || 0;
-    const conges = Number(congesField) || 0;
-    const preavis = Number(preavisField) || 0;
-    const saa = Number(selectedEmp.salaire_brut) || sm;
-
+  const resultat = useMemo<ResultatSoldeDeCompte | null>(() => {
+    if (!selectedEmployee) return null;
+    const sm = Number(salaireMoyen) || 0;
+    const anc = Number(anciennete) || 0;
+    const ssbCdd = Number(sommeBrutsCdd) || 0;
+    const conges = Number(joursConges) || 0;
+    const preavis = Number(joursPreavis) || 0;
+    const saa = Number(selectedEmployee.salaire_brut) || sm;
     return calculerSoldeDeCompte({
-      type_contrat: isCDD ? 'CDD' : 'CDI',
+      type_contrat: isCdd ? "CDD" : "CDI",
       salaire_moyen_12_mois: sm,
       somme_salaires_bruts_cdd: ssbCdd,
       anciennete_annees: anc,
       jours_conges_restants: conges,
       jours_preavis_non_effectues: preavis,
-      salaire_mensuel_actuel: saa
+      salaire_mensuel_actuel: saa,
     });
-  }, [
-    selectedEmp, 
-    isCDD, 
-    salaireMoyenField, 
-    ancienneteField, 
-    cddMasseField, 
-    congesField, 
-    preavisField
-  ]);
+  }, [selectedEmployee, isCdd, salaireMoyen, anciennete, sommeBrutsCdd, joursConges, joursPreavis]);
 
-  const handleNext = async () => {
-    let isValid = false;
-    if (currentStep === 1) {
-      isValid = await trigger("employee_id");
-    } else if (currentStep === 2) {
-      isValid = await trigger();
+  function handleExportPdf(): void {
+    if (!selectedEmployee || !resultat) {
+      toast.error("Sélectionnez un salarié et complétez les paramètres.");
+      return;
     }
-    
-    if (isValid) {
-      setCurrentStep(prev => Math.min(prev + 1, 3));
+    setExporting(true);
+    try {
+      const doc = generateSTCPDF({
+        employee: selectedEmployee,
+        stcResult: resultat,
+        company: company || { name: "ENTREPRISE", id: "temp" },
+        params: {
+          salaire_moyen_12_mois: salaireMoyen,
+          anciennete_annees: anciennete,
+          somme_salaires_bruts_cdd: sommeBrutsCdd,
+          jours_conges_restants: joursConges,
+          jours_preavis_non_effectues: joursPreavis,
+        },
+      });
+      const filename = `STC_${(selectedEmployee.full_name || "Export").replace(/ /g, "_")}_${new Date().getFullYear()}`;
+      exportPDF(doc, filename);
+      toast.success("PDF généré.");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Erreur lors de la génération du PDF."));
+    } finally {
+      setExporting(false);
     }
-  };
+  }
 
-  const handlePrev = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  };
-  
-  const handleArchive = async () => {
-    if (!selectedEmp || !resultat) return;
-    
-    const toastId = toast.loading("Génération du document et archivage en cours...");
-    setIsArchiving(true);
+  async function handleArchive(): Promise<void> {
+    if (!selectedEmployee || !resultat) {
+      toast.error("Sélectionnez un salarié et complétez les paramètres.");
+      return;
+    }
+    const toastId = toast.loading("Archivage en cours…");
+    setArchiving(true);
     try {
       const response = await fetch("/api/stc/archiver", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employee_id: selectedEmp.id,
-          resultat: resultat,
+          employee_id: selectedEmployee.id,
+          resultat,
           parametres: {
-            salaire_moyen_12_mois: salaireMoyenField,
-            anciennete_annees: ancienneteField,
-            somme_salaires_bruts_cdd: cddMasseField,
-            jours_conges_restants: congesField,
-            jours_preavis_non_effectues: preavisField
-          }
-        })
+            salaire_moyen_12_mois: salaireMoyen,
+            anciennete_annees: anciennete,
+            somme_salaires_bruts_cdd: sommeBrutsCdd,
+            jours_conges_restants: joursConges,
+            jours_preavis_non_effectues: joursPreavis,
+          },
+        }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Erreur lors de l'archivage");
-
+      const data: { error?: string } = await response.json();
+      if (!response.ok) throw new Error(data.error || "Erreur lors de l'archivage.");
       setArchived(true);
-      toast.success("STC archivé avec succès dans le dossier du personnel", { id: toastId });
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.message || "Erreur lors de la génération du document", { id: toastId });
+      toast.success("STC archivé dans le dossier du personnel.", { id: toastId });
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Erreur lors de l'archivage."), { id: toastId });
     } finally {
-      setIsArchiving(false);
+      setArchiving(false);
     }
-  };
+  }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-10 pb-20">
-      {/* Premium Wizard Progress */}
-      <div className="p-10 bg-white border border-slate-100 rounded-[3rem] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.06)] relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-slate-50" />
-        <motion.div 
-          className="absolute top-0 left-0 h-1 bg-gradient-to-r from-primary to-emerald-500"
-          initial={{ width: "0%" }}
-          animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
-          transition={{ type: "spring", stiffness: 40, damping: 15 }}
-        />
+    <section className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-5">
+      {/* ── Colonne formulaire (3/5) ──────────────────────────── */}
+      <div className="lg:col-span-3 space-y-4 sm:space-y-5">
+        {/* Sélection salarié */}
+        <Card>
+          <CardTitle sub="Recherche par nom ou matricule">Salarié concerné</CardTitle>
+          <div className="p-4 sm:p-5 space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Rechercher un collaborateur…"
+                value={employeeSearch}
+                onChange={(e) => setEmployeeSearch(e.target.value)}
+                className="h-9 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              />
+            </div>
+            <select
+              value={employeeId}
+              onChange={(e) => setEmployeeId(e.target.value)}
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+            >
+              <option value="">— Sélectionner —</option>
+              {filteredEmployees.map(e => (
+                <option key={e.id} value={e.id}>
+                  {e.full_name} ({e.matricule}) · {e.type_contrat || "CDI"}
+                </option>
+              ))}
+            </select>
 
-        <div className="flex items-center justify-between relative px-2 sm:px-8">
-          {steps.map((step, idx) => {
-            const Icon = step.icon;
-            const isActive = currentStep === step.id;
-            const isCompleted = currentStep > step.id;
-            
-            return (
-              <div key={step.id} className="relative flex flex-col items-center gap-4">
-                <motion.div 
-                  initial={false}
-                  animate={{ 
-                    scale: isActive ? 1.1 : 1,
-                    backgroundColor: isCompleted ? "#0f172a" : isActive ? "#ffffff" : "#ffffff",
-                    borderColor: isCompleted ? "#0f172a" : isActive ? "#0f172a" : "#f1f5f9"
-                  }}
-                  className={`w-16 h-16 rounded-2xl flex items-center justify-center border-[2.5px] transition-all duration-500 relative
-                    ${isActive ? "shadow-2xl shadow-primary/20" : ""}
-                  `}
-                >
-                  {isCompleted ? (
-                    <CheckCircle2 className="w-7 h-7 text-emerald-400" />
-                  ) : (
-                    <Icon className={`w-6 h-6 ${isActive ? "text-primary" : "text-slate-300"}`} />
-                  )}
-                  
-                  {isActive && (
-                    <motion.div 
-                      layoutId="step-glow"
-                      className="absolute -inset-2 bg-primary/5 rounded-[2rem] -z-10 blur-xl"
-                    />
-                  )}
-                </motion.div>
-                <div className="flex flex-col items-center">
-                  <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500
-                    ${isActive ? "text-slate-900" : "text-slate-400"}
-                  `}>
-                    {step.title}
-                  </span>
-                  {isActive && (
-                    <motion.div 
-                      layoutId="step-indicator"
-                      className="w-1 h-1 rounded-full bg-primary mt-1"
-                    />
-                  )}
+            {selectedEmployee && (
+              <div className="rounded-md border border-slate-100 bg-slate-50 p-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Matricule</p>
+                  <p className="mt-0.5 text-slate-900 font-medium tabular-nums">{selectedEmployee.matricule}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Contrat</p>
+                  <p className="mt-0.5 text-slate-900 font-medium">{selectedEmployee.type_contrat || "CDI"}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Embauche</p>
+                  <p className="mt-0.5 text-slate-900 font-medium tabular-nums" suppressHydrationWarning>
+                    {safeFormatDate(selectedEmployee.date_embauche)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">Salaire</p>
+                  <p className="mt-0.5 text-slate-900 font-medium tabular-nums">{fmt(selectedEmployee.salaire_brut || 0)}</p>
                 </div>
               </div>
-            );
-          })}
+            )}
+          </div>
+        </Card>
+
+        {/* Paramètres financiers */}
+        <Card>
+          <CardTitle sub="Bases de calcul des indemnités légales">Paramètres financiers</CardTitle>
+          <div className="p-4 sm:p-5 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <NumericField
+                label="Salaire moyen (12 mois)"
+                hint="Base légale pour licenciement et préavis"
+                value={salaireMoyen}
+                onChange={setSalaireMoyen}
+                step={1000}
+                suffix="FCFA"
+                disabled={!selectedEmployee}
+              />
+              <NumericField
+                label="Ancienneté"
+                hint="Calculée depuis la date d'embauche"
+                value={anciennete}
+                onChange={setAnciennete}
+                step={0.01}
+                suffix="ans"
+                disabled={!selectedEmployee}
+              />
+            </div>
+
+            {isCdd && (
+              <div className="rounded-md border border-amber-200 bg-amber-50/60 p-3">
+                <NumericField
+                  label="Masse salariale du CDD"
+                  hint="Total des salaires bruts perçus — base de la prime de précarité (3 %)"
+                  value={sommeBrutsCdd}
+                  onChange={setSommeBrutsCdd}
+                  step={1000}
+                  suffix="FCFA"
+                />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <NumericField
+                label="Jours de congés restants"
+                hint="Indemnité compensatrice (ICCP)"
+                value={joursConges}
+                onChange={setJoursConges}
+                step={0.5}
+                suffix="jours"
+                disabled={!selectedEmployee}
+              />
+              <NumericField
+                label="Préavis non effectué"
+                hint="Indemnité compensatrice de préavis"
+                value={joursPreavis}
+                onChange={setJoursPreavis}
+                step={1}
+                suffix="jours"
+                disabled={!selectedEmployee}
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Avertissement legal */}
+        <div className="rounded-md border border-amber-200 bg-amber-50/60 p-3.5 flex gap-2.5">
+          <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-900 leading-relaxed">
+            <span className="font-semibold">Brut indicatif.</span> Les retenues fiscales et sociales (CNPS, CN, IGR) seront déduites
+            sur le bulletin de solde final selon les barèmes en vigueur.
+          </p>
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-           key={currentStep}
-           initial={{ opacity: 0, x: 20 }}
-           animate={{ opacity: 1, x: 0 }}
-           exit={{ opacity: 0, x: -20 }}
-           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Card className="border-none shadow-[0_30px_70px_rgba(0,0,0,0.04)] rounded-[2.5rem] overflow-hidden bg-white/80 backdrop-blur-xl">
-            <CardHeader className="p-10 pb-6 border-b border-slate-50">
-              <div className="flex items-center gap-4 mb-4">
-                 <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center">
-                    {currentStep === 1 && <User className="w-6 h-6 text-white" />}
-                    {currentStep === 2 && <Calculator className="w-6 h-6 text-white" />}
-                    {currentStep === 3 && <FileCheck className="w-6 h-6 text-white" />}
-                 </div>
-                 <div>
-                    <CardTitle className="text-3xl font-black text-slate-900 tracking-tightest leading-none">
-                      {currentStep === 1 && "Identification"}
-                      {currentStep === 2 && "Calculateur"}
-                      {currentStep === 3 && "Vérification"}
-                    </CardTitle>
-                    <CardDescription className="text-slate-500 font-medium mt-1">
-                      {currentStep === 1 && "Sélectionnez le collaborateur pour initier la procédure de solde."}
-                      {currentStep === 2 && "Configurez les paramètres financiers et les reliquats de congés."}
-                      {currentStep === 3 && "Validez les calculs avant l'archivage définitif du document."}
-                    </CardDescription>
-                 </div>
+      {/* ── Colonne résultat (2/5) ────────────────────────────── */}
+      <aside className="lg:col-span-2">
+        <div className="lg:sticky lg:top-4">
+          <Card className="overflow-hidden">
+            <CardTitle
+              sub={
+                selectedEmployee
+                  ? `${selectedEmployee.full_name} · ${isCdd ? "CDD" : "CDI"}`
+                  : "Sélectionnez un salarié pour voir le calcul"
+              }
+            >
+              Solde de tout compte
+            </CardTitle>
+
+            {!selectedEmployee || !resultat ? (
+              <div className="px-5 py-12 text-center">
+                <Calendar className="h-7 w-7 text-slate-300 mx-auto mb-2.5" />
+                <p className="text-sm font-medium text-slate-700">En attente de saisie</p>
+                <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+                  Choisissez un salarié et renseignez les paramètres pour générer le solde.
+                </p>
               </div>
-            </CardHeader>
-            
-            <CardContent className="p-10">
-              {/* STEP 1: Searchable Employee List */}
-              {currentStep === 1 && (
-                <div className="space-y-8 animate-in fade-in duration-500">
-                  <div className="space-y-4">
-                    <Label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] ml-1">Rechercher un collaborateur</Label>
-                    <div className="relative group">
-                      <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 to-emerald-500/10 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition duration-500" />
-                      <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                        <Input 
-                          placeholder="Nom, matricule..." 
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="pl-12 h-16 border-slate-100 rounded-2xl bg-slate-50/50 shadow-inner focus:bg-white focus:ring-primary/20 text-lg font-bold transition-all"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-                    <div className="lg:col-span-3 space-y-4">
-                      <ScrollArea className="h-[460px] pr-4 -mr-4">
-                        <div className="space-y-3 pb-4">
-                          {filteredEmployees.length === 0 ? (
-                            <motion.div 
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="p-16 text-center bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-100 flex flex-col items-center gap-4"
-                            >
-                               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                                  <XCircle className="w-8 h-8 text-slate-200" />
-                               </div>
-                               <div className="space-y-1">
-                                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Aucun collaborateur trouvé</p>
-                                 <p className="text-[10px] text-slate-400 font-bold">Essayez d'ajuster vos filtres de recherche</p>
-                               </div>
-                            </motion.div>
-                          ) : (
-                            filteredEmployees.map((e, idx) => (
-                              <motion.button
-                                key={e.id}
-                                layout
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.03 }}
-                                type="button"
-                                onClick={() => {
-                                  setValue("employee_id", e.id);
-                                  trigger("employee_id");
-                                }}
-                                className={`w-full p-6 rounded-3xl border-2 text-left transition-all duration-500 group relative overflow-hidden
-                                  ${empId === e.id 
-                                    ? "bg-slate-900 border-slate-900 shadow-[0_20px_40px_rgba(15,23,42,0.15)] scale-[1.02]" 
-                                    : "bg-white border-slate-50 hover:border-slate-100 hover:bg-slate-50/80 hover:scale-[1.01]"
-                                  }
-                                `}
-                              >
-                                {empId === e.id && (
-                                  <motion.div 
-                                    layoutId="selected-indicator"
-                                    className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 -z-10"
-                                  />
-                                )}
-                                <div className="flex items-center justify-between relative z-10">
-                                  <div className="flex items-center gap-5">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs transition-colors duration-500
-                                      ${empId === e.id ? "bg-white/10 text-white" : "bg-slate-100 text-slate-400"}
-                                    `}>
-                                      {(e.full_name || "Employé").split(' ').filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase()}
-                                    </div>
-                                    <div className="space-y-1">
-                                      <div className={`font-black text-lg tracking-tight leading-tight ${empId === e.id ? "text-white" : "text-slate-900"}`}>
-                                        {e.full_name || "Chargement..."}
-                                      </div>
-                                      <div className={`text-[10px] uppercase font-bold tracking-widest flex items-center gap-2 ${empId === e.id ? "text-slate-400" : "text-slate-400"}`}>
-                                        <span className={empId === e.id ? "text-emerald-400" : "text-slate-300"}>#{e.matricule}</span>
-                                        <span className="w-1 h-1 rounded-full bg-slate-300" />
-                                        <span>{e.type_contrat}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  {empId === e.id && (
-                                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="h-8 w-8 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                                      <UserCheck className="w-4 h-4 text-white" />
-                                    </motion.div>
-                                  )}
-                                </div>
-                              </motion.button>
-                            ))
-                          )}
-                        </div>
-                      </ScrollArea>
-                    </div>
-
-                        <div className="lg:col-span-2 relative">
-                          <AnimatePresence mode="wait">
-                            {selectedEmp ? (
-                              <motion.div 
-                                key={selectedEmp.id}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="bg-slate-50 border border-slate-100 rounded-3xl p-8 sticky top-0"
-                              >
-                                 <div className="flex flex-col items-center text-center space-y-4 mb-8">
-                                    <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-slate-900/5 ring-1 ring-slate-100">
-                                       <User className="w-12 h-12 text-slate-300" />
-                                    </div>
-                                    <div className="space-y-1">
-                                      <h4 className="text-xl font-black text-slate-900 tracking-tight">{selectedEmp.full_name}</h4>
-                                      <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] uppercase px-4 py-1.5 rounded-full">{selectedEmp.type_contrat}</Badge>
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
-                                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Matricule</span>
-                                       <span className="text-xs font-black text-slate-900">{selectedEmp.matricule}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100">
-                                       <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Date Embauche</span>
-                                       <span className="text-xs font-black text-slate-900" suppressHydrationWarning>{safeFormatDate(selectedEmp.date_embauche)}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between p-4 bg-emerald-500 rounded-2xl shadow-lg shadow-emerald-500/10">
-                                       <span className="text-[10px] font-black uppercase text-emerald-100 tracking-widest">Salaire Actuel</span>
-                                       <span className="text-sm font-black text-white">{fmt(selectedEmp.salaire_brut || 0)}</span>
-                                    </div>
-                                 </div>
-                              </motion.div>
-                            ) : (
-                              <div className="h-full flex flex-col items-center justify-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100 p-8 text-center space-y-4">
-                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                                    <ArrowRightCircle className="w-8 h-8 text-slate-200" />
-                                 </div>
-                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Sélectionnez un employé pour <br/> voir ses détails contractuels</p>
-                              </div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                   </div>
+            ) : (
+              <>
+                <div className="p-4 sm:p-5 space-y-2.5 text-sm">
+                  {isCdd ? (
+                    <Line
+                      label="Indemnité de précarité"
+                      hint="3 % de la masse salariale CDD"
+                      value={fmt(resultat.indemnite_precarite)}
+                    />
+                  ) : (
+                    <Line
+                      label="Indemnité de licenciement"
+                      hint="Selon ancienneté et salaire moyen"
+                      value={fmt(resultat.indemnite_licenciement)}
+                    />
+                  )}
+                  <Line
+                    label="Indemnité de congés (ICCP)"
+                    hint="Salaire / 26 × jours restants"
+                    value={fmt(resultat.indemnite_compensatrice_conges)}
+                  />
+                  <Line
+                    label="Indemnité de préavis"
+                    hint="Salaire / 26 × jours non effectués"
+                    value={fmt(resultat.indemnite_preavis)}
+                  />
                 </div>
-              )}
 
-              {/* STEP 2: Parameters */}
-              {currentStep === 2 && (
-                <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] ml-1">Salaire Moyen (12 mois)</Label>
-                        <div className="relative group">
-                          <Input type="number" step="1000" {...register("salaire_moyen_12_mois")} className="h-14 border-slate-100 rounded-2xl bg-slate-50/50 focus:bg-white focus:ring-primary/20 text-lg font-black pr-16" />
-                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">FCFA</span>
-                        </div>
-                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest pl-1">Base légale des indemnités</p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] ml-1">Ancienneté totale</Label>
-                        <div className="relative group">
-                          <Input type="number" step="0.01" {...register("anciennete_annees")} className="h-14 border-slate-100 rounded-2xl bg-slate-50/50 focus:bg-white focus:ring-primary/20 text-lg font-black pr-16" />
-                          <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">ANS</span>
-                        </div>
-                      </div>
-
-                      {isCDD && (
-                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase text-primary tracking-[0.2em] ml-1">Masse salariale du CDD</Label>
-                          <div className="relative group">
-                            <Input type="number" step="1000" {...register("somme_salaires_bruts_cdd")} className="h-14 border-primary/10 rounded-2xl bg-primary/5 focus:bg-white focus:ring-primary/20 text-lg font-black pr-16" />
-                            <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-primary/60">FCFA</span>
-                          </div>
-                          <p className="text-[9px] text-primary/60 font-bold uppercase tracking-widest pl-1">Calcul de la prime de précarité (3%)</p>
-                        </motion.div>
-                      )}
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="bg-slate-900 rounded-[2.5rem] p-8 space-y-8 shadow-2xl shadow-slate-900/20 relative overflow-hidden group">
-                         <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-all duration-700">
-                           <Clock className="w-20 h-20 text-white" />
-                         </div>
-                         <h4 className="text-white font-black uppercase tracking-[0.3em] text-xs pb-4 border-b border-white/10 flex items-center gap-3">
-                           <Calendar className="w-4 h-4 text-primary" /> Droits Restants
-                         </h4>
-                        
-                        <div className="space-y-6">
-                          <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Jours de congés payés</Label>
-                            <div className="relative group/input">
-                              <Input type="number" step="0.5" {...register("jours_conges_restants")} className="h-14 border-white/10 rounded-2xl bg-white/5 focus:bg-white/10 focus:ring-white/20 text-lg font-black text-white pr-20" />
-                              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-500">JOURS</span>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Préavis non effectué</Label>
-                            <div className="relative group/input">
-                              <Input type="number" step="1" {...register("jours_preavis_non_effectues")} className="h-14 border-white/10 rounded-2xl bg-white/5 focus:bg-white/10 focus:ring-white/20 text-lg font-black text-white pr-20" />
-                              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-500">JOURS</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <div className="border-t border-slate-100 px-4 sm:px-5 py-4 bg-slate-900 text-white flex items-baseline justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400 font-medium">Total brut STC</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Avant retenues fiscales et sociales</p>
                   </div>
+                  <p className="text-2xl sm:text-3xl font-semibold tabular-nums tracking-tight">
+                    {fmt(resultat.total_brut_stc)}
+                  </p>
                 </div>
-              )}
 
-              {/* STEP 3: Summary Verification */}
-              {currentStep === 3 && resultat && selectedEmp && (
-                <div className="space-y-8 animate-in fade-in duration-500">
-                  <div className="relative p-1 bg-gradient-to-br from-primary to-emerald-500 rounded-[3rem] shadow-2xl shadow-primary/10 overflow-hidden group">
-                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-                     <div className="bg-white rounded-[2.9rem] p-10 relative overflow-hidden">
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-12">
-                           <div className="flex items-center gap-6">
-                              <div className="h-20 w-20 rounded-[1.5rem] bg-slate-900 flex items-center justify-center shadow-xl shadow-slate-900/20">
-                                <CheckCircle2 className="h-10 w-10 text-emerald-400" />
-                              </div>
-                              <div>
-                                <h3 className="text-3xl font-black text-slate-900 tracking-tightest">Solde de Tout Compte</h3>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Simulation Finale • {selectedEmp.full_name}</p>
-                              </div>
-                           </div>
-                           <div className="px-6 py-3 bg-emerald-500/10 rounded-2xl flex items-center gap-3">
-                              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                              <span className="text-xs font-black text-emerald-600 uppercase tracking-widest">Document Prêt</span>
-                           </div>
-                        </div>
-
-                        <div className="space-y-6">
-                          {isCDD ? (
-                            <div className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors group/row">
-                              <div className="space-y-1">
-                                <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Indemnité de précarité</span>
-                                <p className="text-[9px] text-slate-400 font-bold italic">Calculée à 3% du total des salaires bruts perçus</p>
-                              </div>
-                              <span className="font-black text-slate-900 text-2xl tracking-tightest">{fmt(resultat.indemnite_precarite)}</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors group/row">
-                              <div className="space-y-1">
-                                <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Indemnité de licenciement</span>
-                                <p className="text-[9px] text-slate-400 font-bold italic">Basée sur l'ancienneté et le salaire moyen</p>
-                              </div>
-                              <span className="font-black text-slate-900 text-2xl tracking-tightest">{fmt(resultat.indemnite_licenciement)}</span>
-                            </div>
-                          )}
-                          
-                          <div className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors group/row">
-                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Indemnité comp. de congés</span>
-                            <span className="font-black text-slate-900 text-2xl tracking-tightest">{fmt(resultat.indemnite_compensatrice_conges)}</span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between p-6 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors group/row">
-                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest">Indemnité comp. de préavis</span>
-                            <span className="font-black text-slate-900 text-2xl tracking-tightest">{fmt(resultat.indemnite_preavis)}</span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between p-10 bg-slate-900 rounded-[2rem] mt-10 shadow-2xl shadow-slate-900/20 group/total">
-                            <div className="space-y-1">
-                               <span className="text-xs font-black text-primary uppercase tracking-[0.4em]">Net à Payer</span>
-                               <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Montant brut des indemnités</p>
-                            </div>
-                            <span className="font-black text-white text-5xl tracking-tightest group-hover/total:scale-105 transition-transform duration-500">{fmt(resultat.total_brut_stc)}</span>
-                          </div>
-                        </div>
-                     </div>
-                  </div>
-                  
-                  <div className="bg-amber-50 rounded-3xl p-6 border border-amber-100 flex gap-4">
-                    <div className="w-12 h-12 bg-amber-200/50 rounded-2xl flex items-center justify-center flex-shrink-0">
-                       <AlertTriangle className="w-6 h-6 text-amber-600" />
-                    </div>
-                    <p className="text-xs text-amber-900 font-medium leading-relaxed">
-                      <span className="font-black uppercase text-[10px] block mb-1">Attention</span>
-                      Ce montant représente le brut des indemnités. Les retenues fiscales et sociales (ITS, IGR, RN) seront déduites sur le bulletin de solde final selon les barèmes en vigueur.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-            
-            <CardFooter className="p-10 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handlePrev}
-                disabled={currentStep === 1}
-                className="h-14 px-8 rounded-2xl font-black text-slate-500 hover:bg-white hover:text-slate-900 disabled:opacity-30 transition-all uppercase text-[10px] tracking-widest"
-              >
-                <ArrowLeft className="w-4 h-4 mr-3" /> Retour
-              </Button>
-              
-              <div className="flex gap-4">
-                {currentStep < 3 ? (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={currentStep === 1 && !empId}
-                    className="h-14 px-10 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black shadow-xl shadow-slate-900/10 transition-all hover:scale-[1.02] active:scale-[0.98] uppercase text-[10px] tracking-widest"
+                <div className="px-4 sm:px-5 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-2">
+                  <button
+                    onClick={handleExportPdf}
+                    disabled={exporting || !resultat}
+                    className="flex-1 h-9 inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
                   >
-                    Suivant <ArrowRight className="w-4 h-4 ml-3" />
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        try {
-                          if (!selectedEmp || !resultat) {
-                            toast.error("Veuillez sélectionner un employé et remplir les paramètres.");
-                            return;
-                          }
-                          
-                          const doc = generateSTCPDF({
-                            employee: selectedEmp,
-                            stcResult: resultat,
-                            company: company || { name: "ENTREPRISE", id: "temp" },
-                            params: {
-                              salaire_moyen_12_mois: salaireMoyenField,
-                              anciennete_annees: ancienneteField,
-                              somme_salaires_bruts_cdd: cddMasseField,
-                              jours_conges_restants: congesField,
-                              jours_preavis_non_effectues: preavisField
-                            }
-                          });
-                          
-                          exportPDF(doc, `STC_${(selectedEmp.full_name || "Export").replace(/ /g, "_")}_${new Date().getFullYear()}`);
-                          toast.success("PDF généré avec succès");
-                        } catch (err) {
-                          console.error("Export PDF error:", err);
-                          toast.error("Erreur lors de la génération du PDF local.");
-                        }
-                      }}
-                      className="h-14 px-8 border-slate-200 bg-white hover:bg-slate-50 rounded-2xl font-black transition-all uppercase text-[10px] tracking-widest flex items-center gap-2"
-                    >
-                      <Download className="w-4 h-4" /> <span>Exporter PDF</span>
-                    </Button>
-                    
-                    <Button
-                      type="button"
-                      onClick={handleArchive}
-                      disabled={isArchiving || archived}
-                      className="h-14 px-10 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] uppercase text-[10px] tracking-widest"
-                    >
-                      {isArchiving ? (
-                        <div className="flex items-center gap-3">
-                           <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                           Archivage...
-                        </div>
-                      ) : archived ? (
-                        <div className="flex items-center gap-3"><CheckCircle2 className="w-4 h-4" /> Archivé</div>
-                      ) : (
-                        <div className="flex items-center gap-3"><Save className="w-4 h-4" /> Générer & Archiver</div>
-                      )}
-                    </Button>
-                  </>
-                )}
-              </div>
-            </CardFooter>
+                    <Download className="h-3.5 w-3.5" />
+                    {exporting ? "Export…" : "Exporter PDF"}
+                  </button>
+                  <button
+                    onClick={handleArchive}
+                    disabled={archiving || archived || !resultat}
+                    className={[
+                      "flex-1 h-9 inline-flex items-center justify-center gap-2 rounded-md px-3 text-sm font-medium",
+                      archived
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50",
+                    ].join(" ")}
+                  >
+                    {archived ? (
+                      <>
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Archivé
+                      </>
+                    ) : archiving ? (
+                      "Archivage…"
+                    ) : (
+                      <>
+                        <Save className="h-3.5 w-3.5" />
+                        Archiver
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </Card>
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      </aside>
+    </section>
+  );
+}
+
+// ── UI primitives ──────────────────────────────────────────────────────────
+
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-lg border border-slate-200 bg-white ${className}`}>{children}</div>;
+}
+
+function CardTitle({ children, sub }: { children: React.ReactNode; sub?: string }) {
+  return (
+    <div className="flex items-start justify-between gap-2 sm:gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-slate-100">
+      <div className="min-w-0 flex-1">
+        <h3 className="text-sm font-semibold text-slate-900">{children}</h3>
+        {sub && <p className="text-xs text-slate-500 mt-0.5 leading-snug">{sub}</p>}
+      </div>
+    </div>
+  );
+}
+
+interface NumericFieldProps {
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (v: string) => void;
+  step?: number;
+  suffix?: string;
+  disabled?: boolean;
+}
+
+function NumericField({ label, hint, value, onChange, step, suffix, disabled }: NumericFieldProps) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs font-medium text-slate-700 block">{label}</label>
+      <div className="relative">
+        <input
+          type="number"
+          step={step}
+          min="0"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className="h-9 w-full rounded-md border border-slate-200 bg-white pl-3 pr-14 text-sm text-slate-900 tabular-nums focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        />
+        {suffix && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] uppercase tracking-wider text-slate-400 font-medium">
+            {suffix}
+          </span>
+        )}
+      </div>
+      {hint && <p className="text-[10px] text-slate-500 leading-snug">{hint}</p>}
+    </div>
+  );
+}
+
+function Line({ label, hint, value }: { label: string; hint?: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 py-2 border-b border-slate-100 last:border-0">
+      <div className="min-w-0">
+        <p className="text-sm text-slate-700">{label}</p>
+        {hint && <p className="text-[10px] text-slate-400 mt-0.5">{hint}</p>}
+      </div>
+      <p className="text-sm font-semibold text-slate-900 tabular-nums shrink-0">{value}</p>
     </div>
   );
 }

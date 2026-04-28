@@ -1,17 +1,19 @@
 export const dynamic = 'force-dynamic';
+import Link from "next/link";
+import { ArrowLeft, FileText, ExternalLink } from "lucide-react";
 import { createServerClient } from "@/lib/supabase/server";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { safeFormatDate } from "@/lib/paie-ci";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FilePdf, ClockCounterClockwise, Calculator } from "@phosphor-icons/react/dist/ssr";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import React from "react";
 
-// Separate components used to have hooks but they must be in "use client" files or separated.
-// Since SoldeToutCompteForm is already "use client", it will handle hydration on its own.
+export const metadata = { title: "Fin de contrat — RH Manager CI" };
 
-export const metadata = { title: "Solde de Tout Compte — RH Manager CI" };
+interface ArchiveDocument {
+  id: string;
+  name: string;
+  file_url: string;
+  created_at: string | null;
+  employees?: { full_name: string | null; matricule: string | null } | null;
+}
 
 export default async function FinDeContratPage({
   searchParams,
@@ -22,137 +24,104 @@ export default async function FinDeContratPage({
   const params = await searchParams;
   const defaultEmployeeId = params?.employeeId;
 
-  // We wrap the queries to be more resilient
   const [
-    { data: employees, error: empErr }, 
-    { data: company, error: compErr }, 
-    { data: archivedSTCs, error: stcErr }
+    { data: employees },
+    { data: company },
+    { data: archivedSTCs },
   ] = await Promise.all([
     supabase
       .from("employees")
       .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche")
       .eq("statut", "actif")
       .order("full_name"),
-    supabase
-      .from("companies")
-      .select("*")
-      .limit(1)
-      .maybeSingle(),
+    supabase.from("companies").select("*").limit(1).maybeSingle(),
     supabase
       .from("documents")
-      .select("*, employees(full_name, matricule)")
-      .eq("famille", "Paie") // Adjusted to use 'Paie' as STC is not in enum, or we can use another filter
+      .select("id, name, file_url, created_at, employees(full_name, matricule)")
+      .eq("famille", "Paie")
       .order("created_at", { ascending: false })
-      .limit(10)
+      .limit(20),
   ]);
 
-  if (stcErr) console.error("Error fetching archives:", stcErr);
-
-  // Filter archivedSTCs to only those with 'Solde de Tout Compte' in the name if needed, 
-  // or keep as is if 'Paie' is the standard for STCs.
-  const displayArchives = archivedSTCs?.filter(doc => doc.name?.includes("Solde de Tout Compte")) || [];
+  const archives = ((archivedSTCs as ArchiveDocument[] | null) ?? [])
+    .filter(d => d.name?.includes("Solde de Tout Compte"));
 
   return (
-    <div className="container mx-auto py-10 px-6 space-y-12">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-4">
-           <div className="flex items-center gap-3">
-              <Link 
-                href="/paie" 
-                className="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all shadow-sm"
-              >
-                <ArrowLeft size={20} />
-              </Link>
-              <Badge className="bg-slate-900 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-md">
-                Module de Paie
-              </Badge>
-           </div>
-           <h1 className="text-5xl font-black text-slate-900 tracking-tightest leading-none">
-             Fin de <span className="text-primary italic">Contrat</span>
-           </h1>
-           <p className="text-slate-500 font-medium max-w-xl border-l-2 border-primary/20 pl-4">
-             Générez, simulez et archivez les soldes de tout compte conformément à la législation ivoirienne (Article 25.1).
-           </p>
+    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+      {/* ── Header ──────────────────────────────────────────────────── */}
+      <header className="pb-4 border-b border-slate-200">
+        <Link href="/paie" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
+          <ArrowLeft className="h-3 w-3" /> Retour à la paie
+        </Link>
+        <div className="mt-1.5 sm:mt-2 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
+          <div>
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Module Paie · Art. 25.1</p>
+            <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1">Fin de contrat</h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-snug max-w-2xl">
+              Calcul, simulation et archivage du solde de tout compte selon le Code du travail ivoirien.
+            </p>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-4">
-           <div className="h-20 w-px bg-slate-100" />
-           <div className="text-right">
-             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">Statut Réglementaire</p>
-             <div className="flex items-center gap-2 text-emerald-500 font-bold justify-end">
-               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-               À Jour • Mars 2026
-             </div>
-           </div>
+      </header>
+
+      {/* ── Calculateur ─────────────────────────────────────────────── */}
+      <SoldeToutCompteForm
+        employees={employees || []}
+        defaultEmployeeId={defaultEmployeeId}
+        company={company}
+      />
+
+      {/* ── Historique ──────────────────────────────────────────────── */}
+      <section className="rounded-lg border border-slate-200 bg-white">
+        <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-slate-100">
+          <div className="flex items-baseline justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">Historique des STC archivés</h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {archives.length} document{archives.length > 1 ? "s" : ""} dans le dossier du personnel
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <Tabs defaultValue="calculateur" className="space-y-10">
-        <TabsList className="bg-slate-100/50 p-1.5 rounded-2xl border border-slate-100 gap-1">
-          <TabsTrigger value="calculateur" className="rounded-xl px-10 py-3 font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-slate-900 text-slate-400 gap-2">
-             <Calculator size={16} weight="bold" /> Calculateur
-          </TabsTrigger>
-          <TabsTrigger value="archives" className="rounded-xl px-10 py-3 font-black text-[10px] uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-slate-900 text-slate-400 gap-2">
-             <ClockCounterClockwise size={16} weight="bold" /> Historique
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="calculateur" className="m-0 focus-visible:outline-none">
-          <SoldeToutCompteForm 
-            employees={employees || []} 
-            defaultEmployeeId={defaultEmployeeId}
-            company={company}
-          />
-        </TabsContent>
-
-        <TabsContent value="archives" className="m-0 focus-visible:outline-none">
-           <div className="bg-white border border-slate-100 rounded-[3rem] overflow-hidden shadow-sm">
-              <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/20">
-                 <h3 className="text-xl font-black text-slate-900 tracking-tightest">Récemment Archivés</h3>
-              </div>
-              
-              {displayArchives.length > 0 ? (
-                <div className="divide-y divide-slate-50">
-                   {displayArchives.map((doc: any) => (
-                     <div key={doc.id} className="p-8 hover:bg-slate-50/50 transition-colors flex items-center justify-between group">
-                        <div className="flex items-center gap-6">
-                           <div className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 border border-rose-100 group-hover:scale-110 transition-transform">
-                              <FilePdf weight="duotone" size={28} />
-                           </div>
-                           <div>
-                              <h4 className="font-black text-slate-900 tracking-tight leading-tight mb-1">
-                                {doc.employees?.full_name || "Employé Inconnu"}
-                              </h4>
-                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400" suppressHydrationWarning>
-                                 Archivé le {safeFormatDate(doc.created_at, "PPP")}
-                              </p>
-                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                           <a 
-                             href={doc.file_url}
-                             target="_blank"
-                             rel="noopener noreferrer"
-                             className="h-10 px-6 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-slate-800 transition-all flex items-center gap-2"
-                           >
-                             <FilePdf weight="bold" size={14} /> Voir le document
-                           </a>
-                        </div>
-                     </div>
-                   ))}
+        {archives.length === 0 ? (
+          <div className="px-5 py-12 text-center">
+            <FileText className="h-7 w-7 text-slate-300 mx-auto mb-2.5" />
+            <p className="text-sm font-medium text-slate-700">Aucun STC archivé</p>
+            <p className="text-xs text-slate-500 mt-1">Les soldes de tout compte générés apparaîtront ici.</p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-slate-100">
+            {archives.map(doc => (
+              <li key={doc.id} className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 hover:bg-slate-50/60 transition-colors">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-slate-100 text-slate-500 shrink-0">
+                    <FileText className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate">
+                      {doc.employees?.full_name || "Salarié inconnu"}
+                    </p>
+                    <p className="text-[11px] text-slate-500 tabular-nums">
+                      {doc.employees?.matricule ? `${doc.employees.matricule} · ` : ""}
+                      Archivé le <span suppressHydrationWarning>{safeFormatDate(doc.created_at, "dd MMM yyyy")}</span>
+                    </p>
+                  </div>
                 </div>
-              ) : (
-                <div className="p-20 text-center">
-                   <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                      <FilePdf className="h-10 w-10 text-slate-200" weight="duotone" />
-                   </div>
-                   <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Aucune archive disponible</p>
-                </div>
-              )}
-           </div>
-        </TabsContent>
-      </Tabs>
+                <a
+                  href={doc.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-8 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50 shrink-0"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  <span className="hidden sm:inline">Ouvrir</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
