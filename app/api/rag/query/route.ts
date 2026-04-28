@@ -95,8 +95,9 @@ Question : "${question}"` }] }],
   ]);
 
   const searchQueries = [question];
-  if (reformulationResult && (reformulationResult as any).text) {
-    searchQueries.unshift((reformulationResult as any).text.trim());
+  const reformulatedText = (reformulationResult as { text?: string } | null)?.text?.trim();
+  if (reformulatedText && reformulatedText.length > 3 && reformulatedText.length < 300) {
+    searchQueries.unshift(reformulatedText);
   }
 
   if (ragResult && Array.isArray(ragResult.chunks) && ragResult.chunks.length > 0) {
@@ -108,15 +109,16 @@ Question : "${question}"` }] }],
     try {
       // Rechercher avec la question reformulée prioritairement
       const searchQuery = searchQueries[0];
-      
+
       const embeddingResult = await gemini.models.embedContent({
-        model: "text-embedding-004",
-        contents: [{ parts: [{ text: searchQuery }] }]
+        model: "gemini-embedding-001",
+        contents: searchQuery,
+        config: { outputDimensionality: 768 },
       });
-      
+
       const embedding = embeddingResult.embeddings?.[0]?.values;
 
-      if (embedding) {
+      if (embedding && embedding.length > 0) {
         const { data: matchedDocs, error: rpcError } = await supabase.rpc("match_legal_documents", {
           query_embedding: embedding,
           match_threshold: 0.2, // Légèrement plus bas pour plus de rappel
@@ -124,10 +126,10 @@ Question : "${question}"` }] }],
         });
 
         if (!rpcError && matchedDocs && matchedDocs.length > 0) {
-          contextChunks = matchedDocs.map((doc: any) => ({
+          contextChunks = matchedDocs.map((doc: { source?: string; contenu: string }) => ({
             titre: doc.source || "Document Juridique",
             contenu: doc.contenu,
-            source: doc.source,
+            source: doc.source || "Document Juridique",
           }));
           usedRag = true;
         }
@@ -137,7 +139,6 @@ Question : "${question}"` }] }],
     }
 
     if (!usedRag) {
-      console.log(`[rag/query] Semantic search failed, trying keywords with: ${searchQueries[0]}`);
       const keywords = searchQueries[0].split(/\s+/).filter(w => w.length > 3).slice(0, 5);
       if (keywords.length > 0) {
         const { data: docs, error: keywordError } = await supabase
@@ -193,26 +194,36 @@ Question : "${question}"` }] }],
   try {
     const result = await gemini.models.generateContent({
       model: GEMINI_FLASH,
-      contents: [...geminiHistory, userMessage], 
-      config: { 
+      contents: [...geminiHistory, userMessage],
+      config: {
         systemInstruction: SYSTEM_PROMPT,
         maxOutputTokens: 1536,
         temperature: 0.2,
       },
     });
 
-    const answer = result.candidates?.[0]?.content?.parts?.[0]?.text || result.text || "";
+    const answer =
+      result.candidates?.[0]?.content?.parts?.[0]?.text ||
+      result.text ||
+      "Je n'ai pas pu générer de réponse précise pour cette question. Reformulez-la ou précisez le contexte (type de contrat, ancienneté, situation…).";
 
     return NextResponse.json({
-      answer: answer || "Désolé, je n'ai pas pu générer de réponse précise pour le moment.",
+      answer,
       sources: contextChunks.map((c) => ({ titre: c.titre, source: c.source })),
       used_rag: usedRag,
     });
   } catch (err) {
-    console.error("[rag/query] Gemini error:", err);
-    return NextResponse.json(
-      { error: "Erreur lors de la génération de la réponse IA. Réessayez." },
-      { status: 502 }
-    );
+    const message = err instanceof Error ? err.message : "Erreur inconnue";
+    console.error("[rag/query] Gemini error:", message);
+
+    // Réponse dégradée — on ne renvoie pas 502 pour ne pas bloquer l'UX
+    return NextResponse.json({
+      answer:
+        "Le service d'IA est temporairement indisponible. Réessayez dans quelques instants. " +
+        "Si le problème persiste, vérifiez la configuration de la clé GEMINI_API_KEY ou les quotas Google.",
+      sources: [],
+      used_rag: false,
+      degraded: true,
+    });
   }
 }
