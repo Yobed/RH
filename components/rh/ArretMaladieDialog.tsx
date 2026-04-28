@@ -167,11 +167,11 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl p-0 border-none bg-transparent shadow-none overflow-visible">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="bg-card border border-border shadow-2xl rounded-2xl overflow-hidden"
+      <DialogContent className="max-w-xl p-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.18 }}
         >
           <div className="bg-primary/5 p-6 border-b border-border/50 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-5">
