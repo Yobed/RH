@@ -47,10 +47,10 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
 
 function CardTitle({ children, sub, action }: { children: React.ReactNode; sub?: string; action?: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-slate-100">
-      <div>
+    <div className="flex items-start justify-between gap-2 sm:gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-slate-100">
+      <div className="min-w-0 flex-1">
         <h3 className="text-sm font-semibold text-slate-900">{children}</h3>
-        {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
+        {sub && <p className="text-xs text-slate-500 mt-0.5 leading-snug">{sub}</p>}
       </div>
       {action}
     </div>
@@ -91,11 +91,11 @@ function HeroKpi({
     signal.delta > 0 ? "text-emerald-600" : signal.delta < 0 ? "text-rose-600" : "text-slate-400";
   const Icon = signal && signal.delta > 0 ? ArrowUpRight : signal && signal.delta < 0 ? ArrowDownRight : null;
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-6">
-      <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">{kicker}</p>
-      <p className="mt-2 text-4xl font-semibold text-slate-900 tabular-nums tracking-tight">{value}</p>
-      <div className="mt-2 flex items-center gap-3 text-xs">
-        {sub && <span className="text-slate-500">{sub}</span>}
+    <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-6">
+      <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">{kicker}</p>
+      <p className="mt-1.5 sm:mt-2 text-2xl sm:text-4xl font-semibold text-slate-900 tabular-nums tracking-tight break-words">{value}</p>
+      <div className="mt-1.5 sm:mt-2 flex flex-col sm:flex-row sm:items-center sm:gap-3 gap-1 text-[11px] sm:text-xs">
+        {sub && <span className="text-slate-500 leading-snug">{sub}</span>}
         {signal && Icon && (
           <span className={`inline-flex items-center gap-1 ${sigColor} font-medium`}>
             <Icon className="h-3 w-3" /> {Math.abs(signal.delta).toFixed(1)}% <span className="text-slate-400 font-normal">{signal.label}</span>
@@ -134,11 +134,13 @@ function Insight({ kind, title, body }: { kind: "positive" | "negative" | "warn"
 
 // ── Composants segments ────────────────────────────────────────────────────
 
-function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterField({ label, children, fullOnMobile }: {
+  label: string; children: React.ReactNode; fullOnMobile?: boolean;
+}) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-[11px] uppercase tracking-wider text-slate-400 font-medium whitespace-nowrap">{label}</span>
-      {children}
+    <div className={`flex items-center gap-2 ${fullOnMobile ? "w-full sm:w-auto" : ""}`}>
+      <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-400 font-medium whitespace-nowrap">{label}</span>
+      <div className={fullOnMobile ? "flex-1 sm:flex-none min-w-0" : ""}>{children}</div>
     </div>
   );
 }
@@ -163,7 +165,7 @@ function SegmentedYear({ value, onChange, years }: {
   const visible = years.slice(0, 4);
   const hidden = years.slice(4);
   return (
-    <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5">
+    <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5 max-w-full overflow-x-auto no-scrollbar">
       <SegmentBtn active={value === null} onClick={() => onChange(null)}>Toutes</SegmentBtn>
       {visible.map(y => (
         <SegmentBtn key={y} active={value === y} onClick={() => onChange(y)}>{y}</SegmentBtn>
@@ -190,7 +192,7 @@ function SegmentedMonth({ value, onChange, disabled }: {
       value={value ?? ""}
       onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
       disabled={disabled}
-      className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="h-9 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <option value="">Tous</option>
       <option value="1">Janv.</option>
@@ -251,55 +253,54 @@ export function AnalytiqueFocus(props: Props) {
   };
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-[1400px] mx-auto">
       {/* ── Header ─────────────────────────────────────────── */}
-      <header className="flex flex-col gap-5 pb-4 border-b border-slate-200">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-          <div>
-            <Link href="/analytique" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
-              <ArrowLeft className="h-3 w-3" /> Retour à l'analytique
-            </Link>
-            <h1 className="text-2xl font-semibold text-slate-900 mt-2">Focus stratégique</h1>
-            <p className="text-sm text-slate-500 mt-1.5">
-              Lecture détaillée par axe — données synchronisées.
-              <span className="text-slate-700 font-medium ml-1">· {periodLabel}</span>
-            </p>
-          </div>
+      <header className="flex flex-col gap-4 sm:gap-5 pb-4 border-b border-slate-200">
+        <div>
+          <Link href="/analytique" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
+            <ArrowLeft className="h-3 w-3" /> Retour à l'analytique
+          </Link>
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1.5 sm:mt-2">Focus stratégique</h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-snug">
+            Lecture détaillée par axe — données synchronisées.
+            <span className="text-slate-700 font-medium block sm:inline sm:ml-1">· {periodLabel}</span>
+          </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <FilterField label="Département">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-5 gap-y-3">
+          <FilterField label="Département" fullOnMobile>
             <select
               value={departement}
               onChange={e => setDepartement(e.target.value)}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              className="h-9 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
             >
               {departements.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
           </FilterField>
-          <FilterField label="Catégorie">
+          <FilterField label="Catégorie" fullOnMobile>
             <select
               value={categorie}
               onChange={e => setCategorie(e.target.value)}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              className="h-9 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
             >
               {categories.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </FilterField>
 
-          <div className="h-8 w-px bg-slate-200" />
+          <div className="hidden sm:block h-8 w-px bg-slate-200" />
+          <div className="sm:hidden h-px w-full bg-slate-100" />
 
-          <FilterField label="Année">
+          <FilterField label="Année" fullOnMobile>
             <SegmentedYear value={annee} onChange={setAnnee} years={annees} />
           </FilterField>
-          <FilterField label="Mois">
+          <FilterField label="Mois" fullOnMobile>
             <SegmentedMonth value={mois} onChange={setMois} disabled={annee === null} />
           </FilterField>
 
           {isFiltered && (
             <button
               onClick={resetFilters}
-              className="text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 ml-auto"
+              className="text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 self-start sm:self-auto sm:ml-auto"
             >
               Réinitialiser
             </button>
@@ -351,7 +352,7 @@ function AxeTalent({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <HeroKpi
           kicker="Effectif actif"
           value={eff.actifs.toString()}
@@ -369,11 +370,11 @@ function AxeTalent({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
         <Card className="lg:col-span-2">
           <CardTitle sub={`Âge moyen ${age.averageAge} ans`}>Pyramide des âges</CardTitle>
-          <div className="p-5">
-            <ResponsiveContainer width="100%" height={300}>
+          <div className="p-3 sm:p-5">
+            <ResponsiveContainer width="100%" height={260} minHeight={220}>
               <BarChart data={pyramidData} layout="vertical" stackOffset="sign" margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                 <XAxis type="number" tickFormatter={(v: number) => Math.abs(v).toString()} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
@@ -389,7 +390,7 @@ function AxeTalent({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
 
         <Card>
           <CardTitle sub="Répartition statutaire">Statut</CardTitle>
-          <div className="p-5">
+          <div className="p-3 sm:p-5">
             <StatRow label="Actifs" value={eff.actifs.toString()} accent="positive" />
             <StatRow label="Suspendus" value={eff.suspendus.toString()} accent="warn" />
             <StatRow label="Inactifs" value={eff.inactifs.toString()} accent="neutral" />
@@ -400,7 +401,7 @@ function AxeTalent({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
 
       <Card>
         <CardTitle sub="Mouvements mensuels — 12 derniers mois">Évolution effectif</CardTitle>
-        <div className="p-5">
+        <div className="p-3 sm:p-5">
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={turnover.series} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
@@ -445,7 +446,7 @@ function AxeRemuneration({ dataset, refDate }: { dataset: ReturnType<typeof appl
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <HeroKpi
           kicker="Masse salariale (mois)"
           value={FMT.currency(payroll.current?.brut || 0)}
@@ -466,7 +467,7 @@ function AxeRemuneration({ dataset, refDate }: { dataset: ReturnType<typeof appl
 
       <Card>
         <CardTitle sub="Brut, net et coût total employeur — 12 derniers mois">Trajectoire de la masse salariale</CardTitle>
-        <div className="p-5">
+        <div className="p-3 sm:p-5">
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={payroll.series} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <defs>
@@ -491,10 +492,10 @@ function AxeRemuneration({ dataset, refDate }: { dataset: ReturnType<typeof appl
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         <Card>
           <CardTitle sub="Décomposition brut / charges / net">Structure du coût</CardTitle>
-          <div className="p-5">
+          <div className="p-3 sm:p-5">
             <StatRow label="Salaire brut (mois)" value={FMT.currency(payroll.current?.brut || 0)} />
             <StatRow label="Charges patronales (≈ 21 %)" value={FMT.currency((payroll.current?.coutTotal || 0) - (payroll.current?.brut || 0))} />
             <StatRow label="Coût total employeur" value={FMT.currency(payroll.current?.coutTotal || 0)} accent="warn" />
@@ -505,8 +506,8 @@ function AxeRemuneration({ dataset, refDate }: { dataset: ReturnType<typeof appl
 
         <Card>
           <CardTitle sub="Heures supplémentaires consommées (mois)">Heures sup.</CardTitle>
-          <div className="p-5">
-            <ResponsiveContainer width="100%" height={220}>
+          <div className="p-3 sm:p-5">
+            <ResponsiveContainer width="100%" height={200} minHeight={180}>
               <LineChart data={payroll.series} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
@@ -543,18 +544,18 @@ function AxeRecrutement({ dataset }: { dataset: ReturnType<typeof applyFilters> 
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <HeroKpi kicker="Postes ouverts" value={r.jobsOpen.toString()} sub={`${r.jobsTotal} au total`} />
         <HeroKpi kicker="Candidats" value={r.candidatesTotal.toString()} sub={`${r.candidatesHired} recrutés`} />
         <HeroKpi kicker="Fill rate" value={`${r.fillRate}%`} sub="Recrutements / postes" />
         <HeroKpi kicker="Délai moyen" value={`${r.avgHiringDays}j`} sub="Création du poste → recrutement" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
         <Card className="lg:col-span-2">
           <CardTitle sub="De l'ouverture du poste au recrutement effectif">Pipeline de recrutement</CardTitle>
-          <div className="p-5">
-            <ResponsiveContainer width="100%" height={240}>
+          <div className="p-3 sm:p-5">
+            <ResponsiveContainer width="100%" height={210} minHeight={180}>
               <BarChart data={pipelineData} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="stage" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
@@ -570,7 +571,7 @@ function AxeRecrutement({ dataset }: { dataset: ReturnType<typeof applyFilters> 
 
         <Card>
           <CardTitle sub="Indicateurs qualitatifs">Qualité du sourcing</CardTitle>
-          <div className="p-5">
+          <div className="p-3 sm:p-5">
             <StatRow label="Score IA moyen" value={`${r.avgScoreIa}/100`} accent={r.avgScoreIa >= 70 ? "positive" : r.avgScoreIa >= 50 ? "warn" : "negative"} />
             <StatRow label="Taux de transformation" value={`${r.candidatesTotal === 0 ? 0 : Math.round((r.candidatesHired / r.candidatesTotal) * 1000) / 10}%`} />
             <StatRow label="Postes restants à pourvoir" value={(r.jobsTotal - r.candidatesHired).toString()} accent="warn" />
@@ -605,7 +606,7 @@ function AxeClimat({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <HeroKpi
           kicker="Absentéisme (mois)"
           value={`${abs.rateMonth}%`}
@@ -623,10 +624,10 @@ function AxeClimat({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         <Card>
           <CardTitle sub="Causes d'absence — mois courant">Absentéisme par type</CardTitle>
-          <div className="p-5">
+          <div className="p-3 sm:p-5">
             {abs.byType.length === 0 ? (
               <p className="text-sm text-slate-400 py-8 text-center">Aucune absence enregistrée ce mois</p>
             ) : (
@@ -647,7 +648,7 @@ function AxeClimat({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
 
         <Card>
           <CardTitle sub="Indicateurs sécurité">Détail sécurité</CardTitle>
-          <div className="p-5">
+          <div className="p-3 sm:p-5">
             <StatRow label="Accidents recensés" value={safety.count.toString()} accent={safety.count === 0 ? "positive" : "warn"} />
             <StatRow label="Jours d'arrêt" value={safety.joursPerdus.toString()} />
             <StatRow label="Taux de fréquence" value={safety.freqRate.toString()} sub="/M h" />
@@ -693,7 +694,7 @@ function AxePerformance({ dataset }: { dataset: ReturnType<typeof applyFilters> 
   // Distribution simple : performance vs potentiel pour chaque catégorie (matrice 9-box simplifiée)
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <HeroKpi
           kicker="Évaluations validées"
           value={perf.validated.toString()}
@@ -713,7 +714,7 @@ function AxePerformance({ dataset }: { dataset: ReturnType<typeof applyFilters> 
 
       <Card>
         <CardTitle sub="Score moyen par catégorie professionnelle">Performance par catégorie</CardTitle>
-        <div className="p-5">
+        <div className="p-3 sm:p-5">
           {perf.byCategory.length === 0 ? (
             <p className="text-sm text-slate-400 py-8 text-center">
               Aucune évaluation validée pour ce périmètre.
@@ -724,13 +725,13 @@ function AxePerformance({ dataset }: { dataset: ReturnType<typeof applyFilters> 
                 const pct = Math.round((c.avgScore / 5) * 100);
                 const color = c.avgScore >= 4 ? "bg-emerald-500" : c.avgScore >= 3 ? "bg-slate-700" : c.avgScore >= 2 ? "bg-amber-500" : "bg-rose-500";
                 return (
-                  <li key={c.category} className="py-3 flex items-center gap-3">
-                    <span className="flex-1 text-sm text-slate-700 truncate">{c.category}</span>
-                    <span className="text-xs text-slate-400 tabular-nums w-12 text-right">{c.count} éval.</span>
-                    <div className="flex-1 max-w-[200px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <li key={c.category} className="py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
+                    <span className="flex-1 text-xs sm:text-sm text-slate-700 truncate min-w-0">{c.category}</span>
+                    <span className="text-[10px] sm:text-xs text-slate-400 tabular-nums w-10 sm:w-14 text-right shrink-0">{c.count} év.</span>
+                    <div className="hidden md:block flex-1 max-w-[200px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div className={`h-full ${color} rounded-full`} style={{ width: `${pct}%` }} />
                     </div>
-                    <span className="text-sm font-semibold text-slate-900 tabular-nums w-12 text-right">{c.avgScore}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-slate-900 tabular-nums w-10 sm:w-12 text-right shrink-0">{c.avgScore}</span>
                   </li>
                 );
               })}

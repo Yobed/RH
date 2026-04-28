@@ -16,7 +16,7 @@ export default async function FocusPage() {
 
   const { data: bulletins, error: errBulletins } = await supabase
     .from("bulletins_paie")
-    .select("id, employee_id, periode, salaire_brut, salaire_net, its, cnps_salarie, prime_transport, sursalaire");
+    .select("id, employee_id, periode, salaire_brut, salaire_net, its, cnps_salarie, prime_transport, sursalaire, total_contributions, net_to_pay, tax_cn, tax_igr, withholding_cnps");
 
   const { data: contracts, error: errContracts } = await supabase
     .from("contracts")
@@ -59,7 +59,7 @@ export default async function FocusPage() {
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-6 bg-slate-50/50 min-h-full">
+    <div className="p-3 sm:p-6 md:p-8 space-y-6 bg-slate-50/50 min-h-full">
       <Suspense
         fallback={
           <div className="rounded-2xl border border-slate-100 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] p-16 flex items-center justify-center">

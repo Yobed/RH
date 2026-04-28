@@ -198,6 +198,15 @@ body.dark {
     @apply p-4 sm:p-6;
   }
 
+  /* Masquer la scrollbar tout en gardant le scroll (segments mobiles) */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Premium glass card */
   .glass-card {
     background: oklch(1 0 0 / 0.7);

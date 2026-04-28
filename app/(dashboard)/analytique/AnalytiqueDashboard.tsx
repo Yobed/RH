@@ -39,9 +39,9 @@ function SectionHeader({ kicker, title, action }: {
   kicker?: string; title: string; action?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-end justify-between gap-4 mb-5">
+    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
       <div>
-        {kicker && <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium mb-1">{kicker}</p>}
+        {kicker && <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium mb-1">{kicker}</p>}
         <h2 className="text-base font-semibold text-slate-900">{title}</h2>
       </div>
       {action}
@@ -72,19 +72,19 @@ function Kpi({
   }[accent || "neutral"];
 
   return (
-    <div className="relative rounded-lg border border-slate-200 bg-white p-5 hover:border-slate-300 transition-colors">
-      <div className={`absolute left-0 top-5 bottom-5 w-0.5 rounded-r ${accentBar}`} />
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs text-slate-500 font-medium">{label}</p>
-          <p className="mt-1.5 text-2xl font-semibold text-slate-900 tabular-nums">{value}</p>
-          {sub && <p className="mt-1 text-xs text-slate-500">{sub}</p>}
+    <div className="relative rounded-lg border border-slate-200 bg-white p-3.5 sm:p-5 hover:border-slate-300 transition-colors">
+      <div className={`absolute left-0 top-3.5 bottom-3.5 sm:top-5 sm:bottom-5 w-0.5 rounded-r ${accentBar}`} />
+      <div className="flex items-start justify-between gap-2 sm:gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">{label}</p>
+          <p className="mt-1 sm:mt-1.5 text-lg sm:text-2xl font-semibold text-slate-900 tabular-nums leading-tight break-words">{value}</p>
+          {sub && <p className="mt-1 text-[10px] sm:text-xs text-slate-500 leading-snug line-clamp-2">{sub}</p>}
         </div>
-        {icon && <div className="text-slate-300">{icon}</div>}
+        {icon && <div className="text-slate-300 hidden sm:block shrink-0">{icon}</div>}
       </div>
       {trend && TrendIcon && (
-        <div className={`mt-3 inline-flex items-center gap-1 text-xs font-medium ${trendColor}`}>
-          <TrendIcon className="h-3.5 w-3.5" />
+        <div className={`mt-2 sm:mt-3 inline-flex items-center gap-1 text-[10px] sm:text-xs font-medium ${trendColor}`}>
+          <TrendIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
           <span className="tabular-nums">{Math.abs(trend.delta).toFixed(1)}%{trend.suffix || ""}</span>
           <span className="text-slate-400 font-normal">vs M-1</span>
         </div>
@@ -103,21 +103,23 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
 
 function CardTitle({ children, sub, action }: { children: React.ReactNode; sub?: string; action?: React.ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-slate-100">
-      <div>
+    <div className="flex items-start justify-between gap-2 sm:gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-slate-100">
+      <div className="min-w-0 flex-1">
         <h3 className="text-sm font-semibold text-slate-900">{children}</h3>
-        {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
+        {sub && <p className="text-xs text-slate-500 mt-0.5 leading-snug">{sub}</p>}
       </div>
       {action}
     </div>
   );
 }
 
-function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterField({ label, children, fullOnMobile }: {
+  label: string; children: React.ReactNode; fullOnMobile?: boolean;
+}) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-[11px] uppercase tracking-wider text-slate-400 font-medium whitespace-nowrap">{label}</span>
-      {children}
+    <div className={`flex items-center gap-2 ${fullOnMobile ? "w-full sm:w-auto" : ""}`}>
+      <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-400 font-medium whitespace-nowrap">{label}</span>
+      <div className={fullOnMobile ? "flex-1 sm:flex-none min-w-0" : ""}>{children}</div>
     </div>
   );
 }
@@ -129,7 +131,7 @@ function SegmentedYear({ value, onChange, years }: {
   const visible = years.slice(0, 4);
   const hidden = years.slice(4);
   return (
-    <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5">
+    <div className="inline-flex items-center rounded-md border border-slate-200 bg-white p-0.5 max-w-full overflow-x-auto no-scrollbar">
       <SegmentBtn active={value === null} onClick={() => onChange(null)}>Toutes</SegmentBtn>
       {visible.map(y => (
         <SegmentBtn key={y} active={value === y} onClick={() => onChange(y)}>{y}</SegmentBtn>
@@ -156,7 +158,7 @@ function SegmentedMonth({ value, onChange, disabled }: {
       value={value ?? ""}
       onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
       disabled={disabled}
-      className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="h-9 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <option value="">Tous</option>
       <option value="1">Janv.</option>
@@ -294,71 +296,74 @@ export function AnalytiqueDashboard(props: Props) {
   }
 
   return (
-    <div className="space-y-8 max-w-[1400px] mx-auto">
+    <div className="space-y-6 sm:space-y-8 max-w-[1400px] mx-auto">
       {/* ── Header + filtres ─────────────────────────────────────────── */}
-      <header className="flex flex-col gap-5 pb-4 border-b border-slate-200">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+      <header className="flex flex-col gap-4 sm:gap-5 pb-4 border-b border-slate-200">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 sm:gap-4">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Vue d'ensemble</p>
-            <h1 className="text-2xl font-semibold text-slate-900 mt-1">Analytique RH</h1>
-            <p className="text-sm text-slate-500 mt-1.5">
-              Synthèse consolidée des indicateurs sociaux, financiers et de performance.
-              <span className="text-slate-700 font-medium ml-1">· {periodLabel}</span>
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Vue d'ensemble</p>
+            <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1">Analytique RH</h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-snug">
+              <span className="hidden sm:inline">Synthèse consolidée des indicateurs sociaux, financiers et de performance.</span>
+              <span className="sm:hidden">Indicateurs RH consolidés.</span>
+              <span className="text-slate-700 font-medium block sm:inline sm:ml-1">· {periodLabel}</span>
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleExportPdf}
               disabled={exporting}
-              className="h-9 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              className="h-9 flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
             >
               <Download className="h-3.5 w-3.5" />
               {exporting ? "Export..." : "Exporter"}
             </button>
             <Link
               href="/analytique/focus"
-              className="h-9 inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 text-sm font-medium text-white hover:bg-slate-800"
+              className="h-9 flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-3 text-sm font-medium text-white hover:bg-slate-800"
             >
-              Focus stratégique
+              <span className="sm:hidden">Focus</span>
+              <span className="hidden sm:inline">Focus stratégique</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
 
         {/* Barre de filtres */}
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          <FilterField label="Département">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-x-5 gap-y-3">
+          <FilterField label="Département" fullOnMobile>
             <select
               value={departement}
               onChange={e => setDepartement(e.target.value)}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              className="h-9 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
             >
               {departements.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
           </FilterField>
-          <FilterField label="Catégorie">
+          <FilterField label="Catégorie" fullOnMobile>
             <select
               value={categorie}
               onChange={e => setCategorie(e.target.value)}
-              className="h-9 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              className="h-9 w-full sm:w-auto rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
             >
               {categories.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </FilterField>
 
-          <div className="h-8 w-px bg-slate-200" />
+          <div className="hidden sm:block h-8 w-px bg-slate-200" />
+          <div className="sm:hidden h-px w-full bg-slate-100" />
 
-          <FilterField label="Année">
+          <FilterField label="Année" fullOnMobile>
             <SegmentedYear value={annee} onChange={setAnnee} years={annees} />
           </FilterField>
-          <FilterField label="Mois">
+          <FilterField label="Mois" fullOnMobile>
             <SegmentedMonth value={mois} onChange={setMois} disabled={annee === null} />
           </FilterField>
 
           {isFiltered && (
             <button
               onClick={resetFilters}
-              className="text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 ml-auto"
+              className="text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 self-start sm:self-auto sm:ml-auto"
             >
               Réinitialiser
             </button>
@@ -367,7 +372,7 @@ export function AnalytiqueDashboard(props: Props) {
       </header>
 
       {/* ── KPI cards (6) ───────────────────────────────────────────── */}
-      <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
         <Kpi
           label="Effectif actif"
           value={effectif.actifs.toString()}
@@ -420,28 +425,28 @@ export function AnalytiqueDashboard(props: Props) {
           <CardTitle sub="Brut, net et coût total employeur (charges patronales 21 %) sur 12 mois">
             Masse salariale — 12 derniers mois
           </CardTitle>
-          <div className="px-5 py-5">
-            <div className="grid grid-cols-3 gap-6 mb-5 pb-5 border-b border-slate-100">
-              <div>
-                <p className="text-xs text-slate-500">Mois courant — brut</p>
-                <p className="text-lg font-semibold text-slate-900 tabular-nums mt-0.5">
+          <div className="px-3 sm:px-5 py-4 sm:py-5">
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-5 pb-4 sm:pb-5 border-b border-slate-100">
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs text-slate-500 truncate">Mois — brut</p>
+                <p className="text-sm sm:text-lg font-semibold text-slate-900 tabular-nums mt-0.5 break-words">
                   {FMT.currency(payroll.current?.brut || 0)}
                 </p>
               </div>
-              <div>
-                <p className="text-xs text-slate-500">YTD — brut cumulé</p>
-                <p className="text-lg font-semibold text-slate-900 tabular-nums mt-0.5">
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs text-slate-500 truncate">YTD cumulé</p>
+                <p className="text-sm sm:text-lg font-semibold text-slate-900 tabular-nums mt-0.5 break-words">
                   {FMT.currency(payroll.ytdBrut)}
                 </p>
               </div>
-              <div>
-                <p className="text-xs text-slate-500">Salaire moyen</p>
-                <p className="text-lg font-semibold text-slate-900 tabular-nums mt-0.5">
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs text-slate-500 truncate">Moyen / sal.</p>
+                <p className="text-sm sm:text-lg font-semibold text-slate-900 tabular-nums mt-0.5 break-words">
                   {FMT.currency(payroll.averageBrutPerEmployee)}
                 </p>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={220} minHeight={180}>
               <AreaChart data={payroll.series} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="grad-brut" x1="0" y1="0" x2="0" y2="1">
@@ -470,25 +475,25 @@ export function AnalytiqueDashboard(props: Props) {
       </section>
 
       {/* ── 2 col : Turnover + Pyramide ─────────────────────────────── */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         <Card>
           <CardTitle sub="Entrées vs sorties mensuelles">Mouvements d'effectif</CardTitle>
-          <div className="p-5">
-            <div className="flex gap-6 mb-4 pb-4 border-b border-slate-100">
-              <div>
-                <p className="text-xs text-slate-500">Entrées (année)</p>
-                <p className="text-xl font-semibold text-emerald-600 tabular-nums mt-0.5">{turnover.entriesYear}</p>
+          <div className="p-3 sm:p-5">
+            <div className="flex gap-3 sm:gap-6 mb-4 pb-4 border-b border-slate-100">
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs text-slate-500">Entrées</p>
+                <p className="text-base sm:text-xl font-semibold text-emerald-600 tabular-nums mt-0.5">{turnover.entriesYear}</p>
               </div>
-              <div>
-                <p className="text-xs text-slate-500">Sorties (année)</p>
-                <p className="text-xl font-semibold text-rose-600 tabular-nums mt-0.5">{turnover.departuresYear}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs text-slate-500">Sorties</p>
+                <p className="text-base sm:text-xl font-semibold text-rose-600 tabular-nums mt-0.5">{turnover.departuresYear}</p>
               </div>
-              <div>
-                <p className="text-xs text-slate-500">Turnover</p>
-                <p className="text-xl font-semibold text-slate-900 tabular-nums mt-0.5">{turnover.rateYear}%</p>
+              <div className="min-w-0">
+                <p className="text-[10px] sm:text-xs text-slate-500">Turnover</p>
+                <p className="text-base sm:text-xl font-semibold text-slate-900 tabular-nums mt-0.5">{turnover.rateYear}%</p>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={200} minHeight={160}>
               <BarChart data={turnover.series} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={{ stroke: "#e2e8f0" }} tickLine={false} />
@@ -506,8 +511,8 @@ export function AnalytiqueDashboard(props: Props) {
           <CardTitle sub={`Âge moyen ${ageData.averageAge} ans · parité F ${effectif.parityRate}%`}>
             Pyramide des âges
           </CardTitle>
-          <div className="p-5">
-            <ResponsiveContainer width="100%" height={260}>
+          <div className="p-3 sm:p-5">
+            <ResponsiveContainer width="100%" height={240} minHeight={200}>
               <BarChart data={pyramidData} layout="vertical" stackOffset="sign" margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                 <XAxis
@@ -532,10 +537,10 @@ export function AnalytiqueDashboard(props: Props) {
       {/* ── Composition organisationnelle ───────────────────────────── */}
       <section>
         <SectionHeader kicker="Organisation" title="Répartition de l'effectif" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
           <Card>
             <CardTitle sub="Top départements (effectif actif)">Par département</CardTitle>
-            <div className="px-5 pb-5">
+            <div className="px-3 sm:px-5 pb-4 sm:pb-5">
               {effectif.byDepartment.length === 0 ? (
                 <p className="text-sm text-slate-400 py-8 text-center">Aucune donnée</p>
               ) : (
@@ -543,13 +548,13 @@ export function AnalytiqueDashboard(props: Props) {
                   {effectif.byDepartment.slice(0, 8).map((d) => {
                     const pct = effectif.actifs === 0 ? 0 : Math.round((d.count / effectif.actifs) * 100);
                     return (
-                      <li key={d.name} className="py-3 flex items-center gap-3">
-                        <span className="flex-1 text-sm text-slate-700 truncate">{d.name}</span>
-                        <div className="flex-1 max-w-[180px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <li key={d.name} className="py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
+                        <span className="flex-1 text-xs sm:text-sm text-slate-700 truncate min-w-0">{d.name}</span>
+                        <div className="hidden sm:block flex-1 max-w-[180px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
                           <div className="h-full bg-slate-700 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="text-sm font-semibold text-slate-900 tabular-nums w-10 text-right">{d.count}</span>
-                        <span className="text-xs text-slate-400 tabular-nums w-12 text-right">{pct}%</span>
+                        <span className="text-xs sm:text-sm font-semibold text-slate-900 tabular-nums w-8 sm:w-10 text-right shrink-0">{d.count}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-400 tabular-nums w-9 sm:w-12 text-right shrink-0">{pct}%</span>
                       </li>
                     );
                   })}
@@ -560,7 +565,7 @@ export function AnalytiqueDashboard(props: Props) {
 
           <Card>
             <CardTitle sub="Catégories socio-professionnelles">Par catégorie</CardTitle>
-            <div className="px-5 pb-5">
+            <div className="px-3 sm:px-5 pb-4 sm:pb-5">
               {effectif.byCategory.length === 0 ? (
                 <p className="text-sm text-slate-400 py-8 text-center">Aucune donnée</p>
               ) : (
@@ -568,13 +573,13 @@ export function AnalytiqueDashboard(props: Props) {
                   {effectif.byCategory.map((c) => {
                     const pct = effectif.actifs === 0 ? 0 : Math.round((c.count / effectif.actifs) * 100);
                     return (
-                      <li key={c.name} className="py-3 flex items-center gap-3">
-                        <span className="flex-1 text-sm text-slate-700 truncate">{c.name}</span>
-                        <div className="flex-1 max-w-[180px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <li key={c.name} className="py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
+                        <span className="flex-1 text-xs sm:text-sm text-slate-700 truncate min-w-0">{c.name}</span>
+                        <div className="hidden sm:block flex-1 max-w-[180px] h-1.5 bg-slate-100 rounded-full overflow-hidden">
                           <div className="h-full bg-slate-700 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="text-sm font-semibold text-slate-900 tabular-nums w-10 text-right">{c.count}</span>
-                        <span className="text-xs text-slate-400 tabular-nums w-12 text-right">{pct}%</span>
+                        <span className="text-xs sm:text-sm font-semibold text-slate-900 tabular-nums w-8 sm:w-10 text-right shrink-0">{c.count}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-400 tabular-nums w-9 sm:w-12 text-right shrink-0">{pct}%</span>
                       </li>
                     );
                   })}
@@ -588,11 +593,11 @@ export function AnalytiqueDashboard(props: Props) {
       {/* ── Risques & conformité ────────────────────────────────────── */}
       <section>
         <SectionHeader kicker="Risques & conformité" title="Indicateurs sociaux et sécurité" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
           <Card>
             <CardTitle sub="Mois en cours">Absentéisme</CardTitle>
-            <div className="p-5">
-              <p className="text-3xl font-semibold text-slate-900 tabular-nums">{absenteeism.rateMonth}%</p>
+            <div className="p-4 sm:p-5">
+              <p className="text-2xl sm:text-3xl font-semibold text-slate-900 tabular-nums">{absenteeism.rateMonth}%</p>
               <p className="text-xs text-slate-500 mt-1">{absenteeism.totalDaysMonth} jours non travaillés</p>
               <div className="mt-4 space-y-2">
                 {absenteeism.byType.length === 0 ? (
@@ -609,8 +614,8 @@ export function AnalytiqueDashboard(props: Props) {
 
           <Card>
             <CardTitle sub="Visites médicales">Conformité médicale</CardTitle>
-            <div className="p-5">
-              <p className="text-3xl font-semibold text-slate-900 tabular-nums">{medicalKpi.complianceRate}%</p>
+            <div className="p-4 sm:p-5">
+              <p className="text-2xl sm:text-3xl font-semibold text-slate-900 tabular-nums">{medicalKpi.complianceRate}%</p>
               <p className="text-xs text-slate-500 mt-1">salariés actifs à jour</p>
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-xs">
@@ -627,8 +632,8 @@ export function AnalytiqueDashboard(props: Props) {
 
           <Card>
             <CardTitle sub="Cumul historique">Sécurité au travail</CardTitle>
-            <div className="p-5">
-              <p className="text-3xl font-semibold text-slate-900 tabular-nums">{safety.count}</p>
+            <div className="p-4 sm:p-5">
+              <p className="text-2xl sm:text-3xl font-semibold text-slate-900 tabular-nums">{safety.count}</p>
               <p className="text-xs text-slate-500 mt-1">accidents · {safety.joursPerdus} jours d'arrêt</p>
               <div className="mt-4 space-y-2 text-xs">
                 <div className="flex justify-between">
@@ -647,16 +652,16 @@ export function AnalytiqueDashboard(props: Props) {
 
       {/* ── Footer link ─────────────────────────────────────────────── */}
       <section className="pt-2 pb-8">
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-slate-900">Pilotage stratégique par axe</p>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Talent · Recrutement · Rémunération · Climat · Formation — vues détaillées par axe avec scénarios.
+            <p className="text-xs text-slate-500 mt-0.5 leading-snug">
+              Talent · Recrutement · Rémunération · Climat · Formation — vues détaillées par axe.
             </p>
           </div>
           <Link
             href="/analytique/focus"
-            className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 h-9 text-sm font-medium text-white hover:bg-slate-800 transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 h-9 text-sm font-medium text-white hover:bg-slate-800 transition-colors w-full md:w-auto"
           >
             Ouvrir Focus stratégique <ArrowRight className="h-3.5 w-3.5" />
           </Link>
