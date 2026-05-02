@@ -24,7 +24,8 @@ import {
   Presentation,
   ChatCircleText,
   Target,
-  UploadSimple
+  UploadSimple,
+  Stamp
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -40,6 +41,7 @@ const navItems = [
   { href: "/heures-sup", label: "Heures Sup.", icon: Clock, exact: false },
   { href: "/analyses", label: "Finance & Data", icon: ChartBar, exact: false },
   { href: "/paie/fin-de-contrat", label: "Fin de contrat", icon: FileText, exact: false },
+  { href: "/declarations", label: "Déclarations & Conformité", icon: Stamp, exact: false },
   { href: "/paie/import-sage", label: "Import Paie Sage", icon: UploadSimple, exact: false },
   { href: "/recrutement", label: "Talent Acquisition", icon: UserPlus, exact: false },
   { href: "/evaluations", label: "Performance", icon: ChartLineUp, exact: false },

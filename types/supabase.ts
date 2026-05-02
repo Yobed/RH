@@ -1404,6 +1404,130 @@ export type Database = {
           },
         ]
       }
+      social_declarations: {
+        Row: {
+          id: string
+          company_id: string
+          kind: "DIPE" | "DISA" | "DASC"
+          periode: string
+          statut: "brouillon" | "genere" | "soumis" | "rejete" | "rectifie"
+          deadline: string
+          date_generation: string | null
+          date_soumission: string | null
+          numero_recepisse: string | null
+          fichier_url: string | null
+          total_brut: number | null
+          total_cotisations: number | null
+          nb_salaries: number | null
+          details: Json | null
+          penalite_calculee: number | null
+          created_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          kind: "DIPE" | "DISA" | "DASC"
+          periode: string
+          statut?: "brouillon" | "genere" | "soumis" | "rejete" | "rectifie"
+          deadline: string
+          date_generation?: string | null
+          date_soumission?: string | null
+          numero_recepisse?: string | null
+          fichier_url?: string | null
+          total_brut?: number | null
+          total_cotisations?: number | null
+          nb_salaries?: number | null
+          details?: Json | null
+          penalite_calculee?: number | null
+          created_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          statut?: "brouillon" | "genere" | "soumis" | "rejete" | "rectifie"
+          date_soumission?: string | null
+          numero_recepisse?: string | null
+          fichier_url?: string | null
+          total_brut?: number | null
+          total_cotisations?: number | null
+          penalite_calculee?: number | null
+        }
+        Relationships: []
+      }
+      tax_declarations: {
+        Row: {
+          id: string
+          company_id: string
+          kind: "ITS_MENSUEL" | "ITS_ANNUEL" | "IGR_MENSUEL" | "CN_MENSUEL"
+          periode: string
+          statut: "brouillon" | "genere" | "soumis" | "rejete" | "rectifie"
+          deadline: string
+          date_generation: string | null
+          date_soumission: string | null
+          numero_recepisse: string | null
+          fichier_url: string | null
+          total_assiette: number | null
+          total_retenu: number | null
+          nb_salaries: number | null
+          details: Json | null
+          penalite_calculee: number | null
+          created_at: string | null
+          created_by: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          kind: "ITS_MENSUEL" | "ITS_ANNUEL" | "IGR_MENSUEL" | "CN_MENSUEL"
+          periode: string
+          statut?: "brouillon" | "genere" | "soumis" | "rejete" | "rectifie"
+          deadline: string
+          date_generation?: string | null
+          date_soumission?: string | null
+          numero_recepisse?: string | null
+          fichier_url?: string | null
+          total_assiette?: number | null
+          total_retenu?: number | null
+          nb_salaries?: number | null
+          details?: Json | null
+          penalite_calculee?: number | null
+          created_at?: string | null
+          created_by?: string | null
+        }
+        Update: {
+          statut?: "brouillon" | "genere" | "soumis" | "rejete" | "rectifie"
+          date_soumission?: string | null
+          numero_recepisse?: string | null
+          fichier_url?: string | null
+          total_assiette?: number | null
+          total_retenu?: number | null
+          penalite_calculee?: number | null
+        }
+        Relationships: []
+      }
+      declaration_events: {
+        Row: {
+          id: string
+          company_id: string
+          kind: string
+          declaration_id: string
+          event: string
+          metadata: Json | null
+          user_id: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          company_id: string
+          kind: string
+          declaration_id: string
+          event: string
+          metadata?: Json | null
+          user_id?: string | null
+          created_at?: string | null
+        }
+        Update: never
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
