@@ -117,6 +117,30 @@ export function CongesDialog({ employees }: Props) {
     }
   }
 
+  // Suggestion de durée légale pour maternité (14 sem = 98j) et paternité (2j)
+  // Art. 27 CT-CI maternité · Art. 25.bis paternité
+  useEffect(() => {
+    if (!dateDebut) return;
+    let durationDays = 0;
+    if (typeConge === "maternite") durationDays = 98; // 14 semaines = 98 jours calendaires
+    else if (typeConge === "paternite") durationDays = 2; // 2 jours ouvrables (CCI Art. 69)
+    else return;
+
+    const debut = new Date(dateDebut);
+    if (isNaN(debut.getTime())) return;
+    const fin = new Date(debut);
+    fin.setDate(fin.getDate() + durationDays - 1);
+    setValue("date_fin", fin.toISOString().split("T")[0]);
+    setValue("nb_jours", String(durationDays));
+
+    const reprise = new Date(fin);
+    reprise.setDate(reprise.getDate() + 1);
+    const jour = reprise.getDay();
+    if (jour === 6) reprise.setDate(reprise.getDate() + 2);
+    else if (jour === 0) reprise.setDate(reprise.getDate() + 1);
+    setValue("date_reprise", reprise.toISOString().split("T")[0]);
+  }, [typeConge, dateDebut, setValue]);
+
   // Charger le solde dès qu'un employé est sélectionné (pour congé annuel)
   useEffect(() => {
     if (!employeeId || typeConge !== "annuel") {
@@ -226,6 +250,24 @@ export function CongesDialog({ employees }: Props) {
               )}
             />
           </div>
+
+          {/* Information durée légale maternité / paternité */}
+          {(typeConge === "maternite" || typeConge === "paternite") && (
+            <div className="rounded-md border border-sky-200 bg-sky-50/60 p-3 text-xs text-sky-900">
+              {typeConge === "maternite" ? (
+                <p>
+                  <span className="font-semibold">Maternité :</span> 14 semaines (98 jours calendaires) — Art. 27 CT-CI.
+                  Doit comprendre 6 sem avant l'accouchement et 8 sem après.
+                  Indemnité 100 % du salaire (50 % CNPS + 50 % employeur).
+                </p>
+              ) : (
+                <p>
+                  <span className="font-semibold">Paternité :</span> 2 jours ouvrables — CCI Art. 69 / Ordonnance 2021-902.
+                  À prendre dans les 15 jours suivant la naissance.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Solde de congés affiché si congé annuel */}
           {typeConge === "annuel" && employeeId && (

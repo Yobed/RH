@@ -264,6 +264,10 @@ export type Database = {
           nccm: string | null
           nif: string | null
           raison_sociale: string | null
+          taux_at_mp: number | null
+          adresse_paie: string | null
+          contact_paie: string | null
+          code_naf: string | null
         }
         Insert: {
           adresse?: string | null
@@ -276,6 +280,10 @@ export type Database = {
           nccm?: string | null
           nif?: string | null
           raison_sociale?: string | null
+          taux_at_mp?: number | null
+          adresse_paie?: string | null
+          contact_paie?: string | null
+          code_naf?: string | null
         }
         Update: {
           adresse?: string | null
@@ -288,6 +296,10 @@ export type Database = {
           nccm?: string | null
           nif?: string | null
           raison_sociale?: string | null
+          taux_at_mp?: number | null
+          adresse_paie?: string | null
+          contact_paie?: string | null
+          code_naf?: string | null
         }
         Relationships: []
       }
@@ -659,6 +671,8 @@ export type Database = {
           convention_collective: string | null
           site_travail: string | null
           nb_personnes_charge: number | null
+          consent_donnees_personnelles_at: string | null
+          date_archivage_prevue: string | null
         }
         Insert: {
           categorie?: string | null
@@ -704,6 +718,8 @@ export type Database = {
           convention_collective?: string | null
           site_travail?: string | null
           nb_personnes_charge?: number | null
+          consent_donnees_personnelles_at?: string | null
+          date_archivage_prevue?: string | null
         }
         Update: {
           categorie?: string | null
@@ -749,6 +765,8 @@ export type Database = {
           convention_collective?: string | null
           site_travail?: string | null
           nb_personnes_charge?: number | null
+          consent_donnees_personnelles_at?: string | null
+          date_archivage_prevue?: string | null
         }
         Relationships: [
           {

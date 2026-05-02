@@ -55,7 +55,7 @@ export default async function EmployesPage() {
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <ImportExcelModal />
-          <EmployeeDialog />
+          <EmployeeDialog employees={employees ?? []} />
         </div>
       </div>
 

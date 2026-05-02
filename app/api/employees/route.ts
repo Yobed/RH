@@ -45,6 +45,7 @@ const createSchema = z.object({
   convention_collective:  z.string().max(100).nullable().optional(),
   site_travail:           z.string().max(100).nullable().optional(),
   nb_personnes_charge:    z.coerce.number().int().min(0).nullable().optional(),
+  consent_donnees_personnelles_at: z.string().datetime().nullable().optional(),
 });
 
 export async function GET(req: Request) {

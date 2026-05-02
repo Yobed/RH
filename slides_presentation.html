@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Présentation RH Manager CI - Huashu Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Huashu Glassmorphism Style */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            width: 80vw;
+            height: 70vh;
+            padding: 4rem;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: none;
+            transition: all 0.5s ease;
+        }
+
+        .glass-container.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            letter-spacing: 2px;
+        }
+
+        .highlight {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            width: fit-content;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-top: 1rem;
+            opacity: 0.8;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Intro -->
+    <div class="glass-container active" id="slide-1">
+        <div class="slide-number">01 / 06</div>
+        <div class="badge">Innovation RH</div>
+        <h1>RH Manager <span class="highlight">CI</span></h1>
+        <p>Gérez vos ressources humaines avec la précision d'un horloger et l'élégance du design moderne. Entièrement conforme au Code du Travail Ivoirien.</p>
+    </div>
+
+    <!-- Slide 2: Dashboard -->
+    <div class="glass-container" id="slide-2">
+        <div class="slide-number">02 / 06</div>
+        <div class="badge">Pilotage</div>
+        <h1>Dashboard <span class="highlight">Intelligent</span></h1>
+        <p>Visualisez vos KPIs en temps réel. Masse salariale, effectifs, et alertes de fin de contrat en une seule vue panoramique.</p>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3 class="highlight">Temps réel</h3>
+                <p style="font-size: 0.9rem">Données synchronisées instantanément.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="highlight">Alertes</h3>
+                <p style="font-size: 0.9rem">Notifications proactives sur les échéances.</p>
+            </div>
+            <div class="feature-card">
+                <h3 class="highlight">Analytics</h3>
+                <p style="font-size: 0.9rem">Reporting avancé pour la direction.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Paie -->
+    <div class="glass-container" id="slide-3">
+        <div class="slide-number">03 / 06</div>
+        <div class="badge">Conformité</div>
+        <h1>Paie & <span class="highlight">Article 25.1</span></h1>
+        <p>L'automatisation stricte des congés (2.2j/mois) et des calculs de cotisations (CNPS, ITS) pour une sérénité totale lors des audits.</p>
+    </div>
+
+    <!-- Slide 4: STC -->
+    <div class="glass-container" id="slide-4">
+        <div class="slide-number">04 / 06</div>
+        <div class="badge">Expertise</div>
+        <h1>Module <span class="highlight">STC Premium</span></h1>
+        <p>Calculez les soldes de tout compte en 3 étapes. Génération automatique des documents légaux et archivage sécurisé des départs.</p>
+    </div>
+
+    <!-- Slide 5: AI RAG -->
+    <div class="glass-container" id="slide-5">
+        <div class="slide-number">05 / 06</div>
+        <div class="badge">Intelligence Artificielle</div>
+        <h1>Assistant <span class="highlight">Juridique</span></h1>
+        <p>Utilisez la puissance du RAG pour interroger le Code du Travail. Obtenez des réponses sourcées et précises à vos questions juridiques complexes.</p>
+    </div>
+
+    <!-- Slide 6: Futur -->
+    <div class="glass-container" id="slide-6">
+        <div class="slide-number">06 / 06</div>
+        <div class="badge">Vision 2026</div>
+        <h1>Le Futur de la <span class="highlight">RH</span></h1>
+        <p>Mobile-first, Recrutement assisté par IA, et intégration ERP. Ensemble, construisons la gestion du personnel de demain.</p>
+        <button class="btn mt-8 highlight" style="width: fit-content" onclick="alert('Merci pour votre attention !')">Découvrir l'Appli</button>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="prevSlide()">Précédent</button>
+        <button class="btn" onclick="nextSlide()">Suivant</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6;
+
+        function showSlide(n) {
+            document.querySelectorAll('.glass-container').forEach(s => s.classList.remove('active'));
+            document.getElementById(`slide-${n}`).classList.add('active');
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>

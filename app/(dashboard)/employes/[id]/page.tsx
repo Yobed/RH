@@ -124,13 +124,19 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
     supabase.from("evaluations").select("id, periodicite, periode, date_evaluation, score_global, statut").eq("employee_id", params.id).order("date_evaluation", { ascending: false }).limit(5),
     supabase.from("documents").select("id, name, famille, file_type, file_size_kb, created_at, file_url").eq("employee_id", params.id).order("created_at", { ascending: false }),
     supabase.from("conges").select("id, type, date_debut, date_fin, nb_jours, statut").eq("employee_id", params.id).order("date_debut", { ascending: false }).limit(5),
-    supabase.from("bulletins_paie").select("id, periode, salaire_brut, cnps_salarie, its, salaire_net, statut").eq("employee_id", params.id).order("periode", { ascending: false }).limit(6),
+    supabase.from("bulletins_paie").select("id, periode, salaire_brut, cnps_salarie, its, salaire_net, statut, total_contributions, net_to_pay").eq("employee_id", params.id).order("periode", { ascending: false }).limit(6),
     supabase.from("employee_salary_history").select("id, date_effet, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, motif, created_at").eq("employee_id", params.id).order("date_effet", { ascending: false }),
     supabase.from("leave_balances").select("jours_acquis, jours_pris, solde, annee").eq("employee_id", params.id).eq("annee", anneeEnCours).single(),
     supabase.from("conges").select("nb_jours").eq("employee_id", params.id).eq("type", "annuel").eq("statut", "approuve").gte("date_debut", `${anneeEnCours}-01-01`).lte("date_debut", `${anneeEnCours}-12-31`),
     supabase.from("career_events").select("*").eq("employee_id", params.id).order("date_event", { ascending: false }),
     supabase.from("companies").select("*").limit(1).maybeSingle(),
   ]);
+
+  const { data: allEmployees } = await supabase
+    .from("employees")
+    .select("id, full_name")
+    .eq("statut", "actif")
+    .order("full_name");
 
   if (!emp) notFound();
 
@@ -180,7 +186,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
             <DocumentDropdown employee={emp} company={company} />
-            <EmployeeDialog employee={emp} />
+            <EmployeeDialog employee={emp} employees={allEmployees ?? []} />
           </div>
         </div>
       </div>
@@ -487,8 +493,8 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   <tr>
                     <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
                     <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Brut</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Cotisations</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Net</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Cotisations (CNPS+CN+IGR)</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">NET A PAYER</th>
                     <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   </tr>
                 </thead>
@@ -500,10 +506,10 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                         {new Intl.NumberFormat("fr-CI").format(b.salaire_brut)}
                       </td>
                       <td className="px-4 py-3 text-right font-mono tabular-nums text-red-500">
-                        −{new Intl.NumberFormat("fr-CI").format((b.cnps_salarie ?? 0) + (b.its ?? 0))}
+                        −{new Intl.NumberFormat("fr-CI").format(Number((b as Record<string, unknown>).total_contributions ?? ((b.cnps_salarie ?? 0) + (b.its ?? 0))))}
                       </td>
                       <td className="px-4 py-3 text-right font-bold font-mono tabular-nums text-emerald-700">
-                        {new Intl.NumberFormat("fr-CI").format(b.salaire_net)}
+                        {new Intl.NumberFormat("fr-CI").format(Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net))}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <StatutBadge statut={b.statut} />

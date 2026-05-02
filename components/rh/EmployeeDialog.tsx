@@ -39,6 +39,7 @@ const schema = z
     nb_enfants: z.string().optional(),
     nb_personnes_charge: z.string().optional(),
     groupe_sanguin: z.string().max(5).optional(),
+    consent_donnees_personnelles: z.boolean().optional(),
     // ── Pièce d'identité ─────────────────────────────────────
     num_cni: z.string().max(30).optional(),
     date_expiration_cni: z.string().optional(),
@@ -188,18 +189,25 @@ function toFormDefaults(emp: EmployeeWithPrimes): FormData {
 }
 
 function cleanPayload(data: FormData): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(data).map(([k, v]) => {
-      if (v === "" || v === undefined) return [k, null];
-      if (k === "salaire_brut") return [k, v ? Number(v) : null];
-      if (k === "nb_enfants") return [k, v ? Number(v) : 0];
-      if (k === "nb_personnes_charge") return [k, v ? Number(v) : 0];
-      if (k === "anciennete_anterieure") return [k, v ? Number(v) : 0];
-      if (["sursalaire","prime_exceptionnelle","prime_salissure","prime_depassement","prime_fonction","prime_transport"].includes(k))
-        return [k, Number(v) || 0];
-      return [k, v];
-    })
+  const consentChecked = data.consent_donnees_personnelles === true;
+  const payload = Object.fromEntries(
+    Object.entries(data)
+      .filter(([k]) => k !== "consent_donnees_personnelles") // boolean → traité ci-dessous
+      .map(([k, v]) => {
+        if (v === "" || v === undefined) return [k, null];
+        if (k === "salaire_brut") return [k, v ? Number(v) : null];
+        if (k === "nb_enfants") return [k, v ? Number(v) : 0];
+        if (k === "nb_personnes_charge") return [k, v ? Number(v) : 0];
+        if (k === "anciennete_anterieure") return [k, v ? Number(v) : 0];
+        if (["sursalaire","prime_exceptionnelle","prime_salissure","prime_depassement","prime_fonction","prime_transport"].includes(k))
+          return [k, Number(v) || 0];
+        return [k, v];
+      })
   );
+  if (consentChecked) {
+    payload.consent_donnees_personnelles_at = new Date().toISOString();
+  }
+  return payload;
 }
 
 interface Props {
@@ -662,6 +670,27 @@ export function EmployeeDialog({ employee, employees = [] }: Props) {
               </div>
             </div>
           </section>
+
+          {/* ── CONSENTEMENT DONNÉES PERSONNELLES (création) ────── */}
+          {!employee && (
+            <section className="space-y-2 rounded-md border border-amber-200 bg-amber-50/40 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">
+                Conformité Loi n° 2013-450 (ARTCI)
+              </p>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register("consent_donnees_personnelles")}
+                  className="h-4 w-4 mt-0.5 rounded border-slate-300"
+                />
+                <span className="text-xs text-slate-700 leading-relaxed">
+                  Le salarié consent au traitement de ses données personnelles
+                  conformément à la <a href="/legal/confidentialite" target="_blank" className="underline text-slate-900">politique de confidentialité</a>
+                  {" "}(Art. 35 Loi 2013-450). À cocher après lecture par le salarié.
+                </span>
+              </label>
+            </section>
+          )}
 
           {/* ── MOTIF MODIFICATION (édition uniquement) ──────────── */}
           {employee && (

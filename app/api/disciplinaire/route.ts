@@ -12,6 +12,9 @@ const procedureSchema = z.object({
   statut: z.string().min(1, "Le statut est requis"),
   date_incident: z.string().nullable().optional(),
   date_notification: z.string().nullable().optional(),
+  date_convocation: z.string().nullable().optional(),
+  date_audition: z.string().nullable().optional(),
+  delai_legal_jours: z.coerce.number().int().min(1).max(365).optional(),
 });
 
 export async function GET(request: Request) {
@@ -97,7 +100,6 @@ export async function POST(request: Request) {
       .insert({
         company_id: companyId,
         ...validationResult.data,
-        created_by: user.id
       })
       .select()
       .single();

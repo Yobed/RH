@@ -58,10 +58,18 @@ export const CHARGES_PATRONALES_TAUX = {
   familiales: 0.05,      // Prestations familiales (sans plafond)
   maternite: 0.0075,     // Accidents maternité
   retraite: 0.077,       // Retraite patronale (plafond PLAFOND_CNPS_MENSUEL)
-  at_mp: 0.03,           // Accidents travail / Maladies pro (taux moyen, variable)
+  at_mp: 0.03,           // Accidents travail / Maladies pro — taux moyen par défaut (variable selon secteur 2-5%)
   fdfp: 0.012,           // Taxe de Formation Continue (FDFP) 1.2%
   apprentissage: 0.004,  // Taxe d'Apprentissage 0.4%
 } as const;
+
+/**
+ * Taux AT/MP minimum et maximum acceptables (cadrage CNPS CI).
+ * Le taux exact dépend du secteur d'activité — récupéré dans `companies.taux_at_mp`.
+ */
+export const TAUX_AT_MP_MIN = 0.02;
+export const TAUX_AT_MP_MAX = 0.05;
+export const TAUX_AT_MP_DEFAULT = CHARGES_PATRONALES_TAUX.at_mp;
 
 /**
  * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI simplifié mensuel

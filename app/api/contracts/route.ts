@@ -66,8 +66,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Entreprise non trouvée" }, { status: 403 });
   }
 
-  // Vérifier règle ivoirienne : CDD max 2 renouvellements
+  // Vérification règles CDD ivoiriennes (Art. 14-15 CT-CI)
   if (parsed.data.type_contrat === "CDD") {
+    // 1. Plafond 2 renouvellements (3 contrats CDD max sur le même employé)
     const { count } = await supabase
       .from("contracts")
       .select("*", { count: "exact", head: true })
@@ -78,7 +79,43 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error:
-            "Conversion CDI obligatoire. Cet employé a atteint le maximum de 2 renouvellements CDD (droit ivoirien).",
+            "Conversion CDI obligatoire. Cet employé a déjà atteint le maximum de 2 renouvellements CDD (Art. 15 CT-CI).",
+        },
+        { status: 422 }
+      );
+    }
+
+    // 2. Plafond cumulé 24 mois — calculé via fonction Postgres
+    const newDuration =
+      parsed.data.date_fin && parsed.data.date_debut
+        ? Math.max(
+            0,
+            (new Date(parsed.data.date_fin).getTime() -
+              new Date(parsed.data.date_debut).getTime()) /
+              (30.44 * 24 * 60 * 60 * 1000)
+          )
+        : 0;
+
+    const { data: cumulMonths } = await supabase.rpc("get_cdd_cumul_months", {
+      p_employee_id: parsed.data.employee_id,
+    });
+    const totalCumul = (Number(cumulMonths) || 0) + newDuration;
+
+    if (totalCumul > 24) {
+      return NextResponse.json(
+        {
+          error: `Le cumul des CDD pour cet employé atteindrait ${totalCumul.toFixed(1)} mois. Plafond légal : 24 mois (Art. 14 CT-CI). Conversion CDI requise.`,
+        },
+        { status: 422 }
+      );
+    }
+
+    // 3. Motif obligatoire pour CDD
+    if (!parsed.data.motif_cdd || parsed.data.motif_cdd.trim().length < 5) {
+      return NextResponse.json(
+        {
+          error:
+            "Le motif du CDD est obligatoire et doit être détaillé (Art. 14.2 CT-CI : remplacement, surcroît, saisonnier…).",
         },
         { status: 422 }
       );

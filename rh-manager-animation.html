@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH Manager CI - Ultra Motion v2.0</title>
+    <!-- CSS & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+        }
+        
+        body, html {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        #viewport {
+            width: 1920px;
+            height: 1080px;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+            transform-origin: center center;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #0ea5e9, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+
+        #created-by {
+            position: absolute; bottom: 30px; right: 40px;
+            font-size: 14px; color: rgba(255,255,255,0.3);
+            letter-spacing: 0.2em; text-transform: uppercase;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .perspective-container {
+            perspective: 2000px;
+        }
+    </style>
+</head>
+<body>
+    <div id="viewport"></div>
+    <div id="created-by">Created by Huashu-Design</div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const IosFrame = ({ children, time = '09:41', battery = 85, darkMode = false }) => {
+            const textColor = darkMode ? '#fff' : '#000';
+            return (
+                <div className="inline-block p-3 bg-black rounded-[60px] relative shadow-2xl border-4 border-slate-800">
+                    <div className={`relative rounded-[48px] overflow-hidden ${darkMode ? 'bg-black' : 'bg-white'}`} style={{ width: 393, height: 852 }}>
+                        <div className="absolute top-0 left-0 right-0 h-[54px] flex items-center justify-between px-8 z-50" style={{ color: textColor }}>
+                            <span className="font-bold text-lg">{time}</span>
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-end gap-0.5 h-3">
+                                    {[4, 6, 9, 11].map((h, i) => <div key={i} className="w-1 bg-current rounded-sm" style={{ height: h }} />)}
+                                </div>
+                                <div className="w-7 h-3 border-2 border-current rounded-sm relative opacity-80">
+                                    <div className="h-full bg-current" style={{ width: `${battery}%` }} />
+                                    <div className="absolute top-0.5 -right-1 w-1 h-1.5 bg-current rounded-e-full" />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[124px] h-9 bg-black rounded-full z-[60]" />
+                        <div className="absolute inset-0 pt-[54px] pb-8 overflow-hidden">
+                            {children}
+                        </div>
+                        <div className={`absolute bottom-3 left-1/2 -translate-x-1/2 w-36 h-1.5 rounded-full ${darkMode ? 'bg-white/20' : 'bg-black/10'}`} />
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const viewportRef = useRef(null);
+
+            useEffect(() => {
+                const resize = () => {
+                    const el = document.getElementById('viewport');
+                    const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+                    gsap.set(el, { scale: scale });
+                };
+                window.addEventListener('resize', resize);
+                resize();
+
+                const tl = gsap.timeline();
+
+                // 1. CHAOS
+                tl.fromTo(".chaos-item", { opacity: 0, scale: 0.5 }, { opacity: 0.1, scale: 1, duration: 1, stagger: 0.05 });
+                tl.from("#chaos-text h1", { y: 100, opacity: 0, duration: 1, ease: "power4.out" }, 0.5);
+                tl.from("#chaos-text p", { y: 50, opacity: 0, duration: 1, ease: "power4.out" }, 0.8);
+                
+                // Pop icons
+                tl.from(".chaos-icon", {
+                    scale: 0, opacity: 0, 
+                    x: () => (Math.random()-0.5)*1500, 
+                    y: () => (Math.random()-0.5)*1000, 
+                    duration: 1, stagger: 0.2, ease: "back.out(2)"
+                }, 1.2);
+
+                // 2. REVEAL
+                tl.to("#sc-chaos", { scale: 5, opacity: 0, duration: 1.5, ease: "power4.in" }, 4.5);
+                tl.fromTo("#sc-reveal", { opacity: 0 }, { opacity: 1, duration: 0.1 }, 5.0);
+                tl.from("#reveal-logo", { scale: 0, rotation: 720, duration: 1.5, ease: "power4.out" }, 5.2);
+                tl.from("#reveal-title", { y: 50, opacity: 0, duration: 0.8 }, 5.8);
+                tl.from("#reveal-sub", { opacity: 0, duration: 0.8 }, 6.2);
+
+                // 3. FEATURES
+                tl.to("#sc-reveal", { x: -1920, duration: 1, ease: "power4.inOut" }, 8.5);
+                tl.fromTo("#sc-features", { x: 1920, opacity: 1 }, { x: 0, duration: 1, ease: "power4.inOut" }, 8.5);
+                
+                // Feat 1: RAG
+                tl.from("#feat-text-1", { x: -100, opacity: 0, duration: 0.8 }, 9.0);
+                tl.from("#mockup-box", { x: 200, opacity: 0, duration: 1, ease: "power3.out" }, 9.0);
+                tl.to("#ui-rag", { opacity: 1, duration: 0.5 }, 9.5);
+                
+                const ragText = "L'Article 25.1 stipule que le congé annuel est de 2.2 jours par mois. Pour un salarié avec 1 an d'ancienneté, cela représente 26.4 jours...";
+                tl.to({}, {
+                    duration: 3.5,
+                    onUpdate: function() {
+                        const len = Math.floor(this.progress() * ragText.length);
+                        document.getElementById('rag-ai-text').innerText = ragText.substring(0, len);
+                    }
+                }, 10.0);
+
+                // Feat 2: STC
+                tl.to("#feat-text-1", { opacity: 0, y: -50, duration: 0.5 }, 15.0);
+                tl.from("#feat-text-2", { opacity: 0, y: 50, duration: 0.5 }, 15.2);
+                tl.to("#ui-rag", { opacity: 0, duration: 0.5 }, 15.2);
+                tl.to("#ui-stc", { opacity: 1, duration: 0.5 }, 15.5);
+                
+                tl.to({}, {
+                    duration: 2.5,
+                    onUpdate: function() {
+                        const val = Math.floor(this.progress() * 850400);
+                        document.getElementById('stc-val').innerText = val.toLocaleString() + " FCFA";
+                        document.getElementById('stc-bar').style.width = (this.progress()*100) + "%";
+                    }
+                }, 16.0);
+
+                // Feat 3: Matrix
+                tl.to("#feat-text-2", { opacity: 0, y: -50, duration: 0.5 }, 20.0);
+                tl.from("#feat-text-3", { opacity: 0, y: 50, duration: 0.5 }, 20.2);
+                tl.to("#ui-stc", { opacity: 0, duration: 0.5 }, 20.2);
+                tl.to("#ui-matrix", { opacity: 1, duration: 0.5 }, 20.5);
+                tl.from(".talent-dot", { scale: 0, stagger: 0.1, duration: 0.5, ease: "back.out" }, 21.0);
+
+                // 4. CTA
+                tl.to("#sc-features", { opacity: 0, scale: 1.2, duration: 1.5, ease: "power4.in" }, 24.0);
+                tl.fromTo("#sc-cta", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1, ease: "power4.out" }, 24.5);
+                tl.from("#cta-btn", { y: 100, opacity: 0, duration: 1, ease: "back.out" }, 25.0);
+                tl.to("#cta-btn", { scale: 1.1, repeat: -1, yoyo: true, duration: 0.6 }, 26.0);
+
+                return () => window.removeEventListener('resize', resize);
+            }, []);
+
+            return (
+                <div className="w-full h-full relative">
+                    {/* SCENE 1 */}
+                    <div id="sc-chaos" className="absolute inset-0 bg-slate-950 flex items-center justify-center">
+                        <div className="absolute inset-0 flex flex-wrap gap-20 p-20 opacity-20">
+                            {[...Array(60)].map((_, i) => (
+                                <div key={i} className="chaos-item text-white font-bold text-2xl rotate-12">Excel.xlsx</div>
+                            ))}
+                        </div>
+                        <div id="chaos-text" className="text-center z-10">
+                            <h1 className="text-white text-[120px] font-black leading-none mb-8">RH HORS CONTRÔLE ?</h1>
+                            <p className="text-slate-400 text-4xl font-light">Erreurs de calcul, conformité risquée, documents perdus...</p>
+                        </div>
+                        <div className="absolute inset-0">
+                            {['⚠️', '❌', '⌛', '📄', '📉'].map((e, i) => (
+                                <div key={i} className="chaos-icon absolute text-9xl">{e}</div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* SCENE 2 */}
+                    <div id="sc-reveal" className="absolute inset-0 bg-white flex flex-col items-center justify-center opacity-0">
+                        <div id="reveal-logo" className="w-64 h-64 bg-sky-600 rounded-[50px] shadow-2xl flex items-center justify-center mb-12">
+                            <span className="text-white text-9xl font-black">RH</span>
+                        </div>
+                        <h2 id="reveal-title" className="text-[120px] font-black text-slate-900 tracking-tighter">RH MANAGER CI</h2>
+                        <p id="reveal-sub" className="text-4xl text-slate-400 font-light tracking-[0.4em] uppercase">L'excellence RH Ivoirienne</p>
+                    </div>
+
+                    {/* SCENE 3 */}
+                    <div id="sc-features" className="absolute inset-0 bg-slate-50 flex items-center px-40 opacity-0 overflow-hidden">
+                        <div className="w-[800px] space-y-20">
+                            <div id="feat-text-1" className="absolute">
+                                <div className="text-sky-600 font-bold tracking-widest uppercase mb-4">Assistant IA Légal</div>
+                                <h3 className="text-8xl font-black text-slate-900 leading-none mb-8">Article 25.1 en direct</h3>
+                                <p className="text-3xl text-slate-500 leading-relaxed">Fini les doutes. Posez vos questions au Code du Travail Ivoirien, l'IA vous répond avec précision.</p>
+                            </div>
+                            <div id="feat-text-2" className="absolute opacity-0">
+                                <div className="text-emerald-600 font-bold tracking-widest uppercase mb-4">Paie & STC</div>
+                                <h3 className="text-8xl font-black text-slate-900 leading-none mb-8">Automatisation de bout en bout</h3>
+                                <p className="text-3xl text-slate-500 leading-relaxed">Un STC parfait en un clic. Exportation native vers Sage. La sécurité fiscale avant tout.</p>
+                            </div>
+                            <div id="feat-text-3" className="absolute opacity-0">
+                                <div className="text-indigo-600 font-bold tracking-widest uppercase mb-4">Talents & Stratégie</div>
+                                <h3 className="text-8xl font-black text-slate-900 leading-none mb-8">Gérez vos hauts potentiels</h3>
+                                <p className="text-3xl text-slate-500 leading-relaxed">Vision Matrix 360°. Prenez des décisions basées sur les données, pas sur l'intuition.</p>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 flex justify-center perspective-container">
+                            <div id="mockup-box" className="scale-[1.3] transform rotate-y-[-10deg]">
+                                <IosFrame>
+                                    <div className="h-full bg-slate-50 relative overflow-hidden">
+                                        <div id="ui-rag" className="absolute inset-0 p-6 flex flex-col gap-4 opacity-0 transition-opacity">
+                                            <div className="bg-sky-500 text-white p-3 rounded-2xl self-end text-xs max-w-[80%]">C'est quoi l'Article 25.1 ?</div>
+                                            <div className="bg-white p-4 rounded-2xl shadow-sm text-[11px] leading-relaxed border border-slate-100">
+                                                <div id="rag-ai-text"></div>
+                                            </div>
+                                        </div>
+                                        <div id="ui-stc" className="absolute inset-0 p-8 flex flex-col gap-6 opacity-0 transition-opacity translate-y-10">
+                                            <h4 className="font-bold text-slate-800">Calcul STC</h4>
+                                            <div className="bg-white p-6 rounded-3xl shadow-lg space-y-4">
+                                                <div className="flex justify-between text-xs text-slate-400"><span>Indemnités</span><span className="font-bold text-slate-800">Précis</span></div>
+                                                <div id="stc-val" className="text-2xl font-black text-emerald-600">0 FCFA</div>
+                                                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden"><div id="stc-bar" className="h-full bg-emerald-500 w-0"></div></div>
+                                            </div>
+                                        </div>
+                                        <div id="ui-matrix" className="absolute inset-0 p-6 flex flex-col items-center justify-center opacity-0 transition-opacity">
+                                            <div className="w-full aspect-square grid grid-cols-3 gap-2 p-2 bg-white rounded-3xl shadow-inner">
+                                                {[...Array(9)].map((_, i) => (
+                                                    <div key={i} className="bg-slate-50 rounded-xl relative overflow-hidden">
+                                                        {i===0 && <div className="absolute inset-0 bg-sky-100" />}
+                                                        <div className="talent-dot absolute w-3 h-3 bg-sky-500 rounded-full border-2 border-white" style={{left: '40%', top: '40%'}} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </IosFrame>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* SCENE 4 */}
+                    <div id="sc-cta" className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center opacity-0">
+                        <h2 className="text-white text-[160px] font-black leading-none text-center mb-12">MODERNITÉ <br/><span className="text-sky-500">ACCESSIBLE.</span></h2>
+                        <div id="cta-btn" className="px-24 py-10 bg-sky-600 text-white text-5xl font-black rounded-full shadow-[0_0_100px_rgba(14,165,233,0.5)]">DÉMARRER MAINTENANT</div>
+                        <div className="mt-20 text-slate-500 text-2xl tracking-widest uppercase">rh-manager-ci.vercel.app</div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('viewport'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

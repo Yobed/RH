@@ -36,6 +36,7 @@ export default function MasseSalarialePage() {
           `id, periode, salaire_brut, cnps_salarie, its, salaire_net, statut,
            sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
            prime_depassement, prime_fonction, prime_transport,
+           total_contributions, net_to_pay, tax_cn, tax_igr, withholding_cnps,
            employees(full_name, poste, matricule)`
         )
         .eq("periode", periode)

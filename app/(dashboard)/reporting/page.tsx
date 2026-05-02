@@ -17,7 +17,7 @@ export default async function ReportingPage() {
   const [bulletinsRes, congesRes, employeesRes, evaluationsRes, accidentsRes] = await Promise.all([
     supabase
       .from("bulletins_paie")
-      .select("periode, salaire_brut, salaire_net, cnps_salarie, its")
+      .select("periode, salaire_brut, salaire_net, cnps_salarie, its, total_contributions, net_to_pay")
       .gte("periode", periodStart)
       .order("periode"),
     supabase
@@ -39,14 +39,16 @@ export default async function ReportingPage() {
 
   // Build monthly mass salariale
   const bulletins = bulletinsRes.data ?? [];
-  const byPeriod = new Map<string, { brut: number; net: number; cnps: number; its: number; count: number }>();
+  const byPeriod = new Map<string, { brut: number; net: number; cotisations: number; count: number }>();
   for (const b of bulletins) {
-    const prev = byPeriod.get(b.periode) ?? { brut: 0, net: 0, cnps: 0, its: 0, count: 0 };
+    const bRec = b as Record<string, unknown>;
+    const cotisations = Number(bRec.total_contributions ?? (Number(b.cnps_salarie) + Number(b.its)));
+    const netPay = Number(bRec.net_to_pay ?? b.salaire_net);
+    const prev = byPeriod.get(b.periode) ?? { brut: 0, net: 0, cotisations: 0, count: 0 };
     byPeriod.set(b.periode, {
       brut: prev.brut + b.salaire_brut,
-      net: prev.net + b.salaire_net,
-      cnps: prev.cnps + b.cnps_salarie,
-      its: prev.its + b.its,
+      net: prev.net + netPay,
+      cotisations: prev.cotisations + cotisations,
       count: prev.count + 1,
     });
   }
@@ -57,8 +59,8 @@ export default async function ReportingPage() {
       periode,
       masse_brute: vals.brut,
       masse_nette: vals.net,
-      cnps_total: vals.cnps,
-      its_total: vals.its,
+      cnps_total: vals.cotisations,
+      its_total: 0,
       nb_bulletins: vals.count,
     }));
 

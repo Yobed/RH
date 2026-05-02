@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/types/supabase";
 
@@ -36,6 +37,10 @@ const schema = z.object({
   comportement: z.string().optional(),
   ponctualite: z.string().optional(),
   initiative: z.string().optional(),
+  evaluateur_id: z.string().optional(),
+  commentaires_evaluateur: z.string().max(2000).optional(),
+  commentaires_employe: z.string().max(2000).optional(),
+  objectifs_futurs: z.string().max(2000).optional(),
   statut: z.enum(["PLANIFIEE", "EN_COURS", "TERMINEE", "ANNULEE"]),
 });
 
@@ -114,6 +119,10 @@ export function EvaluationDialog({ employees }: Props) {
       date_prevue: data.date_prevue,
       criteres_evaluation: scores,
       statut: data.statut,
+      evaluateur_id: data.evaluateur_id || null,
+      commentaires_evaluateur: data.commentaires_evaluateur || null,
+      commentaires_employe: data.commentaires_employe || null,
+      objectifs_futurs: data.objectifs_futurs || null,
     };
 
     const res = await fetch("/api/evaluations", {
@@ -239,6 +248,51 @@ export function EvaluationDialog({ employees }: Props) {
                 <ScoreInput label="Comportement" name="comportement" register={register} />
                 <ScoreInput label="Ponctualité" name="ponctualite" register={register} />
                 <ScoreInput label="Initiative" name="initiative" register={register} />
+              </div>
+            </section>
+
+            {/* Évaluateur */}
+            <section className="space-y-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="h-0.5 w-6 bg-blue-500" />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Évaluateur & Commentaires</p>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Évaluateur responsable</label>
+                <select {...register("evaluateur_id")} className={`mt-2 ${selectClass} h-12 rounded-xl bg-slate-50 border-slate-200 font-bold`}>
+                  <option value="">— À désigner —</option>
+                  {employees.map((e) => (
+                    <option key={e.id} value={e.id}>{e.full_name} ({e.poste})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Commentaires évaluateur</label>
+                <Textarea
+                  {...register("commentaires_evaluateur")}
+                  placeholder="Appréciation générale, points forts, axes d'amélioration..."
+                  className="mt-2 rounded-xl bg-slate-50 border-slate-200 min-h-[80px]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Auto-évaluation employé</label>
+                <Textarea
+                  {...register("commentaires_employe")}
+                  placeholder="Bilan personnel, difficultés rencontrées, attentes..."
+                  className="mt-2 rounded-xl bg-slate-50 border-slate-200 min-h-[80px]"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-black uppercase text-slate-600 ml-1">Objectifs & Plan de développement</label>
+                <Textarea
+                  {...register("objectifs_futurs")}
+                  placeholder="Objectifs pour la prochaine période, formations, promotions envisagées..."
+                  className="mt-2 rounded-xl bg-slate-50 border-slate-200 min-h-[80px]"
+                />
               </div>
             </section>
 
