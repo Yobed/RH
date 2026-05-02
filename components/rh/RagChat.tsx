@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { 
   Send, 
@@ -266,8 +268,35 @@ export function RagChat() {
                           </div>
                           <span className="text-[11px] font-bold text-primary uppercase tracking-wider animate-pulse">Réflexion Juridique...</span>
                         </div>
-                      ) : (
+                      ) : msg.role === "user" ? (
                         <p className="whitespace-pre-wrap">{msg.content}</p>
+                      ) : (
+                        <div className="markdown-message">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc pl-5 space-y-1 my-3 marker:text-slate-400">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal pl-5 space-y-1 my-3 marker:text-slate-400">{children}</ol>,
+                              li: ({ children }) => <li className="leading-relaxed pl-1">{children}</li>,
+                              strong: ({ children }) => <strong className="font-semibold text-slate-900">{children}</strong>,
+                              em: ({ children }) => <em className="italic">{children}</em>,
+                              h1: ({ children }) => <h2 className="text-base font-semibold text-slate-900 mt-3 mb-2 first:mt-0">{children}</h2>,
+                              h2: ({ children }) => <h3 className="text-sm font-semibold text-slate-900 mt-3 mb-2 first:mt-0">{children}</h3>,
+                              h3: ({ children }) => <h4 className="text-sm font-semibold text-slate-800 mt-3 mb-1.5 first:mt-0">{children}</h4>,
+                              code: ({ children }) => <code className="px-1 py-0.5 rounded bg-slate-100 text-[12px] font-mono text-slate-800">{children}</code>,
+                              pre: ({ children }) => <pre className="my-3 p-3 rounded-md bg-slate-50 border border-slate-100 overflow-x-auto text-[12px] leading-relaxed">{children}</pre>,
+                              blockquote: ({ children }) => <blockquote className="border-l-2 border-slate-200 pl-3 italic text-slate-600 my-3">{children}</blockquote>,
+                              a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:text-primary/80">{children}</a>,
+                              hr: () => <hr className="my-4 border-slate-100" />,
+                              table: ({ children }) => <div className="overflow-x-auto my-3"><table className="text-[12px] border-collapse w-full">{children}</table></div>,
+                              th: ({ children }) => <th className="border border-slate-200 bg-slate-50 px-2 py-1 text-left font-semibold">{children}</th>,
+                              td: ({ children }) => <td className="border border-slate-200 px-2 py-1 align-top">{children}</td>,
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
                       )}
                     </div>
 
