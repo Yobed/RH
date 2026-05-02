@@ -113,7 +113,10 @@ Question : "${question}"` }] }],
       const embeddingResult = await gemini.models.embedContent({
         model: "gemini-embedding-001",
         contents: searchQuery,
-        config: { outputDimensionality: 768 },
+        config: {
+          outputDimensionality: 1536,
+          taskType: "RETRIEVAL_QUERY",
+        },
       });
 
       const embedding = embeddingResult.embeddings?.[0]?.values;
