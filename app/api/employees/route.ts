@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { buildDefaultChecklist } from "@/lib/onboarding-template";
 
 export const dynamic = 'force-dynamic';
 
@@ -105,6 +106,13 @@ export async function POST(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Auto-créer la checklist d'onboarding (non bloquant)
+  await supabase.from("onboarding_checklists").insert({
+    company_id: companyId as string,
+    employee_id: data.id,
+    items: buildDefaultChecklist(),
+  });
 
   // Auto-créer le contrat si type_contrat et salaire_brut sont renseignés
   if (parsed.data.type_contrat && parsed.data.salaire_brut != null && parsed.data.salaire_brut > 0) {

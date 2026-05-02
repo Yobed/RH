@@ -184,7 +184,13 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3 shrink-0">
+          <div className="flex flex-wrap gap-2 sm:gap-3 shrink-0">
+            <Link
+              href={`/employes/${emp.id}/onboarding`}
+              className="h-9 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Onboarding
+            </Link>
             <DocumentDropdown employee={emp} company={company} />
             <EmployeeDialog employee={emp} employees={allEmployees ?? []} />
           </div>

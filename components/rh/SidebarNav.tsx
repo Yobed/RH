@@ -28,7 +28,8 @@ import {
   Stamp,
   BellRinging,
   FilePdf,
-  Bank
+  Bank,
+  Student
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -52,6 +53,7 @@ const navItems = [
   { href: "/paie/import-sage", label: "Import Paie Sage", icon: UploadSimple, exact: false },
   { href: "/recrutement", label: "Talent Acquisition", icon: UserPlus, exact: false },
   { href: "/evaluations", label: "Performance", icon: ChartLineUp, exact: false },
+  { href: "/formation", label: "Formation FDFP", icon: Student, exact: false },
   { href: "/contentieux", label: "Contentieux", icon: Scales, exact: false },
   { href: "/qhse", label: "QHSE & Risques", icon: FirstAid, exact: false },
   { href: "/reporting", label: "Reporting RH", icon: Presentation, exact: false },

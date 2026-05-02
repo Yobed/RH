@@ -153,7 +153,8 @@
       "PowerShell($out = npx.cmd next build 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; if \\($LASTEXITCODE -ne 0\\) { $out | Select-Object -Last 30 } else { $out | Select-String \"qhse|parametres|maintenance|legal\" | Select-Object -First 6 })",
       "PowerShell($out = npx.cmd tsc --noEmit 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; if \\($out.Count -gt 0\\) { $out | Select-Object -Last 30 })",
       "PowerShell($out = npx.cmd next build 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; if \\($LASTEXITCODE -ne 0\\) { $out | Select-Object -Last 30 } else { $out | Select-String \"declarations\" | Select-Object -First 6 })",
-      "PowerShell($out = npx.cmd next build 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; if \\($LASTEXITCODE -ne 0\\) { $out | Select-Object -Last 30 } else { $out | Select-String \"rappels|bordereau|generer-lot|documents-rh|anomalies\" | Select-Object -First 10 })"
+      "PowerShell($out = npx.cmd next build 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; if \\($LASTEXITCODE -ne 0\\) { $out | Select-Object -Last 30 } else { $out | Select-String \"rappels|bordereau|generer-lot|documents-rh|anomalies\" | Select-Object -First 10 })",
+      "PowerShell($out = npx.cmd next build 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; if \\($LASTEXITCODE -ne 0\\) { $out | Select-Object -Last 30 } else { $out | Select-String \"onboarding|formation\" | Select-Object -First 6 })"
     ],
     "additionalDirectories": [
       "c:\\Users\\WILFRIED\\OneDrive - Gravel Ivoire\\Bureau\\Ressource Humaine\\app\\api\\qhse\\accidents",
