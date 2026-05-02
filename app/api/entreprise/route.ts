@@ -17,6 +17,13 @@ const entrepriseSchema = z.object({
     .transform(v => (v === "" ? null : v)),
   ncc: z.string().max(30).nullable().optional()
     .transform(v => (v === "" ? null : v)),
+  taux_at_mp: z.coerce.number().min(0.02, "Min 2 %").max(0.10, "Max 10 %").nullable().optional(),
+  adresse_paie: z.string().max(255).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
+  contact_paie: z.string().max(150).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
+  code_naf: z.string().max(20).nullable().optional()
+    .transform(v => (v === "" ? null : v)),
 });
 
 export async function PUT(req: Request) {
@@ -59,6 +66,10 @@ export async function PUT(req: Request) {
       cnps_matricule: parsed.data.cnps_matricule,
       nccm: parsed.data.nccm,
       ncc: parsed.data.ncc,
+      taux_at_mp: parsed.data.taux_at_mp ?? undefined,
+      adresse_paie: parsed.data.adresse_paie,
+      contact_paie: parsed.data.contact_paie,
+      code_naf: parsed.data.code_naf,
     })
     .eq("id", companyId as string)
     .select()

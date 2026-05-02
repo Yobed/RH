@@ -24,6 +24,10 @@ interface Props {
     cnps_matricule?: string | null;
     nccm?: string | null;
     ncc?: string | null;
+    taux_at_mp?: number | null;
+    adresse_paie?: string | null;
+    contact_paie?: string | null;
+    code_naf?: string | null;
   };
   fiscalParams: {
     convention: ConventionType;
@@ -64,6 +68,13 @@ export function ParametresForm({ profile, company, fiscalParams }: Props) {
   const [cnpsMatricule, setCnpsMatricule] = useState(company.cnps_matricule ?? "");
   const [nccm, setNccm] = useState(company.nccm ?? "");
   const [ncc, setNcc] = useState(company.ncc ?? "");
+  // Conformité audit — paie & sécurité sociale
+  const [tauxAtMp, setTauxAtMp] = useState<string>(
+    company.taux_at_mp != null ? String(company.taux_at_mp * 100) : "3"
+  );
+  const [adressePaie, setAdressePaie] = useState(company.adresse_paie ?? "");
+  const [contactPaie, setContactPaie] = useState(company.contact_paie ?? "");
+  const [codeNaf, setCodeNaf] = useState(company.code_naf ?? "");
   const [savingProfil, setSavingProfil] = useState(false);
   const [savingEntreprise, setSavingEntreprise] = useState(false);
 
@@ -98,6 +109,11 @@ export function ParametresForm({ profile, company, fiscalParams }: Props) {
 
   async function saveEntreprise() {
     if (!companyName.trim()) return;
+    const tauxNum = parseFloat(tauxAtMp);
+    if (isNaN(tauxNum) || tauxNum < 2 || tauxNum > 10) {
+      toast.error("Taux AT/MP invalide — doit être entre 2 et 10 %.");
+      return;
+    }
     setSavingEntreprise(true);
     try {
       const res = await fetch("/api/entreprise", {
@@ -111,6 +127,10 @@ export function ParametresForm({ profile, company, fiscalParams }: Props) {
           cnps_matricule: cnpsMatricule || null,
           nccm: nccm || null,
           ncc: ncc || null,
+          taux_at_mp: tauxNum / 100,
+          adresse_paie: adressePaie || null,
+          contact_paie: contactPaie || null,
+          code_naf: codeNaf || null,
         }),
       });
       if (!res.ok) {
@@ -278,6 +298,75 @@ export function ParametresForm({ profile, company, fiscalParams }: Props) {
               className="mt-1"
               maxLength={30}
             />
+          </div>
+        </div>
+
+        {/* Paie & sécurité sociale — conformité Arrêté 2008-2401 */}
+        <div className="border-t pt-4 space-y-4">
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+            Paie & sécurité sociale
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Taux AT/MP (%)</label>
+              <Input
+                type="number"
+                step="0.01"
+                min="2"
+                max="10"
+                value={tauxAtMp}
+                onChange={(e) => setTauxAtMp(e.target.value)}
+                placeholder="ex: 3"
+                className="mt-1"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Accidents du travail / Maladies professionnelles. Variable selon
+                le secteur (2–5 % en général). Valeur exacte fournie par la CNPS.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Code NAF / secteur</label>
+              <Input
+                value={codeNaf}
+                onChange={(e) => setCodeNaf(e.target.value)}
+                placeholder="ex: 6201Z"
+                className="mt-1"
+                maxLength={20}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Détermine la grille AT/MP applicable.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Adresse du service paie</label>
+            <Input
+              value={adressePaie}
+              onChange={(e) => setAdressePaie(e.target.value)}
+              placeholder="ex: Direction des Ressources Humaines, Plateau, Abidjan"
+              className="mt-1"
+              maxLength={255}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Mention obligatoire sur le bulletin de paie (Arrêté n° 2008-2401).
+            </p>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Contact service paie</label>
+            <Input
+              value={contactPaie}
+              onChange={(e) => setContactPaie(e.target.value)}
+              placeholder="ex: paie@entreprise.ci · +225 27 21 00 00 00"
+              className="mt-1"
+              maxLength={150}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Coordonnées affichées sur le bulletin pour réclamations.
+            </p>
           </div>
         </div>
 

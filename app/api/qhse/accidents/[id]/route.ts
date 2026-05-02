@@ -9,6 +9,8 @@ const patchSchema = z.object({
   numero_cnps: z.string().max(50).optional(),
   jours_arret: z.number().int().min(0).optional(),
   gravite: z.enum(["bénin", "grave", "mortel"]).optional(),
+  date_declaration_cnps: z.string().datetime().nullable().optional(),
+  document_declaration_url: z.string().max(500).nullable().optional(),
 });
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {

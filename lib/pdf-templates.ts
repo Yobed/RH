@@ -11,6 +11,11 @@ export interface CompanyInfo {
   cnps_matricule?: string | null;
   convention_collective?: string | null;
   logo_url?: string | null;
+  // Mentions obligatoires bulletin (Arrêté 2008-2401)
+  adresse_paie?: string | null;
+  contact_paie?: string | null;
+  nccm?: string | null;
+  code_naf?: string | null;
 }
 
 // Extension de type pour jsPDF avec autoTable
@@ -332,8 +337,8 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
     doc.setFontSize(8);
     const companyInfo = [
         company?.adresse || "Abidjan, Côte d'Ivoire",
-        `NCC : ${company?.ncc || "—"} | CNPS : ${company?.cnps_matricule || "—"}`,
-        `CC : ${company?.convention_collective || "Interprofessionnelle"}`
+        `NCC : ${company?.ncc || "—"} | CNPS : ${company?.cnps_matricule || "—"}${company?.nccm ? ` | NCCM : ${company.nccm}` : ""}`,
+        `CC : ${company?.convention_collective || "Interprofessionnelle"}${company?.code_naf ? ` | NAF : ${company.code_naf}` : ""}`,
     ];
     companyInfo.forEach((text, i) => doc.text(text, margin, 25 + (i * 4)));
 
@@ -344,22 +349,37 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
     doc.setFontSize(10);
     doc.text(`Période : ${period}`, pageWidth / 2, 51, { align: "center" });
 
-    // Bloc Employé (Encadré)
+    // Bloc Employé (Encadré) — Arrêté 2008-2401 mentions obligatoires
     doc.setDrawColor(200);
-    doc.rect(110, 15, 85, 30);
+    doc.rect(110, 15, 85, 36);
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
-    doc.text(employee.full_name.toUpperCase(), 115, 22);
+    doc.text((employee.full_name || "").toUpperCase(), 115, 22);
     doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
     doc.text(`Matricule : ${employee.matricule || "—"}`, 115, 27);
     doc.text(`Emploi : ${employee.poste || "—"}`, 115, 32);
-    doc.text(`Ancienneté : ${employee.date_embauche ? new Date(employee.date_embauche).toLocaleDateString() : "—"}`, 115, 37);
+    doc.text(`Catégorie : ${employee.categorie || "—"}`, 115, 37);
+    doc.text(`N° CNPS : ${employee.num_cnps || "—"}`, 115, 42);
+    doc.text(
+        `Embauche : ${employee.date_embauche ? new Date(employee.date_embauche).toLocaleDateString("fr-FR") : "—"}`,
+        115,
+        47
+    );
 
     // Corps du bulletin (Tableau)
     const fmt = (n: number) => n.toLocaleString('fr-FR');
-    
+
+    // Bloc heures normales / taux horaire (Arrêté 2008-2401 — mentions obligatoires)
+    const heuresNormales = (lines as { heures_normales?: number }).heures_normales ?? 173.33;
+    const tauxHoraire = Math.round(((lines.salaire_brut ?? 0) + (lines.sursalaire ?? 0)) / heuresNormales);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Heures normales : ${heuresNormales} h`, margin, 60);
+    doc.text(`Taux horaire : ${fmt(tauxHoraire)} FCFA/h`, margin + 70, 60);
+
     const body = [];
-    
+
     // Gains
     body.push(["100", "Salarie de Base", "", "", fmt(lines.salaire_brut), ""]);
     if (lines.sursalaire) body.push(["101", "Sursalaire", "", "", fmt(lines.sursalaire), ""]);
@@ -371,7 +391,7 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
     
     // Retenues
     if (result.retenu_absence > 0) body.push(["200", "Retenue absence", "", "", "", fmt(result.retenu_absence)]);
-    body.push(["300", "CNPS Retraite (6.3%)", fmt(Math.min(result.total_imposable, 1647315)), "6.30%", "", fmt(result.cnps_retraite)]);
+    body.push(["300", "CNPS Retraite (6.3%)", fmt(Math.min(result.total_imposable, 3375000)), "6.30%", "", fmt(result.cnps_retraite)]);
     body.push(["301", "CMU (Couverture Maladie)", "", "Fait", "", fmt(result.cmu)]);
     body.push(["400", "IS (Impôt sur Salaire)", fmt(result.total_imposable), "Barème", "", fmt(result.its)]);
     
@@ -379,7 +399,7 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
     if (lines.autres_retenues) body.push(["501", "Autres retenues", "", "", "", fmt(lines.autres_retenues)]);
 
     autoTable(doc, {
-        startY: 65,
+        startY: 67,
         head: [['Code', 'Désignation', 'Base', 'Taux', 'Gains', 'Retenues']],
         body: body,
         theme: 'grid',
@@ -409,12 +429,27 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
     doc.setFontSize(12);
     doc.text(`NET À PAYER : ${fmt(result.salaire_net)} FCFA`, 110, finalY + 22);
 
+    // Bloc service paie & plafond CNPS — Arrêté 2008-2401
+    doc.setTextColor(60);
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    const footerY = finalY + 35;
+    if (company?.adresse_paie || company?.contact_paie) {
+        doc.text("Service paie :", margin, footerY);
+        if (company?.adresse_paie) doc.text(company.adresse_paie, margin, footerY + 4, { maxWidth: pageWidth - 30 });
+        if (company?.contact_paie) doc.text(company.contact_paie, margin, footerY + 8, { maxWidth: pageWidth - 30 });
+    }
+    doc.text(`Plafond CNPS retraite : 3 375 000 FCFA · Base appliquée : ${fmt(Math.min(result.total_imposable, 3375000))} FCFA`, margin, footerY + 14);
+
     // Mention Légale
     doc.setTextColor(100);
     doc.setFontSize(7);
     doc.setFont("helvetica", "italic");
-    const mention = "Pour vous aider à faire valoir vos droits, conservez ce bulletin de paie sans limitation de durée.\nEn cas de contestation, l'employeur est tenu de fournir les éléments de preuve des sommes versées.";
-    doc.text(mention, margin, doc.internal.pageSize.getHeight() - 25, { maxWidth: pageWidth - 30 });
+    const mention =
+        "Pour faire valoir vos droits, conservez ce bulletin sans limitation de durée. " +
+        "En cas de contestation, l'employeur est tenu de fournir les éléments de preuve des sommes versées " +
+        "(Code du travail CI Art. 73 · Arrêté n° 2008-2401).";
+    doc.text(mention, margin, doc.internal.pageSize.getHeight() - 22, { maxWidth: pageWidth - 30 });
 
     setupSignatures(doc, "L'Employé", "Le Gérant / DRH");
     return doc;

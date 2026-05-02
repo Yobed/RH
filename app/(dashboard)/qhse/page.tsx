@@ -12,6 +12,7 @@ export default async function QhsePage() {
     supabase
       .from("work_accidents")
       .select(`id, date_accident, heure_accident, lieu, description, gravite, jours_arret, statut_cnps, numero_cnps,
+               deadline_declaration_cnps, date_declaration_cnps,
                employees(full_name, poste, matricule)`)
       .order("date_accident", { ascending: false }),
     supabase

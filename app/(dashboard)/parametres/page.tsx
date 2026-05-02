@@ -22,7 +22,7 @@ export default async function ParametresPage() {
   const { data: company } = companyId
     ? await supabase
         .from("companies")
-        .select("name, convention_collective, raison_sociale, adresse, cnps_matricule, nccm, ncc")
+        .select("name, convention_collective, raison_sociale, adresse, cnps_matricule, nccm, ncc, taux_at_mp, adresse_paie, contact_paie, code_naf")
         .eq("id", companyId as string)
         .single()
     : { data: null };
@@ -67,6 +67,10 @@ export default async function ParametresPage() {
             cnps_matricule: company?.cnps_matricule ?? null,
             nccm: company?.nccm ?? null,
             ncc: company?.ncc ?? null,
+            taux_at_mp: company?.taux_at_mp ?? null,
+            adresse_paie: company?.adresse_paie ?? null,
+            contact_paie: company?.contact_paie ?? null,
+            code_naf: company?.code_naf ?? null,
           }}
           fiscalParams={{
             convention: (fiscalParams?.convention ?? "CCI") as
