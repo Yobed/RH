@@ -5,8 +5,27 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Download, FileText, ShieldCheck, AlertTriangle, CheckCircle2,
-  Calendar as CalendarIcon, Building2,
+  Calendar as CalendarIcon, Building2, Eye, X,
 } from "lucide-react";
+
+interface PreviewData {
+  kind: string;
+  periode: string;
+  deadline: string;
+  isSocial: boolean;
+  company: { raison_sociale: string; cnps_matricule: string | null; ncc: string | null };
+  totals: {
+    nb_salaries: number;
+    total_brut: number;
+    total_cotisations: number;
+    total_assiette: number;
+    total_retenu: number;
+    penalite: number;
+    total_du: number;
+  };
+  columns: string[];
+  rows: Array<Record<string, string | number>>;
+}
 
 type Statut = "brouillon" | "genere" | "soumis" | "rejete" | "rectifie";
 
@@ -93,7 +112,9 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("social");
   const [generating, setGenerating] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
   const [submittingId, setSubmittingId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PreviewData | null>(null);
 
   // ── KPI globaux ──
   const allDecls = useMemo(() => {
@@ -128,10 +149,43 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
 
   const isMonthlyKind = genKind === "DIPE" || genKind === "ITS_MENSUEL" || genKind === "IGR_MENSUEL";
 
-  async function handleGenerate(): Promise<void> {
+  async function handlePreview(): Promise<void> {
     const periode = isMonthlyKind ? genPeriode : genYear;
     if (!periode) {
       toast.error("Sélectionnez une période.");
+      return;
+    }
+    setPreviewing(true);
+    try {
+      const res = await fetch("/api/declarations/preview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: genKind, periode }),
+      });
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
+        toast.error(err.error ?? "Aucune donnée à prévisualiser");
+        return;
+      }
+      const data = (await res.json()) as PreviewData;
+      setPreview(data);
+    } catch {
+      toast.error("Erreur lors de la prévisualisation.");
+    } finally {
+      setPreviewing(false);
+    }
+  }
+
+  async function handleGenerate(skipConfirm = false): Promise<void> {
+    const periode = preview ? preview.periode : isMonthlyKind ? genPeriode : genYear;
+    const kind = preview ? preview.kind : genKind;
+    if (!periode) {
+      toast.error("Sélectionnez une période.");
+      return;
+    }
+    if (!skipConfirm && !preview) {
+      // Pas de preview chargé : on charge d'abord
+      await handlePreview();
       return;
     }
     setGenerating(true);
@@ -139,7 +193,7 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
       const res = await fetch("/api/declarations/generer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind: genKind, periode }),
+        body: JSON.stringify({ kind, periode }),
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
@@ -150,12 +204,13 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${genKind}_${periode}.csv`;
+      a.download = `${kind}_${periode}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      toast.success(`Fichier ${genKind} ${periode} généré et téléchargé.`);
+      toast.success(`Fichier ${kind} ${periode} archivé et téléchargé.`);
+      setPreview(null);
       router.refresh();
     } catch {
       toast.error("Erreur lors de la génération.");
@@ -285,16 +340,35 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
               />
             )}
           </div>
-          <button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 sm:w-auto w-full"
-          >
-            <Download className="h-3.5 w-3.5" />
-            {generating ? "Génération…" : "Générer & télécharger"}
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={handlePreview}
+              disabled={previewing || generating}
+              className="h-9 inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              {previewing ? "Calcul…" : "Prévisualiser"}
+            </button>
+            <button
+              onClick={() => handleGenerate(true)}
+              disabled={generating || previewing}
+              className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+            >
+              <Download className="h-3.5 w-3.5" />
+              {generating ? "Génération…" : "Générer & télécharger"}
+            </button>
+          </div>
         </div>
       </section>
+
+      {preview && (
+        <PreviewDialog
+          data={preview}
+          onClose={() => setPreview(null)}
+          onConfirm={() => handleGenerate(true)}
+          generating={generating}
+        />
+      )}
 
       {/* ── Tabs ──────────────────────────────────────────────────── */}
       <nav className="border-b border-slate-200">
@@ -534,6 +608,219 @@ function DeclarationTable({
           );
         })}
       </ul>
+    </div>
+  );
+}
+
+function PreviewDialog({
+  data, onClose, onConfirm, generating,
+}: {
+  data: PreviewData;
+  onClose: () => void;
+  onConfirm: () => void;
+  generating: boolean;
+}) {
+  const isCurrency = (col: string): boolean => {
+    const lower = col.toLowerCase();
+    return (
+      lower.includes("salair") ||
+      lower.includes("brut") ||
+      lower.includes("base") ||
+      lower.includes("cnps") ||
+      lower.includes("retraite") ||
+      lower.includes("famil") ||
+      lower.includes("matern") ||
+      lower.includes("at/mp") ||
+      lower.includes("cmu") ||
+      lower.includes("its") ||
+      lower.includes("contribution") ||
+      lower.includes("abattement") ||
+      lower.includes("imposable")
+    );
+  };
+
+  const formatCell = (val: string | number, col: string): string => {
+    if (typeof val === "number") {
+      return isCurrency(col)
+        ? new Intl.NumberFormat("fr-CI", { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val)
+        : new Intl.NumberFormat("fr-CI").format(val);
+    }
+    return String(val ?? "");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[92vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 px-5 sm:px-6 py-4 border-b border-slate-200">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">
+              Prévisualisation — non encore archivée
+            </p>
+            <h2 className="text-base sm:text-lg font-semibold text-slate-900 mt-0.5">
+              {data.kind} · {data.periode}
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5 leading-snug">
+              {data.company.raison_sociale} · NCNPS {data.company.cnps_matricule || "—"} · NCC {data.company.ncc || "—"}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-700 p-1 -m-1"
+            aria-label="Fermer"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Bandeau totaux */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-5 sm:px-6 py-4 bg-slate-50/60 border-b border-slate-100">
+          <SummaryCell label="Salariés" value={data.totals.nb_salaries.toString()} />
+          {data.isSocial ? (
+            <>
+              <SummaryCell label="Brut total" value={fcfa(data.totals.total_brut)} />
+              <SummaryCell label="Cotisations" value={fcfa(data.totals.total_cotisations)} accent="primary" />
+            </>
+          ) : (
+            <>
+              <SummaryCell label="Assiette" value={fcfa(data.totals.total_assiette)} />
+              <SummaryCell label="Retenue" value={fcfa(data.totals.total_retenu)} accent="primary" />
+            </>
+          )}
+          <SummaryCell
+            label="Échéance"
+            value={new Date(data.deadline).toLocaleDateString("fr-CI")}
+            accent={new Date(data.deadline) < new Date() ? "danger" : "neutral"}
+          />
+        </div>
+
+        {data.totals.penalite > 0 && (
+          <div className="px-5 sm:px-6 py-2.5 bg-rose-50/60 border-b border-rose-200 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+            <p className="text-xs text-rose-900 leading-relaxed">
+              <span className="font-semibold">Pénalité de retard estimée : {fcfa(data.totals.penalite)}.</span>{" "}
+              Calcul Art. 47 CPS — 5 % du dû dès le 1er jour de retard, +1 %/mois supplémentaire.
+            </p>
+          </div>
+        )}
+
+        {/* Tableau */}
+        <div className="flex-1 overflow-auto">
+          {data.rows.length === 0 ? (
+            <div className="px-5 py-12 text-center text-sm text-slate-500">
+              Aucune ligne pour cette période.
+            </div>
+          ) : (
+            <table className="min-w-full text-xs">
+              <thead className="bg-slate-100/80 text-[11px] uppercase tracking-wider text-slate-600 font-medium sticky top-0">
+                <tr>
+                  <th className="px-3 py-2.5 text-left w-10 tabular-nums text-slate-400">#</th>
+                  {data.columns.map((c) => (
+                    <th
+                      key={c}
+                      className={[
+                        "px-3 py-2.5 whitespace-nowrap",
+                        isCurrency(c) ? "text-right" : "text-left",
+                      ].join(" ")}
+                    >
+                      {c}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {data.rows.map((row, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50/60">
+                    <td className="px-3 py-2 text-slate-400 tabular-nums">{idx + 1}</td>
+                    {data.columns.map((c) => {
+                      const v = row[c];
+                      const numeric = isCurrency(c);
+                      return (
+                        <td
+                          key={c}
+                          className={[
+                            "px-3 py-2 whitespace-nowrap",
+                            numeric
+                              ? "text-right tabular-nums font-medium text-slate-900"
+                              : "text-slate-700",
+                          ].join(" ")}
+                        >
+                          {formatCell(v, c)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="bg-slate-50 border-t border-slate-200 sticky bottom-0">
+                <tr>
+                  <td className="px-3 py-2.5 text-[11px] uppercase tracking-wider text-slate-500 font-medium">
+                    Total
+                  </td>
+                  {data.columns.map((c) => {
+                    if (!isCurrency(c)) {
+                      return <td key={c} />;
+                    }
+                    const sum = data.rows.reduce(
+                      (s, r) => s + (typeof r[c] === "number" ? (r[c] as number) : 0),
+                      0
+                    );
+                    return (
+                      <td
+                        key={c}
+                        className="px-3 py-2.5 text-right tabular-nums font-semibold text-slate-900"
+                      >
+                        {formatCell(sum, c)}
+                      </td>
+                    );
+                  })}
+                </tr>
+              </tfoot>
+            </table>
+          )}
+        </div>
+
+        {/* Footer actions */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 px-5 sm:px-6 py-4 border-t border-slate-200 bg-white">
+          <p className="text-xs text-slate-500 sm:flex-1 leading-snug">
+            Vérifiez les chiffres avant génération. La déclaration sera archivée
+            (statut « Généré ») et le CSV téléchargé pour soumission E-CNPS / DGI.
+          </p>
+          <div className="flex gap-2 shrink-0">
+            <button
+              onClick={onClose}
+              className="h-9 px-4 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={generating}
+              className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+            >
+              <Download className="h-3.5 w-3.5" />
+              {generating ? "Archivage…" : "Confirmer & télécharger"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryCell({
+  label, value, accent,
+}: {
+  label: string; value: string; accent?: "primary" | "danger" | "neutral";
+}) {
+  const valueColor =
+    accent === "primary" ? "text-slate-900 font-semibold" :
+    accent === "danger" ? "text-rose-700 font-semibold" :
+    "text-slate-900";
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">{label}</p>
+      <p className={`text-sm sm:text-base tabular-nums mt-0.5 ${valueColor}`}>{value}</p>
     </div>
   );
 }
