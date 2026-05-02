@@ -202,6 +202,118 @@ export const generateAttestationPDF = ({ employee, company, type = 'travail' }: 
 };
 
 /**
+ * Template : DPAE (Déclaration Préalable À l'Embauche) — CNPS Art. 33 CT-CI
+ * À transmettre à la CNPS dans les 8 jours suivant l'embauche.
+ */
+interface EmployeeForDpae {
+  id?: string;
+  full_name?: string;
+  matricule?: string;
+  num_cnps?: string | null;
+  num_cni?: string | null;
+  date_naissance?: string | null;
+  lieu_naissance?: string | null;
+  date_embauche?: string;
+  poste?: string;
+  type_contrat?: string | null;
+  salaire_brut?: number | null;
+  adresse?: string | null;
+  phone?: string | null;
+}
+
+export const generateDpaePDF = ({
+  employee,
+  company,
+}: {
+  employee: EmployeeForDpae;
+  company: CompanyInfo | null;
+}): jsPDF => {
+  const doc = new jsPDF() as jsPDFWithAutoTable;
+  const margin = 20;
+  const startY = setupHeader(doc, company, "DPAE — Déclaration Préalable à l'Embauche");
+
+  doc.setFontSize(9);
+  doc.setTextColor(100);
+  doc.text(
+    "Conformément à l'Art. 33 du Code du travail ivoirien, à transmettre à la CNPS dans les 8 jours suivant l'embauche.",
+    margin,
+    startY + 8,
+    { maxWidth: 170 }
+  );
+
+  // Employeur
+  doc.setFontSize(11);
+  doc.setTextColor(15, 23, 42);
+  doc.setFont("helvetica", "bold");
+  doc.text("EMPLOYEUR", margin, startY + 22);
+  autoTable(doc, {
+    startY: startY + 25,
+    body: [
+      ["Raison sociale", company?.raison_sociale ?? company?.name ?? "—"],
+      ["Adresse", company?.adresse ?? "—"],
+      ["N° CNPS employeur", company?.cnps_matricule ?? "—"],
+      ["NCC", company?.ncc ?? "—"],
+      ["Convention collective", company?.convention_collective ?? "—"],
+    ],
+    theme: "grid",
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: { 0: { fontStyle: "bold", cellWidth: 60 } },
+  });
+
+  // Salarié
+  const y2 = (doc as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? startY + 60;
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("SALARIÉ", margin, y2 + 10);
+  autoTable(doc, {
+    startY: y2 + 13,
+    body: [
+      ["Nom & prénoms", employee.full_name ?? "—"],
+      ["Matricule interne", employee.matricule ?? "—"],
+      ["N° CNI / Passeport", employee.num_cni ?? "—"],
+      ["N° CNPS salarié", employee.num_cnps ?? "—"],
+      ["Date de naissance", employee.date_naissance ?? "—"],
+      ["Lieu de naissance", employee.lieu_naissance ?? "—"],
+      ["Adresse", employee.adresse ?? "—"],
+      ["Téléphone", employee.phone ?? "—"],
+    ],
+    theme: "grid",
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: { 0: { fontStyle: "bold", cellWidth: 60 } },
+  });
+
+  // Contrat
+  const y3 = (doc as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? y2 + 80;
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("CONTRAT DE TRAVAIL", margin, y3 + 10);
+  autoTable(doc, {
+    startY: y3 + 13,
+    body: [
+      ["Date d'embauche", employee.date_embauche ?? "—"],
+      ["Type de contrat", employee.type_contrat ?? "CDI"],
+      ["Poste", employee.poste ?? "—"],
+      [
+        "Salaire brut mensuel",
+        employee.salaire_brut
+          ? new Intl.NumberFormat("fr-CI", {
+              style: "currency",
+              currency: "XOF",
+              minimumFractionDigits: 0,
+            }).format(employee.salaire_brut)
+          : "—",
+      ],
+    ],
+    theme: "grid",
+    styles: { fontSize: 9, cellPadding: 2 },
+    columnStyles: { 0: { fontStyle: "bold", cellWidth: 60 } },
+  });
+
+  setupSignatures(doc, "Visa CNPS", "Cachet & signature employeur");
+  return doc;
+};
+
+/**
  * 4. Template : Certificat de Travail
  */
 export const generateCertificatPDF = ({ employee, company }: { employee: any, company: CompanyInfo | null }) => {

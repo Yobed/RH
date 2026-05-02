@@ -25,13 +25,17 @@ import {
   ChatCircleText,
   Target,
   UploadSimple,
-  Stamp
+  Stamp,
+  BellRinging,
+  FilePdf,
+  Bank
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/rh", label: "Dashboard", icon: SquaresFour, exact: true },
+  { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging, exact: false },
   { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
   { href: "/analytique/focus", label: "Focus Stratégique", icon: Target, exact: false },
   { href: "/employes", label: "Collaborateurs", icon: Users, exact: false },
@@ -40,8 +44,11 @@ const navItems = [
   { href: "/paie", label: "Paie & Salaires", icon: Money, exact: true },
   { href: "/heures-sup", label: "Heures Sup.", icon: Clock, exact: false },
   { href: "/analyses", label: "Finance & Data", icon: ChartBar, exact: false },
+  { href: "/paie/generer-lot", label: "Génération en lot", icon: Stamp, exact: false },
+  { href: "/paie/bordereau", label: "Bordereau virement", icon: Bank, exact: false },
   { href: "/paie/fin-de-contrat", label: "Fin de contrat", icon: FileText, exact: false },
   { href: "/declarations", label: "Déclarations & Conformité", icon: Stamp, exact: false },
+  { href: "/documents-rh", label: "Documents RH", icon: FilePdf, exact: false },
   { href: "/paie/import-sage", label: "Import Paie Sage", icon: UploadSimple, exact: false },
   { href: "/recrutement", label: "Talent Acquisition", icon: UserPlus, exact: false },
   { href: "/evaluations", label: "Performance", icon: ChartLineUp, exact: false },
