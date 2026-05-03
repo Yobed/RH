@@ -788,8 +788,12 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
       {/* Mode switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Cockpit de Simulation RH</h2>
-          <p className="text-sm text-slate-600 dark:text-slate-600">Analyse de masse salariale · Conforme CT-CI 2025</p>
+          <h2 className="text-base font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            Choisissez un mode de simulation
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Salaire libre ou sur un salarié réel de votre équipe
+          </p>
         </div>
         <div className="flex gap-1 bg-slate-100 dark:bg-[oklch(0.22_0.03_248)] p-1 rounded-xl self-start sm:self-auto">
           <button
@@ -802,7 +806,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
             )}
           >
             <Calculator className="h-4 w-4" />
-            Simulation libre
+            Salaire libre
           </button>
           <button
             onClick={() => setMode("salarie")}
@@ -814,7 +818,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
             )}
           >
             <Users className="h-4 w-4" />
-            Par salarié
+            Sur un salarié existant
             {employees.length > 0 && (
               <span className="ml-1 rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-1.5 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-300">
                 {employees.length}
