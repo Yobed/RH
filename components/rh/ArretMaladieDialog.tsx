@@ -211,7 +211,6 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                           <SelectItem
                             key={e.id}
                             value={e.id}
-                            textValue={e.full_name ?? ''}
                             className="cursor-pointer hover:bg-slate-50"
                           >
                             {e.full_name ?? 'Employé sans nom'}

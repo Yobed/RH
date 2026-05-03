@@ -9,11 +9,13 @@ import { CalendarDays } from "lucide-react";
 export const metadata = { title: "Conges — RH Manager CI" };
 
 import { CongesTable, CongeRow } from "@/components/rh/CongesTable";
+import { calculerJoursAcquis } from "@/lib/conges-ci";
 
 export default async function CongesPage() {
   const supabase = createServerClient();
+  const currentYear = new Date().getFullYear();
 
-  const [{ data: conges }, { data: employees }] = await Promise.all([
+  const [{ data: conges }, { data: employees }, { data: leaveBalances }] = await Promise.all([
     supabase
       .from("conges")
       .select(
@@ -29,6 +31,10 @@ export default async function CongesPage() {
       .neq("statut", "inactif") // On permet actif et suspendu
       .order("full_name")
       .limit(1000),
+    supabase
+      .from("leave_balances")
+      .select("employee_id, jours_acquis, jours_pris, solde")
+      .eq("annee", currentYear),
   ]);
 
   // Role-based approval permissions
@@ -52,6 +58,43 @@ export default async function CongesPage() {
     sursalaire: e.sursalaire,
   }));
 
+  // Soldes équipe
+  const soldesEquipe = (employees ?? []).map((emp) => {
+    const balance = (leaveBalances ?? []).find((b) => b.employee_id === emp.id);
+    let jours_acquis: number;
+    let jours_pris: number;
+    let solde: number;
+
+    if (balance) {
+      jours_acquis = balance.jours_acquis;
+      jours_pris = balance.jours_pris;
+      solde = balance.solde;
+    } else {
+      const anneeEmbauche = emp.date_embauche
+        ? parseInt(emp.date_embauche.split("-")[0], 10)
+        : currentYear;
+      const ancienneteAns = Math.max(0, currentYear - anneeEmbauche);
+      jours_acquis = calculerJoursAcquis(emp.date_embauche, currentYear, ancienneteAns);
+      jours_pris = (conges ?? [])
+        .filter(
+          (c) =>
+            c.type === "annuel" &&
+            c.statut === "approuve" &&
+            c.date_debut?.startsWith(String(currentYear)) &&
+            (c.employees as unknown as { full_name: string } | null)?.full_name === emp.full_name
+        )
+        .reduce((s, c) => s + Number(c.nb_jours), 0);
+      solde = jours_acquis - jours_pris;
+    }
+
+    return { ...emp, jours_acquis, jours_pris, solde };
+  }).sort((a, b) => a.solde - b.solde);
+
+  const soldeMoyenEquipe =
+    soldesEquipe.length > 0
+      ? soldesEquipe.reduce((s, e) => s + e.solde, 0) / soldesEquipe.length
+      : 0;
+
   // KPI
   const currentMonth = new Date().toISOString().slice(0, 7);
   const approuvesCeMois = conges?.filter(
@@ -74,7 +117,7 @@ export default async function CongesPage() {
       </div>
 
       {/* KPI row */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
         <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">En attente</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{enAttenteManager.length + enAttenteRh.length}</p>
@@ -89,6 +132,13 @@ export default async function CongesPage() {
           <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours pris ce mois</p>
           <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{joursTotal}</p>
           <p className="mt-1 text-xs text-slate-600">jours ouvrés cumulés</p>
+        </div>
+        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Solde moyen équipe</p>
+          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
+            {soldeMoyenEquipe.toFixed(1)} j
+          </p>
+          <p className="mt-1 text-xs text-slate-600">congés restants / collaborateur</p>
         </div>
       </div>
 
@@ -232,6 +282,69 @@ export default async function CongesPage() {
           </div>
         );
       })()}
+
+      {/* Soldes des congés — Vue équipe */}
+      {soldesEquipe.length > 0 && (
+        <div>
+          <h2 className="text-base font-semibold text-slate-700 mb-3">Soldes des congés — Vue équipe</h2>
+          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <th className="px-5 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Collaborateur</th>
+                  <th className="px-5 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Acquis</th>
+                  <th className="px-5 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Pris</th>
+                  <th className="px-5 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Solde</th>
+                  <th className="px-5 py-2.5 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Alerte</th>
+                </tr>
+              </thead>
+              <tbody>
+                {soldesEquipe.map((emp) => {
+                  const soldeDisplay = emp.solde;
+                  const soldeClass =
+                    soldeDisplay >= 5
+                      ? "text-emerald-700"
+                      : soldeDisplay >= 1
+                      ? "text-amber-600"
+                      : "text-red-600";
+                  const alerteBadge =
+                    soldeDisplay < 0
+                      ? { cls: "bg-red-50 text-red-700 border-red-200", label: "Dépassé" }
+                      : soldeDisplay < 3
+                      ? { cls: "bg-amber-50 text-amber-700 border-amber-200", label: "Faible (< 3j)" }
+                      : { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "OK" };
+                  return (
+                    <tr key={emp.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                      <td className="px-5 py-3 font-medium text-slate-800">
+                        {emp.full_name}
+                        {emp.matricule && (
+                          <span className="ml-1.5 text-xs text-slate-400">{emp.matricule}</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3 text-right tabular-nums font-mono text-slate-600">
+                        {emp.jours_acquis.toFixed(1)} j
+                      </td>
+                      <td className="px-5 py-3 text-right tabular-nums font-mono text-slate-600">
+                        {emp.jours_pris.toFixed(1)} j
+                      </td>
+                      <td className={`px-5 py-3 text-right tabular-nums font-mono font-bold ${soldeClass}`}>
+                        {soldeDisplay.toFixed(1)} j
+                      </td>
+                      <td className="px-5 py-3 text-center">
+                        <span
+                          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${alerteBadge.cls}`}
+                        >
+                          {alerteBadge.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Historique */}
       <div>
