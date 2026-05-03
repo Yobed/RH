@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Search, Download, Save, CheckCircle2, AlertTriangle, Calendar } from "lucide-react";
-import { calculerSoldeDeCompte, safeFormatDate, type ResultatSoldeDeCompte } from "@/lib/paie-ci";
+import {
+  calculerSoldeDeCompte,
+  calculerITS,
+  safeFormatDate,
+  type ResultatSoldeDeCompte,
+  TAUX_CNPS_RETRAITE_SALARIE,
+  CMU_MENSUEL,
+  PLAFOND_CNPS_MENSUEL,
+  TAUX_ABATTEMENT_ITS,
+} from "@/lib/paie-ci";
 import { exportPDF, generateSTCPDF, type CompanyInfo } from "@/lib/pdf-templates";
 import { toast } from "sonner";
 import type { Tables } from "@/types/supabase";
@@ -10,7 +19,25 @@ import type { Tables } from "@/types/supabase";
 export type EmployeeSTC = Pick<
   Tables<"employees">,
   "id" | "full_name" | "matricule" | "salaire_brut" | "type_contrat" | "date_embauche"
->;
+> & {
+  poste?: string | null;
+  categorie?: string | null;
+  departement?: string | null;
+};
+
+const MOTIFS_RUPTURE: { value: string; label: string }[] = [
+  { value: "", label: "— Sélectionner le motif —" },
+  { value: "licenciement_faute_simple", label: "Licenciement pour faute simple" },
+  { value: "licenciement_faute_lourde", label: "Licenciement pour faute lourde" },
+  { value: "licenciement_economique", label: "Licenciement économique" },
+  { value: "demission", label: "Démission" },
+  { value: "fin_cdd", label: "Fin de CDD (terme échu)" },
+  { value: "rupture_conventionnelle", label: "Rupture conventionnelle" },
+  { value: "retraite", label: "Départ volontaire à la retraite" },
+  { value: "mise_a_la_retraite", label: "Mise à la retraite par l'employeur" },
+  { value: "deces", label: "Décès du salarié" },
+  { value: "force_majeure", label: "Force majeure" },
+];
 
 interface Props {
   employees: EmployeeSTC[];
@@ -49,6 +76,8 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
   const [sommeBrutsCdd, setSommeBrutsCdd] = useState<string>("0");
   const [joursConges, setJoursConges] = useState<string>("0");
   const [joursPreavis, setJoursPreavis] = useState<string>("0");
+  const [motifRupture, setMotifRupture] = useState<string>("");
+  const [dateFin, setDateFin] = useState<string>("");
 
   const [archiving, setArchiving] = useState(false);
   const [archived, setArchived] = useState(false);
@@ -76,8 +105,9 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
     if (!selectedEmployee) return;
     setSalaireMoyen(String(selectedEmployee.salaire_brut ?? 0));
     setAnciennete(computeSeniorityYears(selectedEmployee.date_embauche));
+    if (isCdd) setMotifRupture("fin_cdd");
     setArchived(false);
-  }, [selectedEmployee]);
+  }, [selectedEmployee, isCdd]);
 
   const resultat = useMemo<ResultatSoldeDeCompte | null>(() => {
     if (!selectedEmployee) return null;
@@ -161,7 +191,30 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
     }
   }
 
+  // ── Retenues STC ─────────────────────────────────────────────────────────
+  // Seules l'ICCP, l'indemnité de préavis et la précarité CDD sont soumises
+  // aux cotisations. L'indemnité de licenciement légale est exonérée (CGI-CI).
+  const baseImposableStc = resultat
+    ? resultat.indemnite_compensatrice_conges
+      + resultat.indemnite_preavis
+      + (isCdd ? resultat.indemnite_precarite : 0)
+    : 0;
+  const cnpsStc = resultat
+    ? Math.round(Math.min(baseImposableStc, PLAFOND_CNPS_MENSUEL) * TAUX_CNPS_RETRAITE_SALARIE)
+    : 0;
+  const cmuStc = resultat ? CMU_MENSUEL : 0;
+  const baseItsStc = resultat
+    ? Math.max(0, (baseImposableStc - cnpsStc) * (1 - TAUX_ABATTEMENT_ITS))
+    : 0;
+  const itsStc = resultat ? calculerITS(baseItsStc) : 0;
+  const netStc = resultat ? resultat.total_brut_stc - cnpsStc - cmuStc - itsStc : 0;
+
+  const today = new Date().toLocaleDateString("fr-CI", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+  });
+
   return (
+    <div className="space-y-8">
     <section className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-5">
       {/* ── Colonne formulaire (3/5) ──────────────────────────── */}
       <div className="lg:col-span-3 space-y-4 sm:space-y-5">
@@ -298,6 +351,36 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
           </div>
         </Card>
 
+        {/* Motif de rupture + date de fin */}
+        <Card>
+          <CardTitle sub="Obligatoire pour le bulletin légal">Motif et date de rupture</CardTitle>
+          <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-700 block">Motif de rupture</label>
+              <select
+                value={motifRupture}
+                onChange={(e) => setMotifRupture(e.target.value)}
+                disabled={!selectedEmployee}
+                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {MOTIFS_RUPTURE.map((m) => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-700 block">Date de fin de contrat</label>
+              <input
+                type="date"
+                value={dateFin}
+                onChange={(e) => setDateFin(e.target.value)}
+                disabled={!selectedEmployee}
+                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-900 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+            </div>
+          </div>
+        </Card>
+
         {/* Avertissement legal */}
         <div className="rounded-md border border-amber-200 bg-amber-50/60 p-3.5 flex gap-2.5">
           <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
@@ -408,6 +491,263 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
         </div>
       </aside>
     </section>
+
+    {/* ── Prévisualisation bulletin complet ───────────────────── */}
+    {selectedEmployee && resultat && (
+      <div className="space-y-3">
+        <div className="flex items-center gap-3">
+          <h3 className="text-sm font-semibold text-slate-800">Prévisualisation du bulletin</h3>
+          <span className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 border border-slate-200 rounded-full px-2 py-0.5">
+            Document non officiel
+          </span>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+
+          {/* ① En-tête */}
+          <div className="bg-slate-900 text-white px-6 py-5 flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold mb-1">
+                République de Côte d&apos;Ivoire — Code du Travail
+              </p>
+              <h2 className="text-lg font-black tracking-tight">BULLETIN DE SOLDE DE TOUT COMPTE</h2>
+              <p className="text-xs text-slate-400 mt-1">
+                {MOTIFS_RUPTURE.find(m => m.value === motifRupture)?.label || "Motif non renseigné"}
+                {" — "}
+                {isCdd ? "Contrat à Durée Déterminée" : "Contrat à Durée Indéterminée"}
+              </p>
+            </div>
+            <div className="text-right shrink-0 space-y-1">
+              <div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Établi le</p>
+                <p className="text-sm font-semibold tabular-nums">{today}</p>
+              </div>
+              {dateFin && (
+                <div>
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider">Fin de contrat</p>
+                  <p className="text-sm font-semibold tabular-nums">
+                    {new Date(dateFin).toLocaleDateString("fr-CI", { day: "2-digit", month: "2-digit", year: "numeric" })}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ② Identification salarié */}
+          <div className="border-b border-slate-100 px-6 py-4 bg-slate-50/50">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-3">
+              I — Identification du salarié
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3">
+              {[
+                { label: "Nom & Prénom", value: selectedEmployee.full_name },
+                { label: "Matricule", value: selectedEmployee.matricule ?? "—" },
+                { label: "Poste occupé", value: selectedEmployee.poste ?? "—" },
+                { label: "Catégorie / Échelon", value: selectedEmployee.categorie ?? "—" },
+                { label: "Département", value: selectedEmployee.departement ?? "—" },
+                { label: "Type de contrat", value: isCdd ? "CDD" : "CDI" },
+                { label: "Date d'embauche", value: safeFormatDate(selectedEmployee.date_embauche) },
+                { label: "Date de fin", value: dateFin ? new Date(dateFin).toLocaleDateString("fr-CI", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—" },
+                { label: "Ancienneté", value: `${Number(anciennete).toFixed(2)} an(s)` },
+                { label: "Salaire brut de base", value: fmt(selectedEmployee.salaire_brut ?? 0) },
+                { label: "Salaire moyen (12 mois)", value: fmt(Number(salaireMoyen)) },
+                { label: "Préavis non effectué", value: `${joursPreavis} jour(s)` },
+              ].map(({ label, value }) => (
+                <div key={label}>
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">{label}</p>
+                  <p className="mt-0.5 text-sm font-semibold text-slate-800 tabular-nums">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ③ Indemnités */}
+          <div className="px-6 py-5 border-b border-slate-100">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-3">
+              II — Décompte des indemnités légales
+            </p>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-slate-800 text-[10px] uppercase tracking-wider text-slate-500">
+                  <th className="text-left pb-2 font-semibold w-[40%]">Désignation</th>
+                  <th className="text-left pb-2 font-semibold">Référence légale</th>
+                  <th className="text-center pb-2 font-semibold">Détail du calcul</th>
+                  <th className="text-center pb-2 font-semibold">Régime fiscal</th>
+                  <th className="text-right pb-2 font-semibold">Montant (FCFA)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {isCdd ? (
+                  <BulletinRow
+                    label="Indemnité de précarité"
+                    ref_legale="Art. 26 CT-CI"
+                    calcul={`${fmt(Number(sommeBrutsCdd))} × 3%`}
+                    regime="Imposable"
+                    montant={resultat.indemnite_precarite}
+                  />
+                ) : (
+                  <BulletinRow
+                    label="Indemnité de licenciement"
+                    ref_legale="Art. 74 CT-CI"
+                    calcul={`${Number(anciennete).toFixed(2)} ans (30%/35%/40%)`}
+                    regime="Exonérée"
+                    montant={resultat.indemnite_licenciement}
+                    exonere
+                  />
+                )}
+                <BulletinRow
+                  label="Indemnité compensatrice de congés payés (ICCP)"
+                  ref_legale="Art. 25 CT-CI"
+                  calcul={`${joursConges} j × ${fmt(selectedEmployee.salaire_brut ?? 0)} ÷ 26`}
+                  regime="Imposable"
+                  montant={resultat.indemnite_compensatrice_conges}
+                />
+                <BulletinRow
+                  label="Indemnité compensatrice de préavis"
+                  ref_legale="Art. 20 CT-CI"
+                  calcul={`${joursPreavis} j × ${fmt(selectedEmployee.salaire_brut ?? 0)} ÷ 26`}
+                  regime="Imposable"
+                  montant={resultat.indemnite_preavis}
+                />
+              </tbody>
+            </table>
+
+            <div className="mt-4 pt-3 border-t border-slate-200 flex items-baseline justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-900 uppercase tracking-wide">Total brut STC</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Avant retenues sociales et fiscales</p>
+              </div>
+              <p className="text-xl font-black text-slate-900 tabular-nums">{fmt(resultat.total_brut_stc)}</p>
+            </div>
+          </div>
+
+          {/* ④ Retenues sociales et fiscales */}
+          <div className="px-6 py-5 border-b border-slate-100">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-3">
+              III — Retenues sociales et fiscales
+            </p>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200 text-[10px] uppercase tracking-wider text-slate-500">
+                  <th className="text-left pb-2 font-semibold">Désignation</th>
+                  <th className="text-left pb-2 font-semibold">Base</th>
+                  <th className="text-center pb-2 font-semibold">Taux</th>
+                  <th className="text-right pb-2 font-semibold">Montant (FCFA)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm">
+                <tr>
+                  <td className="py-2.5 pr-4">
+                    <p className="font-medium text-slate-800">Base imposable STC</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      {isCdd ? "Précarité + ICCP + Préavis" : "ICCP + Préavis (licenciement exonéré)"}
+                    </p>
+                  </td>
+                  <td className="py-2.5 text-slate-600 tabular-nums">{fmt(baseImposableStc)}</td>
+                  <td className="py-2.5 text-center text-slate-400">—</td>
+                  <td className="py-2.5 text-right font-semibold text-slate-800 tabular-nums">{fmt(baseImposableStc)}</td>
+                </tr>
+                <tr>
+                  <td className="py-2.5 pr-4">
+                    <p className="font-medium text-slate-800">CNPS Retraite salarié</p>
+                    <p className="text-[10px] text-slate-400">Plafond : {fmt(PLAFOND_CNPS_MENSUEL)}</p>
+                  </td>
+                  <td className="py-2.5 text-slate-600 tabular-nums">{fmt(Math.min(baseImposableStc, PLAFOND_CNPS_MENSUEL))}</td>
+                  <td className="py-2.5 text-center text-slate-500">{(TAUX_CNPS_RETRAITE_SALARIE * 100).toFixed(1)} %</td>
+                  <td className="py-2.5 text-right font-semibold text-red-600 tabular-nums">− {fmt(cnpsStc)}</td>
+                </tr>
+                <tr>
+                  <td className="py-2.5 pr-4">
+                    <p className="font-medium text-slate-800">CMU (Couverture Maladie Universelle)</p>
+                  </td>
+                  <td className="py-2.5 text-slate-600">Forfait mensuel</td>
+                  <td className="py-2.5 text-center text-slate-500">—</td>
+                  <td className="py-2.5 text-right font-semibold text-red-600 tabular-nums">− {fmt(cmuStc)}</td>
+                </tr>
+                <tr>
+                  <td className="py-2.5 pr-4">
+                    <p className="font-medium text-slate-800">ITS (Impôt sur Traitements et Salaires)</p>
+                    <p className="text-[10px] text-slate-400">
+                      Base ITS = {fmt(baseImposableStc - cnpsStc)} × {((1 - TAUX_ABATTEMENT_ITS) * 100).toFixed(0)} % = {fmt(baseItsStc)}
+                    </p>
+                  </td>
+                  <td className="py-2.5 text-slate-600 tabular-nums">{fmt(baseItsStc)}</td>
+                  <td className="py-2.5 text-center text-slate-500">Barème</td>
+                  <td className="py-2.5 text-right font-semibold text-red-600 tabular-nums">− {fmt(itsStc)}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="mt-4 pt-3 border-t border-slate-200 flex items-baseline justify-between">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wide font-semibold">Total retenues</p>
+              <p className="text-base font-bold text-red-600 tabular-nums">− {fmt(cnpsStc + cmuStc + itsStc)}</p>
+            </div>
+          </div>
+
+          {/* ⑤ Net à payer */}
+          <div className="px-6 py-5 bg-emerald-50/50 border-b border-emerald-100">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-emerald-700">NET STC À PAYER</p>
+                <p className="text-[10px] text-emerald-600 mt-0.5">Après retenues CNPS, CMU et ITS</p>
+              </div>
+              <p className="text-3xl font-black text-emerald-800 tabular-nums">{fmt(netStc)}</p>
+            </div>
+          </div>
+
+          {/* ⑥ Mention légale reçu STC */}
+          <div className="px-6 py-5 border-b border-slate-100 space-y-3">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+              IV — Reçu pour solde de tout compte — Art. 16.11 CT-CI
+            </p>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-relaxed text-slate-700 italic">
+              Je soussigné(e), <span className="font-semibold not-italic">{selectedEmployee.full_name}</span>,
+              reconnais avoir reçu de mon employeur la somme de{" "}
+              <span className="font-semibold not-italic">{fmt(netStc)}</span>{" "}
+              ({fmt(netStc).replace(/\s*XOF.*/, "").trim()} francs CFA) en règlement intégral de toutes sommes dues
+              à titre de solde de tout compte suite à la cessation de mon contrat de travail
+              {motifRupture ? ` pour motif : ${MOTIFS_RUPTURE.find(m => m.value === motifRupture)?.label?.toLowerCase()}` : ""}.
+            </div>
+            <div className="rounded-md border border-amber-200 bg-amber-50/60 px-4 py-2.5 text-[11px] text-amber-800 leading-relaxed">
+              <span className="font-semibold">Délai de contestation :</span> Conformément à l&apos;article 16.11 du Code du Travail
+              ivoirien, le présent reçu pour solde de tout compte peut être dénoncé dans un délai de{" "}
+              <span className="font-semibold">6 mois</span> à compter de sa date de signature.
+              Passé ce délai, il devient libératoire pour l&apos;employeur.
+            </div>
+          </div>
+
+          {/* ⑦ Zone signatures */}
+          <div className="px-6 py-6 bg-white">
+            <p className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-5">
+              V — Signatures — Fait à ______________, le {today}
+            </p>
+            <div className="grid grid-cols-2 gap-12">
+              <div className="space-y-8">
+                <div>
+                  <p className="text-xs font-semibold text-slate-600 mb-1">L&apos;Employeur</p>
+                  <p className="text-[10px] text-slate-400">Nom, qualité, cachet et signature</p>
+                </div>
+                <div className="border-b-2 border-slate-300" />
+              </div>
+              <div className="space-y-8">
+                <div>
+                  <p className="text-xs font-semibold text-slate-600 mb-1">
+                    Le Salarié — <span className="font-normal italic">{selectedEmployee.full_name}</span>
+                  </p>
+                  <p className="text-[10px] text-slate-400">
+                    Mention manuscrite obligatoire :{" "}
+                    <span className="italic">&laquo; Reçu pour solde de tout compte &raquo;</span>
+                  </p>
+                </div>
+                <div className="border-b-2 border-slate-300" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    )}
+    </div>
   );
 }
 
@@ -472,5 +812,40 @@ function Line({ label, hint, value }: { label: string; hint?: string; value: str
       </div>
       <p className="text-sm font-semibold text-slate-900 tabular-nums shrink-0">{value}</p>
     </div>
+  );
+}
+
+function BulletinRow({
+  label, ref_legale, calcul, regime, montant, exonere = false,
+}: {
+  label: string;
+  ref_legale?: string;
+  calcul?: string;
+  regime?: string;
+  montant: number;
+  exonere?: boolean;
+}) {
+  return (
+    <tr>
+      <td className="py-3 pr-4">
+        <p className="text-sm font-medium text-slate-800">{label}</p>
+      </td>
+      <td className="py-3 px-2 text-xs text-indigo-600 font-medium whitespace-nowrap">{ref_legale}</td>
+      <td className="py-3 px-2 text-center text-xs text-slate-500 whitespace-nowrap">{calcul}</td>
+      <td className="py-3 px-2 text-center">
+        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+          exonere
+            ? "bg-emerald-100 text-emerald-700"
+            : "bg-amber-100 text-amber-700"
+        }`}>
+          {regime}
+        </span>
+      </td>
+      <td className="py-3 pl-4 text-right text-sm font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+        {montant > 0
+          ? fmt(montant)
+          : <span className="text-slate-400 font-normal">—</span>}
+      </td>
+    </tr>
   );
 }

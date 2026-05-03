@@ -1,7 +1,6 @@
-import { CalculateurRH } from "@/components/rh/CalculateurRH";
 import { CalcEnversForm } from "@/components/rh/CalcEnversForm";
-import { SimulatorCockpit } from "@/components/rh/SimulatorCockpit";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
+import { CalculateurRH } from "@/components/rh/CalculateurRH";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createServerClient } from "@/lib/supabase/server";
 
@@ -18,12 +17,6 @@ interface TabMeta {
 }
 
 const TABS: TabMeta[] = [
-  {
-    value: "simuler",
-    label: "Simuler une paie",
-    description:
-      "Testez n'importe quel niveau de salaire et voyez instantanément le net reçu, les cotisations et ce que ça coûte réellement à l'entreprise. Vous pouvez aussi charger un salarié existant et simuler son augmentation.",
-  },
   {
     value: "net-vers-brut",
     label: "Je veux offrir X net — quel brut ?",
@@ -46,16 +39,16 @@ const TABS: TabMeta[] = [
 
 export default async function CalculateurPage() {
   const supabase = createServerClient();
-  const { data: employees, error } = await supabase
+
+  // Requête minimaliste pour SoldeToutCompteForm — uniquement les champs nécessaires
+  const { data: stcEmployees } = await supabase
     .from("employees")
-    .select(
-      "id, full_name, matricule, salaire_brut, type_contrat, date_embauche, sursalaire, prime_transport, prime_anciennete, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, departement"
-    )
+    .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche, poste, categorie, departement")
     .eq("statut", "actif")
     .order("full_name")
     .limit(500);
 
-  const employeeList = error ? [] : (employees ?? []);
+  const employeeList = stcEmployees ?? [];
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -72,7 +65,7 @@ export default async function CalculateurPage() {
         </span>
       </div>
 
-      <Tabs defaultValue="simuler" className="w-full">
+      <Tabs defaultValue="net-vers-brut" className="w-full">
         {/* Barre d'onglets */}
         <TabsList className="bg-white border border-slate-200 p-1 rounded-xl h-auto gap-1 flex-wrap mb-0">
           {TABS.map((t) => (
@@ -82,16 +75,12 @@ export default async function CalculateurPage() {
           ))}
         </TabsList>
 
-        {/* Description contextuelle — s'affiche sous les onglets */}
+        {/* Description contextuelle */}
         {TABS.map((t) => (
           <TabsContent key={t.value} value={t.value} className="mt-0 outline-none">
             <p className="mt-3 mb-5 text-sm text-slate-500 leading-relaxed border-l-2 border-slate-200 pl-3">
               {t.description}
             </p>
-
-            {t.value === "simuler" && (
-              <SimulatorCockpit employees={employeeList} />
-            )}
 
             {t.value === "net-vers-brut" && (
               <CalcEnversForm />
