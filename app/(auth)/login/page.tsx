@@ -115,6 +115,13 @@ export default function LoginPage() {
           <Button type="submit" className="mt-2 w-full" disabled={isSubmitting}>
             {isSubmitting ? "Connexion en cours…" : "Se connecter"}
           </Button>
+
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            Pas encore de compte ?{" "}
+            <a href="/register" className="font-semibold text-primary underline underline-offset-4 hover:text-primary/80">
+              Créer mon compte
+            </a>
+          </p>
         </form>
       </CardContent>
     </Card>

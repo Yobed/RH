@@ -781,64 +781,32 @@ function ParSalarieMode({ employees }: { employees: EmpRow[] }) {
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
-  const [mode, setMode] = useState<"libre" | "salarie">("libre");
+  const [showComparison, setShowComparison] = useState(false);
 
   return (
-    <div className="space-y-5">
-      {/* Mode switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-base font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Choisissez un mode de simulation
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Salaire libre ou sur un salarié réel de votre équipe
-          </p>
-        </div>
-        <div className="flex gap-1 bg-slate-100 dark:bg-[oklch(0.22_0.03_248)] p-1 rounded-xl self-start sm:self-auto">
+    <div className="space-y-6">
+      {/* Calculette principale — toujours visible */}
+      <LibreMode />
+
+      {/* Section comparaison salarié — optionnelle, masquée par défaut */}
+      {employees.length > 0 && (
+        <div className="border-t border-slate-100 dark:border-slate-700 pt-5">
           <button
-            onClick={() => setMode("libre")}
-            className={cn(
-              "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all",
-              mode === "libre"
-                ? "bg-white dark:bg-[oklch(0.175_0.04_248)] text-indigo-600 dark:text-[oklch(0.78_0.13_73)] shadow-sm"
-                : "text-slate-600 hover:text-slate-700 dark:hover:text-slate-200",
-            )}
-          >
-            <Calculator className="h-4 w-4" />
-            Salaire libre
-          </button>
-          <button
-            onClick={() => setMode("salarie")}
-            className={cn(
-              "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all",
-              mode === "salarie"
-                ? "bg-white dark:bg-[oklch(0.175_0.04_248)] text-indigo-600 dark:text-[oklch(0.78_0.13_73)] shadow-sm"
-                : "text-slate-600 hover:text-slate-700 dark:hover:text-slate-200",
-            )}
+            onClick={() => setShowComparison((v) => !v)}
+            className="flex items-center gap-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 transition-colors"
           >
             <Users className="h-4 w-4" />
-            Sur un salarié existant
-            {employees.length > 0 && (
-              <span className="ml-1 rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-1.5 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-300">
-                {employees.length}
-              </span>
-            )}
+            {showComparison ? "Masquer" : "Simuler l'impact d'une augmentation sur un salarié existant"}
+            <span className="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-2 py-0.5 text-[10px] font-bold text-indigo-600 dark:text-indigo-300">
+              {employees.length} salarié(s)
+            </span>
           </button>
+          {showComparison && (
+            <div className="mt-4">
+              <ParSalarieMode employees={employees} />
+            </div>
+          )}
         </div>
-      </div>
-
-      {mode === "libre" && <LibreMode />}
-      {mode === "salarie" && (
-        employees.length === 0 ? (
-          <div className="rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.18_0.03_248)] p-10 text-center">
-            <Users className="h-10 w-10 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
-            <p className="text-sm font-medium text-slate-600">Aucun salarié actif trouvé.</p>
-            <p className="text-xs text-slate-600 mt-1">Ajoutez des employés dans le module Employés.</p>
-          </div>
-        ) : (
-          <ParSalarieMode employees={employees} />
-        )
       )}
     </div>
   );
