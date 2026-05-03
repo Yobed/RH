@@ -208,8 +208,13 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       {/* bg-white explicite pour éviter la transparence */}
                       <SelectContent className="z-[9999] bg-white border border-slate-200 shadow-xl">
                         {employees.map((e) => (
-                          <SelectItem key={e.id} value={e.id} className="cursor-pointer hover:bg-slate-50">
-                            {e.full_name}
+                          <SelectItem
+                            key={e.id}
+                            value={e.id}
+                            textValue={e.full_name ?? ''}
+                            className="cursor-pointer hover:bg-slate-50"
+                          >
+                            {e.full_name ?? 'Employé sans nom'}
                           </SelectItem>
                         ))}
                       </SelectContent>

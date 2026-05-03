@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
 
   let justificatif_url: string | null = null;
   let est_justifie = false;
+  const adminClient = createAdminClient();
 
   if (file) {
     // Validation fichier
@@ -118,7 +119,6 @@ export async function POST(req: NextRequest) {
     const storagePath = `documents/${company_id}/${employee_id}/Medical/${timestamp}_${safeName}`;
 
     const arrayBuffer = await file.arrayBuffer();
-    const adminClient = createAdminClient();
     
     console.log(`[ArretMaladie] Tentative d'upload: bucket=rh-documents, path=${storagePath}, size=${file.size}`);
     
@@ -160,10 +160,10 @@ export async function POST(req: NextRequest) {
       });
   }
 
-  const { data: conge, error: insertError } = await supabase
+  const { data: conge, error: insertError } = await adminClient
     .from('conges')
     .insert({
-      company_id, // Added missing company_id
+      company_id,
       employee_id,
       date_debut,
       date_fin,
