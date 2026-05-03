@@ -197,11 +197,11 @@ export function CalcEnversForm({ employees = [] }: Props) {
               {selectedEmp ? "Net souhaité après augmentation (FCFA) *" : "Net souhaité (FCFA) *"}
             </span>
             <input
-              type="number"
-              min={0}
-              step={1000}
+              type="text"
+              inputMode="numeric"
               value={netSouhaite}
-              onChange={(e) => setNetSouhaite(e.target.value)}
+              onChange={(e) => setNetSouhaite(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder="ex : 350000"
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
@@ -209,11 +209,11 @@ export function CalcEnversForm({ employees = [] }: Props) {
           <label className="block">
             <span className="text-sm font-medium text-slate-700">Autres retenues (FCFA)</span>
             <input
-              type="number"
-              min={0}
-              step={1000}
+              type="text"
+              inputMode="numeric"
               value={autresRetenues}
-              onChange={(e) => setAutresRetenues(e.target.value)}
+              onChange={(e) => setAutresRetenues(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder="0"
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
@@ -221,11 +221,11 @@ export function CalcEnversForm({ employees = [] }: Props) {
           <label className="block">
             <span className="text-sm font-medium text-slate-700">Avances / acomptes (FCFA)</span>
             <input
-              type="number"
-              min={0}
-              step={1000}
+              type="text"
+              inputMode="numeric"
               value={avances}
-              onChange={(e) => setAvances(e.target.value)}
+              onChange={(e) => setAvances(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder="0"
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
@@ -251,9 +251,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
             className="flex-1 rounded-lg bg-slate-900 text-white py-2.5 px-4 text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
           >
             <Calculator className="h-4 w-4" />
-            {computed
-              ? "Recalculer"
-              : selectedEmp ? "Simuler l'augmentation" : "Calculer le brut correspondant"}
+            {selectedEmp ? "Simuler l'augmentation" : "Calculer le brut correspondant"}
           </button>
           {computed && (
             <button
