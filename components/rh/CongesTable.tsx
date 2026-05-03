@@ -6,7 +6,7 @@ import { CaretUp, CaretDown, CaretLeft, CaretRight } from "@phosphor-icons/react
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Calendar as CalendarIcon } from "@phosphor-icons/react";
+import { Calendar as CalendarIcon, Paperclip } from "@phosphor-icons/react";
 
 const TYPE_LABELS: Record<string, string> = {
   annuel: "Congé annuel",
@@ -282,6 +282,18 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
                         estAt={(c as { est_at?: boolean }).est_at ?? false}
                         estJustifie={(c as { est_justifie?: boolean }).est_justifie ?? false}
                       />
+                    )}
+                    {c.justificatif_url && (
+                      <a
+                        href={c.justificatif_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[10px] font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                        title="Voir le justificatif"
+                      >
+                        <Paperclip className="h-3 w-3" />
+                        Justificatif
+                      </a>
                     )}
                   </div>
                 </td>

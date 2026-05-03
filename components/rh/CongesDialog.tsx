@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlusIcon, Info } from "lucide-react";
+import { PlusIcon, Info, Paperclip, CheckCircle, AlertCircle } from "lucide-react";
 
 import {
   Dialog,
@@ -101,10 +101,16 @@ interface SoldeConges {
   annee: number;
 }
 
+const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png"];
+const MAX_SIZE = 10 * 1024 * 1024;
+
 export function CongesDialog({ employees }: Props) {
   const [open, setOpen] = useState(false);
   const [solde, setSolde] = useState<SoldeConges | null>(null);
   const [loadingSolde, setLoadingSolde] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const {
@@ -178,25 +184,37 @@ export function CongesDialog({ employees }: Props) {
       .finally(() => setLoadingSolde(false));
   }, [employeeId, typeConge]);
 
-  async function onSubmit(data: FormData) {
-    const payload = {
-      employee_id: data.employee_id,
-      type: data.type,
-      date_debut: data.date_debut,
-      date_fin: data.date_fin,
-      nb_jours: Number(data.nb_jours),
-      commentaire: data.commentaire || undefined,
-      conge_fractionne: data.conge_fractionne ?? false,
-      date_reprise: data.date_reprise || null,
-      remplacant_id: data.remplacant_id || null,
-      justificatif_url: data.justificatif_url || null,
-    };
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] ?? null;
+    setFileError(null);
+    if (!f) { setSelectedFile(null); return; }
+    if (!ALLOWED_MIME.includes(f.type)) {
+      setFileError("Format invalide. Acceptés : PDF, JPEG, PNG.");
+      setSelectedFile(null);
+      return;
+    }
+    if (f.size > MAX_SIZE) {
+      setFileError("Fichier trop volumineux (max 10 Mo).");
+      setSelectedFile(null);
+      return;
+    }
+    setSelectedFile(f);
+  }
 
-    const res = await fetch("/api/conges", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+  async function onSubmit(data: FormData) {
+    const fd = new globalThis.FormData();
+    fd.append("employee_id", data.employee_id);
+    fd.append("type", data.type);
+    fd.append("date_debut", data.date_debut);
+    fd.append("date_fin", data.date_fin);
+    fd.append("nb_jours", String(Number(data.nb_jours)));
+    if (data.commentaire) fd.append("commentaire", data.commentaire);
+    fd.append("conge_fractionne", String(data.conge_fractionne ?? false));
+    if (data.date_reprise) fd.append("date_reprise", data.date_reprise);
+    if (data.remplacant_id) fd.append("remplacant_id", data.remplacant_id);
+    if (selectedFile) fd.append("justificatif", selectedFile);
+
+    const res = await fetch("/api/conges", { method: "POST", body: fd });
 
     if (!res.ok) {
       const err = (await res.json()) as { error?: string };
@@ -208,6 +226,8 @@ export function CongesDialog({ employees }: Props) {
     setOpen(false);
     reset();
     setSolde(null);
+    setSelectedFile(null);
+    setFileError(null);
     router.refresh();
   }
 
@@ -406,20 +426,35 @@ export function CongesDialog({ employees }: Props) {
               />
             </div>
 
-            {/* Justificatif */}
+            {/* Justificatif — upload fichier */}
             {needsJustificatif && (
-              <div>
+              <div className="space-y-1.5">
                 <Label className="text-sm font-medium">
-                  Justificatif (URL ou référence)
-                  <span className="ml-1 text-[10px] text-amber-600 font-normal">
-                    {typeConge === "maladie" ? "(certificat médical — neutralise la retenue)" : "(pièce justificative requise)"}
+                  Pièce justificative
+                  <span className="ml-1.5 text-[10px] text-amber-600 font-normal">
+                    {typeConge === "maladie" ? "(certificat médical — neutralise la retenue salariale)" : "(pièce obligatoire)"}
                   </span>
                 </Label>
                 <Input
-                  {...register("justificatif_url")}
-                  placeholder="https://… ou n° certificat médical"
-                  className="mt-1"
+                  ref={fileRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={handleFileChange}
+                  className="cursor-pointer file:cursor-pointer file:bg-primary/10 file:text-primary file:border-none file:rounded-md file:px-3 file:py-1 file:mr-3 h-11 bg-muted/10 border-dashed border-2 hover:border-primary/30 transition-all pt-2"
                 />
+                {fileError ? (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />{fileError}
+                  </p>
+                ) : selectedFile ? (
+                  <p className="text-xs text-emerald-600 flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />{selectedFile.name}
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                    <Paperclip className="h-3 w-3" />PDF, JPG ou PNG · max 10 Mo
+                  </p>
+                )}
               </div>
             )}
 
