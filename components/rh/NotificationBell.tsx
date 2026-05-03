@@ -99,7 +99,7 @@ export function NotificationBell() {
           />
 
           {/* Panneau */}
-          <div className="absolute right-0 top-11 z-40 w-80 rounded-xl border bg-white shadow-lg">
+          <div className="absolute right-0 top-11 z-40 w-80 rounded-xl border bg-popover text-popover-foreground shadow-lg">
             {/* En-tête */}
             <div className="flex items-center justify-between border-b px-4 py-3">
               <p className="text-sm font-semibold">Notifications</p>

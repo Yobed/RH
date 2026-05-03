@@ -3,12 +3,29 @@
 import { useRouter } from "next/navigation";
 import { createClientSupabase } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { SignOut, UserCircleGear } from "@phosphor-icons/react";
-import { cn } from "@/lib/utils";
+import { SignOut } from "@phosphor-icons/react";
 
 interface UserMenuProps {
   fullName: string | null;
   role: string | null;
+}
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Administrateur",
+  responsable_rh: "Resp. RH",
+  rh: "Chargé(e) RH",
+  manager: "Manager",
+  employee: "Collaborateur",
+};
+
+function getInitials(name: string | null): string {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
 }
 
 export function UserMenu({ fullName, role }: UserMenuProps) {
@@ -22,43 +39,47 @@ export function UserMenu({ fullName, role }: UserMenuProps) {
     router.refresh();
   }
 
-  const roleLabel: Record<string, string> = {
-    admin: "Executive Admin",
-    rh: "HR Director",
-    manager: "Ops Manager",
-    employee: "Staff Member",
-  };
+  const initials = getInitials(fullName);
+  const roleDisplay = role ? (ROLE_LABELS[role] ?? role) : "Invité";
 
   return (
-    <div className="group relative">
-      <div className={cn(
-        "flex items-center gap-4 p-4 rounded-[1.25rem] transition-all duration-500",
-        "bg-slate-50 border border-slate-100/50 hover:bg-white hover:shadow-[0_12px_24px_-8px_rgba(0,0,0,0.06)]"
-      )}>
-        <div className="relative">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-900 border-2 border-white shadow-sm transition-transform duration-500 group-hover:scale-105">
-            <UserCircleGear weight="duotone" className="h-6 w-6 text-amber-400" />
-          </div>
-          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
-        </div>
-        
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-xs font-black text-slate-900 tracking-tightest leading-none">
-            {fullName ?? "Ghost User"}
-          </p>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 leading-none">
-            {role ? (roleLabel[role] ?? role) : "Guest"}
-          </p>
-        </div>
-
-        <button
-          onClick={handleLogout}
-          className="h-8 w-8 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-rose-500 hover:text-white transition-all duration-300"
-          title="Sign Out"
+    <div className="flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors duration-150">
+      {/* Avatar avec initiales */}
+      <div className="relative shrink-0">
+        <div
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-bold text-white select-none"
+          style={{ background: "linear-gradient(135deg, #6366f1 0%, #818cf8 100%)" }}
+          aria-hidden
         >
-          <SignOut weight="bold" className="h-4 w-4" />
-        </button>
+          {initials}
+        </div>
+        {/* Indicateur en ligne */}
+        <span
+          className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400"
+          style={{ boxShadow: "0 0 0 2px #0f172a" }}
+          title="En ligne"
+        />
       </div>
+
+      {/* Nom + rôle */}
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-xs font-semibold text-white leading-none">
+          {fullName ?? "Utilisateur"}
+        </p>
+        <p className="truncate text-[10px] mt-1 leading-none text-slate-400">
+          {roleDisplay}
+        </p>
+      </div>
+
+      {/* Bouton déconnexion */}
+      <button
+        onClick={handleLogout}
+        className="h-7 w-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/15 transition-all duration-150 shrink-0"
+        title="Se déconnecter"
+        aria-label="Se déconnecter"
+      >
+        <SignOut weight="bold" className="h-3.5 w-3.5" />
+      </button>
     </div>
   );
 }

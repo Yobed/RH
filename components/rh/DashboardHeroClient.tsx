@@ -40,7 +40,7 @@ function useGreeting() {
 
 function AnimatedBar({ value, delay = 0 }: { value: number; delay?: number }) {
   return (
-    <div className="relative h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-700/60 overflow-hidden">
+    <div className="relative h-1.5 w-full rounded-full bg-muted overflow-hidden">
       <motion.div
         className="absolute inset-y-0 left-0 rounded-full"
         style={{
@@ -87,7 +87,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
         <div className="space-y-3">
           <motion.p
             variants={fadeUp}
-            className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-600"
+            className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
           >
             {dateLabel}
           </motion.p>
@@ -97,7 +97,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               {greeting}
             </p>
             <h1
-              className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold leading-[1.08] tracking-tight text-slate-900 dark:text-white"
+              className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold leading-[1.08] tracking-tight text-foreground"
               style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
             >
               Tableau de bord{" "}
@@ -112,7 +112,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
                 RH
               </span>
             </h1>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-600">
+            <p className="text-sm font-medium text-muted-foreground">
               Capital humain — Côte d&apos;Ivoire · Droit ivoirien
             </p>
           </motion.div>
@@ -138,13 +138,13 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="flex items-center gap-2 rounded-full border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.175_0.030_248)] px-3 py-1.5 shadow-sm"
+                className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 shadow-sm"
               >
                 <span className={`h-2 w-2 rounded-full shrink-0 ${stat.color}`} />
                 <span className={`text-xs font-bold tabular-nums ${stat.textColor}`}>
                   {stat.value}
                 </span>
-                <span className="text-[10px] text-slate-600 dark:text-slate-600">{stat.label}</span>
+                <span className="text-[10px] text-muted-foreground">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -153,9 +153,9 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
         {/* Right — compliance card */}
         <motion.div
           variants={scaleIn}
-          className="shrink-0 rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] glow-hover min-w-[220px]"
+          className="shrink-0 rounded-2xl border border-border bg-card p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] glow-hover min-w-[220px]"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600 dark:text-slate-600 mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">
             Score conformité
           </p>
 
@@ -202,12 +202,12 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               >
                 {complianceScore}
               </span>
-              <span className="text-[9px] text-slate-600 uppercase tracking-wider">/ 100</span>
+              <span className="text-[9px] text-muted-foreground uppercase tracking-wider">/ 100</span>
             </div>
           </div>
 
           <AnimatedBar value={complianceScore} delay={0.4} />
-          <p className="mt-2 text-[10px] text-center text-slate-600 dark:text-slate-600">
+          <p className="mt-2 text-[10px] text-center text-muted-foreground">
             {complianceScore >= 85
               ? "Excellent"
               : complianceScore >= 70
