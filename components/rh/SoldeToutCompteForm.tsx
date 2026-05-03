@@ -169,28 +169,48 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
         <Card>
           <CardTitle sub="Recherche par nom ou matricule">Salarié concerné</CardTitle>
           <div className="p-4 sm:p-5 space-y-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Rechercher un collaborateur…"
-                value={employeeSearch}
-                onChange={(e) => setEmployeeSearch(e.target.value)}
-                className="h-9 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
-              />
-            </div>
-            <select
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
-            >
-              <option value="">— Sélectionner —</option>
-              {filteredEmployees.map(e => (
-                <option key={e.id} value={e.id}>
-                  {e.full_name} ({e.matricule}) · {e.type_contrat || "CDI"}
-                </option>
-              ))}
-            </select>
+
+            {employees.length === 0 ? (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                <p className="font-semibold">Aucun salarié actif trouvé.</p>
+                <p className="mt-1 text-xs text-amber-700">
+                  Ajoutez d'abord des salariés dans l'onglet{" "}
+                  <a href="/employes" className="underline font-medium">Employés</a>{" "}
+                  pour pouvoir calculer un Solde de Tout Compte.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder={`Rechercher parmi ${employees.length} salarié(s)…`}
+                    value={employeeSearch}
+                    onChange={(e) => setEmployeeSearch(e.target.value)}
+                    className="h-10 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+                  />
+                </div>
+                <select
+                  value={employeeId}
+                  onChange={(e) => setEmployeeId(e.target.value)}
+                  size={Math.min(filteredEmployees.length + 1, 6)}
+                  className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+                >
+                  <option value="">— Sélectionner un salarié —</option>
+                  {filteredEmployees.map(e => (
+                    <option key={e.id} value={e.id}>
+                      {e.full_name}{e.matricule ? ` (${e.matricule})` : ""} · {e.type_contrat || "CDI"}
+                    </option>
+                  ))}
+                </select>
+                {filteredEmployees.length === 0 && employeeSearch && (
+                  <p className="text-xs text-slate-400 text-center">
+                    Aucun résultat pour «&nbsp;{employeeSearch}&nbsp;»
+                  </p>
+                )}
+              </>
+            )}
 
             {selectedEmployee && (
               <div className="rounded-md border border-slate-100 bg-slate-50 p-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
