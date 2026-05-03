@@ -96,7 +96,7 @@ const navGroups: NavGroup[] = [
     defaultOpen: false,
     items: [
       { href: "/documents-rh", label: "Documents RH", icon: FilePdf },
-      { href: "/archives", label: "GED", icon: Books, pulse: true },
+      { href: "/ged", label: "GED", icon: Books, pulse: true },
       { href: "/archives", label: "Archives", icon: Archive },
     ],
   },
