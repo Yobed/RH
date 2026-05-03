@@ -42,6 +42,7 @@ interface NavItem {
   label: string;
   icon: React.ElementType;
   exact?: boolean;
+  pulse?: boolean;
 }
 
 interface NavGroup {
@@ -72,6 +73,7 @@ const navGroups: NavGroup[] = [
       { href: "/contrats", label: "Contrats", icon: FileText },
       { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
       { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
+      { href: "/onboarding", label: "Onboarding", icon: UserPlus, pulse: true },
     ],
   },
   {
@@ -94,6 +96,7 @@ const navGroups: NavGroup[] = [
     defaultOpen: false,
     items: [
       { href: "/documents-rh", label: "Documents RH", icon: FilePdf },
+      { href: "/ged", label: "GED", icon: Books, pulse: true },
       { href: "/archives", label: "Archives", icon: Archive },
     ],
   },
@@ -144,6 +147,7 @@ function NavLink({
   label,
   icon: Icon,
   exact = false,
+  pulse = false,
   accent,
 }: NavItem & { accent: string }) {
   const pathname = usePathname();
@@ -160,7 +164,7 @@ function NavLink({
       )}
       style={isActive ? { background: `${accent}22` } : undefined}
     >
-      {/* Indicateur actif — ne génère pas de layout-shift */}
+      {/* Indicateur actif */}
       <span
         aria-hidden
         className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 rounded-r-full transition-all duration-200"
@@ -175,7 +179,13 @@ function NavLink({
         className="h-3.5 w-3.5 shrink-0 transition-colors duration-150"
         style={{ color: isActive ? accent : undefined }}
       />
-      <span className="truncate">{label}</span>
+      <span className="truncate flex-1">{label}</span>
+      {pulse && !isActive && (
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
+        </span>
+      )}
     </Link>
   );
 }
