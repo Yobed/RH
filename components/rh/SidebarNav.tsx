@@ -31,132 +31,205 @@ import {
   Bank,
   Student,
   ShieldWarning,
-  Books
+  Books,
+  CaretDown,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { href: "/rh", label: "Dashboard", icon: SquaresFour, exact: true },
-  { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging, exact: false },
-  { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
-  { href: "/analytique/focus", label: "Focus Stratégique", icon: Target, exact: false },
-  { href: "/employes", label: "Collaborateurs", icon: Users, exact: false },
-  { href: "/contrats", label: "Gestion Contrats", icon: FileText, exact: false },
-  { href: "/conges", label: "Absences", icon: CalendarBlank, exact: false },
-  { href: "/paie", label: "Paie & Salaires", icon: Money, exact: true },
-  { href: "/heures-sup", label: "Heures Sup.", icon: Clock, exact: false },
-  { href: "/analyses", label: "Finance & Data", icon: ChartBar, exact: false },
-  { href: "/paie/generer-lot", label: "Génération en lot", icon: Stamp, exact: false },
-  { href: "/paie/bordereau", label: "Bordereau virement", icon: Bank, exact: false },
-  { href: "/paie/fin-de-contrat", label: "Fin de contrat", icon: FileText, exact: false },
-  { href: "/declarations", label: "Déclarations & Conformité", icon: Stamp, exact: false },
-  { href: "/documents-rh", label: "Documents RH", icon: FilePdf, exact: false },
-  { href: "/paie/import-sage", label: "Import Paie Sage", icon: UploadSimple, exact: false },
-  { href: "/recrutement", label: "Talent Acquisition", icon: UserPlus, exact: false },
-  { href: "/evaluations", label: "Performance", icon: ChartLineUp, exact: false },
-  { href: "/formation", label: "Formation FDFP", icon: Student, exact: false },
-  { href: "/contentieux", label: "Contentieux", icon: Scales, exact: false },
-  { href: "/qhse", label: "QHSE & Risques", icon: FirstAid, exact: false },
-  { href: "/duerp", label: "DUERP", icon: ShieldWarning, exact: false },
-  { href: "/bilan-social", label: "Bilan social", icon: Books, exact: false },
-  { href: "/reporting", label: "Reporting RH", icon: Presentation, exact: false },
-  { href: "/messages", label: "Internal Comms", icon: ChatCircleText, exact: false },
-  { href: "/notifications", label: "Flux Alerts", icon: Bell, exact: false },
-  { href: "/archives", label: "Documents", icon: Archive, exact: false },
-  { href: "/agent-juridique", label: "Legal AI", icon: Robot, exact: false },
-  { href: "/calculateur", label: "Smart Calculator", icon: Calculator, exact: false },
-];
-
-const bottomItems = [
-  { href: "/parametres", label: "Paramètres", icon: Gear, exact: false },
-];
-
-function NavLink({
-  href,
-  label,
-  icon: Icon,
-  exact,
-}: {
+interface NavItem {
   href: string;
   label: string;
   icon: React.ElementType;
-  exact: boolean;
-}) {
+  exact?: boolean;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+  defaultOpen?: boolean;
+}
+
+const navGroups: NavGroup[] = [
+  {
+    label: "Vue d'ensemble",
+    defaultOpen: true,
+    items: [
+      { href: "/rh", label: "Tableau de bord", icon: SquaresFour, exact: true },
+      { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging },
+      { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
+      { href: "/analytique/focus", label: "Focus Stratégique", icon: Target },
+    ],
+  },
+  {
+    label: "Collaborateurs",
+    defaultOpen: true,
+    items: [
+      { href: "/employes", label: "Fiches collaborateurs", icon: Users },
+      { href: "/contrats", label: "Contrats", icon: FileText },
+      { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
+      { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
+    ],
+  },
+  {
+    label: "Paie & Conformité",
+    defaultOpen: true,
+    items: [
+      { href: "/paie", label: "Bulletins de paie", icon: Money, exact: true },
+      { href: "/analyses", label: "Finance & Data", icon: ChartBar },
+      { href: "/paie/generer-lot", label: "Génération en lot", icon: Stamp },
+      { href: "/paie/bordereau", label: "Bordereau de virement", icon: Bank },
+      { href: "/paie/fin-de-contrat", label: "Fin de contrat / STC", icon: FileText },
+      { href: "/declarations", label: "Déclarations & Conformité", icon: Stamp },
+      { href: "/paie/import-sage", label: "Import Sage Paie", icon: UploadSimple },
+    ],
+  },
+  {
+    label: "Documents",
+    defaultOpen: false,
+    items: [
+      { href: "/documents-rh", label: "Documents RH", icon: FilePdf },
+      { href: "/archives", label: "Archives", icon: Archive },
+    ],
+  },
+  {
+    label: "Développement RH",
+    defaultOpen: false,
+    items: [
+      { href: "/recrutement", label: "Talent Acquisition", icon: UserPlus },
+      { href: "/evaluations", label: "Évaluations & Performance", icon: ChartLineUp },
+      { href: "/formation", label: "Formation FDFP", icon: Student },
+    ],
+  },
+  {
+    label: "Qualité & Risques",
+    defaultOpen: false,
+    items: [
+      { href: "/contentieux", label: "Contentieux", icon: Scales },
+      { href: "/qhse", label: "QHSE & Accidents", icon: FirstAid },
+      { href: "/duerp", label: "DUERP", icon: ShieldWarning },
+      { href: "/bilan-social", label: "Bilan social annuel", icon: Books },
+    ],
+  },
+  {
+    label: "Reporting & Comms",
+    defaultOpen: false,
+    items: [
+      { href: "/reporting", label: "Reporting RH", icon: Presentation },
+      { href: "/messages", label: "Messagerie interne", icon: ChatCircleText },
+      { href: "/notifications", label: "Notifications", icon: Bell },
+    ],
+  },
+  {
+    label: "Outils & IA",
+    defaultOpen: false,
+    items: [
+      { href: "/agent-juridique", label: "Agent juridique IA", icon: Robot },
+      { href: "/calculateur", label: "Simulateur paie", icon: Calculator },
+    ],
+  },
+];
+
+const bottomItems: NavItem[] = [
+  { href: "/parametres", label: "Paramètres", icon: Gear },
+];
+
+function NavLink({ href, label, icon: Icon, exact = false }: NavItem) {
   const pathname = usePathname();
   const isActive = exact ? pathname === href : pathname.startsWith(href);
-  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <Link
       href={href}
       className={cn(
-        "group relative flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-300",
-        isActive 
-          ? "bg-slate-900 text-white shadow-[0_10px_20px_-5px_rgba(0,0,0,0.15)]" 
-          : "text-slate-600 hover:text-slate-900"
+        "group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] outline-none transition-all duration-200",
+        isActive
+          ? "bg-slate-900 text-white shadow-sm"
+          : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/80"
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      <AnimatePresence>
-        {!isActive && isHovered && (
+      <Icon
+        weight={isActive ? "duotone" : "bold"}
+        className={cn(
+          "h-4 w-4 shrink-0 transition-all duration-300",
+          isActive
+            ? "text-amber-400"
+            : "text-slate-400 group-hover:text-slate-600"
+        )}
+      />
+      <span className={cn("truncate", isActive ? "font-semibold" : "font-medium")}>
+        {label}
+      </span>
+      {isActive && (
+        <motion.div
+          layoutId="active-dot"
+          className="ml-auto w-1 h-3 bg-amber-400 rounded-full"
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        />
+      )}
+    </Link>
+  );
+}
+
+function NavSection({ group }: { group: NavGroup }) {
+  const pathname = usePathname();
+  const hasActive = group.items.some((item) =>
+    item.exact ? pathname === item.href : pathname.startsWith(item.href)
+  );
+  const [open, setOpen] = useState(group.defaultOpen ?? hasActive);
+
+  return (
+    <div className="space-y-0.5">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors hover:bg-slate-100/60 group"
+        style={{ color: "var(--sidebar-foreground)", opacity: hasActive ? 1 : 0.45 }}
+      >
+        <span className="group-hover:opacity-100">{group.label}</span>
+        <CaretDown
+          weight="bold"
+          className={cn(
+            "h-3 w-3 shrink-0 transition-transform duration-200",
+            open ? "rotate-0" : "-rotate-90"
+          )}
+        />
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
           <motion.div
-            layoutId="sidebar-hover"
-            className="absolute inset-0 rounded-xl bg-slate-100/80 -z-10"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          />
+            className="overflow-hidden"
+          >
+            <div className="flex flex-col gap-0.5 pb-1">
+              {group.items.map((item) => (
+                <NavLink key={item.href} {...item} />
+              ))}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="relative z-10 flex items-center gap-3 w-full">
-        <Icon 
-          weight={isActive ? "duotone" : "bold"} 
-          className={cn(
-            "h-5 w-5 shrink-0 transition-all duration-500",
-            isActive ? "text-amber-400 group-hover:rotate-[12deg]" : "text-slate-400 group-hover:text-slate-900"
-          )} 
-        />
-        <span
-          className={cn(
-            "truncate tracking-tight",
-            isActive ? "font-black" : "font-bold"
-          )}
-        >
-          {label}
-        </span>
-
-        {isActive && (
-          <motion.div 
-            layoutId="active-dot"
-            className="w-1 h-4 bg-amber-400 rounded-full ml-auto"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        )}
-      </div>
-    </Link>
+    </div>
   );
 }
 
 export function SidebarNav() {
   return (
-    <div className="flex flex-col gap-8 w-full">
-      <nav className="flex flex-col gap-1 relative w-full pt-2">
-        {navItems.map((item) => (
-          <NavLink key={item.href} {...item} />
+    <div className="flex flex-col gap-1 w-full">
+      <nav className="flex flex-col gap-1 w-full">
+        {navGroups.map((group) => (
+          <NavSection key={group.label} group={group} />
         ))}
       </nav>
-      
-      <div className="w-full">
-        <div className="px-4 mb-4">
-           <div className="h-[1px] w-full bg-slate-100 flex items-center justify-center">
-             <span className="bg-white px-3 text-[9px] font-black uppercase tracking-[0.3em] text-slate-300">Système</span>
-           </div>
+
+      <div className="w-full mt-2">
+        <div className="px-3 mb-2">
+          <div className="h-px w-full bg-slate-100" />
         </div>
-        <nav className="flex flex-col gap-1 relative w-full">
+        <nav className="flex flex-col gap-0.5">
           {bottomItems.map((item) => (
             <NavLink key={item.href} {...item} />
           ))}
