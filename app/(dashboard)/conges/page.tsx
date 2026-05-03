@@ -25,7 +25,7 @@ export default async function CongesPage() {
       .limit(500),
     supabase
       .from("employees")
-      .select("id, full_name, matricule")
+      .select("id, full_name, matricule, date_embauche, salaire_brut, sursalaire")
       .neq("statut", "inactif") // On permet actif et suspendu
       .order("full_name")
       .limit(1000),
@@ -47,6 +47,9 @@ export default async function CongesPage() {
   const employeesForArret = (employees ?? []).map((e) => ({
     id: e.id,
     full_name: e.full_name,
+    date_embauche: e.date_embauche,
+    salaire_brut: e.salaire_brut,
+    sursalaire: e.sursalaire,
   }));
 
   // KPI
@@ -159,6 +162,76 @@ export default async function CongesPage() {
           />
         )}
       </div>
+
+      {/* Prochains congés planifiés */}
+      {(() => {
+        const today = new Date().toISOString().split("T")[0];
+        const prochains = (conges ?? [])
+          .filter((c) => c.statut === "approuve" && c.date_debut >= today)
+          .sort((a, b) => a.date_debut.localeCompare(b.date_debut))
+          .slice(0, 10);
+        if (prochains.length === 0) return null;
+        const typeLabels: Record<string, string> = {
+          annuel: "Annuel", maladie: "Maladie", maternite: "Maternité",
+          paternite: "Paternité", sans_solde: "Sans solde",
+          exceptionnel: "Exceptionnel", arret_maladie: "Arrêt maladie",
+        };
+        const typeImpact: Record<string, { badge: string; label: string }> = {
+          annuel:       { badge: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "Maintenu 100 %" },
+          maladie:      { badge: "bg-amber-50 text-amber-700 border-amber-200",       label: "Selon justif." },
+          maternite:    { badge: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "Maintenu 100 %" },
+          paternite:    { badge: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "Maintenu 100 %" },
+          sans_solde:   { badge: "bg-red-50 text-red-700 border-red-200",             label: "Aucune rém." },
+          exceptionnel: { badge: "bg-sky-50 text-sky-700 border-sky-200",             label: "Maintenu" },
+          arret_maladie:{ badge: "bg-amber-50 text-amber-700 border-amber-200",       label: "Selon justif." },
+        };
+        return (
+          <div>
+            <h2 className="text-base font-semibold text-slate-700 mb-3">Prochains départs en congé</h2>
+            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                    <th className="px-5 py-2.5 text-left font-medium">Collaborateur</th>
+                    <th className="px-5 py-2.5 text-left font-medium">Type</th>
+                    <th className="px-5 py-2.5 text-left font-medium">Départ</th>
+                    <th className="px-5 py-2.5 text-left font-medium">Retour</th>
+                    <th className="px-5 py-2.5 text-right font-medium">Jours</th>
+                    <th className="px-5 py-2.5 text-left font-medium">Impact salaire</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {prochains.map((c) => {
+                    const imp = typeImpact[c.type] ?? { badge: "bg-slate-50 text-slate-500 border-slate-200", label: "—" };
+                    const emp = (c.employees as unknown as { full_name: string; matricule?: string | null } | null);
+                    return (
+                      <tr key={c.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                        <td className="px-5 py-3 font-medium text-slate-800">
+                          {emp?.full_name ?? "—"}
+                          {emp?.matricule && <span className="ml-1.5 text-xs text-slate-400">{emp.matricule}</span>}
+                        </td>
+                        <td className="px-5 py-3 text-slate-600">{typeLabels[c.type] ?? c.type}</td>
+                        <td className="px-5 py-3 text-slate-700 font-semibold">
+                          {new Date(c.date_debut).toLocaleDateString("fr-CI")}
+                        </td>
+                        <td className="px-5 py-3 text-slate-600">
+                          {new Date(c.date_fin).toLocaleDateString("fr-CI")}
+                        </td>
+                        <td className="px-5 py-3 text-right tabular-nums text-slate-700 font-semibold">{c.nb_jours} j</td>
+                        <td className="px-5 py-3">
+                          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${imp.badge}`}>
+                            {imp.label}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Historique */}
       <div>

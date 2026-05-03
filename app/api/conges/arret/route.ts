@@ -11,7 +11,7 @@ const bodySchema = z.object({
   date_debut: z.string().min(1, 'Date de début obligatoire'),
   date_fin: z.string().min(1, 'Date de fin obligatoire'),
   nb_jours: z.coerce.number().int().positive(),
-  est_at: z.coerce.boolean().default(false),
+  est_at: z.union([z.boolean(), z.string().transform(v => v === 'true')]).default(false),
   commentaire: z.string().max(500).optional(),
 });
 
@@ -114,35 +114,61 @@ export async function POST(req: NextRequest) {
 
     const timestamp = Date.now();
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const storagePath = `${company_id}/${employee_id}/Medical/${timestamp}_${safeName}`;
+    // Important: le chemin doit commencer par "documents/" pour respecter les politiques RLS de rh-documents
+    const storagePath = `documents/${company_id}/${employee_id}/Medical/${timestamp}_${safeName}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const adminClient = createAdminClient();
-    const { error: uploadError } = await adminClient.storage
-      .from('documents')
-      .upload(storagePath, arrayBuffer, { contentType: file.type, upsert: false });
+    
+    console.log(`[ArretMaladie] Tentative d'upload: bucket=rh-documents, path=${storagePath}, size=${file.size}`);
+    
+    const { data: uploadData, error: uploadError } = await adminClient.storage
+      .from('rh-documents')
+      .upload(storagePath, arrayBuffer, { 
+        contentType: file.type, 
+        upsert: true 
+      });
 
     if (uploadError) {
-      console.error('Storage upload error:', uploadError);
-      return NextResponse.json({ error: 'Erreur upload justificatif.' }, { status: 500 });
+      console.error('[ArretMaladie] Storage upload error:', uploadError);
+      return NextResponse.json({ 
+        error: 'Erreur lors du transfert du justificatif.', 
+        details: uploadError.message,
+        path: storagePath,
+        bucket: 'rh-documents'
+      }, { status: 500 });
     }
 
     const { data: urlData } = adminClient.storage
-      .from('documents')
+      .from('rh-documents')
       .getPublicUrl(storagePath);
 
     justificatif_url = urlData.publicUrl;
     est_justifie = true;
+
+    // Enregistrer aussi dans la GED (table documents)
+    await adminClient
+      .from('documents')
+      .insert({
+        company_id,
+        employee_id,
+        name: `Arrêt Maladie - ${date_debut} au ${date_fin}`,
+        famille: 'Médical',
+        file_url: justificatif_url,
+        file_type: file.type,
+        file_size_kb: Math.round(file.size / 1024)
+      });
   }
 
   const { data: conge, error: insertError } = await supabase
     .from('conges')
     .insert({
+      company_id, // Added missing company_id
       employee_id,
       date_debut,
       date_fin,
       nb_jours,
-      type: 'arret_maladie',
+      type: 'maladie',
       statut: 'en_attente',
       est_at,
       est_justifie,

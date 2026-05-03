@@ -29,9 +29,13 @@ import { Tooltip, TooltipProvider, TooltipContent, TooltipTrigger } from '@/comp
 import { Info, Loader2, Stethoscope, Calendar, FileText, AlertCircle, TrendingDown, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+
 interface Employee {
   id: string;
   full_name: string;
+  date_embauche?: string;
+  salaire_brut?: number;
+  sursalaire?: number;
 }
 
 interface ArretMaladieDialogProps {
@@ -130,8 +134,9 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
       const res = await fetch('/api/conges/arret', { method: 'POST', body: formData });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({})) as { error?: string };
-        toast.error(err?.error ?? 'Erreur lors de la déclaration.');
+        const err = await res.json().catch(() => ({})) as { error?: string; details?: string };
+        const msg = err?.details ? `${err.error} (${err.details})` : (err?.error ?? 'Erreur lors de la déclaration.');
+        toast.error(msg);
         return;
       }
 
@@ -251,12 +256,34 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                     <p className="text-xs text-destructive">{errors.date_fin.message}</p>
                   )}
                 </div>
-              </div>
+                </div>
 
               {/* Impact — conditionnel selon présence du justificatif */}
               <AnimatePresence mode="wait">
                 {nbJours > 0 && (
-                  selectedFile ? (
+                  watch('est_at') ? (
+                    <motion.div
+                      key="at-impact"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3"
+                    >
+                      <div className="p-2 bg-blue-100 rounded-lg shrink-0">
+                        <Stethoscope className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-blue-800">Accident de Travail (AT)</h4>
+                        <p className="text-xs text-blue-700 mt-0.5">
+                          En cas d&apos;accident professionnel, le maintien de salaire est de <span className="font-bold">100%</span> (sous réserve de déclaration à la CNPS). 
+                          L&apos;impact sur les conges est neutralisé pendant 12 mois.
+                        </p>
+                        <p className="text-[10px] text-blue-600 italic mt-1 font-medium">
+                          N&apos;oubliez pas de joindre la déclaration d&apos;AT CNPS.
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : selectedFile ? (
                     <motion.div
                       key="justifie"
                       initial={{ opacity: 0, height: 0 }}
@@ -267,13 +294,14 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       <div className="p-2 bg-emerald-100 rounded-lg shrink-0">
                         <CheckCircle className="h-4 w-4 text-emerald-600" />
                       </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-emerald-800">Absence justifiée</h4>
-                        <p className="text-xs text-emerald-700 mt-0.5">
-                          Avec justificatif médical, cette absence de{' '}
-                          <span className="font-bold">{nbJours} jour{nbJours > 1 ? 's' : ''}</span>{' '}
-                          est justifiée et <strong>n&apos;impacte pas le salaire</strong>.
-                          L&apos;ICCP et la prime de rendement ne seront pas affectés.
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-emerald-800">Absence justifiée (CCI Art. 42)</h4>
+                        <p className="text-xs text-emerald-700 mt-1">
+                          Certificat médical fourni — absence justifiée. Aucune retenue salariale ne sera appliquée pour ces{' '}
+                          <span className="font-bold">{nbJours} jour{nbJours > 1 ? 's' : ''}</span> (CCI Art. 42).
+                        </p>
+                        <p className="text-[10px] text-emerald-600 italic mt-1">
+                          Le maintien s&apos;applique sur le salaire de base + ancienneté, sous réserve des droits restants.
                         </p>
                       </div>
                     </motion.div>
@@ -289,13 +317,30 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                         <TrendingDown className="h-4 w-4 text-amber-600" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-amber-800">Impact estimé</h4>
+                        <h4 className="text-sm font-semibold text-amber-800">Absence non justifiée</h4>
                         <p className="text-xs text-amber-700 mt-0.5">
-                          Sans justificatif, cette absence de{' '}
+                          Sans certificat médical, l&apos;absence de{' '}
                           <span className="font-bold">{nbJours} jour{nbJours > 1 ? 's' : ''}</span>{' '}
-                          impactera le calcul de l&apos;indemnité compensatrice de congé et la prime de rendement.
-                          Ajoutez un justificatif médical pour neutraliser cet impact.
+                          sera déduite du salaire brut (retenue pour absence).
                         </p>
+                        {(() => {
+                          const emp = employees.find(e => e.id === watch('employee_id'));
+                          const base = (emp?.salaire_brut || 0) + (emp?.sursalaire || 0);
+                          if (base > 0) {
+                            const daily = base / 26;
+                            const impact = Math.round(nbJours * daily);
+                            return (
+                              <p className="text-[10px] text-amber-600 mt-1 font-medium italic">
+                                Impact estimé : -{new Intl.NumberFormat('fr-CI').format(impact)} FCFA.
+                              </p>
+                            );
+                          }
+                          return (
+                            <p className="text-[10px] text-amber-600 mt-1 font-medium italic">
+                              Impact estimé : -{new Intl.NumberFormat('fr-CI').format(Math.round(nbJours * 2500))} FCFA (indicatif).
+                            </p>
+                          );
+                        })()}
                       </div>
                     </motion.div>
                   )

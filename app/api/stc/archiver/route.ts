@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -151,12 +152,14 @@ export async function POST(req: Request) {
     const pdfOutput = doc.output("arraybuffer");
     const buffer = Buffer.from(pdfOutput);
 
+    const adminClient = createAdminClient();
+
     // Nom du fichier
     const fileName = `STC_${employee.full_name.replace(/\s+/g, "_")}_${new Date().getTime()}.pdf`;
     const filePath = `documents/${company.id}/${employee.id}/Paie/${fileName}`;
 
-    // Uploader sur Supabase Storage
-    const { error: uploadError } = await supabase.storage
+    // Uploader sur Supabase Storage avec l'admin client pour contourner RLS
+    const { error: uploadError } = await adminClient.storage
       .from("rh-documents")
       .upload(filePath, buffer, {
         contentType: "application/pdf",
@@ -165,18 +168,25 @@ export async function POST(req: Request) {
 
     if (uploadError) {
       console.error("Erreur upload Storage:", uploadError);
-      return NextResponse.json({ error: "Erreur lors de l'archivage du document" }, { status: 500 });
+      return NextResponse.json({ error: "Erreur lors de l'archivage du document", details: uploadError.message }, { status: 500 });
     }
 
+    // Obtenir l'URL publique
+    const { data: urlData } = adminClient.storage
+      .from("rh-documents")
+      .getPublicUrl(filePath);
+
+    const publicUrl = urlData.publicUrl;
+
     // Enregistrer dans la table GED (documents)
-    const { data: documentData, error: docDbError } = await supabase
+    const { data: documentData, error: docDbError } = await adminClient
       .from("documents")
       .insert({
         company_id: company.id,
         employee_id: employee.id,
         name: `Solde de Tout Compte - ${employee.full_name}`,
         famille: "Paie",
-        file_url: filePath,
+        file_url: publicUrl,
         file_type: "application/pdf",
         file_size_kb: Math.round(buffer.length / 1024)
       })
