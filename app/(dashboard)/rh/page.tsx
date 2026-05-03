@@ -286,6 +286,62 @@ export default async function RhPage() {
           </div>
         </section>
 
+        {/* ── SCORE CONFORMITÉ — DÉTAIL ── */}
+        {complianceScore < 100 && (
+          <section className="space-y-3">
+            <SectionDivider label="Détail conformité" />
+            <div className="rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.06)] p-5 space-y-2.5">
+              <p className="text-xs text-slate-500 dark:text-slate-400 pb-1">
+                Score{" "}
+                <span className="font-bold text-slate-800 dark:text-white">
+                  {Math.round(complianceScore)}/100
+                </span>{" "}
+                — résolvez les points ci-dessous pour améliorer votre conformité.
+              </p>
+              {missingDocsTotal > 0 && (
+                <PenaltyRow
+                  label="Documents obligatoires manquants"
+                  detail={`${missingDocsTotal} doc(s) manquant(s) sur ${totalExpectedDocs} attendus (CNI, Contrat, CV)`}
+                  points={Math.min(missingDocsTotal, 50)}
+                  href="/employes"
+                  linkLabel="Gérer les documents"
+                  severity="medium"
+                />
+              )}
+              {(cddExpirant ?? 0) > 0 && (
+                <PenaltyRow
+                  label="CDD arrivant à échéance"
+                  detail={`${cddExpirant} contrat(s) CDD expire(nt) dans moins de 30 jours`}
+                  points={(cddExpirant ?? 0) * 8}
+                  href="/employes"
+                  linkLabel="Voir les contrats"
+                  severity="high"
+                />
+              )}
+              {(essaiExpirant ?? 0) > 0 && (
+                <PenaltyRow
+                  label="Périodes d'essai à confirmer"
+                  detail={`${essaiExpirant} période(s) d'essai expire(nt) dans moins de 30 jours`}
+                  points={(essaiExpirant ?? 0) * 10}
+                  href="/employes"
+                  linkLabel="Voir les essais"
+                  severity="high"
+                />
+              )}
+              {(medicalAlertsCount ?? 0) > 0 && (
+                <PenaltyRow
+                  label="Visites médicales en retard"
+                  detail={`${medicalAlertsCount} visite(s) médicale(s) arrivant à échéance sous 30 jours`}
+                  points={(medicalAlertsCount ?? 0) * 5}
+                  href="/employes"
+                  linkLabel="Voir les alertes médicales"
+                  severity="medium"
+                />
+              )}
+            </div>
+          </section>
+        )}
+
         {/* ── CHARTS ── */}
         <section className="space-y-3">
           <SectionDivider label="Analyses" />
@@ -467,6 +523,46 @@ export default async function RhPage() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PenaltyRow({
+  label,
+  detail,
+  points,
+  href,
+  linkLabel,
+  severity,
+}: {
+  label: string;
+  detail: string;
+  points: number;
+  href: string;
+  linkLabel: string;
+  severity: "high" | "medium";
+}) {
+  const isHigh = severity === "high";
+  return (
+    <div className={`flex items-start justify-between gap-3 rounded-xl px-4 py-3 border ${isHigh ? "bg-red-50 dark:bg-red-900/15 border-red-100 dark:border-red-800/40" : "bg-amber-50 dark:bg-amber-900/15 border-amber-100 dark:border-amber-800/40"}`}>
+      <div className="flex items-start gap-3 min-w-0">
+        <div className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${isHigh ? "bg-red-500" : "bg-amber-500"}`} />
+        <div className="min-w-0">
+          <p className={`text-xs font-semibold ${isHigh ? "text-red-800 dark:text-red-300" : "text-amber-800 dark:text-amber-300"}`}>{label}</p>
+          <p className={`text-[11px] mt-0.5 ${isHigh ? "text-red-700 dark:text-red-400" : "text-amber-700 dark:text-amber-400"}`}>{detail}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 shrink-0">
+        <span className={`text-[11px] font-bold whitespace-nowrap ${isHigh ? "text-red-700 dark:text-red-400" : "text-amber-700 dark:text-amber-400"}`}>
+          -{points} pts
+        </span>
+        <Link
+          href={href}
+          className={`text-[10px] font-semibold underline underline-offset-2 whitespace-nowrap ${isHigh ? "text-red-700 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200" : "text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200"}`}
+        >
+          {linkLabel} →
+        </Link>
       </div>
     </div>
   );
