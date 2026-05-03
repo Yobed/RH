@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
@@ -116,7 +117,8 @@ export async function POST(req: NextRequest) {
     const storagePath = `${company_id}/${employee_id}/Medical/${timestamp}_${safeName}`;
 
     const arrayBuffer = await file.arrayBuffer();
-    const { error: uploadError } = await supabase.storage
+    const adminClient = createAdminClient();
+    const { error: uploadError } = await adminClient.storage
       .from('documents')
       .upload(storagePath, arrayBuffer, { contentType: file.type, upsert: false });
 
@@ -125,7 +127,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Erreur upload justificatif.' }, { status: 500 });
     }
 
-    const { data: urlData } = supabase.storage
+    const { data: urlData } = adminClient.storage
       .from('documents')
       .getPublicUrl(storagePath);
 
