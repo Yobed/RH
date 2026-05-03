@@ -16,15 +16,27 @@ const fcfa = (n: number) =>
 const pct = (part: number, total: number) =>
   total > 0 ? `${((part / total) * 100).toFixed(1)}%` : "0%";
 
-const delta = (after: number, before: number) => {
+function DeltaBadge({ after, before, invertColor = false }: { after: number; before: number; invertColor?: boolean }) {
   const diff = after - before;
-  const sign = diff >= 0 ? "+" : "";
-  return { label: `${sign}${fcfa(diff)}`, positive: diff >= 0, zero: diff === 0 };
-};
+  if (diff === 0) return <span className="text-xs text-slate-400 tabular-nums">—</span>;
+  const sign = diff > 0 ? "+" : "";
+  // invertColor = true pour les lignes déductions : hausse = mauvais (rouge)
+  const positive = invertColor ? diff < 0 : diff > 0;
+  return (
+    <span className={cn(
+      "inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums",
+      positive ? "text-emerald-600" : "text-red-500"
+    )}>
+      {positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+      {sign}{fcfa(diff)}
+    </span>
+  );
+}
 
 interface ResultRow {
   label: string;
   montant: number;
+  avantMontant?: number;
   detail?: string;
   variant?: "deduction" | "total" | "neutral";
 }
@@ -53,12 +65,11 @@ export function CalcEnversForm({ employees = [] }: Props) {
     [employees, selectedEmpId]
   );
 
-  // Situation actuelle de l'employé sélectionné
   const avant = useMemo(() => {
     if (!selectedEmp) return null;
     const bulletin = calculerBulletin(selectedEmp.salaire_brut);
     const pat = calculerChargesPatronales(selectedEmp.salaire_brut, tauxAtMp);
-    return { bulletin, cout: selectedEmp.salaire_brut + pat.total };
+    return { bulletin, patronales: pat, cout: selectedEmp.salaire_brut + pat.total };
   }, [selectedEmp, tauxAtMp]);
 
   const handleSelectEmp = useCallback((id: string) => {
@@ -81,39 +92,65 @@ export function CalcEnversForm({ employees = [] }: Props) {
     setComputed(result);
   }, [netSouhaite, autresRetenues, avances]);
 
-  const patronales = computed
-    ? calculerChargesPatronales(computed.brut, tauxAtMp)
-    : null;
-
-  const coutTotal = computed && patronales
-    ? computed.brut + patronales.total
-    : null;
+  const patronales = computed ? calculerChargesPatronales(computed.brut, tauxAtMp) : null;
+  const coutTotal = computed && patronales ? computed.brut + patronales.total : null;
+  const showComparison = !!avant && !!computed;
 
   const lignes: ResultRow[] = computed ? [
-    { label: "Salaire brut à fixer", montant: computed.brut, variant: "total" },
-    { label: "CNPS retraite salarié (6,30%)", montant: computed.details.cnps_retraite, variant: "deduction", detail: `Plafonné à 3 375 000 FCFA` },
-    { label: "CMU salarié", montant: computed.details.cmu_salarie, variant: "deduction", detail: "Forfait mensuel" },
-    { label: "ITS (barème progressif)", montant: computed.details.its, variant: "deduction", detail: `Base imposable : ${fcfa(computed.details.base_imposable)}` },
-    ...((Number(autresRetenues) || 0) > 0 ? [{ label: "Autres retenues", montant: Number(autresRetenues), variant: "deduction" as const }] : []),
-    ...((Number(avances) || 0) > 0 ? [{ label: "Avances / acomptes", montant: Number(avances), variant: "deduction" as const }] : []),
-    { label: "NET À PAYER", montant: computed.details.salaire_net, variant: "total" },
+    {
+      label: "Salaire brut à fixer",
+      montant: computed.brut,
+      avantMontant: avant?.bulletin.salaire_brut,
+      variant: "total",
+    },
+    {
+      label: "CNPS retraite salarié (6,30%)",
+      montant: computed.details.cnps_retraite,
+      avantMontant: avant?.bulletin.cnps_retraite,
+      variant: "deduction",
+      detail: "Plafonné à 3 375 000 FCFA",
+    },
+    {
+      label: "CMU salarié",
+      montant: computed.details.cmu_salarie,
+      avantMontant: avant?.bulletin.cmu_salarie,
+      variant: "deduction",
+      detail: "Forfait mensuel",
+    },
+    {
+      label: "ITS (barème progressif)",
+      montant: computed.details.its,
+      avantMontant: avant?.bulletin.its,
+      variant: "deduction",
+      detail: `Base imposable : ${fcfa(computed.details.base_imposable)}`,
+    },
+    ...((Number(autresRetenues) || 0) > 0
+      ? [{ label: "Autres retenues", montant: Number(autresRetenues), variant: "deduction" as const }]
+      : []),
+    ...((Number(avances) || 0) > 0
+      ? [{ label: "Avances / acomptes", montant: Number(avances), variant: "deduction" as const }]
+      : []),
+    {
+      label: "NET À PAYER",
+      montant: computed.details.salaire_net,
+      avantMontant: avant?.bulletin.salaire_net,
+      variant: "total",
+    },
   ] : [];
 
   const patronalesLignes: ResultRow[] = patronales ? [
-    { label: "Prestations familiales (5%)", montant: patronales.familiales },
-    { label: "Maternité (0,75%)", montant: patronales.maternite },
-    { label: "Retraite patronale (7,7%)", montant: patronales.retraite, detail: "Plafonné à 3 375 000 FCFA" },
-    { label: `AT/MP (${(tauxAtMp * 100).toFixed(1)}%)`, montant: patronales.at_mp, detail: "Variable selon secteur (2%–5%)" },
-    { label: "CMU patronale", montant: patronales.cmu },
-    { label: "FDFP (1,2%)", montant: patronales.fdfp },
-    { label: "Apprentissage (0,4%)", montant: patronales.apprentissage },
-    { label: "Total charges patronales", montant: patronales.total, variant: "total" },
+    { label: "Prestations familiales (5%)", montant: patronales.familiales, avantMontant: avant?.patronales.familiales },
+    { label: "Maternité (0,75%)", montant: patronales.maternite, avantMontant: avant?.patronales.maternite },
+    { label: "Retraite patronale (7,7%)", montant: patronales.retraite, avantMontant: avant?.patronales.retraite, detail: "Plafonné à 3 375 000 FCFA" },
+    { label: `AT/MP (${(tauxAtMp * 100).toFixed(1)}%)`, montant: patronales.at_mp, avantMontant: avant?.patronales.at_mp, detail: "Variable selon secteur (2%–5%)" },
+    { label: "CMU patronale", montant: patronales.cmu, avantMontant: avant?.patronales.cmu },
+    { label: "FDFP (1,2%)", montant: patronales.fdfp, avantMontant: avant?.patronales.fdfp },
+    { label: "Apprentissage (0,4%)", montant: patronales.apprentissage, avantMontant: avant?.patronales.apprentissage },
+    { label: "Total charges patronales", montant: patronales.total, avantMontant: avant?.patronales.total, variant: "total" },
   ] : [];
 
-  const showComparison = !!avant && !!computed && !!coutTotal;
-
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-4xl">
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 flex gap-3">
         <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
         <p className="text-sm text-amber-800">
@@ -127,7 +164,6 @@ export function CalcEnversForm({ employees = [] }: Props) {
           <ArrowLeft className="h-4 w-4" /> Paramètres
         </h3>
 
-        {/* Sélection employé (optionnel) */}
         {employees.length > 0 && (
           <label className="block">
             <span className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
@@ -236,64 +272,6 @@ export function CalcEnversForm({ employees = [] }: Props) {
         </div>
       </div>
 
-      {/* Comparaison Avant / Après */}
-      {showComparison && avant && computed && coutTotal && (
-        <div className="rounded-xl border border-indigo-200 bg-indigo-50 overflow-hidden">
-          <div className="px-5 py-3 border-b border-indigo-100">
-            <p className="text-sm font-semibold text-indigo-800">
-              Impact de l'augmentation — {selectedEmp?.full_name}
-            </p>
-          </div>
-          <div className="grid grid-cols-3 divide-x divide-indigo-100">
-            {[
-              {
-                label: "Brut",
-                avant: avant.bulletin.salaire_brut,
-                apres: computed.brut,
-              },
-              {
-                label: "Net garanti",
-                avant: avant.bulletin.salaire_net,
-                apres: computed.details.salaire_net,
-              },
-              {
-                label: "Coût employeur",
-                avant: avant.cout,
-                apres: coutTotal,
-              },
-            ].map(({ label, avant: av, apres: ap }) => {
-              const d = delta(ap, av);
-              return (
-                <div key={label} className="p-4 text-center">
-                  <p className="text-xs text-indigo-600 font-medium mb-2">{label}</p>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-center gap-1.5">
-                      <span className="text-xs text-slate-400">Avant</span>
-                      <span className="text-sm font-semibold text-slate-700">{fcfa(av)}</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-1.5">
-                      <span className="text-xs text-slate-400">Après</span>
-                      <span className="text-sm font-bold text-slate-900">{fcfa(ap)}</span>
-                    </div>
-                    <div className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold",
-                      d.zero ? "bg-slate-100 text-slate-500" :
-                      d.positive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
-                    )}>
-                      {!d.zero && (d.positive
-                        ? <TrendingUp className="h-3 w-3" />
-                        : <TrendingDown className="h-3 w-3" />
-                      )}
-                      {d.label}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
       {/* Résultats */}
       {computed && (
         <>
@@ -310,16 +288,45 @@ export function CalcEnversForm({ employees = [] }: Props) {
                 </div>
                 <p className="text-xs text-slate-500">{label}</p>
                 <p className="text-base font-bold text-slate-900 mt-0.5">{value}</p>
+                {showComparison && avant && (() => {
+                  const avMap: Record<string, number> = {
+                    "Brut à fixer": avant.bulletin.salaire_brut,
+                    "Net garanti": avant.bulletin.salaire_net,
+                    "Coût total employeur": avant.cout,
+                  };
+                  const av = avMap[label];
+                  const ap = label === "Brut à fixer" ? computed.brut
+                    : label === "Net garanti" ? computed.details.salaire_net
+                    : coutTotal ?? 0;
+                  return (
+                    <div className="mt-1">
+                      <DeltaBadge after={ap} before={av} invertColor={false} />
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>
 
           {/* Décomposition bulletin */}
           <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
               <p className="text-sm font-semibold text-slate-700">Décomposition du bulletin</p>
+              {showComparison && (
+                <span className="text-xs text-slate-400">{selectedEmp?.full_name}</span>
+              )}
             </div>
             <table className="w-full text-sm">
+              {showComparison && (
+                <thead>
+                  <tr className="border-b border-slate-100 text-xs text-slate-400 uppercase tracking-wide">
+                    <th className="px-5 py-2 text-left font-medium">Poste</th>
+                    <th className="px-5 py-2 text-right font-medium">Avant</th>
+                    <th className="px-5 py-2 text-right font-medium">Après</th>
+                    <th className="px-5 py-2 text-right font-medium">Impact</th>
+                  </tr>
+                </thead>
+              )}
               <tbody>
                 {lignes.map((row, i) => (
                   <tr key={i} className={cn("border-b border-slate-50 last:border-0", row.variant === "total" && "bg-slate-50 font-semibold")}>
@@ -327,12 +334,28 @@ export function CalcEnversForm({ employees = [] }: Props) {
                       {row.label}
                       {row.detail && <span className="ml-2 text-xs text-slate-400 font-normal">{row.detail}</span>}
                     </td>
-                    <td className={cn("px-5 py-2.5 text-right tabular-nums", row.variant === "deduction" && "text-red-600", row.variant === "total" && "text-slate-900")}>
-                      {row.variant === "deduction" ? `- ${fcfa(row.montant)}` : fcfa(row.montant)}
-                    </td>
-                    <td className="px-5 py-2.5 text-right tabular-nums text-slate-400 w-20">
-                      {row.variant !== "total" ? pct(row.montant, computed.brut) : ""}
-                    </td>
+                    {showComparison && row.avantMontant !== undefined ? (
+                      <>
+                        <td className="px-5 py-2.5 text-right tabular-nums text-slate-400">
+                          {row.variant === "deduction" ? `- ${fcfa(row.avantMontant)}` : fcfa(row.avantMontant)}
+                        </td>
+                        <td className={cn("px-5 py-2.5 text-right tabular-nums font-medium", row.variant === "deduction" && "text-red-600", row.variant === "total" && "text-slate-900")}>
+                          {row.variant === "deduction" ? `- ${fcfa(row.montant)}` : fcfa(row.montant)}
+                        </td>
+                        <td className="px-5 py-2.5 text-right">
+                          <DeltaBadge after={row.montant} before={row.avantMontant} invertColor={row.variant === "deduction"} />
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className={cn("px-5 py-2.5 text-right tabular-nums", row.variant === "deduction" && "text-red-600", row.variant === "total" && "text-slate-900")}>
+                          {row.variant === "deduction" ? `- ${fcfa(row.montant)}` : fcfa(row.montant)}
+                        </td>
+                        <td className="px-5 py-2.5 text-right tabular-nums text-slate-400 w-20">
+                          {row.variant !== "total" ? pct(row.montant, computed.brut) : ""}
+                        </td>
+                      </>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -346,6 +369,16 @@ export function CalcEnversForm({ employees = [] }: Props) {
                 <p className="text-sm font-semibold text-slate-700">Charges patronales</p>
               </div>
               <table className="w-full text-sm">
+                {showComparison && (
+                  <thead>
+                    <tr className="border-b border-slate-100 text-xs text-slate-400 uppercase tracking-wide">
+                      <th className="px-5 py-2 text-left font-medium">Poste</th>
+                      <th className="px-5 py-2 text-right font-medium">Avant</th>
+                      <th className="px-5 py-2 text-right font-medium">Après</th>
+                      <th className="px-5 py-2 text-right font-medium">Impact</th>
+                    </tr>
+                  </thead>
+                )}
                 <tbody>
                   {patronalesLignes.map((row, i) => (
                     <tr key={i} className={cn("border-b border-slate-50 last:border-0", row.variant === "total" && "bg-slate-50 font-semibold")}>
@@ -353,13 +386,33 @@ export function CalcEnversForm({ employees = [] }: Props) {
                         {row.label}
                         {row.detail && <span className="ml-2 text-xs text-slate-400 font-normal">{row.detail}</span>}
                       </td>
-                      <td className="px-5 py-2.5 text-right tabular-nums text-slate-700">{fcfa(row.montant)}</td>
+                      {showComparison && row.avantMontant !== undefined ? (
+                        <>
+                          <td className="px-5 py-2.5 text-right tabular-nums text-slate-400">{fcfa(row.avantMontant)}</td>
+                          <td className="px-5 py-2.5 text-right tabular-nums text-slate-700 font-medium">{fcfa(row.montant)}</td>
+                          <td className="px-5 py-2.5 text-right">
+                            <DeltaBadge after={row.montant} before={row.avantMontant} invertColor={true} />
+                          </td>
+                        </>
+                      ) : (
+                        <td className="px-5 py-2.5 text-right tabular-nums text-slate-700">{fcfa(row.montant)}</td>
+                      )}
                     </tr>
                   ))}
                   {coutTotal && (
                     <tr className="bg-slate-900">
                       <td className="px-5 py-3 text-white font-bold">COÛT TOTAL EMPLOYEUR</td>
-                      <td className="px-5 py-3 text-right tabular-nums text-white font-bold">{fcfa(coutTotal)}</td>
+                      {showComparison && avant ? (
+                        <>
+                          <td className="px-5 py-3 text-right tabular-nums text-slate-400">{fcfa(avant.cout)}</td>
+                          <td className="px-5 py-3 text-right tabular-nums text-white font-bold">{fcfa(coutTotal)}</td>
+                          <td className="px-5 py-3 text-right">
+                            <DeltaBadge after={coutTotal} before={avant.cout} invertColor={true} />
+                          </td>
+                        </>
+                      ) : (
+                        <td className="px-5 py-3 text-right tabular-nums text-white font-bold">{fcfa(coutTotal)}</td>
+                      )}
                     </tr>
                   )}
                 </tbody>
