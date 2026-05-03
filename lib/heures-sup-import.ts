@@ -172,7 +172,7 @@ export async function parseExcelHS(input: Buffer | ArrayBuffer): Promise<ParseRe
   const colIdx = (name: string) => headers.indexOf(name);
 
   sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-    if (rowNumber === 1) return; // skip header
+    if (rowNumber <= 2) return; // skip header and subtitle rows
 
     const get = (col: string) => {
       const idx = colIdx(col);
