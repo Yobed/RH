@@ -38,7 +38,7 @@ export const REQUIRED_COLUMNS_HS = [
   "h100",
 ] as const;
 
-export const MAX_ROWS = 500;
+export const MAX_ROWS = 1000;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
