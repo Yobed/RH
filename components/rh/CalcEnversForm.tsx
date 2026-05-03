@@ -165,7 +165,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
               min={0}
               step={1000}
               value={netSouhaite}
-              onChange={(e) => { setNetSouhaite(e.target.value); setComputed(null); }}
+              onChange={(e) => setNetSouhaite(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
@@ -209,13 +209,31 @@ export function CalcEnversForm({ employees = [] }: Props) {
           </label>
         </div>
 
-        <button
-          onClick={handleCalculer}
-          className="w-full rounded-lg bg-slate-900 text-white py-2.5 px-4 text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
-        >
-          <Calculator className="h-4 w-4" />
-          {selectedEmp ? "Simuler l'augmentation" : "Calculer le brut correspondant"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleCalculer}
+            className="flex-1 rounded-lg bg-slate-900 text-white py-2.5 px-4 text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+          >
+            <Calculator className="h-4 w-4" />
+            {computed
+              ? "Recalculer"
+              : selectedEmp ? "Simuler l'augmentation" : "Calculer le brut correspondant"}
+          </button>
+          {computed && (
+            <button
+              onClick={() => {
+                setComputed(null);
+                setNetSouhaite("250000");
+                setAutresRetenues("0");
+                setAvances("0");
+                setSelectedEmpId("");
+              }}
+              className="rounded-lg border border-slate-200 text-slate-600 py-2.5 px-4 text-sm font-medium hover:bg-slate-50 transition-colors whitespace-nowrap"
+            >
+              Réinitialiser
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Comparaison Avant / Après */}
