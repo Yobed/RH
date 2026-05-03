@@ -41,9 +41,9 @@ interface Props {
 }
 
 export function CalcEnversForm({ employees = [] }: Props) {
-  const [netSouhaite, setNetSouhaite] = useState(250_000);
-  const [autresRetenues, setAutresRetenues] = useState(0);
-  const [avances, setAvances] = useState(0);
+  const [netSouhaite, setNetSouhaite] = useState<string>("250000");
+  const [autresRetenues, setAutresRetenues] = useState<string>("0");
+  const [avances, setAvances] = useState<string>("0");
   const [tauxAtMp, setTauxAtMp] = useState<number>(CHARGES_PATRONALES_TAUX.at_mp);
   const [computed, setComputed] = useState<ReturnType<typeof calculerBrutDepuisNet> | null>(null);
   const [selectedEmpId, setSelectedEmpId] = useState<string>("");
@@ -67,14 +67,17 @@ export function CalcEnversForm({ employees = [] }: Props) {
     if (id) {
       const emp = employees.find((e) => e.id === id);
       if (emp) {
-        // Pré-remplir avec le net actuel de l'employé
-        setNetSouhaite(calculerBulletin(emp.salaire_brut).salaire_net);
+        setNetSouhaite(String(calculerBulletin(emp.salaire_brut).salaire_net));
       }
     }
   }, [employees]);
 
   const handleCalculer = useCallback(() => {
-    const result = calculerBrutDepuisNet(netSouhaite, autresRetenues, avances);
+    const result = calculerBrutDepuisNet(
+      Number(netSouhaite) || 0,
+      Number(autresRetenues) || 0,
+      Number(avances) || 0,
+    );
     setComputed(result);
   }, [netSouhaite, autresRetenues, avances]);
 
@@ -91,8 +94,8 @@ export function CalcEnversForm({ employees = [] }: Props) {
     { label: "CNPS retraite salarié (6,30%)", montant: computed.details.cnps_retraite, variant: "deduction", detail: `Plafonné à 3 375 000 FCFA` },
     { label: "CMU salarié", montant: computed.details.cmu_salarie, variant: "deduction", detail: "Forfait mensuel" },
     { label: "ITS (barème progressif)", montant: computed.details.its, variant: "deduction", detail: `Base imposable : ${fcfa(computed.details.base_imposable)}` },
-    ...(autresRetenues > 0 ? [{ label: "Autres retenues", montant: autresRetenues, variant: "deduction" as const }] : []),
-    ...(avances > 0 ? [{ label: "Avances / acomptes", montant: avances, variant: "deduction" as const }] : []),
+    ...((Number(autresRetenues) || 0) > 0 ? [{ label: "Autres retenues", montant: Number(autresRetenues), variant: "deduction" as const }] : []),
+    ...((Number(avances) || 0) > 0 ? [{ label: "Avances / acomptes", montant: Number(avances), variant: "deduction" as const }] : []),
     { label: "NET À PAYER", montant: computed.details.salaire_net, variant: "total" },
   ] : [];
 
@@ -162,7 +165,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
               min={0}
               step={1000}
               value={netSouhaite}
-              onChange={(e) => setNetSouhaite(Number(e.target.value))}
+              onChange={(e) => { setNetSouhaite(e.target.value); setComputed(null); }}
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
@@ -174,7 +177,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
               min={0}
               step={1000}
               value={autresRetenues}
-              onChange={(e) => setAutresRetenues(Number(e.target.value))}
+              onChange={(e) => setAutresRetenues(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
@@ -186,7 +189,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
               min={0}
               step={1000}
               value={avances}
-              onChange={(e) => setAvances(Number(e.target.value))}
+              onChange={(e) => setAvances(e.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </label>
