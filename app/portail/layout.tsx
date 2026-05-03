@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
-import { LayoutDashboard, FileText, CalendarDays, UserCircle, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, CalendarDays, UserCircle, PenLine } from "lucide-react";
 import { LogoutButton } from "./LogoutButton";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +31,7 @@ export default async function PortailLayout({ children }: { children: React.Reac
     { href: "/portail", label: "Tableau de bord", icon: LayoutDashboard },
     { href: "/portail/bulletins", label: "Mes bulletins", icon: FileText },
     { href: "/portail/conges", label: "Mes congés", icon: CalendarDays },
+    { href: "/portail/signatures", label: "Signatures", icon: PenLine },
     { href: "/portail/profil", label: "Mon profil", icon: UserCircle },
   ];
 

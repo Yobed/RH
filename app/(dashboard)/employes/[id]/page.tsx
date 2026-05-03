@@ -32,6 +32,7 @@ import Link from "next/link";
 import { formatAnciennete, calculerPrimeAnciennete } from "@/lib/paie-ci";
 import { calculerJoursAcquis, calculerSoldeConges } from "@/lib/conges-ci";
 import { EmployeeCostSheet } from "@/components/employees/EmployeeCostSheet";
+import { InviterPortailButton } from "@/components/rh/InviterPortailButton";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -191,6 +192,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             >
               Onboarding
             </Link>
+            <InviterPortailButton
+              employeeId={emp.id}
+              employeeName={emp.full_name}
+              employeeEmail={emp.email}
+            />
             <DocumentDropdown employee={emp} company={company} />
             <EmployeeDialog employee={emp} employees={allEmployees ?? []} />
           </div>
