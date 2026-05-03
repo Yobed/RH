@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import * as XLSX from "xlsx";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,11 @@ export async function POST(req: Request) {
       departement: String(row["departement"] ?? "").trim() || null,
       categorie: String(row["categorie"] ?? "").trim() || null,
       salaire_brut,
+      sursalaire: parseSalary(row["sursalaire"]),
+      prime_transport: parseSalary(row["prime_transport"]),
+      nb_enfants: row["nb_enfants"] ? parseInt(String(row["nb_enfants"]), 10) || 0 : 0,
+      nationalite: String(row["nationalite"] ?? "").trim() || null,
+      etat_civil: String(row["etat_civil"] ?? "").trim() || null,
       statut: String(row["statut"] ?? "actif").trim().toLowerCase() === "inactif" ? "inactif" : "actif",
       email: String(row["email"] ?? "").trim() || null,
       phone: String(row["telephone"] ?? row["phone"] ?? "").trim() || null,
@@ -147,6 +153,21 @@ export async function POST(req: Request) {
         console.error("[import/employees] Error upserting contracts:", contractError);
       }
     }
+  }
+
+  try {
+    await logAuditEvent({
+      action: "upload",
+      entity_type: "employees",
+      details: {
+        imported: toUpsert.length,
+        skipped: errors.length,
+        filename: file.name,
+        errors: errors.length > 0 ? errors.slice(0, 5) : undefined,
+      },
+    });
+  } catch {
+    // L'audit ne doit jamais bloquer la réponse
   }
 
   return NextResponse.json({
