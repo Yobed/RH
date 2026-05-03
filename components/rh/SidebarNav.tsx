@@ -29,7 +29,9 @@ import {
   BellRinging,
   FilePdf,
   Bank,
-  Student
+  Student,
+  ShieldWarning,
+  Books
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -56,6 +58,8 @@ const navItems = [
   { href: "/formation", label: "Formation FDFP", icon: Student, exact: false },
   { href: "/contentieux", label: "Contentieux", icon: Scales, exact: false },
   { href: "/qhse", label: "QHSE & Risques", icon: FirstAid, exact: false },
+  { href: "/duerp", label: "DUERP", icon: ShieldWarning, exact: false },
+  { href: "/bilan-social", label: "Bilan social", icon: Books, exact: false },
   { href: "/reporting", label: "Reporting RH", icon: Presentation, exact: false },
   { href: "/messages", label: "Internal Comms", icon: ChatCircleText, exact: false },
   { href: "/notifications", label: "Flux Alerts", icon: Bell, exact: false },
