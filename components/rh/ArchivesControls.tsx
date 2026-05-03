@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
@@ -25,15 +25,7 @@ export function ArchivesControls({ employees, familles }: Props) {
   const [famille, setFamille] = useState(searchParams.get("famille") || "all");
   const [employeeId, setEmployeeId] = useState(searchParams.get("employeeId") || "all");
 
-  // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updateParams({ q: search });
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search]);
-
-  function updateParams(newParams: Record<string, string | null>) {
+  const updateParams = useCallback((newParams: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
     Object.entries(newParams).forEach(([key, value]) => {
       if (value === "all" || !value) {
@@ -43,7 +35,15 @@ export function ArchivesControls({ employees, familles }: Props) {
       }
     });
     router.push(`?${params.toString()}`);
-  }
+  }, [searchParams, router]);
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateParams({ q: search });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search, updateParams]);
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center">

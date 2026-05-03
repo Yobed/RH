@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { createClientSupabase } from "@/lib/supabase/client";
+import { OvertimeImportDialog } from "./OvertimeImportDialog";
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -261,15 +262,16 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
             </p>
           </div>
 
-          <Dialog open={isDialogOpen} onOpenChange={(v) => { setIsDialogOpen(v); if (!v) resetForm(); }}>
-            <DialogTrigger asChild>
-              <button
-                className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 w-full sm:w-auto"
-              >
-                <Plus className="h-4 w-4" />
-                Nouvelle saisie
-              </button>
-            </DialogTrigger>
+          <div className="flex flex-wrap items-center gap-2">
+            <Dialog open={isDialogOpen} onOpenChange={(v) => { setIsDialogOpen(v); if (!v) resetForm(); }}>
+              <DialogTrigger asChild>
+                <button
+                  className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4" />
+                  Nouvelle saisie
+                </button>
+              </DialogTrigger>
             <NewRecordDialog
               employees={employeeOptions}
               empSearch={empSearch}
@@ -289,8 +291,22 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
               loading={loading}
               onSubmit={handleAdd}
               onCancel={() => setIsDialogOpen(false)}
+              />
+            </Dialog>
+
+            <OvertimeImportDialog
+              onImported={async () => {
+                // Recharger les enregistrements depuis Supabase après import
+                const { data } = await supabase
+                  .from("overtime_records")
+                  .select("*, employee:employees(full_name, matricule)")
+                  .eq("company_id", companyId)
+                  .order("date", { ascending: false })
+                  .limit(500);
+                if (data) setRecords(data as OvertimeRecord[]);
+              }}
             />
-          </Dialog>
+          </div>
         </div>
 
         {/* Filtres */}

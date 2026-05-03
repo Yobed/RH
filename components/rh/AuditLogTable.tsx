@@ -27,24 +27,24 @@ export function AuditLogTable() {
   const limit = 20;
 
   useEffect(() => {
-    fetchLogs();
-  }, [offset]);
-
-  const fetchLogs = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/audit?limit=${limit}&offset=${offset}`);
-      const data = await res.json();
-      if (data.data) {
-        setLogs(data.data);
-        setCount(data.count);
+    const fetchLogs = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/audit?limit=${limit}&offset=${offset}`);
+        const data = await res.json();
+        if (data.data) {
+          setLogs(data.data);
+          setCount(data.count);
+        }
+      } catch (error) {
+        console.error("Failed to fetch logs", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch logs", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchLogs();
+  }, [offset, limit]);
 
   const getActionBadge = (action: string) => {
     const colors: Record<string, string> = {

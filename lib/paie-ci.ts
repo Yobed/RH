@@ -264,11 +264,12 @@ export const MAJORATIONS_HEURES_SUP = {
   // Samedi : non spécifié dans les textes — à vérifier avec convention collective
 } as const;
 
-export function calculerHeuresSup(nbH15: number, nbH50: number, nbH75: number, tauxHoraire: number): number {
+export function calculerHeuresSup(nbH15: number, nbH50: number, nbH75: number, nbH100: number, tauxHoraire: number): number {
   const h15 = nbH15 * tauxHoraire * 1.15;
   const h50 = nbH50 * tauxHoraire * 1.50;
   const h75 = nbH75 * tauxHoraire * 1.75;
-  return Math.round(h15 + h50 + h75);
+  const h100 = nbH100 * tauxHoraire * 2.0;
+  return Math.round(h15 + h50 + h75 + h100);
 }
 
 // ── Préavis CDI — Art. 34 Code du Travail ivoirien CI ───────────────────
@@ -315,6 +316,7 @@ export interface LignesBulletin {
     h15: number;
     h50: number;
     h75: number;
+    h100?: number;
   };
   // Heures à taux spéciaux — Décret n°96-203
   heures_nuit?: number;            // Heures de nuit (21h–5h) — majoration 75%
@@ -377,7 +379,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   const heures_normales = lignes.heures_normales ?? 173.33;
   const taux_horaire = lignes.taux_horaire ?? Math.round(((lignes.salaire_brut ?? 0) + (lignes.sursalaire ?? 0)) / heures_normales);
   const heures_sup_montant = lignes.heures_sup
-    ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, taux_horaire)
+    ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, lignes.heures_sup.h100 || 0, taux_horaire)
     : 0;
 
   // Heures spéciales : nuit, dimanche, fériés — toutes au taux 75% (Décret n°96-203)

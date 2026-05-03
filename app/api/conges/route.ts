@@ -55,7 +55,7 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase
     .from("conges")
-    .insert({ ...parsed.data, company_id: profile.company_id })
+    .insert({ ...parsed.data, company_id: profile.company_id, statut: "en_attente" })
     .select()
     .single();
 
