@@ -1,0 +1,214 @@
+"use client";
+
+import React, { useState, useCallback } from "react";
+import { calculerBrutDepuisNet, calculerChargesPatronales, CHARGES_PATRONALES_TAUX } from "@/lib/paie-ci";
+import { Calculator, ArrowLeft, Info, TrendingUp, Wallet } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const fcfa = (n: number) =>
+  new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(Math.round(n));
+
+const pct = (part: number, total: number) =>
+  total > 0 ? `${((part / total) * 100).toFixed(1)}%` : "0%";
+
+interface ResultRow {
+  label: string;
+  montant: number;
+  detail?: string;
+  variant?: "deduction" | "total" | "neutral";
+}
+
+export function CalcEnversForm() {
+  const [netSouhaite, setNetSouhaite] = useState(250_000);
+  const [autresRetenues, setAutresRetenues] = useState(0);
+  const [avances, setAvances] = useState(0);
+  const [tauxAtMp, setTauxAtMp] = useState<number>(CHARGES_PATRONALES_TAUX.at_mp);
+  const [computed, setComputed] = useState<ReturnType<typeof calculerBrutDepuisNet> | null>(null);
+
+  const handleCalculer = useCallback(() => {
+    const result = calculerBrutDepuisNet(netSouhaite, autresRetenues, avances);
+    setComputed(result);
+  }, [netSouhaite, autresRetenues, avances]);
+
+  const patronales = computed
+    ? calculerChargesPatronales(computed.brut, tauxAtMp)
+    : null;
+
+  const coutTotal = computed && patronales
+    ? computed.brut + patronales.total
+    : null;
+
+  const lignes: ResultRow[] = computed ? [
+    { label: "Salaire brut à fixer", montant: computed.brut, variant: "total" },
+    { label: "CNPS retraite salarié (6,30%)", montant: computed.details.cnps_retraite, variant: "deduction", detail: `Plafonné à 3 375 000 FCFA` },
+    { label: "CMU salarié", montant: computed.details.cmu_salarie, variant: "deduction", detail: "Forfait mensuel" },
+    { label: "ITS (barème progressif)", montant: computed.details.its, variant: "deduction", detail: `Base imposable : ${fcfa(computed.details.base_imposable)}` },
+    ...(autresRetenues > 0 ? [{ label: "Autres retenues", montant: autresRetenues, variant: "deduction" as const }] : []),
+    ...(avances > 0 ? [{ label: "Avances / acomptes", montant: avances, variant: "deduction" as const }] : []),
+    { label: "NET À PAYER", montant: computed.details.salaire_net, variant: "total" },
+  ] : [];
+
+  const patronalesLignes: ResultRow[] = patronales ? [
+    { label: "Prestations familiales (5%)", montant: patronales.familiales },
+    { label: "Maternité (0,75%)", montant: patronales.maternite },
+    { label: "Retraite patronale (7,7%)", montant: patronales.retraite, detail: "Plafonné à 3 375 000 FCFA" },
+    { label: `AT/MP (${(tauxAtMp * 100).toFixed(1)}%)`, montant: patronales.at_mp, detail: "Variable selon secteur (2%–5%)" },
+    { label: "CMU patronale", montant: patronales.cmu },
+    { label: "FDFP (1,2%)", montant: patronales.fdfp },
+    { label: "Apprentissage (0,4%)", montant: patronales.apprentissage },
+    { label: "Total charges patronales", montant: patronales.total, variant: "total" },
+  ] : [];
+
+  return (
+    <div className="space-y-6 max-w-3xl">
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 flex gap-3">
+        <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+        <p className="text-sm text-amber-800">
+          Saisissez le <strong>net souhaité</strong> et l'outil calcule le brut à fixer, les cotisations exactes et le coût total employeur — selon le droit ivoirien 2026.
+        </p>
+      </div>
+
+      {/* Formulaire */}
+      <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-5">
+        <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" /> Paramètres
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700">Net souhaité (FCFA) *</span>
+            <input
+              type="number"
+              min={0}
+              step={1000}
+              value={netSouhaite}
+              onChange={(e) => setNetSouhaite(Number(e.target.value))}
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700">Autres retenues (FCFA)</span>
+            <input
+              type="number"
+              min={0}
+              step={1000}
+              value={autresRetenues}
+              onChange={(e) => setAutresRetenues(Number(e.target.value))}
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700">Avances / acomptes (FCFA)</span>
+            <input
+              type="number"
+              min={0}
+              step={1000}
+              value={avances}
+              onChange={(e) => setAvances(Number(e.target.value))}
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700">Taux AT/MP (%)</span>
+            <input
+              type="number"
+              min={2}
+              max={5}
+              step={0.1}
+              value={Math.round(tauxAtMp * 1000) / 10}
+              onChange={(e) => setTauxAtMp(Number(e.target.value) / 100)}
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+            />
+            <p className="text-xs text-slate-400 mt-1">Variable selon secteur (2%–5%)</p>
+          </label>
+        </div>
+
+        <button
+          onClick={handleCalculer}
+          className="w-full rounded-lg bg-slate-900 text-white py-2.5 px-4 text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+        >
+          <Calculator className="h-4 w-4" />
+          Calculer le brut correspondant
+        </button>
+      </div>
+
+      {/* Résultats */}
+      {computed && (
+        <>
+          {/* KPI rapides */}
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: "Brut à fixer", value: fcfa(computed.brut), icon: TrendingUp, color: "text-blue-600 bg-blue-50" },
+              { label: "Net garanti", value: fcfa(computed.details.salaire_net), icon: Wallet, color: "text-emerald-600 bg-emerald-50" },
+              { label: "Coût total employeur", value: coutTotal ? fcfa(coutTotal) : "—", icon: Calculator, color: "text-orange-600 bg-orange-50" },
+            ].map(({ label, value, icon: Icon, color }) => (
+              <div key={label} className="rounded-xl border border-slate-200 bg-white p-4 text-center">
+                <div className={cn("inline-flex items-center justify-center rounded-lg p-2 mb-2", color)}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <p className="text-xs text-slate-500">{label}</p>
+                <p className="text-base font-bold text-slate-900 mt-0.5">{value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Décomposition bulletin */}
+          <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+              <p className="text-sm font-semibold text-slate-700">Décomposition du bulletin</p>
+            </div>
+            <table className="w-full text-sm">
+              <tbody>
+                {lignes.map((row, i) => (
+                  <tr key={i} className={cn("border-b border-slate-50 last:border-0", row.variant === "total" && "bg-slate-50 font-semibold")}>
+                    <td className="px-5 py-2.5 text-slate-700">
+                      {row.label}
+                      {row.detail && <span className="ml-2 text-xs text-slate-400 font-normal">{row.detail}</span>}
+                    </td>
+                    <td className={cn("px-5 py-2.5 text-right tabular-nums", row.variant === "deduction" && "text-red-600", row.variant === "total" && "text-slate-900")}>
+                      {row.variant === "deduction" ? `- ${fcfa(row.montant)}` : fcfa(row.montant)}
+                    </td>
+                    <td className="px-5 py-2.5 text-right tabular-nums text-slate-400 w-20">
+                      {row.variant !== "total" ? pct(row.montant, computed.brut) : ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Charges patronales */}
+          {patronales && (
+            <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+              <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+                <p className="text-sm font-semibold text-slate-700">Charges patronales</p>
+              </div>
+              <table className="w-full text-sm">
+                <tbody>
+                  {patronalesLignes.map((row, i) => (
+                    <tr key={i} className={cn("border-b border-slate-50 last:border-0", row.variant === "total" && "bg-slate-50 font-semibold")}>
+                      <td className="px-5 py-2.5 text-slate-700">
+                        {row.label}
+                        {row.detail && <span className="ml-2 text-xs text-slate-400 font-normal">{row.detail}</span>}
+                      </td>
+                      <td className="px-5 py-2.5 text-right tabular-nums text-slate-700">{fcfa(row.montant)}</td>
+                    </tr>
+                  ))}
+                  {coutTotal && (
+                    <tr className="bg-slate-900">
+                      <td className="px-5 py-3 text-white font-bold">COÛT TOTAL EMPLOYEUR</td>
+                      <td className="px-5 py-3 text-right tabular-nums text-white font-bold">{fcfa(coutTotal)}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

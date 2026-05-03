@@ -1,13 +1,16 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(
-  _req: Request,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const rl = checkRateLimit(_req, { limit: 5, windowMs: 60_000, key: "invite-portail" });
+  if (!rl.success) return rateLimitResponse(rl.resetAt);
   const supabase = createServerClient();
 
   // Vérification session admin

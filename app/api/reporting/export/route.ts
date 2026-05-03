@@ -1,122 +1,150 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import * as XLSX from "xlsx";
 
 export const dynamic = 'force-dynamic';
 
-function escapeCSV(val: unknown): string {
-  if (val === null || val === undefined) return "";
-  const s = String(val);
-  if (s.includes(",") || s.includes('"') || s.includes("\n")) {
-    return `"${s.replace(/"/g, '""')}"`;
+function toRows(data: Record<string, unknown>[], headers: string[]): unknown[][] {
+  const rows: unknown[][] = [headers];
+  for (const row of data) {
+    rows.push(headers.map((h) => row[h] ?? ""));
   }
-  return s;
+  return rows;
 }
 
-function toCSV(rows: Record<string, unknown>[], headers: string[]): string {
-  if (rows.length === 0) return headers.join(",");
-  const lines = [headers.join(",")];
-  for (const row of rows) {
-    lines.push(headers.map((h) => escapeCSV(row[h])).join(","));
-  }
-  return lines.join("\n");
-}
-
-export async function GET() {
+export async function GET(req: Request) {
   const supabase = createServerClient();
-
+  const { searchParams } = new URL(req.url);
+  const format = searchParams.get("format") ?? "xlsx"; // xlsx | csv
   const currentYear = new Date().getFullYear();
   const yearStart = `${currentYear}-01-01`;
 
   const [bulletinsRes, congesRes, employeesRes, evaluationsRes] = await Promise.all([
     supabase
       .from("bulletins_paie")
-      .select("periode, salaire_brut, salaire_net, cnps_salarie, its, prime_transport, avances, autres_retenues")
+      .select("periode, salaire_brut, salaire_net, cnps_salarie, its, prime_transport, avances, autres_retenues, overtime_pay")
       .gte("periode", `${currentYear - 1}-01`)
       .order("periode"),
     supabase
       .from("conges")
-      .select("type, nb_jours, statut, date_debut")
+      .select("type, nb_jours, statut, date_debut, employees(full_name)")
       .gte("date_debut", yearStart),
     supabase
       .from("employees")
-      .select("full_name, poste, date_embauche, statut, salaire_base, categorie_emploi"),
+      .select("full_name, matricule, poste, departement, date_embauche, statut, salaire_base, categorie_emploi, genre, type_contrat"),
     supabase
       .from("evaluations")
-      .select("score_global, date_evaluation, type_evaluation")
+      .select("score_global, date_evaluation, type_evaluation, employees(full_name)")
       .gte("date_evaluation", yearStart),
   ]);
 
-  // Sheet 1: Masse salariale mensuelle
-  const masseSalariale: Record<string, unknown>[] = [];
-  const byPeriod = new Map<string, { brut: number; net: number; cnps: number; its: number }>();
+  // Feuille 1 — Masse salariale mensuelle
+  const byPeriod = new Map<string, { brut: number; net: number; cnps: number; its: number; hSup: number; avances: number }>();
   for (const b of bulletinsRes.data ?? []) {
-    const existing = byPeriod.get(b.periode) ?? { brut: 0, net: 0, cnps: 0, its: 0 };
+    const cur = byPeriod.get(b.periode) ?? { brut: 0, net: 0, cnps: 0, its: 0, hSup: 0, avances: 0 };
     byPeriod.set(b.periode, {
-      brut: existing.brut + b.salaire_brut,
-      net: existing.net + b.salaire_net,
-      cnps: existing.cnps + b.cnps_salarie,
-      its: existing.its + b.its,
+      brut: cur.brut + b.salaire_brut,
+      net: cur.net + b.salaire_net,
+      cnps: cur.cnps + b.cnps_salarie,
+      its: cur.its + b.its,
+      hSup: cur.hSup + (b.overtime_pay ?? 0),
+      avances: cur.avances + (b.avances ?? 0),
     });
   }
-  Array.from(byPeriod.entries()).forEach(([periode, vals]) => {
-    masseSalariale.push({
-      Période: periode,
-      "Masse brute (FCFA)": vals.brut,
-      "Masse nette (FCFA)": vals.net,
-      "CNPS salarié (FCFA)": vals.cnps,
-      "ITS (FCFA)": vals.its,
-      "Charges totales (FCFA)": vals.brut - vals.net,
-    });
+  const masseSalariale = Array.from(byPeriod.entries()).map(([periode, v]) => ({
+    "Période": periode,
+    "Masse brute (FCFA)": v.brut,
+    "Masse nette (FCFA)": v.net,
+    "CNPS salarié (FCFA)": v.cnps,
+    "ITS (FCFA)": v.its,
+    "Heures sup (FCFA)": v.hSup,
+    "Avances (FCFA)": v.avances,
+    "Charges totales (FCFA)": v.brut - v.net,
+  }));
+
+  // Feuille 2 — Congés
+  const congesRows = (congesRes.data ?? []).map((c: Record<string, unknown>) => {
+    const emp = c.employees as Record<string, unknown> | null;
+    return {
+      "Employé": emp?.full_name ?? "",
+      "Type de congé": c.type,
+      "Jours demandés": c.nb_jours,
+      "Statut": c.statut,
+      "Date début": c.date_debut,
+    };
   });
 
-  // Sheet 2: Congés par type
-  const congesRows = (congesRes.data ?? []).map((c) => ({
-    Type: c.type,
-    "Jours demandés": c.nb_jours,
-    Statut: c.statut,
-    "Date début": c.date_debut,
-  }));
-
-  // Sheet 3: Effectif
+  // Feuille 3 — Effectif
   const effectifRows = (employeesRes.data ?? []).map((e) => ({
-    Nom: e.full_name,
-    Poste: e.poste,
+    "Matricule": e.matricule ?? "",
+    "Nom complet": e.full_name,
+    "Genre": e.genre ?? "",
+    "Poste": e.poste,
+    "Département": e.departement ?? "",
+    "Type contrat": e.type_contrat ?? "",
     "Date embauche": e.date_embauche ?? "",
-    Statut: e.statut,
-    "Salaire base (FCFA)": e.salaire_base,
-    Catégorie: e.categorie_emploi ?? "",
+    "Statut": e.statut,
+    "Salaire base (FCFA)": e.salaire_base ?? "",
+    "Catégorie emploi": e.categorie_emploi ?? "",
   }));
 
-  // Sheet 4: Évaluations
-  const evalRows = (evaluationsRes.data ?? []).map((e) => ({
-    "Score global": e.score_global,
-    "Date évaluation": e.date_evaluation,
-    Type: e.type_evaluation,
-  }));
+  // Feuille 4 — Évaluations
+  const evalRows = (evaluationsRes.data ?? []).map((e: Record<string, unknown>) => {
+    const emp = e.employees as Record<string, unknown> | null;
+    return {
+      "Employé": emp?.full_name ?? "",
+      "Score global": e.score_global,
+      "Date évaluation": e.date_evaluation,
+      "Type": e.type_evaluation,
+    };
+  });
 
-  const masseCols = ["Période", "Masse brute (FCFA)", "Masse nette (FCFA)", "CNPS salarié (FCFA)", "ITS (FCFA)", "Charges totales (FCFA)"];
-  const congesCols = ["Type", "Jours demandés", "Statut", "Date début"];
-  const effectifCols = ["Nom", "Poste", "Date embauche", "Statut", "Salaire base (FCFA)", "Catégorie"];
-  const evalCols = ["Score global", "Date évaluation", "Type"];
+  if (format === "csv") {
+    // Fallback CSV (feuille masse salariale seulement)
+    const headers = Object.keys(masseSalariale[0] ?? {});
+    const lines = [headers.join(",")];
+    for (const row of masseSalariale) {
+      lines.push(headers.map((h) => {
+        const v = String((row as Record<string, unknown>)[h] ?? "");
+        return v.includes(",") ? `"${v}"` : v;
+      }).join(","));
+    }
+    const csv = "﻿" + lines.join("\n");
+    return new NextResponse(csv, {
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="reporting-rh-${currentYear}.csv"`,
+      },
+    });
+  }
 
-  const csv = "\uFEFF" + [
-    `=== MASSE SALARIALE MENSUELLE (${currentYear - 1} → ${currentYear}) ===`,
-    toCSV(masseSalariale, masseCols),
-    "",
-    `=== CONGÉS ${currentYear} ===`,
-    toCSV(congesRows, congesCols),
-    "",
-    "=== EFFECTIF ===",
-    toCSV(effectifRows, effectifCols),
-    "",
-    `=== ÉVALUATIONS ${currentYear} ===`,
-    toCSV(evalRows, evalCols),
-  ].join("\n");
+  // XLSX multi-feuilles
+  const wb = XLSX.utils.book_new();
 
-  return new NextResponse(csv, {
+  const sheetMasse = XLSX.utils.aoa_to_sheet(
+    toRows(masseSalariale as Record<string, unknown>[], Object.keys(masseSalariale[0] ?? {}))
+  );
+  const sheetConges = XLSX.utils.aoa_to_sheet(
+    toRows(congesRows as Record<string, unknown>[], ["Employé", "Type de congé", "Jours demandés", "Statut", "Date début"])
+  );
+  const sheetEffectif = XLSX.utils.aoa_to_sheet(
+    toRows(effectifRows as Record<string, unknown>[], ["Matricule", "Nom complet", "Genre", "Poste", "Département", "Type contrat", "Date embauche", "Statut", "Salaire base (FCFA)", "Catégorie emploi"])
+  );
+  const sheetEval = XLSX.utils.aoa_to_sheet(
+    toRows(evalRows as Record<string, unknown>[], ["Employé", "Score global", "Date évaluation", "Type"])
+  );
+
+  XLSX.utils.book_append_sheet(wb, sheetMasse, "Masse salariale");
+  XLSX.utils.book_append_sheet(wb, sheetConges, "Congés");
+  XLSX.utils.book_append_sheet(wb, sheetEffectif, "Effectif");
+  XLSX.utils.book_append_sheet(wb, sheetEval, "Évaluations");
+
+  const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+
+  return new NextResponse(buf, {
     headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="reporting-rh-${currentYear}.csv"`,
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": `attachment; filename="reporting-rh-${currentYear}.xlsx"`,
     },
   });
 }

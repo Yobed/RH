@@ -1,8 +1,9 @@
 import { createServerClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import { calculerBulletinComplet } from "@/lib/paie-ci";
 import { logAuditEvent } from "@/lib/audit";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +26,9 @@ const schema = z.object({
   heures_sup_h15: z.number().min(0).default(0),
   heures_sup_h50: z.number().min(0).default(0),
   heures_sup_h75: z.number().min(0).default(0),
+  heures_nuit: z.number().min(0).default(0),       // Heures de nuit (21h–5h) — majoration 75%
+  heures_dimanche: z.number().min(0).default(0),   // Heures dimanche — majoration 75%
+  heures_ferie: z.number().min(0).default(0),      // Heures jours fériés — majoration 75%
   autres_retenues: z.number().min(0).default(0),
   avances: z.number().min(0).default(0),
   nb_jours_absence: z.number().min(0).max(31).default(0),
@@ -42,7 +46,10 @@ export async function GET() {
   return NextResponse.json(data);
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const rl = checkRateLimit(req, { limit: 20, windowMs: 60_000, key: "bulletin-post" });
+  if (!rl.success) return rateLimitResponse(rl.resetAt);
+
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
@@ -82,6 +89,9 @@ export async function POST(req: Request) {
       h50: d.heures_sup_h50,
       h75: d.heures_sup_h75,
     },
+    heures_nuit: d.heures_nuit,
+    heures_dimanche: d.heures_dimanche,
+    heures_ferie: d.heures_ferie,
     autres_retenues: d.autres_retenues,
     avances: d.avances,
     nb_jours_absence: d.nb_jours_absence,
@@ -131,7 +141,10 @@ export async function POST(req: Request) {
         heures_sup: {
           h15: d.heures_sup_h15,
           h50: d.heures_sup_h50,
-          h75: d.heures_sup_h75
+          h75: d.heures_sup_h75,
+          nuit: d.heures_nuit,
+          dimanche: d.heures_dimanche,
+          ferie: d.heures_ferie,
         },
         heures_sup_montant: calc.heures_sup_montant,
         nb_jours_absence: d.nb_jours_absence,

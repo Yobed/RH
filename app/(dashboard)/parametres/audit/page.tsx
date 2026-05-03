@@ -1,5 +1,5 @@
 import { AuditLogTable } from "@/components/rh/AuditLogTable";
-import { Breadcrumbs } from "@/components/rh/Breadcrumbs";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 export const metadata = { title: "Journal d'audit — RH Manager CI" };
 

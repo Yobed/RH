@@ -6,7 +6,7 @@ import { CaretUp, CaretDown, CaretLeft, CaretRight } from "@phosphor-icons/react
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
-import { CalendarDays as CalendarIcon } from "@phosphor-icons/react";
+import { Calendar as CalendarIcon } from "@phosphor-icons/react";
 
 const TYPE_LABELS: Record<string, string> = {
   annuel: "Congé annuel",

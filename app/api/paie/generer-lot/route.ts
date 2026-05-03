@@ -1,5 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { z } from "zod";
 import {
   calculerBulletinComplet,
@@ -7,6 +7,7 @@ import {
   calculerProvision13e,
 } from "@/lib/paie-ci";
 import { logAuditEvent } from "@/lib/audit";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +40,10 @@ interface LineSummary {
   warnings: string[];
 }
 
-export async function POST(req: Request): Promise<NextResponse> {
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const rl = checkRateLimit(req, { limit: 3, windowMs: 60_000, key: "generer-lot" });
+  if (!rl.success) return rateLimitResponse(rl.resetAt);
+
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });

@@ -193,7 +193,7 @@ export async function POST(req: Request) {
     await logAuditEvent({
       entity_type: "stc",
       entity_id: employee.id,
-      action: "CREATE",
+      action: "create",
       details: {
         employee_name: employee.full_name,
         total_brut: resultat.total_brut_stc,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -213,9 +213,10 @@ function cleanPayload(data: FormData): Record<string, unknown> {
 interface Props {
   employee?: EmployeeWithPrimes;
   employees?: { id: string; full_name: string }[];
+  trigger?: React.ReactNode;
 }
 
-export function EmployeeDialog({ employee, employees = [] }: Props) {
+export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
   const [open, setOpen] = useState(false);
   const [suggestedMatricule, setSuggestedMatricule] = useState<string>("");
   const router = useRouter();
@@ -286,24 +287,36 @@ export function EmployeeDialog({ employee, employees = [] }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          employee ? (
-            <Button variant="ghost" size="sm" aria-label="Modifier" />
+      {trigger ? (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => setOpen(true)}
+          onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
+          className="contents"
+        >
+          {trigger}
+        </div>
+      ) : (
+        <DialogTrigger
+          render={
+            employee ? (
+              <Button variant="ghost" size="sm" aria-label="Modifier" />
+            ) : (
+              <Button />
+            )
+          }
+        >
+          {employee ? (
+            <PencilSimple className="h-4 w-4" weight="bold" />
           ) : (
-            <Button />
-          )
-        }
-      >
-        {employee ? (
-          <PencilSimple className="h-4 w-4" weight="bold" />
-        ) : (
-          <>
-            <Plus className="mr-2 h-4 w-4" weight="bold" />
-            Ajouter un collaborateur
-          </>
-        )}
-      </DialogTrigger>
+            <>
+              <Plus className="mr-2 h-4 w-4" weight="bold" />
+              Ajouter un collaborateur
+            </>
+          )}
+        </DialogTrigger>
+      )}
 
       <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
         <DialogHeader>

@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     await logAuditEvent({
       entity_type: "medical_exam",
       entity_id: data.id,
-      action: "CREATE",
+      action: "create",
       details: {
         employee_id: validatedData.employee_id,
         type_examen: validatedData.type_examen,

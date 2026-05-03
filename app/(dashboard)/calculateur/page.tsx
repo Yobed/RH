@@ -1,4 +1,5 @@
 ﻿import { CalculateurRH } from "@/components/rh/CalculateurRH";
+import { CalcEnversForm } from "@/components/rh/CalcEnversForm";
 import { SimulatorCockpit } from "@/components/rh/SimulatorCockpit";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,6 +48,12 @@ export default async function CalculateurPage() {
           >
             Outils Rapides
           </TabsTrigger>
+          <TabsTrigger
+            value="envers"
+            className="rounded-lg px-4 py-2 text-sm font-medium transition-colors data-[state=active]:bg-[oklch(0.175_0.04_248)] data-[state=active]:text-[oklch(0.78_0.13_73)] data-[state=inactive]:text-slate-600 data-[state=inactive]:hover:text-slate-700"
+          >
+            Calcul Net → Brut
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="cockpit" className="mt-0 outline-none">
@@ -59,6 +66,10 @@ export default async function CalculateurPage() {
 
         <TabsContent value="tools" className="mt-0 outline-none max-w-3xl">
           <CalculateurRH />
+        </TabsContent>
+
+        <TabsContent value="envers" className="mt-0 outline-none">
+          <CalcEnversForm />
         </TabsContent>
       </Tabs>
     </div>

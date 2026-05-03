@@ -163,7 +163,8 @@
       "Bash(Select-Object Name, FullName)",
       "Bash(Format-Table)",
       "PowerShell(head -50)",
-      "Bash(xargs wc *)"
+      "Bash(xargs wc *)",
+      "Bash(Start-Sleep -Seconds 15)"
     ],
     "additionalDirectories": [
       "c:\\Users\\WILFRIED\\OneDrive - Gravel Ivoire\\Bureau\\Ressource Humaine\\app\\api\\qhse\\accidents",
