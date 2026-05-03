@@ -149,7 +149,8 @@ export async function parseExcelHS(input: Buffer | ArrayBuffer): Promise<ParseRe
   const headerRow = sheet.getRow(1);
   const headers: string[] = [];
   headerRow.eachCell({ includeEmpty: false }, (cell) => {
-    headers.push(cleanStr(cell.value).toLowerCase().replace(/\s+/g, "_"));
+    const rawVal = cleanStr(cell.value).toLowerCase().replace(/\*/g, "");
+    headers.push(rawVal.trim().replace(/\s+/g, "_"));
   });
 
   // Vérifier colonnes obligatoires
