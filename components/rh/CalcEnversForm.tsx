@@ -1,8 +1,13 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { calculerBrutDepuisNet, calculerChargesPatronales, CHARGES_PATRONALES_TAUX } from "@/lib/paie-ci";
-import { Calculator, ArrowLeft, Info, TrendingUp, Wallet } from "lucide-react";
+import React, { useState, useCallback, useMemo } from "react";
+import {
+  calculerBrutDepuisNet,
+  calculerBulletin,
+  calculerChargesPatronales,
+  CHARGES_PATRONALES_TAUX,
+} from "@/lib/paie-ci";
+import { Calculator, ArrowLeft, Info, TrendingUp, Wallet, User, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const fcfa = (n: number) =>
@@ -11,6 +16,12 @@ const fcfa = (n: number) =>
 const pct = (part: number, total: number) =>
   total > 0 ? `${((part / total) * 100).toFixed(1)}%` : "0%";
 
+const delta = (after: number, before: number) => {
+  const diff = after - before;
+  const sign = diff >= 0 ? "+" : "";
+  return { label: `${sign}${fcfa(diff)}`, positive: diff >= 0, zero: diff === 0 };
+};
+
 interface ResultRow {
   label: string;
   montant: number;
@@ -18,12 +29,49 @@ interface ResultRow {
   variant?: "deduction" | "total" | "neutral";
 }
 
-export function CalcEnversForm() {
+export interface EmpRow {
+  id: string;
+  full_name: string;
+  matricule?: string | null;
+  salaire_brut: number;
+}
+
+interface Props {
+  employees?: EmpRow[];
+}
+
+export function CalcEnversForm({ employees = [] }: Props) {
   const [netSouhaite, setNetSouhaite] = useState(250_000);
   const [autresRetenues, setAutresRetenues] = useState(0);
   const [avances, setAvances] = useState(0);
   const [tauxAtMp, setTauxAtMp] = useState<number>(CHARGES_PATRONALES_TAUX.at_mp);
   const [computed, setComputed] = useState<ReturnType<typeof calculerBrutDepuisNet> | null>(null);
+  const [selectedEmpId, setSelectedEmpId] = useState<string>("");
+
+  const selectedEmp = useMemo(
+    () => employees.find((e) => e.id === selectedEmpId) ?? null,
+    [employees, selectedEmpId]
+  );
+
+  // Situation actuelle de l'employé sélectionné
+  const avant = useMemo(() => {
+    if (!selectedEmp) return null;
+    const bulletin = calculerBulletin(selectedEmp.salaire_brut);
+    const pat = calculerChargesPatronales(selectedEmp.salaire_brut, tauxAtMp);
+    return { bulletin, cout: selectedEmp.salaire_brut + pat.total };
+  }, [selectedEmp, tauxAtMp]);
+
+  const handleSelectEmp = useCallback((id: string) => {
+    setSelectedEmpId(id);
+    setComputed(null);
+    if (id) {
+      const emp = employees.find((e) => e.id === id);
+      if (emp) {
+        // Pré-remplir avec le net actuel de l'employé
+        setNetSouhaite(calculerBulletin(emp.salaire_brut).salaire_net);
+      }
+    }
+  }, [employees]);
 
   const handleCalculer = useCallback(() => {
     const result = calculerBrutDepuisNet(netSouhaite, autresRetenues, avances);
@@ -59,6 +107,8 @@ export function CalcEnversForm() {
     { label: "Total charges patronales", montant: patronales.total, variant: "total" },
   ] : [];
 
+  const showComparison = !!avant && !!computed && !!coutTotal;
+
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 flex gap-3">
@@ -74,9 +124,39 @@ export function CalcEnversForm() {
           <ArrowLeft className="h-4 w-4" /> Paramètres
         </h3>
 
+        {/* Sélection employé (optionnel) */}
+        {employees.length > 0 && (
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
+              <User className="h-3.5 w-3.5" />
+              Simuler pour un employé existant
+              <span className="text-slate-400 font-normal">(optionnel)</span>
+            </span>
+            <select
+              value={selectedEmpId}
+              onChange={(e) => handleSelectEmp(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-white"
+            >
+              <option value="">— Simulation libre (sans employé) —</option>
+              {employees.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.full_name}{e.matricule ? ` — ${e.matricule}` : ""} ({fcfa(e.salaire_brut)} brut)
+                </option>
+              ))}
+            </select>
+            {selectedEmp && (
+              <p className="text-xs text-slate-400 mt-1">
+                Net actuel estimé : <strong>{fcfa(calculerBulletin(selectedEmp.salaire_brut).salaire_net)}</strong>
+              </p>
+            )}
+          </label>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block">
-            <span className="text-sm font-medium text-slate-700">Net souhaité (FCFA) *</span>
+            <span className="text-sm font-medium text-slate-700">
+              {selectedEmp ? "Net souhaité après augmentation (FCFA) *" : "Net souhaité (FCFA) *"}
+            </span>
             <input
               type="number"
               min={0}
@@ -131,9 +211,67 @@ export function CalcEnversForm() {
           className="w-full rounded-lg bg-slate-900 text-white py-2.5 px-4 text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
         >
           <Calculator className="h-4 w-4" />
-          Calculer le brut correspondant
+          {selectedEmp ? "Simuler l'augmentation" : "Calculer le brut correspondant"}
         </button>
       </div>
+
+      {/* Comparaison Avant / Après */}
+      {showComparison && avant && computed && coutTotal && (
+        <div className="rounded-xl border border-indigo-200 bg-indigo-50 overflow-hidden">
+          <div className="px-5 py-3 border-b border-indigo-100">
+            <p className="text-sm font-semibold text-indigo-800">
+              Impact de l'augmentation — {selectedEmp?.full_name}
+            </p>
+          </div>
+          <div className="grid grid-cols-3 divide-x divide-indigo-100">
+            {[
+              {
+                label: "Brut",
+                avant: avant.bulletin.salaire_brut,
+                apres: computed.brut,
+              },
+              {
+                label: "Net garanti",
+                avant: avant.bulletin.salaire_net,
+                apres: computed.details.salaire_net,
+              },
+              {
+                label: "Coût employeur",
+                avant: avant.cout,
+                apres: coutTotal,
+              },
+            ].map(({ label, avant: av, apres: ap }) => {
+              const d = delta(ap, av);
+              return (
+                <div key={label} className="p-4 text-center">
+                  <p className="text-xs text-indigo-600 font-medium mb-2">{label}</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <span className="text-xs text-slate-400">Avant</span>
+                      <span className="text-sm font-semibold text-slate-700">{fcfa(av)}</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <span className="text-xs text-slate-400">Après</span>
+                      <span className="text-sm font-bold text-slate-900">{fcfa(ap)}</span>
+                    </div>
+                    <div className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold",
+                      d.zero ? "bg-slate-100 text-slate-500" :
+                      d.positive ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                    )}>
+                      {!d.zero && (d.positive
+                        ? <TrendingUp className="h-3 w-3" />
+                        : <TrendingDown className="h-3 w-3" />
+                      )}
+                      {d.label}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Résultats */}
       {computed && (

@@ -83,7 +83,7 @@ export default async function CalculateurPage() {
             </p>
 
             {t.value === "net-vers-brut" && (
-              <CalcEnversForm />
+              <CalcEnversForm employees={employeeList} />
             )}
 
             {t.value === "depart" && (
