@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -13,11 +13,34 @@ import {
   Buildings,
   CurrencyCircleDollar,
   UserCircle,
-  CaretDown
+  CaretDown,
+  CaretUp,
+  CaretLeft,
+  CaretRight,
+  Trash
 } from "@phosphor-icons/react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Pagination } from "@/components/ui/pagination";
+import { EmptyState } from "@/components/ui/empty-state";
+import { 
+  DotsThreeVertical,
+  Eye,
+  PencilSimple,
+  Archive
+} from "@phosphor-icons/react";
 import { Tables } from "@/types/supabase";
 import { cn } from "@/lib/utils";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 type Employee = Tables<"employees">;
 
@@ -81,46 +104,93 @@ function StatutBadge({ statut }: { statut: string | null }) {
 
 interface Props {
   employees: Employee[];
+  totalCount: number;
+  allEmployees: { id: string; full_name: string; type_contrat?: string | null }[];
 }
 
-export function EmployeeTable({ employees }: Props) {
-  const [search, setSearch] = useState("");
-  const [filterStatut, setFilterStatut] = useState("tous");
-  const [filterContrat, setFilterContrat] = useState("tous");
+export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("q") || "";
+  const filterStatut = searchParams.get("statut") || "tous";
+  const filterContrat = searchParams.get("contrat") || "tous";
+  const sortColumn = searchParams.get("sort") || "full_name";
+  const sortDir = searchParams.get("dir") || "asc";
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const itemsPerPage = 10;
 
   const contrats = useMemo(() => {
     const types = Array.from(
-      new Set(employees.map((e) => e.type_contrat).filter(Boolean))
+      new Set(allEmployees.map((e) => e.type_contrat).filter(Boolean))
     ) as string[];
     return types.sort();
-  }, [employees]);
+  }, [allEmployees]);
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase().trim();
-    return employees.filter((e) => {
-      if (filterStatut !== "tous" && (e.statut ?? "actif") !== filterStatut) return false;
-      if (filterContrat !== "tous" && e.type_contrat !== filterContrat) return false;
-      if (!q) return true;
-      return (
-        e.full_name.toLowerCase().includes(q) ||
-        e.poste.toLowerCase().includes(q) ||
-        e.matricule.toLowerCase().includes(q) ||
-        (e.departement ?? "").toLowerCase().includes(q)
-      );
-    });
-  }, [employees, search, filterStatut, filterContrat]);
+  const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+
+  const createQueryString = (params: Record<string, string | null>) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(params)) {
+      if (value === null || value === "" || value === "tous") {
+        newSearchParams.delete(key);
+      } else {
+        newSearchParams.set(key, value);
+      }
+    }
+    return newSearchParams.toString();
+  };
+
+  const handleSearchChange = (val: string) => {
+    router.push(`${pathname}?${createQueryString({ q: val, page: "1" })}`);
+  };
+
+  const handleStatutChange = (val: string) => {
+    router.push(`${pathname}?${createQueryString({ statut: val, page: "1" })}`);
+  };
+
+  const handleContratChange = (val: string) => {
+    router.push(`${pathname}?${createQueryString({ contrat: val, page: "1" })}`);
+  };
+
+  const handleSort = (col: string) => {
+    const isAsc = sortColumn === col && sortDir === "asc";
+    router.push(`${pathname}?${createQueryString({ sort: col, dir: isAsc ? "desc" : "asc", page: "1" })}`);
+  };
+
+  const handlePageChange = (page: number) => {
+    router.push(`${pathname}?${createQueryString({ page: page.toString() })}`);
+  };
+
+  const SortIcon = ({ column }: { column: string }) => {
+    if (sortColumn !== column) return <CaretDown className="opacity-20 ml-1 inline" size={12} />;
+    return sortDir === "asc" ? (
+      <CaretUp className="opacity-100 ml-1 inline text-slate-900" size={12} weight="bold" />
+    ) : (
+      <CaretDown className="opacity-100 ml-1 inline text-slate-900" size={12} weight="bold" />
+    );
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await fetch(`/api/employees/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur lors de la suppression");
+      toast.success("Employé archivé avec succès");
+      router.refresh();
+    } catch (error) {
+      toast.error("Impossible d'archiver l'employé");
+    }
+  };
 
   if (employees.length === 0 && !search) {
     return (
-      <div className="rounded-[2.5rem] border-2 border-dashed border-slate-100 p-20 text-center bg-white/50 backdrop-blur-xl">
-        <div className="w-20 h-20 bg-slate-100 rounded-[1.5rem] flex items-center justify-center mx-auto mb-6">
-          <Users className="h-10 w-10 text-slate-300" weight="duotone" />
-        </div>
-        <h3 className="text-xl font-black text-slate-900 tracking-tightest">Aucun collaborateur</h3>
-        <p className="mt-2 text-sm text-slate-500 font-medium max-w-xs mx-auto">
-          Votre base de données est vide. Commencez par ajouter votre premier employé.
-        </p>
-      </div>
+      <EmptyState
+        icon={<Users className="h-14 w-14 text-slate-300" weight="duotone" />}
+        title="Aucun collaborateur"
+        description="Votre base de données est vide. Commencez par ajouter votre premier employé pour gérer votre effectif."
+        action={<EmployeeDialog employees={employees} />}
+      />
     );
   }
 
@@ -136,7 +206,7 @@ export function EmployeeTable({ employees }: Props) {
             type="text"
             placeholder="Rechercher un talent (nom, poste, matricule...)"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="w-full h-14 pl-14 pr-6 rounded-2xl bg-slate-50/50 border-none font-bold text-sm focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
           />
         </div>
@@ -148,7 +218,7 @@ export function EmployeeTable({ employees }: Props) {
              </div>
              <select
               value={filterStatut}
-              onChange={(e) => setFilterStatut(e.target.value)}
+              onChange={(e) => handleStatutChange(e.target.value)}
               className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border-none font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-slate-900/5 min-w-[200px]"
             >
               <option value="tous">Tous les statuts</option>
@@ -166,7 +236,7 @@ export function EmployeeTable({ employees }: Props) {
                </div>
                <select
                 value={filterContrat}
-                onChange={(e) => setFilterContrat(e.target.value)}
+                onChange={(e) => handleContratChange(e.target.value)}
                 className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border-none font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-slate-900/5 min-w-[200px]"
               >
                 <option value="tous">Tous les contrats</option>
@@ -186,17 +256,42 @@ export function EmployeeTable({ employees }: Props) {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-50">
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Collaborateur</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden lg:table-cell">Identification</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden md:table-cell">Contrat & Dept</th>
-                <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden xl:table-cell">Rémunération</th>
-                <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Statut</th>
+                <th 
+                  className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 cursor-pointer hover:text-slate-700 transition-colors"
+                  onClick={() => handleSort("full_name")}
+                >
+                  Collaborateur <SortIcon column="full_name" />
+                </th>
+                <th 
+                  className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden lg:table-cell cursor-pointer hover:text-slate-700 transition-colors"
+                  onClick={() => handleSort("matricule")}
+                >
+                  Identification <SortIcon column="matricule" />
+                </th>
+                <th 
+                  className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden md:table-cell cursor-pointer hover:text-slate-700 transition-colors"
+                  onClick={() => handleSort("type_contrat")}
+                >
+                  Contrat & Dept <SortIcon column="type_contrat" />
+                </th>
+                <th 
+                  className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden xl:table-cell cursor-pointer hover:text-slate-700 transition-colors"
+                  onClick={() => handleSort("salaire_brut")}
+                >
+                  Rémunération <SortIcon column="salaire_brut" />
+                </th>
+                <th 
+                  className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 cursor-pointer hover:text-slate-700 transition-colors"
+                  onClick={() => handleSort("statut")}
+                >
+                  Statut <SortIcon column="statut" />
+                </th>
                 <th className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/50">
               <AnimatePresence mode="popLayout">
-                {filtered.map((emp, i) => (
+                {employees.map((emp, i) => (
                   <motion.tr
                     key={emp.id}
                     initial={{ opacity: 0, x: -10 }}
@@ -270,9 +365,46 @@ export function EmployeeTable({ employees }: Props) {
                     </td>
 
                     <td className="px-6 py-6 text-center">
-                       <div className="opacity-40 group-hover:opacity-100 transition-opacity">
-                         <EmployeeDialog employee={emp} />
-                       </div>
+                       <DropdownMenu>
+                         <DropdownMenuTrigger asChild>
+                           <button className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-all outline-none">
+                             <DotsThreeVertical size={20} weight="bold" />
+                           </button>
+                         </DropdownMenuTrigger>
+                         <DropdownMenuContent align="end" className="w-48 p-2 rounded-2xl border-slate-100 shadow-xl">
+                           <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 py-1.5">Actions</DropdownMenuLabel>
+                           <DropdownMenuItem asChild>
+                             <Link href={`/employes/${emp.id}`} className="flex items-center gap-2 p-2 rounded-xl cursor-pointer focus:bg-slate-50 outline-none">
+                               <Eye size={16} weight="duotone" className="text-slate-400" />
+                               <span className="text-xs font-bold text-slate-700">Voir la fiche</span>
+                             </Link>
+                           </DropdownMenuItem>
+                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="p-0 focus:bg-transparent">
+                             <EmployeeDialog 
+                               employee={emp} 
+                               trigger={
+                                 <div className="flex items-center gap-2 w-full p-2 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors outline-none">
+                                   <PencilSimple size={16} weight="duotone" className="text-slate-400" />
+                                   <span className="text-xs font-bold text-slate-700">Modifier</span>
+                                 </div>
+                               }
+                             />
+                           </DropdownMenuItem>
+                           <DropdownMenuSeparator className="my-1 bg-slate-50" />
+                           <ConfirmDialog
+                             title="Archiver l'employé"
+                             description={`Êtes-vous sûr de vouloir archiver ${emp.full_name} ? Son profil sera conservé mais son statut passera à Inactif.`}
+                             confirmLabel="Archiver"
+                             onConfirm={() => handleDelete(emp.id)}
+                             trigger={
+                               <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2 p-2 rounded-xl cursor-pointer text-rose-600 focus:text-rose-600 focus:bg-rose-50 outline-none">
+                                 <Archive size={16} weight="duotone" />
+                                 <span className="text-xs font-bold">Archiver</span>
+                               </DropdownMenuItem>
+                             }
+                           />
+                         </DropdownMenuContent>
+                       </DropdownMenu>
                     </td>
                   </motion.tr>
                 ))}
@@ -281,21 +413,38 @@ export function EmployeeTable({ employees }: Props) {
           </table>
         </div>
 
-        {filtered.length === 0 && (
-          <div className="py-20 text-center bg-slate-50/30">
-            <MagnifyingGlass size={48} className="mx-auto text-slate-200 mb-4" weight="duotone" />
-            <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Aucun talent pour cette recherche</p>
-          </div>
+        {employees.length === 0 && search && (
+          <EmptyState
+            className="border-none bg-transparent py-16"
+            icon={<MagnifyingGlass size={48} className="text-slate-200" weight="duotone" />}
+            title="Aucun talent trouvé"
+            description={`Nous n'avons trouvé aucun collaborateur correspondant à "${search}".`}
+            action={
+              <button 
+                onClick={() => handleSearchChange("")}
+                className="text-xs font-black uppercase tracking-widest text-slate-900 hover:underline"
+              >
+                Effacer la recherche
+              </button>
+            }
+          />
         )}
 
         <div className="bg-slate-50/50 px-8 py-4 border-t border-slate-50 flex items-center justify-between">
            <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-slate-300" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                {filtered.length} Talent{filtered.length > 1 ? 's' : ''} indexé{filtered.length > 1 ? 's' : ''}
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline">
+                {totalCount} Talent{totalCount > 1 ? 's' : ''} indexé{totalCount > 1 ? 's' : ''}
               </span>
            </div>
-           <p className="text-[9px] text-slate-300 font-black uppercase tracking-[0.3em]">Base RH Côte d'Ivoire v4.0</p>
+           
+           <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+           />
+
+           <p className="text-[9px] text-slate-300 font-black uppercase tracking-[0.3em] hidden lg:block">Base RH Côte d'Ivoire v4.0</p>
         </div>
       </div>
     </div>

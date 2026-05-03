@@ -6,54 +6,34 @@ import Link from "next/link";
 import { PaieExportButton } from "@/components/rh/PaieExportButton";
 import { LivrePaieButton } from "@/components/rh/LivrePaieButton";
 import { PaieFilters } from "@/components/rh/PaieFilters";
+import { EmptyState } from "@/components/ui/empty-state";
+import { BulletinTable } from "@/components/paie/BulletinTable";
+import { Banknote } from "lucide-react";
 
 export const metadata = { title: "Paie — RH Manager CI" };
-
-const StatutBadge = ({ statut }: { statut: string }) => {
-  if (statut === "payé") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        {statut}
-      </span>
-    );
-  }
-  if (statut === "validé") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-        {statut}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-      <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-      {statut}
-    </span>
-  );
-};
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
 
-const formatPeriode = (p: string) => {
-  if (!p) return "";
-  const [yyyy, mm] = p.split("-");
-  const d = new Date(parseInt(yyyy), parseInt(mm) - 1);
-  const m = d.toLocaleDateString("fr-CI", { month: "short" }).replace('.', '');
-  return `${m} ${yyyy}`;
-};
-
 export default async function PaiePage({
   searchParams,
 }: {
-  searchParams: { mois?: string; annee?: string };
+  searchParams: { mois?: string; annee?: string; page?: string; sort?: string; dir?: string };
 }) {
   const supabase = createServerClient();
-  const { mois, annee } = searchParams;
+  const { mois, annee, page = "1", sort, dir = "asc" } = searchParams;
+  
+  const currentPage = parseInt(page, 10);
+  const itemsPerPage = 10;
+  const from = (currentPage - 1) * itemsPerPage;
+  const to = from + itemsPerPage - 1;
 
-  let query = supabase
+  const now = new Date();
+  const defaultPeriode = now.toISOString().slice(0, 7);
+  const currentPeriode = annee && mois ? `${annee}-${mois}` : defaultPeriode;
+
+  // Data for KPIs and Livre de Paie (full data for current period)
+  const { data: bulletinsMois } = await supabase
     .from("bulletins_paie")
     .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
              sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
@@ -61,8 +41,18 @@ export default async function PaiePage({
              gross_salary, fiscal_gross, social_gross, tax_cn, tax_igr, withholding_cnps,
              total_contributions, net_before_withholding, net_to_pay,
              employee_id, employees(full_name, poste, matricule)`)
-    .order("periode", { ascending: false })
-    .order("created_at", { ascending: false });
+    .eq("periode", currentPeriode);
+
+  // Paginated data for the main table
+  let query = supabase
+    .from("bulletins_paie")
+    .select(`id, periode, salaire_brut, cnps_salarie, its, autres_retenues, avances, salaire_net, statut,
+             sursalaire, prime_anciennete, prime_exceptionnelle, prime_salissure,
+             prime_depassement, prime_fonction, prime_transport, vacation_allowance, details,
+             gross_salary, fiscal_gross, social_gross, tax_cn, tax_igr, withholding_cnps,
+             total_contributions, net_before_withholding, net_to_pay,
+             employee_id, employees!inner(full_name, poste, matricule)`, { count: "exact" })
+    .range(from, to);
 
   if (annee && mois) {
     query = query.eq("periode", `${annee}-${mois}`);
@@ -72,7 +62,17 @@ export default async function PaiePage({
     query = query.ilike("periode", `%-${mois}`);
   }
 
-  const [{ data: bulletins }, { data: employees }, { data: company }] = await Promise.all([
+  if (sort) {
+    if (sort === "full_name") {
+      query = query.order("full_name", { foreignTable: "employees", ascending: dir === "asc" });
+    } else {
+      query = query.order(sort, { ascending: dir === "asc" });
+    }
+  } else {
+    query = query.order("periode", { ascending: false }).order("created_at", { ascending: false });
+  }
+
+  const [{ data: bulletins, count }, { data: employees }, { data: company }] = await Promise.all([
     query,
     supabase
       .from("employees")
@@ -82,14 +82,10 @@ export default async function PaiePage({
     supabase.from("companies").select("*").limit(1).maybeSingle(),
   ]);
 
-  const now = new Date();
-  const defaultPeriode = now.toISOString().slice(0, 7);
-  const currentPeriode = annee && mois ? `${annee}-${mois}` : defaultPeriode;
-  
-  const bulletinsMois = bulletins?.filter((b) => b.periode === currentPeriode) ?? bulletins ?? [];
-  const masseSalariale = bulletinsMois.reduce((s, b) => s + Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net), 0);
-  const masseCharges = bulletinsMois.reduce((s, b) => s + Number((b as Record<string, unknown>).total_contributions ?? (Number(b.cnps_salarie) + Number(b.its))), 0);
-  const nbPayes = bulletinsMois.filter((b) => b.statut === "payé").length;
+  const bulletinsMoisSafe = bulletinsMois ?? [];
+  const masseSalariale = bulletinsMoisSafe.reduce((s, b) => s + Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net), 0);
+  const masseCharges = bulletinsMoisSafe.reduce((s, b) => s + Number((b as Record<string, unknown>).total_contributions ?? (Number(b.cnps_salarie) + Number(b.its))), 0);
+  const nbPayes = bulletinsMoisSafe.filter((b) => b.statut === "payé").length;
 
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-6">
@@ -103,7 +99,7 @@ export default async function PaiePage({
         </div>
         <div className="flex items-center gap-2">
           <PaieExportButton periode={currentPeriode} />
-          <LivrePaieButton bulletins={bulletinsMois} company={company} periode={currentPeriode} />
+          <LivrePaieButton bulletins={bulletinsMoisSafe} company={company} periode={currentPeriode} />
           <PaieDialog employees={employees ?? []} company={company} />
         </div>
       </div>
@@ -112,12 +108,12 @@ export default async function PaiePage({
       <PaieFilters />
 
       {/* KPI mois courant */}
-      {bulletinsMois.length > 0 && (
+      {bulletinsMoisSafe.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Masse salariale nette</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseSalariale)}</p>
-            <p className="mt-1 text-xs text-slate-600">{bulletinsMois.length} bulletin(s) · {currentPeriode}</p>
+            <p className="mt-1 text-xs text-slate-600">{bulletinsMoisSafe.length} bulletin(s) · {currentPeriode}</p>
           </div>
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total cotisations (CNPS + CN + IGR)</p>
@@ -127,7 +123,7 @@ export default async function PaiePage({
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Bulletins payés</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{nbPayes}</p>
-            <p className="mt-1 text-xs text-slate-600">sur {bulletinsMois.length} ce mois</p>
+            <p className="mt-1 text-xs text-slate-600">sur {bulletinsMoisSafe.length} ce mois</p>
           </div>
         </div>
       )}
@@ -150,93 +146,16 @@ export default async function PaiePage({
         <h2 className="text-base font-semibold text-slate-700 mb-3">Tous les bulletins</h2>
 
         {!bulletins || bulletins.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-            <p className="font-medium text-slate-600">Aucun bulletin de paie</p>
-            <p className="mt-1 text-sm text-slate-600">Créez le premier bulletin du mois.</p>
-          </div>
+          <EmptyState
+            icon={<Banknote className="h-14 w-14 text-slate-300" />}
+            title="Aucun bulletin de paie"
+            description="Créez le premier bulletin du mois pour commencer."
+            action={
+              <PaieDialog employees={employees ?? []} company={company} />
+            }
+          />
         ) : (
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50/60 border-b border-slate-100">
-                <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">*** BRUT ***</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Ret. CNPS</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">IGR</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">NET A PAYER</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 min-w-[130px]"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {bulletins.map((b) => {
-                  const empRaw = b.employees;
-                  const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
-                  const detailsObj = b.details as { heures_sup?: { h15: number, h50: number, h75: number }; nb_jours_absence?: number } | null;
-                  return (
-                    <tr key={b.id} className="group hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3 text-sm">
-                        <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
-                        <p className="text-xs text-slate-600 mt-0.5">{emp?.matricule}</p>
-                      </td>
-                      <td className="px-4 py-3 text-sm font-mono tabular-nums text-xs uppercase tracking-wider text-slate-600">
-                        {formatPeriode(b.periode)}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">{fmt(Number((b as Record<string, unknown>).gross_salary ?? b.salaire_brut))}</td>
-                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).withholding_cnps ?? b.cnps_salarie))}</td>
-                      <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).tax_igr ?? b.its))}</td>
-                      <td className="px-4 py-3 text-sm text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net))}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <StatutBadge statut={b.statut ?? "brouillon"} />
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {b.statut === "brouillon" && (
-                            <PaieDialog
-                              employees={employees ?? []}
-                              company={company}
-                              bulletin={{
-                                id: b.id,
-                                periode: b.periode,
-                                employee_id: (b as Record<string, unknown>).employee_id as string,
-                                employee_name: emp?.full_name ?? "—",
-                                salaire_brut: Number(b.salaire_brut),
-                                sursalaire: Number((b as Record<string, unknown>).sursalaire ?? 0),
-                                prime_anciennete: Number((b as Record<string, unknown>).prime_anciennete ?? 0),
-                                prime_exceptionnelle: Number((b as Record<string, unknown>).prime_exceptionnelle ?? 0),
-                                prime_salissure: Number((b as Record<string, unknown>).prime_salissure ?? 0),
-                                prime_depassement: Number((b as Record<string, unknown>).prime_depassement ?? 0),
-                                prime_fonction: Number((b as Record<string, unknown>).prime_fonction ?? 0),
-                                prime_transport: Number((b as Record<string, unknown>).prime_transport ?? 0),
-                                vacation_allowance: Number((b as Record<string, unknown>).vacation_allowance ?? 0),
-                                heures_sup_h15: detailsObj?.heures_sup?.h15 ?? 0,
-                                heures_sup_h50: detailsObj?.heures_sup?.h50 ?? 0,
-                                heures_sup_h75: detailsObj?.heures_sup?.h75 ?? 0,
-                                autres_retenues: Number(b.autres_retenues ?? 0),
-                                avances: Number(b.avances ?? 0),
-                                nb_jours_absence: detailsObj?.nb_jours_absence ?? 0,
-                              }}
-                            />
-                          )}
-                          <PaieStatusButton bulletinId={b.id} currentStatut={b.statut ?? "brouillon"} />
-                          <Link
-                            href={`/paie/${b.id}/print`}
-                            target="_blank"
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
-                          >
-                            Imprimer
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          </div>
+          <BulletinTable bulletins={bulletins} employees={employees ?? []} company={company} totalCount={count ?? 0} />
         )}
       </div>
     </div>

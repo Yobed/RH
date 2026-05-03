@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -135,6 +136,19 @@ export async function POST(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Audit Log
+  await logAuditEvent({
+    entity_type: "contract",
+    entity_id: data.id,
+    action: "create",
+    details: {
+      employee_id: parsed.data.employee_id,
+      type_contrat: parsed.data.type_contrat,
+      salaire_brut: parsed.data.salaire_brut
+    },
+    new_values: data
+  });
 
   return NextResponse.json(data, { status: 201 });
 }

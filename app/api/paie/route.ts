@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { calculerBulletinComplet } from "@/lib/paie-ci";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -149,11 +150,12 @@ export async function POST(req: Request) {
 
   // Audit : création d'un bulletin de paie (non bloquant)
   if (data?.id) {
-    await supabase.from("audit_logs").insert({
-      action: "CREATE_BULLETIN",
-      company_id: profile.company_id as string,
-      user_id: user.id,
-      resource: `bulletins_paie:${data.id}`,
+    await logAuditEvent({
+      action: "create",
+      entity_type: "bulletin_paie",
+      entity_id: data.id,
+      details: { periode: d.periode },
+      new_values: data,
     });
   }
 

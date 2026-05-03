@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -47,15 +48,16 @@ export async function POST(
   }
 
   // Audit (non bloquant)
-  const { data: companyId } = await supabase.rpc("get_user_company_id");
-  if (companyId) {
-    await supabase.from("audit_logs").insert({
-      action: "DECLARE_CNPS_ACCIDENT",
-      company_id: companyId as string,
-      user_id: user.id,
-      resource: `work_accidents:${params.id}`,
-    });
-  }
+  await logAuditEvent({
+    action: "update",
+    entity_type: "work_accidents",
+    entity_id: params.id,
+    details: {
+      statut: "declare",
+      numero_cnps: body.numero_cnps,
+      document_url: body.document_declaration_url
+    }
+  });
 
   return NextResponse.json(data);
 }

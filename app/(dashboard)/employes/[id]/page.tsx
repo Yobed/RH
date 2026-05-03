@@ -33,6 +33,7 @@ import { formatAnciennete, calculerPrimeAnciennete } from "@/lib/paie-ci";
 import { calculerJoursAcquis, calculerSoldeConges } from "@/lib/conges-ci";
 import { EmployeeCostSheet } from "@/components/employees/EmployeeCostSheet";
 import { InviterPortailButton } from "@/components/rh/InviterPortailButton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -293,7 +294,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   Performance
                 </h3>
                 {!evaluations || evaluations.length === 0 ? (
-                  <p className="text-sm text-slate-600 text-center py-8">Aucune évaluation.</p>
+                  <EmptyState 
+                    icon={<ChartBar className="h-12 w-12 text-slate-300" />} 
+                    title="Aucune évaluation" 
+                    description="Cet employé n'a pas encore été évalué." 
+                  />
                 ) : (
                   <div className="space-y-2">
                     {evaluations.map((ev) => (
@@ -329,7 +334,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </h3>
             </div>
             {!contracts || contracts.length === 0 ? (
-              <div className="p-8 text-center text-sm text-slate-600 italic">Aucun contrat.</div>
+              <EmptyState 
+                icon={<Briefcase className="h-12 w-12 text-slate-300" />} 
+                title="Aucun contrat" 
+                description="Aucun contrat associé à cet employé." 
+              />
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
@@ -498,7 +507,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </h3>
             </div>
             {!bulletins || bulletins.length === 0 ? (
-              <div className="p-12 text-center text-slate-600 italic text-sm">Aucun bulletin généré.</div>
+              <EmptyState 
+                icon={<Money className="h-12 w-12 text-slate-300" />} 
+                title="Aucun bulletin" 
+                description="Aucun bulletin de paie n'a été généré pour cet employé." 
+              />
             ) : (
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
@@ -580,7 +593,11 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </div>
               <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
                 {!documents || documents.length === 0 ? (
-                  <p className="p-10 text-center text-sm text-slate-600 italic">Espace documentaire vide.</p>
+                  <EmptyState 
+                    icon={<FolderOpen className="h-12 w-12 text-slate-300" />} 
+                    title="Espace vide" 
+                    description="Aucun document n'a été téléversé pour cet employé." 
+                  />
                 ) : (
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50/60 border-b border-slate-100">

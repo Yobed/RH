@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,13 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
+  // Get old values for audit
+  const { data: oldData } = await supabase
+    .from("duerp_risks")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+
   const { data, error } = await supabase
     .from("duerp_risks")
     .update({ ...parsed.data, derniere_revision: new Date().toISOString().slice(0, 10) })
@@ -43,6 +51,16 @@ export async function PATCH(
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Audit
+  await logAuditEvent({
+    action: "update",
+    entity_type: "duerp_risk",
+    entity_id: params.id,
+    old_values: oldData,
+    new_values: data,
+  });
+
   return NextResponse.json(data);
 }
 
@@ -54,7 +72,24 @@ export async function DELETE(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
 
+  // Get old values for audit
+  const { data: oldData } = await supabase
+    .from("duerp_risks")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+
   const { error } = await supabase.from("duerp_risks").delete().eq("id", params.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Audit
+  await logAuditEvent({
+    action: "delete",
+    entity_type: "duerp_risk",
+    entity_id: params.id,
+    old_values: oldData,
+  });
+
   return NextResponse.json({ ok: true });
 }
+

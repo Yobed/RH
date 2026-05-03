@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +9,7 @@ export async function POST(req: Request) {
     const supabase = createServerClient();
     const body = await req.json();
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("career_events")
       .insert({
         employee_id: body.employee_id,
@@ -17,11 +18,21 @@ export async function POST(req: Request) {
         date_event: body.date_event,
         description: body.description,
         new_value: body.new_value,
-      });
+      })
+      .select()
+      .single();
 
     if (error) throw error;
 
-    return NextResponse.json({ success: true });
+    // Audit
+    await logAuditEvent({
+      action: "create",
+      entity_type: "career_event",
+      entity_id: data.id,
+      new_values: data,
+    });
+
+    return NextResponse.json({ success: true, data });
   } catch (error: any) {
     console.error("Career Event API Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

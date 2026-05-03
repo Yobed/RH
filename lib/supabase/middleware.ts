@@ -44,36 +44,41 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     return NextResponse.redirect(url);
   }
 
-  // Routage par rôle : un salarié n'a accès qu'au portail
+  // Routage par rôle granulaire
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .maybeSingle();
-    const role = profile?.role ?? null;
+    const role = profile?.role ?? "salarie";
 
-    const isPortalArea =
-      pathname.startsWith("/portail") || pathname.startsWith("/api/portail");
+    const isPortalArea = pathname.startsWith("/portail") || pathname.startsWith("/api/portail");
+    const isAdminArea = pathname.startsWith("/parametres") || pathname.startsWith("/api/audit") || pathname.startsWith("/api/settings");
 
+    // Definition des accès par défaut
     if (role === "salarie") {
       if (!isPortalArea && !isPublic) {
         const url = request.nextUrl.clone();
         url.pathname = "/portail";
         return NextResponse.redirect(url);
       }
-      if (pathname === "/login") {
-        const url = request.nextUrl.clone();
-        url.pathname = "/portail";
-        return NextResponse.redirect(url);
-      }
     } else {
-      // Admin/DRH : pas d'accès au portail (réservé aux salariés)
+      // Les non-salariés (admin, rh, manager, etc.)
       if (isPortalArea) {
         const url = request.nextUrl.clone();
         url.pathname = "/rh";
         return NextResponse.redirect(url);
       }
+
+      // Restriction spécifique pour les zones d'administration système
+      if (isAdminArea && !["admin", "responsable_rh"].includes(role)) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/rh"; // Redirection vers l'accueil dashboard
+        return NextResponse.redirect(url);
+      }
+
+      // Redirection après login
       if (pathname === "/login") {
         const url = request.nextUrl.clone();
         url.pathname = "/rh";

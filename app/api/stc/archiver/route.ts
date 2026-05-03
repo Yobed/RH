@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -187,6 +188,19 @@ export async function POST(req: Request) {
       console.error("Erreur DB documents:", docDbError);
       return NextResponse.json({ error: "Erreur lors de l'enregistrement en base de données" }, { status: 500 });
     }
+
+    // Audit Log
+    await logAuditEvent({
+      entity_type: "stc",
+      entity_id: employee.id,
+      action: "CREATE",
+      details: {
+        employee_name: employee.full_name,
+        total_brut: resultat.total_brut_stc,
+        document_id: documentData.id
+      },
+      new_values: documentData
+    });
 
     return NextResponse.json({ 
       success: true, 

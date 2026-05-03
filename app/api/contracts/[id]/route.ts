@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 const updateSchema = z
   .object({
@@ -82,6 +83,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Entreprise non trouvée" }, { status: 403 });
   }
 
+  // Get old values for audit
+  const { data: oldData } = await supabase
+    .from("contracts")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+
   const { data, error } = await supabase
     .from("contracts")
     .update(parsed.data)
@@ -93,6 +101,16 @@ export async function PATCH(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Audit Log
+  await logAuditEvent({
+    entity_type: "contract",
+    entity_id: params.id,
+    action: "update",
+    details: { updated_fields: Object.keys(parsed.data) },
+    old_values: oldData ?? undefined,
+    new_values: data
+  });
 
   return NextResponse.json(data);
 }

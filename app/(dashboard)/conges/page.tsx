@@ -3,182 +3,12 @@ import { createServerClient } from "@/lib/supabase/server";
 import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { ArretMaladieDialog } from "@/components/rh/ArretMaladieDialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CalendarDays } from "lucide-react";
 
 export const metadata = { title: "Conges — RH Manager CI" };
 
-const TYPE_LABELS: Record<string, string> = {
-  annuel: "Congé annuel",
-  maladie: "Maladie",
-  arret_maladie: "Arrêt maladie",
-  maternite: "Maternité",
-  paternite: "Paternité",
-  sans_solde: "Sans solde",
-  exceptionnel: "Exceptionnel",
-};
-
-const STATUT_LABEL: Record<string, string> = {
-  en_attente: "En attente",
-  valide_manager: "Validé manager",
-  approuve: "Approuvé",
-  refuse: "Refusé",
-};
-
-function formatDate(d: string) {
-  if (!d) return "";
-  try {
-    const parts = d.split("T")[0].split("-");
-    if (parts.length === 3) {
-      const y = parseInt(parts[0], 10);
-      const m = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      return new Date(y, m, day).toLocaleDateString("fr-CI", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
-    }
-  } catch {}
-  return new Date(d).toLocaleDateString("fr-CI", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-const StatutBadge = ({ statut }: { statut: string }) => {
-  if (statut === "approuve") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        {STATUT_LABEL[statut] ?? statut}
-      </span>
-    );
-  }
-  if (statut === "en_attente" || statut === "valide_manager") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-        {STATUT_LABEL[statut] ?? statut}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-      <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-      {STATUT_LABEL[statut] ?? statut}
-    </span>
-  );
-};
-
-const ArretBadge = ({ estAt, estJustifie }: { estAt?: boolean; estJustifie?: boolean }) => {
-  if (estAt) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-medium text-orange-700">AT</span>
-    );
-  }
-  if (estJustifie) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">Justifié</span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-600">Non justifié</span>
-  );
-};
-
-type CongeRow = {
-  id: string;
-  type: string;
-  date_debut: string;
-  date_fin: string;
-  nb_jours: number;
-  statut: string | null;
-  commentaire: string | null;
-  refus_motif: string | null;
-  created_at: string;
-  est_justifie: boolean | null;
-  est_at: boolean | null;
-  justificatif_url: string | null;
-  employees: { full_name: string; matricule: string } | { full_name: string; matricule: string }[] | null;
-};
-
-function CongesTable({ conges, showActions, canManagerApprove, canRhApprove }: {
-  conges: CongeRow[];
-  showActions: boolean;
-  canManagerApprove: boolean;
-  canRhApprove: boolean;
-}) {
-  return (
-    <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-      <table className="w-full text-sm">
-        <thead className="bg-slate-50/60 border-b border-slate-100">
-          <tr>
-            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
-            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
-            <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Période</th>
-            <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours</th>
-            {showActions ? (
-              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
-            ) : (
-              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
-            )}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-50">
-          {conges.map((c) => {
-            const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
-            return (
-              <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
-                <td className="px-4 py-3 text-sm">
-                  <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
-                  <p className="text-xs text-slate-600 mt-0.5">{emp?.matricule}</p>
-                </td>
-                <td className="px-4 py-3 text-sm">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-slate-700">{TYPE_LABELS[c.type] ?? c.type}</span>
-                    {c.type === "arret_maladie" && (
-                      <ArretBadge
-                        estAt={(c as { est_at?: boolean }).est_at ?? false}
-                        estJustifie={(c as { est_justifie?: boolean }).est_justifie ?? false}
-                      />
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell text-xs">
-                  {formatDate(c.date_debut)} → {formatDate(c.date_fin)}
-                </td>
-                <td className="px-4 py-3 text-sm text-center font-bold text-slate-800 font-mono tabular-nums">
-                  {c.nb_jours}j
-                </td>
-                {showActions ? (
-                  <td className="px-4 py-3 text-sm">
-                    <CongesApprovalButton
-                      congeId={c.id}
-                      statut={c.statut ?? "en_attente"}
-                      canManagerApprove={canManagerApprove}
-                      canRhApprove={canRhApprove}
-                    />
-                  </td>
-                ) : (
-                  <td className="px-4 py-3 text-sm">
-                    <div className="flex flex-col gap-1">
-                      <StatutBadge statut={c.statut ?? "en_attente"} />
-                      {c.statut === "refuse" && c.refus_motif && (
-                        <p className="text-xs text-slate-600 italic">{c.refus_motif}</p>
-                      )}
-                    </div>
-                  </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      </div>
-    </div>
-  );
-}
+import { CongesTable, CongeRow } from "@/components/rh/CongesTable";
 
 export default async function CongesPage() {
   const supabase = createServerClient();
@@ -191,16 +21,24 @@ export default async function CongesPage() {
          est_justifie, est_at, justificatif_url,
          employees(full_name, matricule)`
       )
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(500),
     supabase
       .from("employees")
       .select("id, full_name, matricule")
       .neq("statut", "inactif") // On permet actif et suspendu
-      .order("full_name"),
+      .order("full_name")
+      .limit(1000),
   ]);
 
-  const canManagerApprove = true;
-  const canRhApprove = true;
+  // Role-based approval permissions
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("role").eq("id", user.id).single()
+    : { data: null };
+  const userRole = profile?.role ?? "salarie";
+  const canManagerApprove = ["admin", "manager", "responsable_rh"].includes(userRole);
+  const canRhApprove = ["admin", "responsable_rh"].includes(userRole);
 
   const enAttenteManager = conges?.filter((c) => c.statut === "en_attente") ?? [];
   const enAttenteRh = conges?.filter((c) => c.statut === "valide_manager") ?? [];
@@ -281,9 +119,11 @@ export default async function CongesPage() {
           )}
         </div>
         {enAttenteManager.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-600">
-            Aucune demande en attente de validation manager.
-          </div>
+          <EmptyState
+            icon={<CalendarDays className="h-12 w-12 text-slate-300" />}
+            title="Aucune demande en attente"
+            description="Toutes les demandes manager ont été traitées."
+          />
         ) : (
           <CongesTable
             conges={enAttenteManager as CongeRow[]}
@@ -305,9 +145,11 @@ export default async function CongesPage() {
           )}
         </div>
         {enAttenteRh.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-sm text-slate-600">
-            Aucune demande en attente de validation RH.
-          </div>
+          <EmptyState
+            icon={<CalendarDays className="h-12 w-12 text-slate-300" />}
+            title="Aucune demande en attente"
+            description="Toutes les demandes RH ont été traitées."
+          />
         ) : (
           <CongesTable
             conges={enAttenteRh as CongeRow[]}
@@ -322,9 +164,10 @@ export default async function CongesPage() {
       <div>
         <h2 className="text-base font-semibold text-slate-700 mb-3">Historique</h2>
         {historique.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-600">
-            Aucun congé traité.
-          </div>
+          <EmptyState
+            title="Aucun congé traité"
+            description="L'historique des congés approuvés et refusés apparaîtra ici."
+          />
         ) : (
           <CongesTable
             conges={historique as CongeRow[]}

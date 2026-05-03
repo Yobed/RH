@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { calculerBulletinComplet } from "@/lib/paie-ci";
+import { logAuditEvent } from "@/lib/audit";
 
 const statutSchema = z.object({
   statut: z.enum(["brouillon", "validé", "payé"]),
@@ -46,6 +47,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const parsed = statutSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
 
+  // Get old values for audit
+  const { data: oldData } = await supabase
+    .from("bulletins_paie")
+    .select("*")
+    .eq("id", params.id)
+    .eq("company_id", profile.company_id)
+    .single();
+
   const { data, error } = await supabase
     .from("bulletins_paie")
     .update({ statut: parsed.data.statut })
@@ -56,6 +65,19 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     .maybeSingle();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Audit : changement de statut (non bloquant)
+  if (data?.id) {
+    await logAuditEvent({
+      action: "update",
+      entity_type: "bulletin_paie",
+      entity_id: data.id,
+      details: { new_statut: parsed.data.statut },
+      old_values: oldData ?? undefined,
+      new_values: data,
+    });
+  }
+
   return NextResponse.json(data);
 }
 
@@ -67,7 +89,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   // Seuls les brouillons sont modifiables
   const { data: existing } = await supabase
     .from("bulletins_paie")
-    .select("statut, company_id")
+    .select("*")
     .eq("id", params.id)
     .limit(1)
     .maybeSingle();
@@ -164,12 +186,15 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   // Audit : modification d'un bulletin de paie (non bloquant)
-  await supabase.from("audit_logs").insert({
-    action: "UPDATE_BULLETIN_STATUT",
-    company_id: existing.company_id as string,
-    user_id: user.id,
-    resource: `bulletins_paie:${params.id}`,
-  });
+  if (data?.id) {
+    await logAuditEvent({
+      action: "update",
+      entity_type: "bulletin_paie",
+      entity_id: data.id,
+      old_values: existing ?? undefined,
+      new_values: data,
+    });
+  }
 
   return NextResponse.json(data);
 }

@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { buildDefaultChecklist } from "@/lib/onboarding-template";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -106,6 +107,14 @@ export async function POST(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // AUDIT: Log employee creation
+  await logAuditEvent({
+    action: "create",
+    entity_type: "employee",
+    entity_id: data.id,
+    new_values: data,
+  });
 
   // Auto-créer la checklist d'onboarding (non bloquant)
   await supabase.from("onboarding_checklists").insert({

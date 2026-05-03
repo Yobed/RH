@@ -1,6 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import * as z from 'zod';
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -108,6 +109,19 @@ export async function POST(request: Request) {
       console.error('Erreur Supabase (POST disciplinary_procedures):', error);
       return NextResponse.json({ error: 'Erreur lors de la création de la procédure' }, { status: 500 });
     }
+
+    // Audit Log
+    await logAuditEvent({
+      entity_type: "disciplinary_procedure",
+      entity_id: newProcedure.id,
+      action: "create",
+      details: {
+        employee_id: validationResult.data.employee_id,
+        type: validationResult.data.type,
+        statut: validationResult.data.statut
+      },
+      new_values: newProcedure
+    });
 
     return NextResponse.json(newProcedure, { status: 201 });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 const updateSchema = z.object({
   statut: z.enum(["ouvert", "résolu", "classé", "en_appel"]),
@@ -35,6 +36,13 @@ export async function PUT(
     );
   }
 
+  // Récupérer l'ancienne version pour l'audit
+  const { data: oldData } = await supabase
+    .from("legal_cases")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+
   const { data, error } = await supabase
     .from("legal_cases")
     .update(parsed.data)
@@ -45,6 +53,15 @@ export async function PUT(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // AUDIT
+  await logAuditEvent({
+    action: "update",
+    entity_type: "legal_case",
+    entity_id: params.id,
+    old_values: oldData || undefined,
+    new_values: data,
+  });
 
   return NextResponse.json(data);
 }

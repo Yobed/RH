@@ -64,20 +64,20 @@ export function ProfilClient({ employee }: { employee: Employee }) {
 
   return (
     <div className="space-y-6">
-      <header className="pb-4 border-b border-slate-200">
-        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900">Mon profil</h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-snug">
+      <header className="pb-4 border-b border-slate-200 dark:border-slate-800">
+        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">Mon profil</h1>
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
           Vos informations personnelles. Toute modification est tracée et
           partagée avec votre service RH.
         </p>
       </header>
 
       {/* Infos non modifiables */}
-      <section className="rounded-lg border border-slate-200 bg-white">
-        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 flex items-center gap-2">
-          <Lock className="h-4 w-4 text-slate-400" />
-          <h2 className="text-sm font-semibold text-slate-900">Informations RH</h2>
-          <span className="text-[10px] text-slate-500 ml-auto">Modifiable uniquement par le service RH</span>
+      <section className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-2">
+          <Lock className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Informations RH</h2>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400 ml-auto">Modifiable uniquement par le service RH</span>
         </div>
         <dl className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3 p-4 sm:p-5">
           <Info label="Nom" value={employee.full_name} />
@@ -95,10 +95,10 @@ export function ProfilClient({ employee }: { employee: Employee }) {
       </section>
 
       {/* Champs modifiables */}
-      <section className="rounded-lg border border-slate-200 bg-white">
-        <div className="px-4 sm:px-5 py-4 border-b border-slate-100">
-          <h2 className="text-sm font-semibold text-slate-900">Mes coordonnées</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Tenez ces informations à jour pour la paie et les communications.</p>
+      <section className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Mes coordonnées</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tenez ces informations à jour pour la paie et les communications.</p>
         </div>
         <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Téléphone">
@@ -107,14 +107,14 @@ export function ProfilClient({ employee }: { employee: Employee }) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+225 07 00 00 00"
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-slate-600 dark:focus:ring-slate-700"
             />
           </Field>
           <Field label="Situation logement">
             <select
               value={situationLogement}
               onChange={(e) => setSituationLogement(e.target.value)}
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             >
               <option value="">— Choisir —</option>
               <option value="Locataire">Locataire</option>
@@ -129,7 +129,7 @@ export function ProfilClient({ employee }: { employee: Employee }) {
                 value={adresse}
                 onChange={(e) => setAdresse(e.target.value)}
                 placeholder="Quartier, commune, ville"
-                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
+                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
               />
             </Field>
           </div>
@@ -139,7 +139,7 @@ export function ProfilClient({ employee }: { employee: Employee }) {
               value={rib}
               onChange={(e) => setRib(e.target.value)}
               placeholder="CI00 XXXX XXXX XXXX XXXX"
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm tabular-nums"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm tabular-nums dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
           </Field>
           <Field label="Mobile Money">
@@ -148,16 +148,16 @@ export function ProfilClient({ employee }: { employee: Employee }) {
               value={mobileMoney}
               onChange={(e) => setMobileMoney(e.target.value)}
               placeholder="Orange Money / Wave / MTN"
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
           </Field>
         </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white">
-        <div className="px-4 sm:px-5 py-4 border-b border-slate-100">
-          <h2 className="text-sm font-semibold text-slate-900">Contact d'urgence</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Personne à prévenir en cas de besoin.</p>
+      <section className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Contact d'urgence</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Personne à prévenir en cas de besoin.</p>
         </div>
         <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Nom et prénoms">
@@ -166,7 +166,7 @@ export function ProfilClient({ employee }: { employee: Employee }) {
               value={contactNom}
               onChange={(e) => setContactNom(e.target.value)}
               placeholder="Ex : KOFFI Aminata (épouse)"
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
           </Field>
           <Field label="Téléphone">
@@ -175,18 +175,18 @@ export function ProfilClient({ employee }: { employee: Employee }) {
               value={contactTel}
               onChange={(e) => setContactTel(e.target.value)}
               placeholder="+225 05 00 00 00"
-              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm"
+              className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
           </Field>
         </div>
       </section>
 
       {/* Avis confidentialité */}
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-3.5 flex gap-2.5">
-        <Shield className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
-        <p className="text-xs text-slate-600 leading-relaxed">
+      <div className="rounded-md border border-slate-200 bg-slate-50 p-3.5 flex gap-2.5 dark:border-slate-800 dark:bg-slate-900/50">
+        <Shield className="h-4 w-4 text-slate-500 dark:text-slate-400 shrink-0 mt-0.5" />
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
           Vos données sont traitées conformément à la
-          <a href="/legal/confidentialite" target="_blank" className="text-slate-900 underline ml-1">politique de confidentialité</a>
+          <a href="/legal/confidentialite" target="_blank" className="text-slate-900 dark:text-slate-100 underline ml-1">politique de confidentialité</a>
           {" "}(Loi n° 2013-450 ARTCI).
         </p>
       </div>
@@ -195,7 +195,7 @@ export function ProfilClient({ employee }: { employee: Employee }) {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
         >
           <Save className="h-3.5 w-3.5" />
           {saving ? "Enregistrement…" : "Enregistrer mes modifications"}
@@ -208,8 +208,8 @@ export function ProfilClient({ employee }: { employee: Employee }) {
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">{label}</dt>
-      <dd className="text-sm font-medium text-slate-900 mt-0.5 truncate">{value}</dd>
+      <dt className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium">{label}</dt>
+      <dd className="text-sm font-medium text-slate-900 dark:text-slate-100 mt-0.5 truncate">{value}</dd>
     </div>
   );
 }
@@ -217,7 +217,7 @@ function Info({ label, value }: { label: string; value: string }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-700 block mb-1">{label}</label>
+      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">{label}</label>
       {children}
     </div>
   );

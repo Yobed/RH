@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logAuditEvent } from "@/lib/audit";
 import { z } from "zod";
 import {
   generateAttestationPDF,
@@ -89,11 +90,14 @@ export async function POST(req: Request): Promise<NextResponse> {
   });
 
   // Audit
-  await supabase.from("audit_logs").insert({
-    action: "GENERATE_DOCUMENT",
-    company_id: companyId as string,
-    user_id: user.id,
-    resource: `documents:${doc_type}:${employee_id}`,
+  await logAuditEvent({
+    action: "generate",
+    entity_type: "documents",
+    entity_id: employee_id,
+    details: {
+      doc_type,
+      filename
+    }
   });
 
   const arrayBuffer = doc.output("arraybuffer");

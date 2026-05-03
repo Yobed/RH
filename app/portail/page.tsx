@@ -53,13 +53,13 @@ export default async function PortailHome() {
   return (
     <div className="space-y-6 sm:space-y-8">
       <header>
-        <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">
+        <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500 font-medium">
           Bonjour
         </p>
-        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1">
+        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
           {emp?.full_name ?? "Salarié"}
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-snug">
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
           {emp?.poste ?? "—"}
           {emp?.departement ? ` · ${emp.departement}` : ""}
           {emp?.type_contrat ? ` · ${emp.type_contrat}` : ""}
@@ -95,10 +95,10 @@ export default async function PortailHome() {
       </section>
 
       {/* Mes infos */}
-      <section className="rounded-lg border border-slate-200 bg-white">
-        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-900">Mes informations</h2>
-          <Link href="/portail/profil" className="text-xs text-slate-600 hover:text-slate-900 inline-flex items-center gap-1">
+      <section className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+        <div className="px-4 sm:px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Mes informations</h2>
+          <Link href="/portail/profil" className="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 inline-flex items-center gap-1">
             Modifier <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -112,21 +112,21 @@ export default async function PortailHome() {
 
       {/* Demandes en attente */}
       {pendingLeaves && pendingLeaves.length > 0 && (
-        <section className="rounded-lg border border-slate-200 bg-white">
-          <div className="px-4 sm:px-5 py-4 border-b border-slate-100">
-            <h2 className="text-sm font-semibold text-slate-900">Demandes en cours de validation</h2>
+        <section className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
+          <div className="px-4 sm:px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Demandes en cours de validation</h2>
           </div>
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {pendingLeaves.map((l) => (
               <li key={l.id} className="px-4 sm:px-5 py-3 flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-900 capitalize">{l.type}</p>
-                  <p className="text-xs text-slate-500 tabular-nums">
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100 capitalize">{l.type}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">
                     Du {format(new Date(l.date_debut), "d MMM", { locale: fr })}{" "}
                     au {format(new Date(l.date_fin), "d MMM yyyy", { locale: fr })} · {l.nb_jours} j
                   </p>
                 </div>
-                <span className="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
+                <span className="text-[11px] px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
                   En attente
                 </span>
               </li>
@@ -150,14 +150,14 @@ function Card({
   return (
     <Link
       href={href}
-      className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 hover:border-slate-300 transition-colors flex flex-col gap-1"
+      className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors flex flex-col gap-1"
     >
       <div className="flex items-center justify-between">
-        <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 font-medium">{title}</p>
-        <Icon className="h-3.5 w-3.5 text-slate-400" />
+        <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium">{title}</p>
+        <Icon className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
       </div>
-      <p className="text-xl sm:text-2xl font-semibold text-slate-900 tabular-nums leading-tight">{value}</p>
-      <p className="text-[11px] text-slate-500 leading-snug">{sub}</p>
+      <p className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tabular-nums leading-tight">{value}</p>
+      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{sub}</p>
     </Link>
   );
 }
@@ -165,8 +165,8 @@ function Card({
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[10px] uppercase tracking-wider text-slate-500 font-medium">{label}</dt>
-      <dd className="text-sm font-medium text-slate-900 mt-0.5 truncate">{value}</dd>
+      <dt className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium">{label}</dt>
+      <dd className="text-sm font-medium text-slate-900 dark:text-slate-100 mt-0.5 truncate">{value}</dd>
     </div>
   );
 }

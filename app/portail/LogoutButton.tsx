@@ -17,7 +17,7 @@ export function LogoutButton(): React.ReactElement {
   return (
     <button
       onClick={handleLogout}
-      className="p-2 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+      className="p-2 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:hover:text-slate-100 dark:hover:bg-slate-800"
       title="Se déconnecter"
       aria-label="Se déconnecter"
     >

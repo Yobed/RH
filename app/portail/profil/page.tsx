@@ -16,7 +16,7 @@ export default async function MonProfil() {
     .single();
 
   if (!emp) {
-    return <p className="text-sm text-slate-500">Profil introuvable.</p>;
+    return <p className="text-sm text-slate-500 dark:text-slate-400">Profil introuvable.</p>;
   }
 
   return (

@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 const bodySchema = z.object({
   action: z.enum(["valider_manager", "valider_rh", "refuser"]),
@@ -38,7 +39,7 @@ export async function PUT(
   // Récupérer le congé existant — RLS garantit l'accès company_id
   const { data: conge, error: fetchError } = await supabase
     .from("conges")
-    .select("id, statut, nb_jours, date_debut, employee_id, company_id")
+    .select("*")
     .eq("id", params.id)
     .single();
 
@@ -98,6 +99,21 @@ export async function PUT(
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 });
   }
+
+  // AUDIT: Log leave request action
+  await logAuditEvent({
+    action: action === "refuser" ? "reject" : "approve",
+    entity_type: "conge",
+    entity_id: params.id,
+    details: { 
+      action,
+      previous_status: conge.statut,
+      new_status: updatePayload?.statut,
+      motif: motif || null
+    },
+    old_values: conge,
+    new_values: updated,
+  });
 
   // Si approbation RH finale → mettre à jour leave_balances.jours_pris
   if (action === "valider_rh" && conge.nb_jours > 0) {

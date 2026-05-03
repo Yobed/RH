@@ -6,6 +6,8 @@ import { NotificationBell } from "@/components/rh/NotificationBell";
 import { ThemeToggle } from "@/components/rh/ThemeToggle";
 import { MobileSidebar } from "@/components/rh/MobileSidebar";
 import { BuildingsIcon as Building2 } from "@/components/rh/ClientIcons";
+import { TopbarAlerts } from "@/components/rh/TopbarAlerts";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 export default async function DashboardLayout({
   children,
@@ -59,7 +61,7 @@ export default async function DashboardLayout({
           >
             Modules
           </p>
-          <SidebarNav />
+          <SidebarNav role={profile?.role} />
         </div>
 
         {/* Profil utilisateur */}
@@ -87,12 +89,18 @@ export default async function DashboardLayout({
           <p className="text-sm font-bold text-slate-800 dark:text-slate-200 lg:hidden">RH Manager CI</p>
 
           <div className="flex items-center gap-2">
+            <TopbarAlerts />
             <ThemeToggle />
             <NotificationBell />
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto">
+          <div className="px-4 pt-4 sm:px-6 sm:pt-5 md:px-8 md:pt-6">
+            <Breadcrumbs />
+          </div>
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +29,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
   }
 
+  // Get old values for audit
+  const { data: oldData } = await supabase
+    .from("work_accidents")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+
   const { data, error } = await supabase
     .from("work_accidents")
     .update(parsed.data)
@@ -36,5 +44,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Audit
+  await logAuditEvent({
+    action: "update",
+    entity_type: "work_accident",
+    entity_id: params.id,
+    old_values: oldData,
+    new_values: data,
+  });
+
   return NextResponse.json(data);
 }
+

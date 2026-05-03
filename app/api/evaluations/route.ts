@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { gemini, GEMINI_FLASH } from "@/lib/gemini";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 
@@ -193,6 +194,21 @@ export async function POST(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Audit Log
+  await logAuditEvent({
+    entity_type: "evaluation",
+    entity_id: data.id,
+    action: "create",
+    details: {
+      employee_id: parsed.data.employee_id,
+      type: parsed.data.type,
+      periode: periode,
+      score_global: scoreGlobal
+    },
+    new_values: data
+  });
+
   return NextResponse.json(
     {
       ...data,
@@ -228,6 +244,13 @@ export async function PATCH(req: Request) {
   // Vérifier l'appartenance à l'entreprise (via audit/RLS ou vérification manuelle)
   const { data: companyId } = await supabase.rpc("get_user_company_id");
   
+  // Get old values for audit
+  const { data: oldData } = await supabase
+    .from("evaluations")
+    .select("*")
+    .eq("id", id)
+    .single();
+
   const { data, error } = await supabase
     .from("evaluations")
     .update(updates)
@@ -239,6 +262,16 @@ export async function PATCH(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Audit Log
+  await logAuditEvent({
+    entity_type: "evaluation",
+    entity_id: id,
+    action: "update",
+    details: { updated_fields: Object.keys(updates) },
+    old_values: oldData ?? undefined,
+    new_values: data
+  });
 
   return NextResponse.json(data);
 }

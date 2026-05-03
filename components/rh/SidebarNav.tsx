@@ -130,9 +130,7 @@ const navGroups: NavGroup[] = [
   },
 ];
 
-const bottomItems: NavItem[] = [
-  { href: "/parametres", label: "Paramètres", icon: Gear },
-];
+const bottomItems: NavItem[] = [];
 
 function NavLink({ href, label, icon: Icon, exact = false }: NavItem) {
   const pathname = usePathname();
@@ -216,25 +214,39 @@ function NavSection({ group }: { group: NavGroup }) {
   );
 }
 
-export function SidebarNav() {
+export function SidebarNav({ role }: { role?: string }) {
+  const isAdmin = role === "admin" || role === "responsable_rh";
+
+  const allNavGroups = [...navGroups];
+  
+  if (isAdmin) {
+    allNavGroups.push({
+      label: "Administration",
+      defaultOpen: true,
+      items: [
+        { href: "/parametres", label: "Paramètres", icon: Gear },
+        { href: "/parametres/audit", label: "Journal d'audit", icon: ShieldWarning },
+      ],
+    });
+  } else {
+    // For non-admins, still show basic settings
+    allNavGroups.push({
+      label: "Compte",
+      defaultOpen: false,
+      items: [
+        { href: "/parametres", label: "Mon Profil", icon: Gear },
+      ],
+    });
+  }
+
   return (
     <div className="flex flex-col gap-1 w-full">
       <nav className="flex flex-col gap-1 w-full">
-        {navGroups.map((group) => (
+        {allNavGroups.map((group) => (
           <NavSection key={group.label} group={group} />
         ))}
       </nav>
 
-      <div className="w-full mt-2">
-        <div className="px-3 mb-2">
-          <div className="h-px w-full bg-slate-100" />
-        </div>
-        <nav className="flex flex-col gap-0.5">
-          {bottomItems.map((item) => (
-            <NavLink key={item.href} {...item} />
-          ))}
-        </nav>
-      </div>
     </div>
   );
 }

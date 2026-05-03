@@ -6,6 +6,7 @@ import {
   calculerPrimeAnciennete,
   calculerProvision13e,
 } from "@/lib/paie-ci";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -226,11 +227,17 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ error: insErr.message }, { status: 500 });
   }
 
-  await supabase.from("audit_logs").insert({
-    action: "BATCH_PAYROLL",
-    company_id: companyId as string,
-    user_id: user.id,
-    resource: `bulletins_paie:${periode}`,
+  // AUDIT: Log batch payroll generation
+  await logAuditEvent({
+    action: "generate",
+    entity_type: "bulletins_paie",
+    entity_id: periode,
+    details: {
+      periode,
+      nb_created: toCreate.length,
+      total_brut: totalBrut,
+      total_net: totalNet,
+    }
   });
 
   return NextResponse.json({

@@ -48,10 +48,10 @@ const docTypeLabels: Record<string, string> = {
 };
 
 const statusConfig = {
-  en_attente: { label: "En attente", icon: Clock, bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
-  signe: { label: "Signé", icon: CheckCircle, bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  refuse: { label: "Refusé", icon: XCircle, bg: "bg-red-50", text: "text-red-700", border: "border-red-200" },
-  expire: { label: "Expiré", icon: AlertCircle, bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200" },
+  en_attente: { label: "En attente", icon: Clock, bg: "bg-amber-50 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400", border: "border-amber-200 dark:border-amber-800" },
+  signe: { label: "Signé", icon: CheckCircle, bg: "bg-emerald-50 dark:bg-emerald-900/30", text: "text-emerald-700 dark:text-emerald-400", border: "border-emerald-200 dark:border-emerald-800" },
+  refuse: { label: "Refusé", icon: XCircle, bg: "bg-red-50 dark:bg-red-900/30", text: "text-red-700 dark:text-red-400", border: "border-red-200 dark:border-red-800" },
+  expire: { label: "Expiré", icon: AlertCircle, bg: "bg-slate-50 dark:bg-slate-800/50", text: "text-slate-600 dark:text-slate-400", border: "border-slate-200 dark:border-slate-700" },
 };
 
 function fmtDate(d: string | null) {
@@ -130,14 +130,14 @@ export function SignaturesClient({ requests: initial }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Mes signatures</h1>
-        <p className="text-sm text-slate-500 mt-1">Documents en attente de votre signature électronique.</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Mes signatures</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Documents en attente de votre signature électronique.</p>
       </div>
 
       {/* Pending */}
       {pending.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-600">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-400">
             En attente · {pending.length}
           </h2>
           <div className="space-y-3">
@@ -154,17 +154,17 @@ export function SignaturesClient({ requests: initial }: Props) {
       )}
 
       {pending.length === 0 && (
-        <div className="rounded-2xl border border-slate-100 bg-white p-8 text-center">
+        <div className="rounded-2xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900 p-8 text-center">
           <CheckCircle className="mx-auto h-10 w-10 text-emerald-400 mb-3" />
-          <p className="text-sm font-medium text-slate-700">Aucun document en attente</p>
-          <p className="text-xs text-slate-500 mt-1">Vous n'avez aucune signature en suspens.</p>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Aucun document en attente</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Vous n'avez aucune signature en suspens.</p>
         </div>
       )}
 
       {/* History */}
       {done.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-600">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-slate-600 dark:text-slate-400">
             Historique · {done.length}
           </h2>
           <div className="space-y-2">
@@ -174,22 +174,22 @@ export function SignaturesClient({ requests: initial }: Props) {
               return (
                 <div
                   key={req.id}
-                  className="rounded-xl border border-slate-100 bg-white p-4 flex items-start gap-4"
+                  className="rounded-xl border border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 flex items-start gap-4"
                 >
                   <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${cfg.bg}`}>
                     <Icon className={`h-4 w-4 ${cfg.text}`} />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">{req.titre}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">{req.titre}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {docTypeLabels[req.doc_type] ?? req.doc_type}
                       {req.reference && ` · ${req.reference}`}
                     </p>
                     {req.status === "signe" && req.signed_at && (
-                      <p className="text-xs text-emerald-600 mt-1">Signé le {fmtDate(req.signed_at)}</p>
+                      <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-1">Signé le {fmtDate(req.signed_at)}</p>
                     )}
                     {req.status === "refuse" && req.refused_at && (
-                      <p className="text-xs text-red-600 mt-1">
+                      <p className="text-xs text-red-600 dark:text-red-500 mt-1">
                         Refusé le {fmtDate(req.refused_at)}
                         {req.refus_motif && ` — ${req.refus_motif}`}
                       </p>
@@ -212,39 +212,39 @@ export function SignaturesClient({ requests: initial }: Props) {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Pen className="h-5 w-5 text-slate-700" />
+                  <Pen className="h-5 w-5 text-slate-700 dark:text-slate-300" />
                   Signer ce document
                 </DialogTitle>
                 <DialogDescription>
                   En cliquant sur "Confirmer ma signature", vous acceptez et signez électroniquement le document suivant.
                 </DialogDescription>
               </DialogHeader>
-              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-1">
-                <p className="text-sm font-semibold text-slate-900">{selected.titre}</p>
-                <p className="text-xs text-slate-500">
+              <div className="rounded-xl border border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-900/50 p-4 space-y-1">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{selected.titre}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   {docTypeLabels[selected.doc_type] ?? selected.doc_type}
                   {selected.reference && ` · ${selected.reference}`}
                 </p>
                 {selected.description && (
-                  <p className="text-xs text-slate-600 mt-2">{selected.description}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">{selected.description}</p>
                 )}
                 {selected.document_url && (
                   <a
                     href={selected.document_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline mt-2"
+                    className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline mt-2"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Consulter le document
                   </a>
                 )}
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Votre adresse IP, la date et l'heure seront horodatées comme preuve de signature.
               </p>
               {error && (
-                <p className="text-sm text-red-600 flex items-center gap-1">
+                <p className="text-sm text-red-600 dark:text-red-500 flex items-center gap-1">
                   <AlertCircle className="h-4 w-4" />
                   {error}
                 </p>
@@ -262,7 +262,7 @@ export function SignaturesClient({ requests: initial }: Props) {
           {action === "refuser" && selected && (
             <>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-red-700">
+                <DialogTitle className="flex items-center gap-2 text-red-700 dark:text-red-500">
                   <XCircle className="h-5 w-5" />
                   Refuser ce document
                 </DialogTitle>
@@ -283,7 +283,7 @@ export function SignaturesClient({ requests: initial }: Props) {
                   />
                 </div>
                 {error && (
-                  <p className="text-sm text-red-600 flex items-center gap-1">
+                  <p className="text-sm text-red-600 dark:text-red-500 flex items-center gap-1">
                     <AlertCircle className="h-4 w-4" />
                     {error}
                   </p>
@@ -321,39 +321,39 @@ function RequestCard({
   const isExpired = req.expire_le && new Date(req.expire_le) < new Date();
 
   return (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 space-y-4">
+    <div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10 p-5 space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3 min-w-0">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100">
-            <FileText className="h-4.5 w-4.5 text-amber-700" />
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/50">
+            <FileText className="h-4.5 w-4.5 text-amber-700 dark:text-amber-400" />
           </span>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-900 leading-tight">{req.titre}</p>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 leading-tight">{req.titre}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               {docTypeLabels[req.doc_type] ?? req.doc_type}
               {req.reference && ` · Réf. ${req.reference}`}
             </p>
           </div>
         </div>
-        <span className="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+        <span className="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
           <Clock className="h-3 w-3 mr-1" />
           En attente
         </span>
       </div>
 
       {req.description && (
-        <p className="text-sm text-slate-700 bg-white rounded-lg px-3 py-2 border border-slate-100">
+        <p className="text-sm text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 rounded-lg px-3 py-2 border border-slate-100 dark:border-slate-800">
           {req.description}
         </p>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col gap-0.5">
-          <p className="text-[11px] text-slate-500">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">
             Reçu le {fmtDate(req.created_at)}
           </p>
           {req.expire_le && (
-            <p className={`text-[11px] font-medium ${isExpired ? "text-red-600" : "text-amber-700"}`}>
+            <p className={`text-[11px] font-medium ${isExpired ? "text-red-600 dark:text-red-500" : "text-amber-700 dark:text-amber-400"}`}>
               {isExpired ? "Expiré le" : "Expire le"} {fmtDate(req.expire_le)}
             </p>
           )}
@@ -365,7 +365,7 @@ function RequestCard({
               href={req.document_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 h-8 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              className="inline-flex items-center gap-1 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 px-3 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
             >
               <ExternalLink className="h-3.5 w-3.5" />
               Consulter
@@ -374,7 +374,7 @@ function RequestCard({
           <Button
             variant="outline"
             size="sm"
-            className="h-8 text-xs border-red-200 text-red-700 hover:bg-red-50"
+            className="h-8 text-xs border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
             onClick={onRefuse}
             disabled={!!isExpired}
           >

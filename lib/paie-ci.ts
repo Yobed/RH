@@ -316,6 +316,12 @@ export interface LignesBulletin {
     h50: number;
     h75: number;
   };
+  // Heures à taux spéciaux — Décret n°96-203
+  heures_nuit?: number;            // Heures de nuit (21h–5h) — majoration 75%
+  heures_dimanche?: number;        // Heures dimanche — majoration 75%
+  heures_ferie?: number;           // Heures jours fériés — majoration 75%
+  // RTT — accord d'entreprise (non prévu par le CT-CI, usage conventionnel)
+  jours_rtt_pris?: number;         // Jours RTT pris ce mois (déduction si sans solde)
   taux_horaire?: number;
   autres_retenues?: number;
   avances?: number;
@@ -374,6 +380,12 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, taux_horaire)
     : 0;
 
+  // Heures spéciales : nuit, dimanche, fériés — toutes au taux 75% (Décret n°96-203)
+  const heures_nuit_montant = Math.round((lignes.heures_nuit ?? 0) * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.nuit));
+  const heures_dim_montant = Math.round((lignes.heures_dimanche ?? 0) * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.dimanche));
+  const heures_ferie_montant = Math.round((lignes.heures_ferie ?? 0) * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.jour_ferie));
+  const heures_speciales_montant = heures_nuit_montant + heures_dim_montant + heures_ferie_montant;
+
   const total_brut = (lignes.salaire_brut ?? 0)
     + (lignes.sursalaire ?? 0)
     + (lignes.prime_anciennete ?? 0)
@@ -383,6 +395,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     + (lignes.prime_fonction ?? 0)
     + primeResponsabilite
     + heures_sup_montant
+    + heures_speciales_montant
     + primeTransport
     + vacationAllowance
     + primeLogement
@@ -478,6 +491,35 @@ export function formatAnciennete(dateEmbauche: string | null | undefined): strin
   const mStr = String(months).padStart(2, "0");
   const dStr = String(days).padStart(2, "0");
   return `${yStr} an${years > 1 ? "s" : ""} ${mStr} mois ${dStr} jour${days > 1 ? "s" : ""}`;
+}
+
+// ── Calcul inversé : brut depuis net souhaité ────────────────────────────
+// Utilise une dichotomie binaire convergente (60 itérations max, précision ±1 FCFA).
+// Utile pour simulations recrutement ou négociation salariale.
+export function calculerBrutDepuisNet(
+  netSouhaite: number,
+  autresRetenues = 0,
+  avances = 0
+): { brut: number; details: ResultatPaie } {
+  if (netSouhaite <= 0) {
+    const details = calculerBulletin(0);
+    return { brut: 0, details };
+  }
+  let low = Math.max(SMIG_MENSUEL, netSouhaite);
+  let high = Math.round(netSouhaite * 3);
+
+  for (let i = 0; i < 60; i++) {
+    const mid = Math.round((low + high) / 2);
+    const details = calculerBulletin(mid, autresRetenues, avances);
+    const ecart = details.salaire_net - netSouhaite;
+    if (Math.abs(ecart) <= 1) return { brut: mid, details };
+    if (ecart < 0) low = mid + 1;
+    else high = mid - 1;
+    if (low > high) break;
+  }
+
+  const brut = Math.round((low + high) / 2);
+  return { brut, details: calculerBulletin(brut, autresRetenues, avances) };
 }
 
 // ── Indemnité de précarité (CDD) — Art. 14.8 Code du Travail ivoirien CI ─

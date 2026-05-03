@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { logAuditEvent } from "@/lib/audit";
 
 const updateSchema = z.object({
   full_name: z.string().min(2).max(100).optional(),
@@ -87,10 +88,10 @@ export async function PUT(
     );
   }
 
-  // Lire les valeurs salariales actuelles avant mise à jour
+  // Lire les valeurs actuelles avant mise à jour pour l'audit
   const { data: current } = await supabase
     .from("employees")
-    .select("company_id, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
+    .select("*")
     .eq("id", params.id)
     .limit(1)
     .maybeSingle();
@@ -133,6 +134,16 @@ export async function PUT(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // AUDIT: Log employee update
+  await logAuditEvent({
+    action: "update",
+    entity_type: "employee",
+    entity_id: params.id,
+    old_values: current || undefined,
+    new_values: data,
+    details: parsed.data.motif_modification ? { motif: parsed.data.motif_modification } : undefined
+  });
+
   return NextResponse.json(data);
 }
 
@@ -156,6 +167,14 @@ export async function DELETE(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // AUDIT: Log employee archival
+  await logAuditEvent({
+    action: "archive",
+    entity_type: "employee",
+    entity_id: params.id,
+    details: { status: "inactif" }
+  });
 
   return NextResponse.json({ success: true });
 }

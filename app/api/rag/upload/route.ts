@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logAuditEvent } from "@/lib/audit";
 
 export const dynamic = 'force-dynamic';
 const pdfParse = require("pdf-parse") as (buffer: Buffer) => Promise<{ text: string; numpages: number }>; // CommonJS interop
@@ -136,17 +137,17 @@ export async function POST(req: Request) {
 
   // ── 4. Log d'audit après upload RAG réussi ──────────────────
   if (chunksInserted > 0) {
-    const { data: companyData } = await supabase.rpc("get_user_company_id");
-    const companyId = companyData as string | null;
-    if (companyId) {
-      // Audit non bloquant — on ignore l'erreur si l'insert échoue
-      await supabase.from("audit_logs").insert({
-        action: "RAG_UPLOAD",
-        company_id: companyId,
-        user_id: user.id,
-        resource: `legal_documents:${lastInsertedId ?? "unknown"}`,
-      });
-    }
+    await logAuditEvent({
+      action: "upload",
+      entity_type: "legal_documents",
+      entity_id: lastInsertedId ?? "unknown",
+      details: {
+        titre,
+        source,
+        chunksInserted,
+        storagePath
+      }
+    });
   }
 
   return NextResponse.json({

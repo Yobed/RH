@@ -1,6 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import * as z from 'zod';
+import { logAuditEvent } from "@/lib/audit";
 
 const updateProcedureSchema = z.object({
   type: z.string().optional(),
@@ -91,6 +92,13 @@ export async function PATCH(
       );
     }
 
+    // Get old values for audit
+    const { data: oldData } = await supabase
+      .from('disciplinary_procedures')
+      .select('*')
+      .eq('id', id)
+      .single();
+
     const { data, error } = await supabase
       .from('disciplinary_procedures')
       .update({
@@ -106,6 +114,16 @@ export async function PATCH(
       console.error('Erreur Supabase (PATCH disciplinary_procedures):', error);
       return NextResponse.json({ error: 'Erreur lors de la mise à jour' }, { status: 500 });
     }
+
+    // Audit Log
+    await logAuditEvent({
+      entity_type: "disciplinary_procedure",
+      entity_id: id,
+      action: "update",
+      details: { updated_fields: Object.keys(validationResult.data) },
+      old_values: oldData ?? undefined,
+      new_values: data
+    });
 
     return NextResponse.json(data);
   } catch (error) {
@@ -132,7 +150,12 @@ export async function DELETE(
       return NextResponse.json({ error: 'Entreprise non trouvée' }, { status: 403 });
     }
 
-    const { id } = params;
+    // Get old values for audit
+    const { data: oldData } = await supabase
+      .from('disciplinary_procedures')
+      .select('*')
+      .eq('id', id)
+      .single();
 
     const { error } = await supabase
       .from('disciplinary_procedures')
@@ -144,6 +167,15 @@ export async function DELETE(
       console.error('Erreur Supabase (DELETE disciplinary_procedures):', error);
       return NextResponse.json({ error: 'Erreur lors de la suppression' }, { status: 500 });
     }
+
+    // Audit Log
+    await logAuditEvent({
+      entity_type: "disciplinary_procedure",
+      entity_id: id,
+      action: "delete",
+      details: { reason: "Manual deletion" },
+      old_values: oldData ?? undefined
+    });
 
     return NextResponse.json({ success: true, message: 'Procédure supprimée avec succès' });
   } catch (error) {

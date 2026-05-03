@@ -1,4 +1,4 @@
-﻿import { createServerClient } from "@/lib/supabase/server";
+import { createServerClient } from "@/lib/supabase/server";
 import { ParametresForm } from "@/components/rh/ParametresForm";
 
 export const metadata = { title: "Paramètres — RH Manager CI" };
@@ -52,7 +52,7 @@ export default async function ParametresPage() {
       </div>
 
       {/* Formulaire */}
-      <div className="max-w-2xl">
+      <div className="max-w-2xl grid gap-6">
         <ParametresForm
           profile={{
             full_name: profile?.full_name ?? "",
@@ -84,6 +84,35 @@ export default async function ParametresPage() {
             valeur_point: fiscalParams?.valeur_point ?? 0,
           }}
         />
+
+        {/* Section Audit */}
+        {profile?.role === "admin" || profile?.role === "responsable_rh" ? (
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-50 border border-slate-100">
+                <svg className="h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="font-semibold text-slate-900">Sécurité & Audit</h2>
+                <p className="text-xs text-slate-500">Consulter l'historique des actions et gérer la conformité</p>
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <a 
+                href="/parametres/audit"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors"
+              >
+                Accéder au journal d'audit
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
