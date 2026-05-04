@@ -16,8 +16,8 @@ export async function GET() {
     .single();
 
   return NextResponse.json({
-    webhook_url: data?.whatsapp_webhook_url ?? "",
-    access_token: data?.whatsapp_access_token ?? "",
+    api_key: data?.whatsapp_access_token ?? "",
+    test_phone: data?.whatsapp_webhook_url ?? "",
     enabled: data?.whatsapp_enabled ?? false,
   });
 }
@@ -30,14 +30,14 @@ export async function POST(req: NextRequest) {
   const { data: companyId } = await supabase.rpc("get_user_company_id");
   if (!companyId) return NextResponse.json({ error: "Société introuvable" }, { status: 404 });
 
-  const body = await req.json() as { webhook_url?: string; access_token?: string; enabled?: boolean };
+  const body = await req.json() as { test_phone?: string; api_key?: string; enabled?: boolean };
 
   const { error } = await supabase
     .from("company_integrations")
     .upsert({
       company_id: companyId,
-      whatsapp_webhook_url: body.webhook_url,
-      whatsapp_access_token: body.access_token,
+      whatsapp_webhook_url: body.test_phone,
+      whatsapp_access_token: body.api_key,
       whatsapp_enabled: body.enabled ?? false,
       updated_at: new Date().toISOString(),
     }, { onConflict: "company_id" });
