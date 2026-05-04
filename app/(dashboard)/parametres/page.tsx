@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ParametresForm } from "@/components/rh/ParametresForm";
+import { BrandingForm } from "@/components/rh/BrandingForm";
 
 export const metadata = { title: "Paramètres — RH Manager CI" };
 
@@ -22,7 +23,7 @@ export default async function ParametresPage() {
   const { data: company } = companyId
     ? await supabase
         .from("companies")
-        .select("name, convention_collective, raison_sociale, adresse, cnps_matricule, nccm, ncc, taux_at_mp, adresse_paie, contact_paie, code_naf")
+        .select("name, convention_collective, raison_sociale, adresse, cnps_matricule, nccm, ncc, taux_at_mp, adresse_paie, contact_paie, code_naf, logo_url, couleur_primaire, couleur_secondaire")
         .eq("id", companyId as string)
         .single()
     : { data: null };
@@ -83,6 +84,13 @@ export default async function ParametresPage() {
               | "Agriculture",
             valeur_point: fiscalParams?.valeur_point ?? 0,
           }}
+        />
+
+        {/* Section Identité visuelle */}
+        <BrandingForm
+          logoUrl={company?.logo_url ?? null}
+          couleurPrimaire={company?.couleur_primaire ?? "#6366f1"}
+          couleurSecondaire={company?.couleur_secondaire ?? "#8b5cf6"}
         />
 
         {/* Section Audit */}

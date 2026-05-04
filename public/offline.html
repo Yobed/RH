@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hors ligne — RH Manager CI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #0f172a;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 1.5rem;
+    }
+    .card {
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      background: #6366f1;
+      border-radius: 16px;
+    }
+    .logo svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+    }
+    .brand {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6366f1;
+    }
+    p {
+      color: #94a3b8;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      color: #94a3b8;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 21v-2a4 4 0 014-4h10a4 4 0 014 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
+      </svg>
+    </div>
+    <div>
+      <p class="brand">RH Manager CI</p>
+      <h1>Vous êtes hors ligne</h1>
+    </div>
+    <p>Les données seront synchronisées à la reconnexion. Veuillez vérifier votre connexion Internet.</p>
+    <div class="badge">
+      <span class="dot"></span>
+      Connexion indisponible
+    </div>
+  </div>
+</body>
+</html>

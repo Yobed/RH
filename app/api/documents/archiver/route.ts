@@ -42,6 +42,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Erreur lors de l'archivage dans le stockage" }, { status: 500 });
     }
 
+    // Obtenir l'URL publique
+    const { data: urlData } = supabase.storage
+      .from("rh-documents")
+      .getPublicUrl(filePath);
+
     // Enregistrer dans la table GED (documents)
     const { data: documentData, error: docDbError } = await supabase
       .from("documents")
@@ -50,7 +55,7 @@ export async function POST(req: Request) {
         employee_id,
         name,
         famille,
-        file_url: filePath,
+        file_url: urlData.publicUrl,
         file_type: "application/pdf",
         file_size_kb: Math.round(buffer.length / 1024)
       })

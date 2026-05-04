@@ -12,6 +12,7 @@ import {
   ArrowRightIcon as ArrowRight,
 } from "@/components/rh/ClientIcons";
 import Link from "next/link";
+import { AiSuggestionsWidget } from "@/components/rh/AiSuggestionsWidget";
 
 export const metadata = { title: "Tableau de bord — RH Manager CI" };
 
@@ -211,6 +212,19 @@ export default async function RhPage() {
         <section className="space-y-3">
           <SectionDivider label="Actions rapides" />
           <QuickActions />
+        </section>
+
+        {/* ── SUGGESTIONS IA ── */}
+        <section className="space-y-3">
+          <SectionDivider label="Suggestions IA" />
+          <AiSuggestionsWidget
+            totalActifs={totalActifs ?? 0}
+            cddExpirant={cddExpirant ?? 0}
+            medicalAlertsCount={medicalAlertsCount ?? 0}
+            evalBrouillon={evalBrouillon ?? 0}
+            contentieuxOuverts={contentieuxOuverts ?? 0}
+            congesEnAttente={congesEnAttente?.length ?? 0}
+          />
         </section>
 
         {/* ── BENTO KPIs — 12-col dense grid ── */}

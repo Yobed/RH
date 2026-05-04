@@ -35,6 +35,14 @@ import {
   CaretDown,
   TreeStructure,
   CalendarCheck,
+  CalendarDots,
+  TrendUp,
+  UserMinus,
+  Key,
+  Plug,
+  ShieldCheck,
+  UsersThree,
+  DeviceMobile,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -64,6 +72,9 @@ const navGroups: NavGroup[] = [
       { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging },
       { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
       { href: "/analytique/focus", label: "Focus Stratégique", icon: Target },
+      { href: "/analytique/risque-depart", label: "Risque de départ", icon: UserMinus },
+      { href: "/analytique/prevision", label: "Prévision N+1", icon: TrendUp },
+      { href: "/calendrier", label: "Calendrier global", icon: CalendarDots },
     ],
   },
   {
@@ -75,6 +86,7 @@ const navGroups: NavGroup[] = [
       { href: "/employes/organigramme", label: "Organigramme", icon: TreeStructure },
       { href: "/contrats", label: "Contrats", icon: FileText },
       { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
+      { href: "/conges/heatmap", label: "Heatmap absences", icon: CalendarBlank },
       { href: "/planning", label: "Planning & shifts", icon: CalendarCheck },
       { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
       { href: "/onboarding", label: "Onboarding", icon: UserPlus, pulse: true },
@@ -264,8 +276,17 @@ export function SidebarNav({ role }: { role?: string }) {
       accent: "#94a3b8",
       defaultOpen: true,
       items: [
-        { href: "/parametres", label: "Paramètres", icon: Gear },
+        { href: "/parametres", label: "Paramètres", icon: Gear, exact: true },
+        { href: "/parametres/workflows", label: "Workflows approbation", icon: ChartLineUp },
+        { href: "/parametres/permissions", label: "Permissions RBAC", icon: UsersThree },
+        { href: "/parametres/delegations", label: "Délégations", icon: UserMinus },
+        { href: "/parametres/securite", label: "Sécurité & 2FA", icon: ShieldCheck },
+        { href: "/parametres/securite-events", label: "Événements sécurité", icon: ShieldWarning },
         { href: "/parametres/audit", label: "Journal d'audit", icon: ShieldWarning },
+        { href: "/parametres/whatsapp", label: "WhatsApp Business", icon: ChatCircleText },
+        { href: "/parametres/webhooks", label: "Webhooks", icon: Plug },
+        { href: "/parametres/api", label: "API & Clés", icon: Key },
+        { href: "/paie/mobile-money", label: "Mobile Money CI", icon: DeviceMobile },
       ],
     });
   } else {

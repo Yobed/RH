@@ -1,6 +1,7 @@
 import { CalcEnversForm } from "@/components/rh/CalcEnversForm";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { CalculateurRH } from "@/components/rh/CalculateurRH";
+import { CalculateurConventions } from "@/components/rh/CalculateurConventions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createServerClient } from "@/lib/supabase/server";
 
@@ -28,6 +29,12 @@ const TABS: TabMeta[] = [
     label: "Calculer un départ",
     description:
       "Un salarié quitte l'entreprise : calculez son Solde de Tout Compte — indemnité de licenciement, indemnité de précarité (CDD), congés non pris et préavis non effectué. Export PDF inclus.",
+  },
+  {
+    value: "conventions",
+    label: "Conventions collectives CI",
+    description:
+      "Calculez le salaire minimum et les primes obligatoires selon la convention collective applicable (Commerce, BTP, Industrie, Banque & Assurance). Grilles à jour SMIG 75 000 FCFA.",
   },
   {
     value: "baremes",
@@ -90,6 +97,10 @@ export default async function CalculateurPage() {
               <div className="max-w-4xl">
                 <SoldeToutCompteForm employees={employeeList} />
               </div>
+            )}
+
+            {t.value === "conventions" && (
+              <CalculateurConventions />
             )}
 
             {t.value === "baremes" && (

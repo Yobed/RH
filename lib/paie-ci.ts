@@ -318,6 +318,10 @@ export interface LignesBulletin {
     h75: number;
     h100?: number;
   };
+  // Maladie — Maintien de salaire (CCI Art. 42)
+  jours_maladie_total?: number;    // Nombre total de jours d'arrêt dans le mois
+  jours_maladie_plein_tarif?: number; // Jours maintenus à 100%
+  jours_maladie_demi_tarif?: number;  // Jours maintenus à 50%
   // Heures à taux spéciaux — Décret n°96-203
   heures_nuit?: number;            // Heures de nuit (21h–5h) — majoration 75%
   heures_dimanche?: number;        // Heures dimanche — majoration 75%
@@ -345,6 +349,7 @@ export interface ResultatPaieComplet {
   salaire_net: number;
   heures_sup_montant: number;
   retenu_absence: number;
+  indemnite_maladie?: number;     // Montant total du maintien de salaire
   // Colonnes Sage (22 colonnes)
   gross_salary: number;           // *** SALAIRE BRUT *** = total_brut
   exempt_indemnity: number;       // *** INDEMNITE EXONEREE *** = prime_transport
@@ -420,6 +425,14 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
 
   const retenu_absence = calculerRetenuAbsence(lignes.nb_jours_absence ?? 0, lignes.salaire_brut);
 
+  // Calcul Maintien Maladie (Indemnité compensatrice de salaire)
+  // On déduit d'abord l'absence totale, puis on rajoute l'indemnité de maintien
+  const salaire_journalier = (lignes.salaire_brut ?? 0) / 26;
+  const indemnite_maladie = Math.round(
+    ((lignes.jours_maladie_plein_tarif ?? 0) * salaire_journalier) +
+    ((lignes.jours_maladie_demi_tarif ?? 0) * salaire_journalier * 0.5)
+  );
+
   const cnps_salarie = cnps_retraite + cmu;
 
   const total_retenues = cnps_salarie + its
@@ -427,7 +440,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     + (lignes.avances ?? 0)
     + retenu_absence;
 
-  const salaire_net = Math.max(0, total_brut - total_retenues);
+  const salaire_net = Math.max(0, total_brut + indemnite_maladie - total_retenues);
 
   // Colonnes Sage
   const exempt_indemnity = primeTransport + vacationAllowance + primeLogement + remboursementFrais;
@@ -465,7 +478,20 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     net_before_withholding,
     net_to_pay,
     overtime_pay: heures_sup_montant,
+    indemnite_maladie,
   };
+}
+
+/**
+ * Calcul les droits de maintien de salaire en cas de maladie (CCI Art. 42)
+ * @param ancienneteAnnees 
+ * @returns { plein: number, demi: number } (en mois de droits cumulés)
+ */
+export function getDroitsMaladieCCI(ancienneteAnnees: number): { plein: number; demi: number } {
+  if (ancienneteAnnees < 1) return { plein: 1, demi: 0 }; // Par défaut : préavis (souvent 1 mois)
+  if (ancienneteAnnees < 5) return { plein: 1, demi: 1 };
+  if (ancienneteAnnees < 10) return { plein: 2, demi: 2 };
+  return { plein: 3, demi: 3 };
 }
 
 export function formatAnciennete(dateEmbauche: string | null | undefined): string {

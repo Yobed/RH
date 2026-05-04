@@ -102,7 +102,7 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Archives</h1>
           <p className="text-sm text-slate-600 mt-0.5">
-            Gestion électronique des documents — centralisation et conformité.
+            Vue globale de tous les documents — recherche, filtrage et téléchargement.
           </p>
         </div>
         <DocumentUploadDialog companyId={profile.company_id} />

@@ -1,0 +1,4 @@
+ALTER TABLE companies
+  ADD COLUMN IF NOT EXISTS logo_url TEXT,
+  ADD COLUMN IF NOT EXISTS couleur_primaire TEXT DEFAULT '#6366f1',
+  ADD COLUMN IF NOT EXISTS couleur_secondaire TEXT DEFAULT '#8b5cf6';

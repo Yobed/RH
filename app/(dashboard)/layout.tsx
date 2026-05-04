@@ -8,6 +8,8 @@ import { MobileSidebar } from "@/components/rh/MobileSidebar";
 import { BuildingsIcon as Building2 } from "@/components/rh/ClientIcons";
 import { TopbarAlerts } from "@/components/rh/TopbarAlerts";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { CommandPalette, CommandPaletteButton } from "@/components/rh/CommandPalette";
+import { OfflineBanner } from "@/components/rh/OfflineBanner";
 
 export default async function DashboardLayout({
   children,
@@ -28,8 +30,24 @@ export default async function DashboardLayout({
   // Les salariés n'ont pas accès au dashboard admin → redirection portail
   if (profile?.role === "salarie") redirect("/portail");
 
+  const { data: companyId } = await supabase.rpc("get_user_company_id");
+
+  const { data: company } = companyId
+    ? await supabase
+        .from("companies")
+        .select("couleur_primaire, couleur_secondaire, logo_url")
+        .eq("id", companyId as string)
+        .single()
+    : { data: null };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div
+      className="flex h-screen overflow-hidden bg-background"
+      style={{
+        "--brand-primary": company?.couleur_primaire ?? "#6366f1",
+        "--brand-secondary": company?.couleur_secondaire ?? "#8b5cf6",
+      } as React.CSSProperties}
+    >
       {/* Sidebar desktop */}
       <aside className="hidden lg:flex w-[15.5rem] shrink-0 flex-col print:hidden border-r border-[var(--sidebar-border)] bg-[var(--sidebar)]">
         {/* Logo */}
@@ -72,12 +90,15 @@ export default async function DashboardLayout({
           <p className="text-sm font-bold text-foreground lg:hidden">RH Manager CI</p>
 
           <div className="flex items-center gap-1.5">
+            <CommandPaletteButton />
             <TopbarAlerts />
             <ThemeToggle />
             <NotificationBell />
           </div>
         </header>
 
+        <CommandPalette />
+        <OfflineBanner />
         <main className="flex-1 overflow-y-auto">
           <div className="px-4 pt-4 sm:px-6 sm:pt-5 md:px-8 md:pt-5">
             <Breadcrumbs />

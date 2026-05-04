@@ -249,7 +249,8 @@ export function validerLignesHS(
   const empMap = new Map(employees.map((e) => [e.matricule.trim().toUpperCase(), e]));
 
   lignes.forEach((ligne, idx) => {
-    const rowLabel = `Ligne ${idx + 2} (${ligne.matricule || "?"})`;
+    // Les lignes de données commencent à la ligne 3 du fichier Excel (1: en-tête, 2: sous-titre)
+    const rowLabel = `Ligne ${idx + 3} (${ligne.matricule || "?"})`;
 
     // Validation format période
     if (!PERIODE_RE.test(ligne.periode)) {

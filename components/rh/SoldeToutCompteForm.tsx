@@ -145,6 +145,9 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
           somme_salaires_bruts_cdd: sommeBrutsCdd,
           jours_conges_restants: joursConges,
           jours_preavis_non_effectues: joursPreavis,
+          motifRupture,
+          motifLabel: MOTIFS_RUPTURE.find(m => m.value === motifRupture)?.label || "Motif non renseigné",
+          dateFin,
         },
       });
       const filename = `STC_${(selectedEmployee.full_name || "Export").replace(/ /g, "_")}_${new Date().getFullYear()}`;

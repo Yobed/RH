@@ -1,6 +1,15 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { ResultatPaieComplet, LignesBulletin } from "./paie-ci";
+import {
+  ResultatPaieComplet,
+  LignesBulletin,
+  calculerITS,
+  TAUX_CNPS_RETRAITE_SALARIE,
+  CMU_MENSUEL,
+  PLAFOND_CNPS_MENSUEL,
+  TAUX_ABATTEMENT_ITS
+} from "./paie-ci";
+import { addTimestampCachet } from "./pdf-watermark";
 
 export interface CompanyInfo {
   id: string;
@@ -572,51 +581,216 @@ export const generatePaySlipPDF = ({ result, lines, employee, company, period }:
  */
 export const generateSTCPDF = ({ stcResult, employee, company, params }: any) => {
     const doc = new jsPDF() as jsPDFWithAutoTable;
-    const margin = 20;
+    const margin = 15;
     const pageWidth = doc.internal.pageSize.getWidth();
-    const startY = setupHeader(doc, company, "RECU POUR SOLDE DE TOUT COMPTE");
     
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    const content = `Je soussigné(e), Monsieur / Madame ${employee.full_name}, matricule ${employee.matricule || "—"}, demeurant à Abidjan, Côte d'Ivoire, reconnais avoir reçu ce jour de la part de la société ${company?.raison_sociale || company?.name || "l'Employeur"}, la somme brute totale de :`;
+    // 1. En-tête Premium (Bandeau Slate-900)
+    doc.setFillColor(15, 23, 42); // slate-900
+    doc.rect(0, 0, pageWidth, 45, "F");
     
-    doc.text(content, margin, startY + 15, { maxWidth: 170, lineHeightFactor: 1.5 });
-    
+    // Logo / Nom Entreprise
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    const totalV = stcResult?.total_brut_stc ?? 0;
-    const totalFmt = new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(totalV);
-    doc.text(totalFmt, pageWidth / 2, startY + 40, { align: "center" });
-
-    doc.setFontSize(10);
+    doc.setFontSize(16);
+    doc.setTextColor(255, 255, 255);
+    doc.text(company?.raison_sociale || company?.name || "ENTREPRISE IVOIRIENNE", margin, 20);
+    
     doc.setFont("helvetica", "normal");
-    doc.text("Cette somme se décompose comme suit :", margin, startY + 55);
+    doc.setFontSize(8);
+    doc.setTextColor(200, 200, 200);
+    doc.text(company?.adresse || "Abidjan, Côte d'Ivoire", margin, 26);
+    doc.text(`N° CC : ${company?.ncc || "—"} | CNPS : ${company?.cnps_matricule || "—"}`, margin, 31);
 
-    const body = [
-        ["Indemnité de licenciement", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_licenciement ?? 0)} FCFA`],
-        ["Indemnité de précarité (CDD)", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_precarite ?? 0)} FCFA`],
-        ["Indemnité compensatrice de congés", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_compensatrice_conges ?? 0)} FCFA`],
-        ["Indemnité de préavis", `${new Intl.NumberFormat("fr-CI").format(stcResult?.indemnite_preavis ?? 0)} FCFA`],
-        ["TOTAL BRUT STC", `${new Intl.NumberFormat("fr-CI").format(stcResult?.total_brut_stc ?? 0)} FCFA`]
-    ];
+    // Titre Document (à droite dans le bandeau)
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    doc.text("BULLETIN DE SOLDE DE TOUT COMPTE", pageWidth - margin, 20, { align: "right" });
+    
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    const isCdd = (employee.type_contrat || "CDI").toUpperCase() === "CDD";
+    const motifLabel = params.motifLabel || "Fin de contrat";
+    doc.text(`${motifLabel.toUpperCase()} — ${isCdd ? 'CDD' : 'CDI'}`, pageWidth - margin, 27, { align: "right" });
+    
+    // Réf & Dates de référence
+    const ref = `STC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const today = new Date().toLocaleDateString("fr-CI");
+    const dateFin = params.dateFin ? new Date(params.dateFin).toLocaleDateString("fr-CI") : "—";
+    doc.setFontSize(8);
+    doc.setTextColor(200, 200, 200);
+    doc.text(`Réf : ${ref}`, pageWidth - margin, 33, { align: "right" });
+    doc.text(`Établi le : ${today} | Fin effective : ${dateFin}`, pageWidth - margin, 38, { align: "right" });
 
+    const fmt = (n: number) => new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(Math.round(n || 0));
+
+    // --- SECTION I: IDENTIFICATION ---
+    let currentY = 55;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(30, 41, 59); // slate-800
+    doc.text("I. IDENTIFICATION DU SALARIÉ", margin, currentY);
+    
+    doc.setDrawColor(226, 232, 240); // slate-200
+    doc.setLineWidth(0.5);
+    doc.line(margin, currentY + 2, pageWidth - margin, currentY + 2);
+
+    currentY += 8;
     autoTable(doc, {
-        startY: startY + 60,
-        body: body,
-        theme: 'grid',
-        didParseCell: (data: any) => {
-            if (data.row.index === 4) data.cell.styles.fontStyle = 'bold';
+        startY: currentY,
+        body: [
+            ["Collaborateur", employee.full_name || "—", "Matricule", employee.matricule || "—"],
+            ["Poste", employee.poste || "—", "Type de contrat", isCdd ? "CDD" : "CDI"],
+            ["Département", employee.departement || "—", "Catégorie", employee.categorie || "—"],
+            ["Date d'embauche", employee.date_embauche ? new Date(employee.date_embauche).toLocaleDateString("fr-CI") : "—", "Ancienneté retenue", `${Number(params.anciennete_annees || 0).toFixed(2)} an(s)`],
+            ["Salaire de base", fmt(employee.salaire_brut || 0), "Salaire moyen (12m)", fmt(Number(params.salaire_moyen_12_mois || 0))]
+        ],
+        theme: 'plain',
+        styles: { fontSize: 8, cellPadding: 2 },
+        columnStyles: { 
+            0: { fontStyle: 'bold', textColor: [100, 116, 139], cellWidth: 35 }, 
+            2: { fontStyle: 'bold', textColor: [100, 116, 139], cellWidth: 35 } 
         }
     });
 
-    const finalY = (doc as any).lastAutoTable.finalY + 15;
-    const discharge = "Ce reçu pour solde de tout compte est établi en application des articles du Code du Travail de Côte d'Ivoire. Sous réserve d'encaissement définitif de la somme précitée, il libère l'employeur de toute obligation contractuelle.";
-    doc.setFontSize(9);
-    doc.text(discharge, margin, finalY, { maxWidth: 170, lineHeightFactor: 1.4 });
-
-    doc.text(`Fait à Abidjan, le ${new Date().toLocaleDateString('fr-FR')}`, margin, finalY + 30);
+    // --- SECTION II: DÉCOMPTE DES INDEMNITÉS ---
+    currentY = (doc as any).lastAutoTable.finalY + 10;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(30, 41, 59);
+    doc.text("II. DÉCOMPTE DES INDEMNITÉS LÉGALES", margin, currentY);
+    doc.line(margin, currentY + 2, pageWidth - margin, currentY + 2);
     
-    setupSignatures(doc, "L'Employé (Lu et approuvé)", "L'Employeur (Cachet)");
+    currentY += 8;
+    const indemnitesBody = [];
+    if (isCdd) {
+        indemnitesBody.push([
+            "Indemnité de précarité",
+            "Art. 26 CT-CI (3% des salaires bruts)",
+            fmt(stcResult.indemnite_precarite)
+        ]);
+    } else {
+        const hasIndemnite = stcResult.indemnite_licenciement > 0;
+        indemnitesBody.push([
+            "Indemnité de licenciement",
+            hasIndemnite ? "Art. 74 CT-CI (Calcul proratisé)" : "Non applicable pour ce motif",
+            fmt(stcResult.indemnite_licenciement)
+        ]);
+    }
+    
+    indemnitesBody.push([
+        "Indemnité compensatrice de congés (ICCP)",
+        `Solde de ${params.jours_conges_restants || 0} jours acquis`,
+        fmt(stcResult.indemnite_compensatrice_conges)
+    ]);
+    
+    if (stcResult.indemnite_preavis > 0) {
+        indemnitesBody.push([
+            "Indemnité compensatrice de préavis",
+            `${params.jours_preavis_non_effectues || 0} jours non effectués`,
+            fmt(stcResult.indemnite_preavis)
+        ]);
+    }
+
+    autoTable(doc, {
+        startY: currentY,
+        head: [['Nature de l\'indemnité', 'Base légale / Détail', 'Montant Brut']],
+        body: indemnitesBody,
+        theme: 'striped',
+        headStyles: { fillColor: [51, 65, 85], textColor: 255 },
+        styles: { fontSize: 9 },
+        columnStyles: { 2: { halign: 'right', fontStyle: 'bold' } }
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 5;
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text(`SOUS-TOTAL BRUT : ${fmt(stcResult.total_brut_stc)}`, pageWidth - margin, currentY, { align: "right" });
+
+    // --- SECTION III: RETENUES ---
+    currentY += 12;
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(30, 41, 59);
+    doc.text("III. CHARGES SOCIALES & FISCALES", margin, currentY);
+    doc.line(margin, currentY + 2, pageWidth - margin, currentY + 2);
+    
+    currentY += 8;
+    const baseImposableStc = stcResult.indemnite_compensatrice_conges + stcResult.indemnite_preavis + (isCdd ? stcResult.indemnite_precarite : 0);
+    const cnpsStc = Math.round(Math.min(baseImposableStc, PLAFOND_CNPS_MENSUEL) * TAUX_CNPS_RETRAITE_SALARIE);
+    const cmuStc = CMU_MENSUEL;
+    const baseItsStc = Math.max(0, (baseImposableStc - cnpsStc) * (1 - TAUX_ABATTEMENT_ITS));
+    const itsStc = calculerITS(baseItsStc);
+    const totalRetenues = cnpsStc + cmuStc + itsStc;
+    const netStc = stcResult.total_brut_stc - totalRetenues;
+
+    autoTable(doc, {
+        startY: currentY,
+        head: [['Désignation de la retenue', 'Base de calcul', 'Taux', 'Montant']],
+        body: [
+            ["CNPS Retraite Salarié", fmt(Math.min(baseImposableStc, PLAFOND_CNPS_MENSUEL)), "6.3%", fmt(cnpsStc)],
+            ["CMU (Forfait mensuel)", "Base forfaitaire", "—", fmt(cmuStc)],
+            ["ITS (Impôt sur Salaire)", fmt(baseItsStc), "Barème CI", fmt(itsStc)]
+        ],
+        theme: 'striped',
+        headStyles: { fillColor: [153, 27, 27], textColor: 255 }, // Dark red for deductions
+        styles: { fontSize: 8 },
+        columnStyles: { 3: { halign: 'right', fontStyle: 'bold', textColor: [153, 27, 27] } }
+    });
+
+    // --- NET A PAYER (PREMIUM BLOCK) ---
+    currentY = (doc as any).lastAutoTable.finalY + 15;
+    doc.setFillColor(6, 78, 59); // emerald-900
+    doc.rect(margin, currentY, pageWidth - margin * 2, 12, "F");
+    doc.setTextColor(255);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("NET À PAYER AU SALARIÉ :", margin + 5, currentY + 8);
+    doc.text(fmt(netStc), pageWidth - margin - 5, currentY + 8, { align: "right" });
+
+    // --- SECTION IV: REÇU ---
+    currentY += 25;
+    doc.setTextColor(30, 41, 59);
+    doc.setFontSize(10);
+    doc.text("IV. REÇU POUR SOLDE DE TOUT COMPTE", margin, currentY);
+    doc.line(margin, currentY + 2, pageWidth - margin, currentY + 2);
+    
+    currentY += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    const recuTexte = `Je soussigné(e) Monsieur / Madame ${employee.full_name}, reconnais avoir reçu de ${company?.raison_sociale || 'l\'employeur'} la somme nette de ${fmt(netStc)} en règlement définitif de toutes les sommes qui m'étaient dues à la suite de la rupture de mon contrat de travail.\n\nCe montant comprend les indemnités de congés, de préavis et de licenciement/précarité telles que détaillées ci-dessus, déduction faite des retenues sociales et fiscales en vigueur.`;
+    doc.text(recuTexte, margin, currentY, { maxWidth: pageWidth - margin * 2, lineHeightFactor: 1.5 });
+    
+    currentY += 18;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(8);
+    doc.text("Note : Conformément à l'Art. 16.11 du Code du Travail, ce reçu peut être dénoncé dans un délai de 6 mois par lettre recommandée.", margin, currentY, { maxWidth: pageWidth - margin * 2 });
+
+    // --- SIGNATURES (PREMIUM PRESENTATION) ---
+    currentY += 20;
+    const colWidth = (pageWidth - margin * 2) / 3;
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(30, 41, 59);
+    
+    doc.text("L'EMPLOYEUR", margin + colWidth / 2, currentY, { align: "center" });
+    doc.text("L'INSPECTION DU TRAVAIL", margin + colWidth + colWidth / 2, currentY, { align: "center" });
+    doc.text("LE SALARIÉ", margin + colWidth * 2 + colWidth / 2, currentY, { align: "center" });
+    
+    currentY += 4;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(7);
+    doc.setTextColor(100, 116, 139);
+    doc.text("(Cachet et Signature)", margin + colWidth / 2, currentY, { align: "center" });
+    doc.text("(Visa)", margin + colWidth + colWidth / 2, currentY, { align: "center" });
+    doc.text("(Mention 'Lu et Approuvé')", margin + colWidth * 2 + colWidth / 2, currentY, { align: "center" });
+
+    currentY += 15;
+    doc.setDrawColor(226, 232, 240);
+    doc.line(margin + 5, currentY, margin + colWidth - 5, currentY);
+    doc.line(margin + colWidth + 5, currentY, margin + colWidth * 2 - 5, currentY);
+    doc.line(margin + colWidth * 2 + 5, currentY, margin + colWidth * 3 - 5, currentY);
+
     return doc;
 };
 
@@ -784,6 +958,7 @@ export const generateFichePostePDF = ({ employee, company, mission = "", respons
 /**
  * Utilitaires d'export
  */
-export const exportPDF = (doc: jsPDF, fileName: string) => {
+export const exportPDF = (doc: jsPDF, fileName: string, companyName?: string, documentType?: string) => {
+    addTimestampCachet(doc, { companyName, documentType });
     doc.save(`${fileName}.pdf`);
 };

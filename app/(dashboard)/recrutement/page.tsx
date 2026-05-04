@@ -5,6 +5,7 @@ import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
 import { CandidateDialog } from "@/components/rh/CandidateDialog";
 import { CandidateStatusSelect } from "@/components/rh/CandidateStatusSelect";
 import { CandidatePipeline } from "@/components/rh/CandidatePipeline";
+import { RecrutementViewToggle } from "@/components/rh/RecrutementViewToggle";
 import { Info } from "@phosphor-icons/react/dist/ssr";
 import {
   Tabs,
@@ -105,124 +106,143 @@ export default async function RecrutementPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="pipeline" className="space-y-6">
-        <TabsList className="bg-slate-100/50 p-1 rounded-xl">
-          <TabsTrigger value="pipeline" className="rounded-lg px-6">Pipeline de Talents</TabsTrigger>
-          <TabsTrigger value="offres" className="rounded-lg px-6">Offres d'emploi</TabsTrigger>
-          <TabsTrigger value="liste" className="rounded-lg px-6">Liste des Candidats</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="pipeline" className="space-y-4 pt-2">
-          <CandidatePipeline 
-            candidates={candidats?.map(c => ({
+      <RecrutementViewToggle
+        candidates={
+          candidats?.map((c) => {
+            const rawPoste = c.job_postings;
+            const poste = Array.isArray(rawPoste) ? (rawPoste as { titre?: string }[])[0] : (rawPoste as { titre?: string } | null);
+            return {
               id: c.id,
               full_name: c.full_name,
-              email: c.email,
-              score_ia: c.score_ia,
+              poste_souhaite: poste?.titre ?? "Poste non défini",
+              score: c.score_ia ?? null,
               statut: c.statut || "nouveau",
-              job_title: (Array.isArray(c.job_postings) ? (c.job_postings as any)[0]?.titre : (c.job_postings as any)?.titre) || "Poste non défini"
-            })) || []} 
-          />
-        </TabsContent>
+              job_id: null,
+              created_at: "",
+            };
+          }) ?? []
+        }
+        listView={
+          <Tabs defaultValue="pipeline" className="space-y-6">
+            <TabsList className="bg-slate-100/50 p-1 rounded-xl">
+              <TabsTrigger value="pipeline" className="rounded-lg px-6">Pipeline de Talents</TabsTrigger>
+              <TabsTrigger value="offres" className="rounded-lg px-6">Offres d'emploi</TabsTrigger>
+              <TabsTrigger value="liste" className="rounded-lg px-6">Liste des Candidats</TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="offres" className="space-y-4 pt-2">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {!postes || postes.length === 0 ? (
-              <div className="col-span-full rounded-2xl border border-dashed border-slate-200 p-10 text-center">
-                <p className="font-medium text-slate-600 text-sm">Aucune offre publiée</p>
-              </div>
-            ) : (
-              postes.map((p) => (
-                <div
-                  key={p.id}
-                  className="rounded-2xl border border-slate-100 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold text-slate-900 leading-tight">{p.titre}</p>
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-tighter ${
-                        p.statut === "ouvert"
-                          ? "bg-emerald-50 text-emerald-700"
-                          : "bg-slate-100 text-slate-600"
-                      }`}
+            <TabsContent value="pipeline" className="space-y-4 pt-2">
+              <CandidatePipeline
+                candidates={candidats?.map(c => ({
+                  id: c.id,
+                  full_name: c.full_name,
+                  email: c.email,
+                  score_ia: c.score_ia,
+                  statut: c.statut || "nouveau",
+                  job_title: (Array.isArray(c.job_postings) ? (c.job_postings as { titre?: string }[])[0]?.titre : (c.job_postings as { titre?: string } | null)?.titre) || "Poste non défini"
+                })) || []}
+              />
+            </TabsContent>
+
+            <TabsContent value="offres" className="space-y-4 pt-2">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {!postes || postes.length === 0 ? (
+                  <div className="col-span-full rounded-2xl border border-dashed border-slate-200 p-10 text-center">
+                    <p className="font-medium text-slate-600 text-sm">Aucune offre publiée</p>
+                  </div>
+                ) : (
+                  postes.map((p) => (
+                    <div
+                      key={p.id}
+                      className="rounded-2xl border border-slate-100 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all"
                     >
-                      {p.statut}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {p.type_contrat && (
-                      <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100 uppercase tracking-tighter">{p.type_contrat}</span>
-                    )}
-                    {p.is_internal && (
-                      <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-100 uppercase tracking-tighter">Interne</span>
-                    )}
-                  </div>
-                  {p.date_limite && (
-                    <p className="text-[10px] text-slate-500 mt-auto pt-2 border-t border-slate-50 font-bold uppercase tracking-tighter">
-                      Expire le {new Date(p.date_limite).toLocaleDateString("fr-CI")}
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </TabsContent>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-bold text-slate-900 leading-tight">{p.titre}</p>
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-tighter ${
+                            p.statut === "ouvert"
+                              ? "bg-emerald-50 text-emerald-700"
+                              : "bg-slate-100 text-slate-600"
+                          }`}
+                        >
+                          {p.statut}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {p.type_contrat && (
+                          <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100 uppercase tracking-tighter">{p.type_contrat}</span>
+                        )}
+                        {p.is_internal && (
+                          <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-100 uppercase tracking-tighter">Interne</span>
+                        )}
+                      </div>
+                      {p.date_limite && (
+                        <p className="text-[10px] text-slate-500 mt-auto pt-2 border-t border-slate-50 font-bold uppercase tracking-tighter">
+                          Expire le {new Date(p.date_limite).toLocaleDateString("fr-CI")}
+                        </p>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </TabsContent>
 
-        <TabsContent value="liste" className="space-y-4 pt-2">
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-slate-50/60 border-b border-slate-100">
-                    <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Candidat</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Poste</th>
-                    <th className="px-6 py-4 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Score IA</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Statut</th>
-                    <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {candidats?.map((c) => {
-                    const rawPoste = c.job_postings;
-                    const poste = Array.isArray(rawPoste) ? (rawPoste as any)[0] : (rawPoste as any);
-                    return (
-                      <tr key={c.id} className="hover:bg-slate-50/40 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex flex-col">
-                            <span className="font-bold text-slate-900 leading-tight">{c.full_name}</span>
-                            <span className="text-[11px] text-slate-500">{c.email}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs font-medium text-slate-600 bg-slate-100/80 px-2 py-1 rounded-lg">
-                            {poste?.titre ?? "—"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <ScoreCvButton candidateId={c.id} hasScore={c.score_ia != null} />
-                          {c.score_ia != null && (
-                            <span className="ml-2 font-mono font-bold text-xs text-slate-600">{c.score_ia}%</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="w-32">
-                            <CandidateStatusSelect candidateId={c.id} currentStatut={c.statut || "nouveau"} />
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button className="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
-                            <Info size={18} weight="bold" />
-                          </button>
-                        </td>
+            <TabsContent value="liste" className="space-y-4 pt-2">
+              <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-slate-50/60 border-b border-slate-100">
+                        <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Candidat</th>
+                        <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Poste</th>
+                        <th className="px-6 py-4 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Score IA</th>
+                        <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Statut</th>
+                        <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Actions</th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {candidats?.map((c) => {
+                        const rawPoste = c.job_postings;
+                        const poste = Array.isArray(rawPoste) ? (rawPoste as { titre?: string }[])[0] : (rawPoste as { titre?: string } | null);
+                        return (
+                          <tr key={c.id} className="hover:bg-slate-50/40 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="flex flex-col">
+                                <span className="font-bold text-slate-900 leading-tight">{c.full_name}</span>
+                                <span className="text-[11px] text-slate-500">{c.email}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="text-xs font-medium text-slate-600 bg-slate-100/80 px-2 py-1 rounded-lg">
+                                {poste?.titre ?? "—"}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              <ScoreCvButton candidateId={c.id} hasScore={c.score_ia != null} />
+                              {c.score_ia != null && (
+                                <span className="ml-2 font-mono font-bold text-xs text-slate-600">{c.score_ia}%</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="w-32">
+                                <CandidateStatusSelect candidateId={c.id} currentStatut={c.statut || "nouveau"} />
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <button className="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
+                                <Info size={18} weight="bold" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        }
+      />
     </div>
   );
 }

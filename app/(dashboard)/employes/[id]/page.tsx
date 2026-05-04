@@ -34,6 +34,7 @@ import { calculerJoursAcquis, calculerSoldeConges } from "@/lib/conges-ci";
 import { EmployeeCostSheet } from "@/components/employees/EmployeeCostSheet";
 import { InviterPortailButton } from "@/components/rh/InviterPortailButton";
 import { EmptyState } from "@/components/ui/empty-state";
+import { EmployeeTimeline, TimelineEvent } from "@/components/rh/EmployeeTimeline";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -134,6 +135,18 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
     supabase.from("companies").select("*").limit(1).maybeSingle(),
   ]);
 
+  const [{ data: accidents }, { data: trainingParticipations }] = await Promise.all([
+    supabase
+      .from("work_accidents")
+      .select("date_accident, description, gravite")
+      .eq("employee_id", params.id)
+      .order("date_accident", { ascending: false }),
+    supabase
+      .from("training_participants")
+      .select("training_id, training_actions(intitule, date_debut, date_fin, statut)")
+      .eq("employee_id", params.id),
+  ]);
+
   const { data: allEmployees } = await supabase
     .from("employees")
     .select("id, full_name")
@@ -141,6 +154,100 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
     .order("full_name");
 
   if (!emp) notFound();
+
+  // --- Construction de la timeline ---
+  const timelineEvents: TimelineEvent[] = [];
+
+  // Embauche
+  if (emp.date_embauche) {
+    timelineEvents.push({
+      date: emp.date_embauche,
+      type: "embauche",
+      titre: "Embauche",
+      description: `Poste : ${emp.poste ?? "—"}${emp.departement ? ` · ${emp.departement}` : ""}`,
+    });
+  }
+
+  // Changements de contrat
+  for (const c of contracts ?? []) {
+    timelineEvents.push({
+      date: c.date_debut,
+      type: "contrat",
+      titre: `Contrat ${c.type_contrat}`,
+      description: `Salaire brut : ${new Intl.NumberFormat("fr-CI").format(c.salaire_brut)} FCFA · Statut : ${c.statut}`,
+    });
+  }
+
+  // Augmentations (variation salaire > 5%)
+  const sortedSalary = [...(salaryHistory ?? [])].sort(
+    (a, b) => new Date(a.date_effet).getTime() - new Date(b.date_effet).getTime()
+  );
+  for (let i = 1; i < sortedSalary.length; i++) {
+    const prev = sortedSalary[i - 1];
+    const curr = sortedSalary[i];
+    if (prev.salaire_brut > 0) {
+      const variation = ((curr.salaire_brut - prev.salaire_brut) / prev.salaire_brut) * 100;
+      if (variation > 5) {
+        timelineEvents.push({
+          date: curr.date_effet,
+          type: "salaire",
+          titre: `Augmentation de salaire (+${variation.toFixed(0)}%)`,
+          description: curr.motif ?? undefined,
+        });
+      }
+    }
+  }
+
+  // Congés longue durée (> 15 jours)
+  for (const c of conges ?? []) {
+    if (c.nb_jours > 15) {
+      timelineEvents.push({
+        date: c.date_debut,
+        type: "conge",
+        titre: `Congé ${c.type} (${c.nb_jours} jours)`,
+        description: `Du ${c.date_debut} au ${c.date_fin ?? "—"}`,
+      });
+    }
+  }
+
+  // Évaluations
+  for (const ev of evaluations ?? []) {
+    timelineEvents.push({
+      date: ev.date_evaluation,
+      type: "evaluation",
+      titre: `Évaluation — ${ev.periode}`,
+      description: `Score global : ${ev.score_global}/100`,
+    });
+  }
+
+  // Accidents
+  for (const acc of accidents ?? []) {
+    timelineEvents.push({
+      date: acc.date_accident,
+      type: "accident",
+      titre: `Accident de travail (${acc.gravite})`,
+      description: acc.description ?? undefined,
+    });
+  }
+
+  // Formations
+  for (const tp of trainingParticipations ?? []) {
+    const ta = (tp as Record<string, unknown>).training_actions;
+    if (ta && typeof ta === "object" && !Array.isArray(ta)) {
+      const training = ta as { intitule: string; date_debut: string; statut: string };
+      timelineEvents.push({
+        date: training.date_debut,
+        type: "formation",
+        titre: `Formation : ${training.intitule}`,
+        description: `Statut : ${training.statut}`,
+      });
+    }
+  }
+
+  // Tri par date décroissante (plus récent en haut)
+  timelineEvents.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 
   const anciennete = formatAnciennete(emp.date_embauche);
   const joursPrisAnnee = (congesAnnuelsApprouves ?? []).reduce((acc, c) => acc + c.nb_jours, 0);
@@ -226,6 +333,10 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           <TabsTrigger value="ged" className="gap-2 rounded-lg px-4 text-sm">
             <FolderOpen className="h-4 w-4" />
             <span className="hidden sm:inline">GED</span>
+          </TabsTrigger>
+          <TabsTrigger value="timeline" className="gap-2 rounded-lg px-4 text-sm">
+            <Calendar className="h-4 w-4" />
+            <span className="hidden sm:inline">Timeline</span>
           </TabsTrigger>
         </TabsList>
 
