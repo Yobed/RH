@@ -34,6 +34,7 @@ import {
   Books,
   CaretDown,
   TreeStructure,
+  CalendarCheck,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,7 @@ const navGroups: NavGroup[] = [
       { href: "/employes/organigramme", label: "Organigramme", icon: TreeStructure },
       { href: "/contrats", label: "Contrats", icon: FileText },
       { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
+      { href: "/planning", label: "Planning & shifts", icon: CalendarCheck },
       { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
       { href: "/onboarding", label: "Onboarding", icon: UserPlus, pulse: true },
     ],

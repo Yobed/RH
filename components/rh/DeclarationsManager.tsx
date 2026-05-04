@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Download, FileText, ShieldCheck, AlertTriangle, CheckCircle2,
-  Calendar as CalendarIcon, Building2, Eye, X,
+  Calendar as CalendarIcon, Building2, Eye, X, FileSpreadsheet,
 } from "lucide-react";
 
 interface PreviewData {
@@ -219,6 +219,43 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
     }
   }
 
+  async function handleExportExcel(): Promise<void> {
+    const isMonthlyKind = genKind === "DIPE" || genKind === "ITS_MENSUEL";
+    const periode = preview ? preview.periode : isMonthlyKind ? genPeriode : genYear;
+    const kind = preview ? preview.kind : genKind;
+    if (!periode) {
+      toast.error("Sélectionnez une période.");
+      return;
+    }
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/declarations/exporter-excel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind, periode }),
+      });
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
+        toast.error(err.error ?? "Erreur d'export Excel");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${kind}_${periode}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success(`Fichier Excel ${kind} ${periode} téléchargé.`);
+    } catch {
+      toast.error("Erreur lors de l'export Excel.");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   async function markSubmitted(id: string, kindClass: "social" | "tax"): Promise<void> {
     const numero = window.prompt("Numéro de récépissé / accusé de soumission :");
     if (!numero || numero.trim().length < 1) return;
@@ -350,12 +387,21 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
               {previewing ? "Calcul…" : "Prévisualiser"}
             </button>
             <button
+              onClick={handleExportExcel}
+              disabled={generating || previewing}
+              className="h-9 inline-flex items-center justify-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 text-sm font-medium text-emerald-700 hover:bg-emerald-100 disabled:opacity-50"
+              title="Télécharge l'état au format Excel (sans archivage)"
+            >
+              <FileSpreadsheet className="h-3.5 w-3.5" />
+              Excel
+            </button>
+            <button
               onClick={() => handleGenerate(true)}
               disabled={generating || previewing}
               className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
             >
               <Download className="h-3.5 w-3.5" />
-              {generating ? "Génération…" : "Générer & télécharger"}
+              {generating ? "Génération…" : "Générer CSV & archiver"}
             </button>
           </div>
         </div>
