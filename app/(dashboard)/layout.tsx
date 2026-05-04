@@ -25,6 +25,9 @@ export default async function DashboardLayout({
     .eq("id", user.id)
     .single();
 
+  // Les salariés n'ont pas accès au dashboard admin → redirection portail
+  if (profile?.role === "salarie") redirect("/portail");
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar desktop */}
