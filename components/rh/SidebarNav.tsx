@@ -33,6 +33,7 @@ import {
   ShieldWarning,
   Books,
   CaretDown,
+  TreeStructure,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -70,6 +71,7 @@ const navGroups: NavGroup[] = [
     defaultOpen: false,
     items: [
       { href: "/employes", label: "Fiches collaborateurs", icon: Users },
+      { href: "/employes/organigramme", label: "Organigramme", icon: TreeStructure },
       { href: "/contrats", label: "Contrats", icon: FileText },
       { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
       { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
