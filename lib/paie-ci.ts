@@ -102,8 +102,30 @@ export function calculerPartsFiscales(
 }
 
 /**
- * Application du barème ITS à une base donnée (sans quotient familial).
- * Utilisé en interne par `calculerITS`.
+ * RICF — Réduction d'Impôt pour Charge de Famille (mensuelle, FCFA).
+ * Barème DGI CI : 11 000 FCFA par demi-part au-dessus de 1 part.
+ *   1 part   → 0
+ *   2 parts  → 11 000
+ *   2,5      → 16 500
+ *   3        → 22 000
+ *   3,5      → 27 500
+ *   4        → 33 000
+ *   4,5      → 38 500
+ *   5 parts  → 44 000 (plafond)
+ */
+export const RICF_PAR_DEMI_PART = 5_500;
+
+export function calculerRICF(parts: number): number {
+  const p = Math.max(1, Math.min(PARTS_MAX, parts || 1));
+  if (p <= 1) return 0;
+  // Chaque demi-part supplémentaire au-dessus de 1 vaut 5 500 FCFA
+  // (parts - 1) * 2 demi-parts × 5 500 = (parts - 1) × 11 000
+  return Math.round((p - 1) * 2 * RICF_PAR_DEMI_PART);
+}
+
+/**
+ * Application du barème ITS à une base donnée. Retourne l'ITS BRUT
+ * (avant réduction pour charge de famille).
  */
 function appliquerBaremeITS(base: number): number {
   if (base <= 0) return 0;
@@ -134,24 +156,39 @@ function appliquerBaremeITS(base: number): number {
 }
 
 /**
- * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI avec quotient familial.
- * Base imposable = brut - CNPS salarié - abattement forfaitaire
+ * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI avec RICF.
  *
- * Si `parts` est fourni (> 1), application du quotient familial :
- *   1. Q = baseImposable / parts
- *   2. ITS = appliquerBaremeITS(Q) × parts
+ * Logique légale CI (Art. 116 CGI) :
+ *   1. ITS_Brut    = barème progressif appliqué sur base imposable (sans découpage)
+ *   2. RICF        = montant forfaitaire selon nombre de parts
+ *   3. ITS_Salarial = max(0, ITS_Brut − RICF)
  *
- * Si `parts` <= 1, comportement identique à l'ancien `calculerITS` (rétrocompatible).
+ * Le paramètre `parts` (défaut 1) active la déduction RICF.
+ * Si `parts` <= 1, ITS_Salarial = ITS_Brut (pas de réduction).
  *
  * @param salaireImposable Base imposable mensuelle en FCFA
- * @param parts Nombre de parts fiscales (défaut 1 = pas de réduction familiale)
+ * @param parts Nombre de parts fiscales (1 → 5)
  */
 export function calculerITS(salaireImposable: number, parts: number = 1): number {
   if (salaireImposable <= 0) return 0;
-  const nbParts = Math.max(1, Math.min(PARTS_MAX, parts || 1));
-  const quotient = salaireImposable / nbParts;
-  const itsParPart = appliquerBaremeITS(quotient);
-  return Math.round(itsParPart * nbParts);
+  const itsBrut = Math.round(appliquerBaremeITS(salaireImposable));
+  const ricf = calculerRICF(parts);
+  return Math.max(0, itsBrut - ricf);
+}
+
+/**
+ * Variante détaillée — retourne ITS brut, RICF et ITS salarial séparés.
+ * Utile pour l'affichage du bulletin (transparence du calcul).
+ */
+export function calculerITSDetail(
+  salaireImposable: number,
+  parts: number = 1
+): { its_brut: number; ricf: number; its_salarial: number } {
+  if (salaireImposable <= 0) return { its_brut: 0, ricf: 0, its_salarial: 0 };
+  const its_brut = Math.round(appliquerBaremeITS(salaireImposable));
+  const ricf = calculerRICF(parts);
+  const its_salarial = Math.max(0, its_brut - ricf);
+  return { its_brut, ricf, its_salarial };
 }
 
 export interface ResultatPaie {
@@ -160,8 +197,10 @@ export interface ResultatPaie {
   cmu_salarie: number;              // CMU forfait 1 600 FCFA
   cnps_salarie: number;             // Total salarial : cnps_retraite + cmu_salarie
   base_imposable: number;
-  parts_fiscales: number;           // Nombre de parts utilisé pour l'ITS
-  its: number;
+  parts_fiscales: number;           // Nombre de parts utilisé pour le RICF
+  its_brut: number;                 // ITS calculé sur barème avant RICF
+  ricf: number;                     // Réduction d'Impôt pour Charge de Famille
+  its: number;                      // ITS salarial = max(0, its_brut - ricf)
   salaire_net_avant_retenues: number;
   salaire_net: number;
 }
@@ -191,12 +230,15 @@ export function calculerBulletin(
   const baseImposableApresCnps = Math.max(0, salaireBrut - cnps_retraite);
   const base_imposable = Math.max(0, Math.round(baseImposableApresCnps * (1 - TAUX_ABATTEMENT_ITS)));
 
-  // Quotient familial — Art. 116 CGI CI
+  // ITS brut sur barème puis RICF — Art. 116 CGI CI
   const parts_fiscales = calculerPartsFiscales(
     situationFamiliale.etat_civil,
     situationFamiliale.nb_enfants
   );
-  const its = calculerITS(base_imposable, parts_fiscales);
+  const { its_brut, ricf, its_salarial: its } = calculerITSDetail(
+    base_imposable,
+    parts_fiscales
+  );
 
   const salaire_net_avant_retenues = salaireBrut - cnps_salarie - its;
   const salaire_net = salaire_net_avant_retenues - autresRetenues - avances;
@@ -208,6 +250,8 @@ export function calculerBulletin(
     cnps_salarie,
     base_imposable,
     parts_fiscales,
+    its_brut,
+    ricf,
     its,
     salaire_net_avant_retenues,
     salaire_net: Math.max(0, salaire_net),
@@ -416,7 +460,9 @@ export interface ResultatPaieComplet {
   heures_sup_montant: number;
   retenu_absence: number;
   indemnite_maladie?: number;     // Montant total du maintien de salaire
-  parts_fiscales?: number;        // Nombre de parts fiscales appliqué pour l'ITS
+  parts_fiscales?: number;        // Nombre de parts fiscales appliqué pour le RICF
+  its_brut?: number;              // ITS calculé sur barème avant RICF
+  ricf?: number;                  // Réduction d'Impôt pour Charge de Famille
   // Colonnes Sage (22 colonnes)
   gross_salary: number;           // *** SALAIRE BRUT *** = total_brut
   exempt_indemnity: number;       // *** INDEMNITE EXONEREE *** = prime_transport
@@ -485,11 +531,14 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   // CMU forfait
   const cmu = CMU_MENSUEL;
 
-  // ITS : abattement sur base imposable après CNPS + quotient familial
+  // ITS : abattement sur base imposable après CNPS, puis ITS brut barème + RICF
   const base_its = Math.max(0, total_imposable - cnps_retraite);
   const base_its_apres_abattement = Math.max(0, Math.round(base_its * (1 - TAUX_ABATTEMENT_ITS)));
   const parts_fiscales = calculerPartsFiscales(lignes.etat_civil, lignes.nb_enfants);
-  const its = calculerITS(base_its_apres_abattement, parts_fiscales);
+  const itsDetail = calculerITSDetail(base_its_apres_abattement, parts_fiscales);
+  const its_brut = itsDetail.its_brut;
+  const ricf = itsDetail.ricf;
+  const its = itsDetail.its_salarial;
 
   const retenu_absence = calculerRetenuAbsence(lignes.nb_jours_absence ?? 0, lignes.salaire_brut);
 
@@ -548,6 +597,8 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     overtime_pay: heures_sup_montant,
     indemnite_maladie,
     parts_fiscales,
+    its_brut,
+    ricf,
   };
 }
 

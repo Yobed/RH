@@ -147,11 +147,27 @@ export function CalcEnversForm({ employees = [] }: Props) {
       detail: "Forfait mensuel",
     },
     {
-      label: "ITS (barème progressif)",
+      label: "ITS brut (barème progressif)",
+      montant: computed.details.its_brut,
+      avantMontant: avant?.bulletin.its_brut,
+      variant: "deduction",
+      detail: `Base imposable : ${fcfa(computed.details.base_imposable)}`,
+    },
+    ...(computed.details.ricf > 0 ? [{
+      label: "RICF — Réduction charge de famille",
+      montant: -computed.details.ricf,
+      avantMontant: avant ? -avant.bulletin.ricf : undefined,
+      variant: "neutral" as const,
+      detail: `${computed.details.parts_fiscales} part${computed.details.parts_fiscales > 1 ? "s" : ""} fiscale${computed.details.parts_fiscales > 1 ? "s" : ""} · −11 000 FCFA × ${(computed.details.parts_fiscales - 1) * 2} demi-part(s)`,
+    }] : []),
+    {
+      label: "ITS salarial à retenir",
       montant: computed.details.its,
       avantMontant: avant?.bulletin.its,
       variant: "deduction",
-      detail: `Base imposable : ${fcfa(computed.details.base_imposable)} · ${computed.details.parts_fiscales} part${computed.details.parts_fiscales > 1 ? "s" : ""} fiscale${computed.details.parts_fiscales > 1 ? "s" : ""}`,
+      detail: computed.details.ricf > 0
+        ? `= max(0, ${fcfa(computed.details.its_brut)} − ${fcfa(computed.details.ricf)})`
+        : "Pas de réduction (1 part fiscale)",
     },
     ...((Number(autresRetenues) || 0) > 0
       ? [{ label: "Autres retenues", montant: Number(autresRetenues), variant: "deduction" as const }]
