@@ -78,6 +78,23 @@ export async function POST(req: NextRequest) {
     .limit(1)
     .maybeSingle();
 
+  // Récupérer les primes paramétrables du contrat (actives, dans leur fenêtre)
+  const periodeFirstDay = `${d.periode}-01`;
+  const { data: primesRows } = await supabase
+    .from("contract_primes")
+    .select("libelle, montant, imposable, actif, date_debut, date_fin")
+    .eq("employee_id", d.employee_id)
+    .eq("actif", true);
+
+  const primes_contrat = (primesRows ?? [])
+    .filter((p) => !p.date_debut || p.date_debut <= periodeFirstDay)
+    .filter((p) => !p.date_fin || p.date_fin >= periodeFirstDay)
+    .map((p) => ({
+      libelle: p.libelle as string,
+      montant: Number(p.montant) || 0,
+      imposable: Boolean(p.imposable),
+    }));
+
   const calc = calculerBulletinComplet({
     salaire_brut: d.salaire_brut,
     sursalaire: d.sursalaire,
@@ -105,6 +122,7 @@ export async function POST(req: NextRequest) {
     nb_jours_absence: d.nb_jours_absence,
     etat_civil: empFamille?.etat_civil ?? null,
     nb_enfants: empFamille?.nb_enfants ?? null,
+    primes_contrat,
   });
   const { data, error } = await supabase
     .from("bulletins_paie")
@@ -159,6 +177,10 @@ export async function POST(req: NextRequest) {
         heures_sup_montant: calc.heures_sup_montant,
         nb_jours_absence: d.nb_jours_absence,
         retenu_absence: calc.retenu_absence,
+        // Snapshot des primes paramétrables appliquées au bulletin
+        primes_contrat,
+        primes_imposables_total: calc.primes_imposables_total ?? 0,
+        primes_non_imposables_total: calc.primes_non_imposables_total ?? 0,
       }
     })
     .select()

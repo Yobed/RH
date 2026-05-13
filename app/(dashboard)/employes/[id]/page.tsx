@@ -6,6 +6,7 @@ import { DocumentDropdown } from "@/components/rh/DocumentDropdown";
 import { CareerTimeline } from "@/components/rh/CareerTimeline";
 import { CareerEventDialog } from "@/components/rh/CareerEventDialog";
 import { ContractPrintButton } from "@/components/rh/ContractPrintButton";
+import { ContractPrimesManager } from "@/components/rh/ContractPrimesManager";
 import {
   User,
   Phone,
@@ -437,6 +438,8 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
 
         {/* Tab: Contrats */}
         <TabsContent value="contracts" className="space-y-6 pt-2">
+          <ContractPrimesManager employeeId={emp.id} />
+
           <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
             <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
               <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
