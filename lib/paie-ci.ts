@@ -455,22 +455,33 @@ export function calculerIndemniteLicenciement(salaireMoyen12Mois: number, annees
   return Math.round(indemnite);
 }
 
-// ── Majorations heures supplémentaires — Décret n°96-203 ───────────────
-// Source : Décret n°96-203 du 7 mars 1996
+// ── Majorations heures supplémentaires ─────────────────────────────────
+// Règle métier client (alignée Décret n° 96-203 du 7 mars 1996) :
+//   - 15 %  : 41ᵉ à 46ᵉ heure en semaine
+//   - 50 %  : au-delà de la 46ᵉ heure en semaine
+//   - 75 %  : en journée un dimanche ou un jour férié
+//             (+ heure de nuit en semaine, par usage CI)
+//   - 100 % : la nuit d'un dimanche ou d'un jour férié
 export const MAJORATIONS_HEURES_SUP = {
-  semaine_41_46: 0.15,   // 41e à 46e heure en semaine
-  semaine_au_dela_46: 0.50, // Au-delà de la 46e heure en semaine
-  dimanche: 0.75,        // Dimanche
-  jour_ferie: 0.75,      // Jours fériés
-  nuit: 0.75,            // Nuit (21h–5h)
-  // Samedi : non spécifié dans les textes — à vérifier avec convention collective
+  semaine_41_46: 0.15,
+  semaine_au_dela_46: 0.50,
+  jour_dimanche_ferie: 0.75,
+  nuit_semaine: 0.75,
+  nuit_dimanche_ferie: 1.00,
+  // Aliases conservés pour rétro-compatibilité — éviter dans le nouveau code
+  /** @deprecated Utiliser `jour_dimanche_ferie` */
+  dimanche: 0.75,
+  /** @deprecated Utiliser `jour_dimanche_ferie` */
+  jour_ferie: 0.75,
+  /** @deprecated Utiliser `nuit_semaine` ou `nuit_dimanche_ferie` selon le contexte */
+  nuit: 0.75,
 } as const;
 
 export function calculerHeuresSup(nbH15: number, nbH50: number, nbH75: number, nbH100: number, tauxHoraire: number): number {
-  const h15 = nbH15 * tauxHoraire * 1.15;
-  const h50 = nbH50 * tauxHoraire * 1.50;
-  const h75 = nbH75 * tauxHoraire * 1.75;
-  const h100 = nbH100 * tauxHoraire * 2.0;
+  const h15 = nbH15 * tauxHoraire * (1 + MAJORATIONS_HEURES_SUP.semaine_41_46);
+  const h50 = nbH50 * tauxHoraire * (1 + MAJORATIONS_HEURES_SUP.semaine_au_dela_46);
+  const h75 = nbH75 * tauxHoraire * (1 + MAJORATIONS_HEURES_SUP.jour_dimanche_ferie);
+  const h100 = nbH100 * tauxHoraire * (1 + MAJORATIONS_HEURES_SUP.nuit_dimanche_ferie);
   return Math.round(h15 + h50 + h75 + h100);
 }
 
@@ -531,6 +542,13 @@ export interface LignesBulletin {
   prime_responsabilite?: number;   // Prime de responsabilité — imposable
   remboursement_frais?: number;    // Remboursement de frais — exonéré
   heures_normales?: number;        // Heures normales du mois (affichage bulletin)
+  /**
+   * Heures supplémentaires par bucket de majoration :
+   *   h15  → 41ᵉ-46ᵉ heure en semaine (15 %)
+   *   h50  → au-delà de la 46ᵉ heure en semaine (50 %)
+   *   h75  → jour dimanche/férié (75 %)
+   *   h100 → nuit dimanche/férié (100 %)
+   */
   heures_sup?: {
     h15: number;
     h50: number;
@@ -541,10 +559,16 @@ export interface LignesBulletin {
   jours_maladie_total?: number;    // Nombre total de jours d'arrêt dans le mois
   jours_maladie_plein_tarif?: number; // Jours maintenus à 100%
   jours_maladie_demi_tarif?: number;  // Jours maintenus à 50%
-  // Heures à taux spéciaux — Décret n°96-203
-  heures_nuit?: number;            // Heures de nuit (21h–5h) — majoration 75%
-  heures_dimanche?: number;        // Heures dimanche — majoration 75%
-  heures_ferie?: number;           // Heures jours fériés — majoration 75%
+  // Heures à taux spéciaux — saisie séparée (additionnée aux buckets h75 / h100)
+  heures_nuit_semaine?: number;           // Nuit en semaine (21h–5h) → 75 %
+  heures_jour_dimanche_ferie?: number;    // Journée un dimanche/férié → 75 %
+  heures_nuit_dimanche_ferie?: number;    // Nuit un dimanche/férié → 100 %
+  /** @deprecated alias historique de `heures_nuit_semaine` */
+  heures_nuit?: number;
+  /** @deprecated alias historique de `heures_jour_dimanche_ferie` */
+  heures_dimanche?: number;
+  /** @deprecated alias historique de `heures_jour_dimanche_ferie` */
+  heures_ferie?: number;
   // RTT — accord d'entreprise (non prévu par le CT-CI, usage conventionnel)
   jours_rtt_pris?: number;         // Jours RTT pris ce mois (déduction si sans solde)
   taux_horaire?: number;
@@ -614,11 +638,24 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     ? calculerHeuresSup(lignes.heures_sup.h15, lignes.heures_sup.h50, lignes.heures_sup.h75, lignes.heures_sup.h100 || 0, taux_horaire)
     : 0;
 
-  // Heures spéciales : nuit, dimanche, fériés — toutes au taux 75% (Décret n°96-203)
-  const heures_nuit_montant = Math.round((lignes.heures_nuit ?? 0) * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.nuit));
-  const heures_dim_montant = Math.round((lignes.heures_dimanche ?? 0) * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.dimanche));
-  const heures_ferie_montant = Math.round((lignes.heures_ferie ?? 0) * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.jour_ferie));
-  const heures_speciales_montant = heures_nuit_montant + heures_dim_montant + heures_ferie_montant;
+  // Heures spéciales — règles métier client :
+  //   75 %  : nuit en semaine + journée d'un dimanche/férié
+  //   100 % : nuit d'un dimanche/férié
+  // On accepte les nouveaux champs (heures_nuit_semaine,
+  // heures_jour_dimanche_ferie, heures_nuit_dimanche_ferie) et les
+  // anciens (heures_nuit, heures_dimanche, heures_ferie) en compat.
+  const h_nuit_semaine = (lignes.heures_nuit_semaine ?? lignes.heures_nuit ?? 0);
+  const h_jour_dim_ferie =
+    (lignes.heures_jour_dimanche_ferie ?? 0) +
+    (lignes.heures_dimanche ?? 0) +
+    (lignes.heures_ferie ?? 0);
+  const h_nuit_dim_ferie = (lignes.heures_nuit_dimanche_ferie ?? 0);
+
+  const heures_speciales_montant = Math.round(
+    h_nuit_semaine * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.nuit_semaine) +
+      h_jour_dim_ferie * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.jour_dimanche_ferie) +
+      h_nuit_dim_ferie * taux_horaire * (1 + MAJORATIONS_HEURES_SUP.nuit_dimanche_ferie)
+  );
 
   // Primes libres définies sur le contrat — ventilation imposable / non imposable
   const primesContrat = lignes.primes_contrat ?? [];
