@@ -70,6 +70,14 @@ export async function POST(req: NextRequest) {
 
   const d = parsed.data;
 
+  // Récupérer la situation familiale pour le quotient familial ITS
+  const { data: empFamille } = await supabase
+    .from("employees")
+    .select("etat_civil, nb_enfants")
+    .eq("id", d.employee_id)
+    .limit(1)
+    .maybeSingle();
+
   const calc = calculerBulletinComplet({
     salaire_brut: d.salaire_brut,
     sursalaire: d.sursalaire,
@@ -95,6 +103,8 @@ export async function POST(req: NextRequest) {
     autres_retenues: d.autres_retenues,
     avances: d.avances,
     nb_jours_absence: d.nb_jours_absence,
+    etat_civil: empFamille?.etat_civil ?? null,
+    nb_enfants: empFamille?.nb_enfants ?? null,
   });
   const { data, error } = await supabase
     .from("bulletins_paie")

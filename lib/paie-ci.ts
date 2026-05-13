@@ -72,13 +72,41 @@ export const TAUX_AT_MP_MAX = 0.05;
 export const TAUX_AT_MP_DEFAULT = CHARGES_PATRONALES_TAUX.at_mp;
 
 /**
- * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI simplifié mensuel
- * Base imposable = brut - CNPS salarié - abattement forfaitaire
- * ⚠️ Barème ITS non détaillé dans le CT-CI 2025 (seule l'obligation de retenue est mentionnée)
- * Barème ci-dessous = barème CGI CI Art. 116 — À vérifier chaque Loi de Finances
+ * Statut familial pour le calcul du quotient familial (ITS).
+ * Correspond aux valeurs stockées dans employees.etat_civil.
  */
-export function calculerITS(salaireImposable: number): number {
-  if (salaireImposable <= 0) return 0;
+export type EtatCivilFiscal =
+  | 'Célibataire'
+  | 'Marié(e)'
+  | 'Divorcé(e)'
+  | 'Veuf/Veuve'
+  | 'Pacsé(e)';
+
+/**
+ * Calcul du nombre de parts fiscales — Quotient familial CI.
+ * Barème DGI CI post-réforme 2024 (Art. 116 CGI CI) :
+ *   - Célibataire / Divorcé / Veuf sans enfant : 1 part
+ *   - Marié sans enfant                        : 2 parts
+ *   - +0,5 part par enfant à charge
+ *   - Plafond : 5 parts
+ */
+export const PARTS_MAX = 5;
+
+export function calculerPartsFiscales(
+  etatCivil: EtatCivilFiscal | string | null | undefined,
+  nbEnfants: number | null | undefined = 0
+): number {
+  const base = etatCivil === 'Marié(e)' || etatCivil === 'Pacsé(e)' ? 2 : 1;
+  const enfants = Math.max(0, Math.floor(nbEnfants ?? 0));
+  return Math.min(PARTS_MAX, base + enfants * 0.5);
+}
+
+/**
+ * Application du barème ITS à une base donnée (sans quotient familial).
+ * Utilisé en interne par `calculerITS`.
+ */
+function appliquerBaremeITS(base: number): number {
+  if (base <= 0) return 0;
 
   // Barème mensuel progressif ITS CI unifié (Réforme 2024, Art. 116 CGI CI)
   const tranches = [
@@ -91,18 +119,39 @@ export function calculerITS(salaireImposable: number): number {
   ];
 
   let its = 0;
-  let reste = salaireImposable;
+  let reste = base;
   let precedente = 0;
 
   for (const tranche of tranches) {
     if (reste <= 0) break;
-    const base = Math.min(reste, tranche.limite - precedente);
-    its += base * tranche.taux;
-    reste -= base;
+    const partTranche = Math.min(reste, tranche.limite - precedente);
+    its += partTranche * tranche.taux;
+    reste -= partTranche;
     precedente = tranche.limite;
   }
 
-  return Math.round(its);
+  return its;
+}
+
+/**
+ * Calcul ITS (Impôt sur Traitement et Salaires) — Barème CI avec quotient familial.
+ * Base imposable = brut - CNPS salarié - abattement forfaitaire
+ *
+ * Si `parts` est fourni (> 1), application du quotient familial :
+ *   1. Q = baseImposable / parts
+ *   2. ITS = appliquerBaremeITS(Q) × parts
+ *
+ * Si `parts` <= 1, comportement identique à l'ancien `calculerITS` (rétrocompatible).
+ *
+ * @param salaireImposable Base imposable mensuelle en FCFA
+ * @param parts Nombre de parts fiscales (défaut 1 = pas de réduction familiale)
+ */
+export function calculerITS(salaireImposable: number, parts: number = 1): number {
+  if (salaireImposable <= 0) return 0;
+  const nbParts = Math.max(1, Math.min(PARTS_MAX, parts || 1));
+  const quotient = salaireImposable / nbParts;
+  const itsParPart = appliquerBaremeITS(quotient);
+  return Math.round(itsParPart * nbParts);
 }
 
 export interface ResultatPaie {
@@ -111,15 +160,22 @@ export interface ResultatPaie {
   cmu_salarie: number;              // CMU forfait 1 600 FCFA
   cnps_salarie: number;             // Total salarial : cnps_retraite + cmu_salarie
   base_imposable: number;
+  parts_fiscales: number;           // Nombre de parts utilisé pour l'ITS
   its: number;
   salaire_net_avant_retenues: number;
   salaire_net: number;
 }
 
+export interface SituationFamiliale {
+  etat_civil?: EtatCivilFiscal | string | null;
+  nb_enfants?: number | null;
+}
+
 export function calculerBulletin(
   salaireBrut: number,
   autresRetenues = 0,
-  avances = 0
+  avances = 0,
+  situationFamiliale: SituationFamiliale = {}
 ): ResultatPaie {
   // CNPS retraite salariale (6,3% plafonné)
   const baseCNPS = Math.min(salaireBrut, PLAFOND_CNPS_MENSUEL);
@@ -134,7 +190,13 @@ export function calculerBulletin(
   // Base imposable ITS = (brut - CNPS retraite) - abattement 15% (CGI CI)
   const baseImposableApresCnps = Math.max(0, salaireBrut - cnps_retraite);
   const base_imposable = Math.max(0, Math.round(baseImposableApresCnps * (1 - TAUX_ABATTEMENT_ITS)));
-  const its = calculerITS(base_imposable);
+
+  // Quotient familial — Art. 116 CGI CI
+  const parts_fiscales = calculerPartsFiscales(
+    situationFamiliale.etat_civil,
+    situationFamiliale.nb_enfants
+  );
+  const its = calculerITS(base_imposable, parts_fiscales);
 
   const salaire_net_avant_retenues = salaireBrut - cnps_salarie - its;
   const salaire_net = salaire_net_avant_retenues - autresRetenues - avances;
@@ -145,6 +207,7 @@ export function calculerBulletin(
     cmu_salarie,
     cnps_salarie,
     base_imposable,
+    parts_fiscales,
     its,
     salaire_net_avant_retenues,
     salaire_net: Math.max(0, salaire_net),
@@ -332,6 +395,9 @@ export interface LignesBulletin {
   autres_retenues?: number;
   avances?: number;
   nb_jours_absence?: number;
+  // Situation familiale pour quotient familial ITS (Art. 116 CGI CI)
+  etat_civil?: EtatCivilFiscal | string | null;
+  nb_enfants?: number | null;
 }
 
 // Taux Contribution Nationale CI — solidarité employé
@@ -350,6 +416,7 @@ export interface ResultatPaieComplet {
   heures_sup_montant: number;
   retenu_absence: number;
   indemnite_maladie?: number;     // Montant total du maintien de salaire
+  parts_fiscales?: number;        // Nombre de parts fiscales appliqué pour l'ITS
   // Colonnes Sage (22 colonnes)
   gross_salary: number;           // *** SALAIRE BRUT *** = total_brut
   exempt_indemnity: number;       // *** INDEMNITE EXONEREE *** = prime_transport
@@ -418,10 +485,11 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
   // CMU forfait
   const cmu = CMU_MENSUEL;
 
-  // ITS : abattement sur base imposable après CNPS
+  // ITS : abattement sur base imposable après CNPS + quotient familial
   const base_its = Math.max(0, total_imposable - cnps_retraite);
   const base_its_apres_abattement = Math.max(0, Math.round(base_its * (1 - TAUX_ABATTEMENT_ITS)));
-  const its = calculerITS(base_its_apres_abattement);
+  const parts_fiscales = calculerPartsFiscales(lignes.etat_civil, lignes.nb_enfants);
+  const its = calculerITS(base_its_apres_abattement, parts_fiscales);
 
   const retenu_absence = calculerRetenuAbsence(lignes.nb_jours_absence ?? 0, lignes.salaire_brut);
 
@@ -479,6 +547,7 @@ export function calculerBulletinComplet(lignes: LignesBulletin): ResultatPaieCom
     net_to_pay,
     overtime_pay: heures_sup_montant,
     indemnite_maladie,
+    parts_fiscales,
   };
 }
 
@@ -527,10 +596,11 @@ export function formatAnciennete(dateEmbauche: string | null | undefined): strin
 export function calculerBrutDepuisNet(
   netSouhaite: number,
   autresRetenues = 0,
-  avances = 0
+  avances = 0,
+  situationFamiliale: SituationFamiliale = {}
 ): { brut: number; details: ResultatPaie } {
   if (netSouhaite <= 0) {
-    const details = calculerBulletin(0);
+    const details = calculerBulletin(0, 0, 0, situationFamiliale);
     return { brut: 0, details };
   }
   let low = Math.max(SMIG_MENSUEL, netSouhaite);
@@ -538,7 +608,7 @@ export function calculerBrutDepuisNet(
 
   for (let i = 0; i < 60; i++) {
     const mid = Math.round((low + high) / 2);
-    const details = calculerBulletin(mid, autresRetenues, avances);
+    const details = calculerBulletin(mid, autresRetenues, avances, situationFamiliale);
     const ecart = details.salaire_net - netSouhaite;
     if (Math.abs(ecart) <= 1) return { brut: mid, details };
     if (ecart < 0) low = mid + 1;
@@ -547,7 +617,7 @@ export function calculerBrutDepuisNet(
   }
 
   const brut = Math.round((low + high) / 2);
-  return { brut, details: calculerBulletin(brut, autresRetenues, avances) };
+  return { brut, details: calculerBulletin(brut, autresRetenues, avances, situationFamiliale) };
 }
 
 // ── Indemnité de précarité (CDD) — Art. 14.8 Code du Travail ivoirien CI ─

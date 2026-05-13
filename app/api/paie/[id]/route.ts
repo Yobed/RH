@@ -107,6 +107,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (!parsed.success) return NextResponse.json({ error: parsed.error.errors[0].message }, { status: 400 });
 
   const d = parsed.data;
+
+  // Récupérer la situation familiale pour le quotient familial ITS
+  const { data: empFamille } = existing.employee_id
+    ? await supabase
+        .from("employees")
+        .select("etat_civil, nb_enfants")
+        .eq("id", existing.employee_id)
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
+
   const calc = calculerBulletinComplet({
     salaire_brut: d.salaire_brut,
     sursalaire: d.sursalaire,
@@ -129,6 +140,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     autres_retenues: d.autres_retenues,
     avances: d.avances,
     nb_jours_absence: d.nb_jours_absence,
+    etat_civil: empFamille?.etat_civil ?? null,
+    nb_enfants: empFamille?.nb_enfants ?? null,
   });
 
   const { data, error } = await supabase

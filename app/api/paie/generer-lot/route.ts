@@ -28,6 +28,8 @@ interface EmployeeRow {
   prime_depassement: number | null;
   prime_fonction: number | null;
   prime_transport: number | null;
+  etat_civil: string | null;
+  nb_enfants: number | null;
 }
 
 interface LineSummary {
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // 1) Salariés actifs avec un salaire de base
   const { data: employees } = await supabase
     .from("employees")
-    .select("id, full_name, matricule, date_embauche, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport")
+    .select("id, full_name, matricule, date_embauche, salaire_brut, sursalaire, prime_exceptionnelle, prime_salissure, prime_depassement, prime_fonction, prime_transport, etat_civil, nb_enfants")
     .eq("company_id", companyId as string)
     .eq("statut", "actif");
 
@@ -145,6 +147,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       autres_retenues: 0,
       avances: 0,
       nb_jours_absence: absJours,
+      etat_civil: emp.etat_civil,
+      nb_enfants: emp.nb_enfants,
     });
 
     if (absJours > 0) warnings.push(`${absJours} j d'absence non payés`);

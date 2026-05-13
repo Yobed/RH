@@ -46,7 +46,17 @@ export interface EmpRow {
   full_name: string;
   matricule?: string | null;
   salaire_brut: number;
+  etat_civil?: string | null;
+  nb_enfants?: number | null;
 }
+
+const ETATS_CIVILS = [
+  "Célibataire",
+  "Marié(e)",
+  "Divorcé(e)",
+  "Veuf/Veuve",
+  "Pacsé(e)",
+] as const;
 
 interface Props {
   employees?: EmpRow[];
@@ -57,8 +67,15 @@ export function CalcEnversForm({ employees = [] }: Props) {
   const [autresRetenues, setAutresRetenues] = useState<string>("0");
   const [avances, setAvances] = useState<string>("0");
   const [tauxAtMp, setTauxAtMp] = useState<number>(CHARGES_PATRONALES_TAUX.at_mp);
+  const [etatCivil, setEtatCivil] = useState<string>("Célibataire");
+  const [nbEnfants, setNbEnfants] = useState<string>("0");
   const [computed, setComputed] = useState<ReturnType<typeof calculerBrutDepuisNet> | null>(null);
   const [selectedEmpId, setSelectedEmpId] = useState<string>("");
+
+  const situationFamille = useMemo(
+    () => ({ etat_civil: etatCivil, nb_enfants: Number(nbEnfants) || 0 }),
+    [etatCivil, nbEnfants]
+  );
 
   const selectedEmp = useMemo(
     () => employees.find((e) => e.id === selectedEmpId) ?? null,
@@ -67,7 +84,11 @@ export function CalcEnversForm({ employees = [] }: Props) {
 
   const avant = useMemo(() => {
     if (!selectedEmp) return null;
-    const bulletin = calculerBulletin(selectedEmp.salaire_brut);
+    const situation = {
+      etat_civil: selectedEmp.etat_civil ?? null,
+      nb_enfants: selectedEmp.nb_enfants ?? 0,
+    };
+    const bulletin = calculerBulletin(selectedEmp.salaire_brut, 0, 0, situation);
     const pat = calculerChargesPatronales(selectedEmp.salaire_brut, tauxAtMp);
     return { bulletin, patronales: pat, cout: selectedEmp.salaire_brut + pat.total };
   }, [selectedEmp, tauxAtMp]);
@@ -78,7 +99,14 @@ export function CalcEnversForm({ employees = [] }: Props) {
     if (id) {
       const emp = employees.find((e) => e.id === id);
       if (emp) {
-        setNetSouhaite(String(calculerBulletin(emp.salaire_brut).salaire_net));
+        // Reprendre la situation familiale réelle de l'employé
+        setEtatCivil(emp.etat_civil ?? "Célibataire");
+        setNbEnfants(String(emp.nb_enfants ?? 0));
+        const situation = {
+          etat_civil: emp.etat_civil ?? null,
+          nb_enfants: emp.nb_enfants ?? 0,
+        };
+        setNetSouhaite(String(calculerBulletin(emp.salaire_brut, 0, 0, situation).salaire_net));
       }
     }
   }, [employees]);
@@ -88,9 +116,10 @@ export function CalcEnversForm({ employees = [] }: Props) {
       Number(netSouhaite) || 0,
       Number(autresRetenues) || 0,
       Number(avances) || 0,
+      situationFamille,
     );
     setComputed(result);
-  }, [netSouhaite, autresRetenues, avances]);
+  }, [netSouhaite, autresRetenues, avances, situationFamille]);
 
   const patronales = computed ? calculerChargesPatronales(computed.brut, tauxAtMp) : null;
   const coutTotal = computed && patronales ? computed.brut + patronales.total : null;
@@ -122,7 +151,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
       montant: computed.details.its,
       avantMontant: avant?.bulletin.its,
       variant: "deduction",
-      detail: `Base imposable : ${fcfa(computed.details.base_imposable)}`,
+      detail: `Base imposable : ${fcfa(computed.details.base_imposable)} · ${computed.details.parts_fiscales} part${computed.details.parts_fiscales > 1 ? "s" : ""} fiscale${computed.details.parts_fiscales > 1 ? "s" : ""}`,
     },
     ...((Number(autresRetenues) || 0) > 0
       ? [{ label: "Autres retenues", montant: Number(autresRetenues), variant: "deduction" as const }]
@@ -185,7 +214,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
             </select>
             {selectedEmp && (
               <p className="text-xs text-slate-400 mt-1">
-                Net actuel estimé : <strong>{fcfa(calculerBulletin(selectedEmp.salaire_brut).salaire_net)}</strong>
+                Net actuel estimé : <strong>{fcfa(avant?.bulletin.salaire_net ?? 0)}</strong>
               </p>
             )}
           </label>
@@ -243,6 +272,45 @@ export function CalcEnversForm({ employees = [] }: Props) {
             />
             <p className="text-xs text-slate-400 mt-1">Variable selon secteur (2%–5%)</p>
           </label>
+        </div>
+
+        {/* ── Quotient familial (impacte l'ITS) ─────────────────── */}
+        <div className="rounded-lg border border-slate-100 bg-slate-50/50 p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <User className="h-3.5 w-3.5 text-slate-500" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+              Quotient familial (Art. 116 CGI CI)
+            </p>
+            <span className="text-[10px] text-slate-400">— réduit l'ITS</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="block">
+              <span className="text-sm font-medium text-slate-700">Situation matrimoniale</span>
+              <select
+                value={etatCivil}
+                onChange={(e) => setEtatCivil(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-white"
+              >
+                {ETATS_CIVILS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium text-slate-700">Nombre d'enfants à charge</span>
+              <input
+                type="number"
+                min={0}
+                max={10}
+                value={nbEnfants}
+                onChange={(e) => setNbEnfants(e.target.value.replace(/[^0-9]/g, ""))}
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
+              />
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                +0,5 part par enfant — Marié = 2 parts de base — Plafond 5 parts
+              </p>
+            </label>
+          </div>
         </div>
 
         <div className="flex gap-2">

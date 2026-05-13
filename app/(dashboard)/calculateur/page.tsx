@@ -50,7 +50,7 @@ export default async function CalculateurPage() {
   // Requête minimaliste pour SoldeToutCompteForm — uniquement les champs nécessaires
   const { data: stcEmployees } = await supabase
     .from("employees")
-    .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche, poste, categorie, departement")
+    .select("id, full_name, matricule, salaire_brut, type_contrat, date_embauche, poste, categorie, departement, etat_civil, nb_enfants")
     .eq("statut", "actif")
     .order("full_name")
     .limit(500);
