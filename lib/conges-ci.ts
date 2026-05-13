@@ -1,32 +1,36 @@
 /**
  * lib/conges-ci.ts
- * Logique de calcul des congés annuels — Code du Travail de Côte d'Ivoire
+ * Logique de calcul des congés annuels — règle métier client
  *
- * BASES LÉGALES :
- *   - Art. 25.1 CT-CI (Loi n°2015-532 du 20 juillet 2015) :
- *       2,2 jours ouvrables de congé par mois de travail effectif
- *       → plafond de base : 2,2 × 12 = 26,4 jours/an
+ * RÈGLE MÉTIER :
+ *   - 30 jours de congé par an
+ *   - Acquisition : 2,75 jours par mois à compter de la date d'embauche
+ *   - Plafond annuel = 30 jours (atteint avant la fin de l'année car
+ *     2,75 × 12 = 33 → plafonné à 30)
  *
- *   - Art. 26 CT-CI (majorations d'ancienneté — jours ouvrables supplémentaires) :
- *       + 1 jour  après  5 ans d'ancienneté (≥ 5 < 10 ans)
- *       + 2 jours après 10 ans d'ancienneté (≥ 10 < 15 ans)
- *       + 3 jours après 15 ans d'ancienneté (≥ 15 < 20 ans)
- *       + 5 jours après 20 ans d'ancienneté (≥ 20 < 25 ans)
- *       + 7 jours après 25 ans d'ancienneté (≥ 25 ans)
- *     Ces jours majorateurs s'ajoutent au plafond annuel (26,4 + bonus).
+ *   - Art. 26 CT-CI — majorations d'ancienneté (jours supplémentaires) :
+ *       + 1 jour  après  5 ans d'ancienneté
+ *       + 2 jours après 10 ans
+ *       + 3 jours après 15 ans
+ *       + 5 jours après 20 ans
+ *       + 7 jours après 25 ans
+ *     Ces jours majorateurs s'ajoutent au plafond annuel (30 + bonus).
  *
- *   - Convention Collective Interprofessionnelle AINSI-UGTCI (Art. 69) :
- *       Congés événements familiaux déjà gérés dans paie-ci.ts.
+ *   - Allocation / ICCP :
+ *       (moyenne des max. 12 derniers bruts) / 30 × nb jours pris
  *
- * ⚠️ Vérifier annuellement si des décrets ou avenants modifient ces taux.
- * Dernière mise à jour : mars 2026
+ *   - CCI AINSI-UGTCI Art. 69 : congés événements familiaux gérés
+ *     dans paie-ci.ts.
+ *
+ * ⚠️ Vérifier annuellement si la convention d'entreprise change.
+ * Dernière mise à jour : mai 2026
  */
 
-// Taux d'acquisition légal : 2,2 jours ouvrables/mois (Art. 25.1 CT-CI)
-export const TAUX_CONGES_PAR_MOIS = 2.2;
+// Taux d'acquisition : 2,75 jours par mois (règle client)
+export const TAUX_CONGES_PAR_MOIS = 2.75;
 
-// Plafond annuel de base (12 mois × 2,2 j) sans bonus ancienneté
-export const PLAFOND_CONGES_BASE = 26.4; // = TAUX_CONGES_PAR_MOIS * 12
+// Plafond annuel de base = 30 jours (règle client)
+export const PLAFOND_CONGES_BASE = 30;
 
 export interface SoldeConges {
   jours_acquis: number;
@@ -133,17 +137,61 @@ export function calculerSoldeConges(joursAcquis: number, jours_pris: number): nu
 }
 
 /**
- * Calcule l'Indemnité Compensatrice de Congés Payés (ICCP) au solde de tout compte.
- * Base légale : Art. 25.4 CT-CI + usage praticien CI.
- * Taux journalier = salaire mensuel brut / 26 jours ouvrables.
+ * Allocation de congés payés (et indemnité compensatrice ICCP en cas
+ * de départ) — règle métier client :
  *
- * @param joursRestants        - Jours de congés non pris
- * @param salaireMensuelBrut   - Salaire mensuel brut actuel
- * @returns Indemnité compensatrice (FCFA arrondis)
+ *   allocation = ( moyenne des max. 12 derniers bruts ) / 30 × jours pris
+ *
+ * Le diviseur 30 correspond au nombre de jours du mois (calcul calendaire),
+ * cohérent avec l'acquisition de 30 jours par an.
+ *
+ * @param brutMoyen12Mois  - Moyenne des bruts perçus sur les 12 derniers mois
+ *                            (ou moins si l'employé a moins d'ancienneté)
+ * @param joursPris        - Nombre de jours de congé pris (ou restants pour ICCP)
+ * @returns Allocation en FCFA arrondis
  */
-export function calculerICCP(joursRestants: number, salaireMensuelBrut: number): number {
-  if (joursRestants <= 0 || salaireMensuelBrut <= 0) return 0;
-  // Taux journalier sur 26 jours ouvrables (base praticien CI)
-  const tauxJournalier = salaireMensuelBrut / 26;
-  return Math.round(tauxJournalier * joursRestants);
+export function calculerAllocationConges(
+  brutMoyen12Mois: number,
+  joursPris: number
+): number {
+  if (joursPris <= 0 || brutMoyen12Mois <= 0) return 0;
+  return Math.round((brutMoyen12Mois / 30) * joursPris);
+}
+
+/**
+ * Calcule la moyenne des bruts sur la fenêtre roulante des 12 derniers
+ * bulletins (ou moins si l'employé a moins d'ancienneté).
+ *
+ * @param brutsDerniersMois - Tableau des bruts du plus récent au plus ancien
+ *                            (ou inverse — l'ordre est sans importance)
+ * @returns Moyenne arrondie en FCFA
+ */
+export function calculerBrutMoyen12Mois(brutsDerniersMois: number[]): number {
+  if (!brutsDerniersMois || brutsDerniersMois.length === 0) return 0;
+  const fenetre = brutsDerniersMois.slice(0, 12).filter((n) => Number.isFinite(n) && n >= 0);
+  if (fenetre.length === 0) return 0;
+  const somme = fenetre.reduce((s, n) => s + n, 0);
+  return Math.round(somme / fenetre.length);
+}
+
+/**
+ * Indemnité Compensatrice de Congés Payés (ICCP) au solde de tout compte.
+ * Identique à `calculerAllocationConges` — gardé pour rétro-compatibilité
+ * de l'API.
+ *
+ * Deux signatures supportées :
+ *   - Nouvelle (recommandée) : (brutMoyen12Mois, joursRestants)
+ *   - Ancienne (legacy)      : (joursRestants, salaireMensuelBrut)
+ *     → détecté quand le 1er argument est ≤ 365 et le 2ᵉ > 365
+ *     → applique la même formule /30 (et non plus /26)
+ *
+ * @returns FCFA arrondis
+ */
+export function calculerICCP(a: number, b: number): number {
+  // Détection ancien ordre d'arguments (jours, salaire) : jours < salaire
+  // et jours typiquement ≤ ~365.
+  const looksLikeLegacy = a >= 0 && a <= 365 && b > a * 10;
+  const brutMoyen = looksLikeLegacy ? b : a;
+  const jours = looksLikeLegacy ? a : b;
+  return calculerAllocationConges(brutMoyen, jours);
 }
