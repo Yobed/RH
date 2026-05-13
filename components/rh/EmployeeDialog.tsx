@@ -19,8 +19,27 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Tables } from "@/types/supabase";
+import { EmployeePhotoUpload } from "./EmployeePhotoUpload";
 
 type Employee = Tables<"employees">;
+
+interface SalaryGridRow {
+  id: string;
+  libelle: string;
+  code: string;
+  famille: "TEC" | "CHA" | "EMP" | "CAD" | "OUV";
+  type_remu: string;
+  salaire_base: number;
+  ordre: number;
+}
+
+const FAMILLE_LABELS: Record<SalaryGridRow["famille"], string> = {
+  TEC: "Agents techniques",
+  CHA: "Chauffeurs",
+  EMP: "Employés",
+  CAD: "Cadres / Ingénieurs",
+  OUV: "Ouvriers",
+};
 
 const selectClass =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
@@ -64,7 +83,8 @@ const schema = z
     departement: z.string().max(100).optional(),
     site_travail: z.string().max(100).optional(),
     niveau_etude: z.enum(["Primaire", "Secondaire/Collège", "BAC", "BTS / DUT", "Licence", "Master", "Doctorat", ""]).optional(),
-    categorie: z.enum(["Ouvrier / Employé", "Agent de maîtrise / Technicien", "Cadre / Ingénieur", "Cadre supérieur", ""]).optional(),
+    categorie: z.string().max(60).optional(),
+    photo_url: z.string().url().optional().or(z.literal("")),
     convention_collective: z.string().max(100).optional(),
     type_contrat: z.enum(["CDI", "CDD", "Stage", "Apprentissage", ""]).optional(),
     date_embauche: z.string().min(1, "Date d'embauche obligatoire"),
@@ -130,6 +150,7 @@ type EmployeeWithPrimes = Employee & {
   anciennete_anterieure?: number | null;
   niveau_etude?: string | null;
   categorie?: string | null;
+  photo_url?: string | null;
   sursalaire?: number | null;
   prime_exceptionnelle?: number | null;
   prime_salissure?: number | null;
@@ -169,7 +190,8 @@ function toFormDefaults(emp: EmployeeWithPrimes): FormData {
     departement: emp.departement ?? "",
     site_travail: emp.site_travail ?? "",
     niveau_etude: (emp.niveau_etude as FormData["niveau_etude"]) ?? "",
-    categorie: (emp.categorie as FormData["categorie"]) ?? "",
+    categorie: emp.categorie ?? "",
+    photo_url: emp.photo_url ?? "",
     convention_collective: emp.convention_collective ?? "",
     type_contrat: (emp.type_contrat as FormData["type_contrat"]) ?? "",
     date_embauche: emp.date_embauche,
@@ -219,6 +241,7 @@ interface Props {
 export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
   const [open, setOpen] = useState(false);
   const [suggestedMatricule, setSuggestedMatricule] = useState<string>("");
+  const [salaryGrid, setSalaryGrid] = useState<SalaryGridRow[]>([]);
   const router = useRouter();
 
   const {
@@ -249,6 +272,9 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
 
   const typeContrat = watch("type_contrat");
   const needsDateFin = ["CDD", "Stage", "Apprentissage"].includes(typeContrat ?? "");
+  const photoUrl = watch("photo_url");
+  const fullName = watch("full_name");
+  const categorieValue = watch("categorie");
 
   useEffect(() => {
     if (employee || !open) return;
@@ -262,6 +288,22 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
       })
       .catch(() => {});
   }, [open, employee, setValue]);
+
+  useEffect(() => {
+    if (!open || salaryGrid.length > 0) return;
+    fetch("/api/salary-grid")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows: SalaryGridRow[]) => setSalaryGrid(Array.isArray(rows) ? rows : []))
+      .catch(() => setSalaryGrid([]));
+  }, [open, salaryGrid.length]);
+
+  function handleCategorieChange(libelle: string) {
+    setValue("categorie", libelle);
+    const row = salaryGrid.find((r) => r.libelle === libelle);
+    if (row) {
+      setValue("salaire_brut", String(row.salaire_base));
+    }
+  }
 
   async function onSubmit(data: FormData) {
     const url = employee ? `/api/employees/${employee.id}` : "/api/employees";
@@ -330,6 +372,12 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
               Identité
             </p>
+
+            <EmployeePhotoUpload
+              value={photoUrl || null}
+              fullName={fullName}
+              onChange={(url) => setValue("photo_url", url ?? "")}
+            />
 
             <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
               <div>
@@ -536,14 +584,37 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Catégorie professionnelle</label>
-                <select {...register("categorie")} className={`mt-1 ${selectClass}`}>
-                  <option value="">— Choisir —</option>
-                  <option value="Ouvrier / Employé">Ouvrier / Employé</option>
-                  <option value="Agent de maîtrise / Technicien">Agent de maîtrise / Technicien</option>
-                  <option value="Cadre / Ingénieur">Cadre / Ingénieur</option>
-                  <option value="Cadre supérieur">Cadre supérieur</option>
+                <label className="text-sm font-medium">
+                  Catégorie professionnelle
+                  <span className="ml-1 text-[10px] text-blue-600 font-normal">
+                    (auto-remplit le salaire de base)
+                  </span>
+                </label>
+                <select
+                  value={categorieValue ?? ""}
+                  onChange={(e) => handleCategorieChange(e.target.value)}
+                  className={`mt-1 ${selectClass}`}
+                >
+                  <option value="">— Choisir une catégorie —</option>
+                  {(["CAD", "TEC", "EMP", "OUV", "CHA"] as const).map((fam) => {
+                    const rows = salaryGrid.filter((r) => r.famille === fam);
+                    if (rows.length === 0) return null;
+                    return (
+                      <optgroup key={fam} label={FAMILLE_LABELS[fam]}>
+                        {rows.map((r) => (
+                          <option key={r.id} value={r.libelle}>
+                            {r.libelle} — {Math.round(r.salaire_base).toLocaleString("fr-FR")} FCFA
+                          </option>
+                        ))}
+                      </optgroup>
+                    );
+                  })}
                 </select>
+                {salaryGrid.length === 0 && (
+                  <p className="mt-0.5 text-[10px] text-muted-foreground">
+                    Chargement de la grille…
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium">Niveau d'études</label>

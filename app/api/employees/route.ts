@@ -25,6 +25,7 @@ const createSchema = z.object({
   nb_enfants: z.coerce.number().int().min(0).nullable().optional(),
   niveau_etude: z.string().max(50).nullable().optional(),
   categorie: z.string().max(60).nullable().optional(),
+  photo_url: z.string().url("URL photo invalide").max(1000).nullable().optional(),
   date_fin_contrat: z.string().nullable().optional(),
   sursalaire:           z.coerce.number().min(0).nullable().optional(),
   prime_exceptionnelle: z.coerce.number().min(0).nullable().optional(),
