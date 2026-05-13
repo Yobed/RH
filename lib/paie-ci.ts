@@ -808,6 +808,213 @@ export function calculerBrutDepuisNet(
   return { brut, details: calculerBulletin(brut, autresRetenues, avances, situationFamiliale) };
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// CALCUL INVERSE PAR SUBSTITUTION — Sursalaire depuis Net souhaité
+// ════════════════════════════════════════════════════════════════════════
+// Équation de base :
+//   NET = BRUT - CMU - CNPS - ITS_SALARIAL                 (avec primes non imp. ajoutées au net)
+//   ITS_SALARIAL = max(0, ITS_BRUT - RICF)
+//
+// Sur une tranche donnée du barème ITS : ITS_BRUT = a × BRUT + b
+// Sur la zone CNPS normale (75 000 ≤ BRUT ≤ 3 375 000) : CNPS = 0,063 × BRUT
+//
+// Cas 1 — ITS_BRUT ≤ RICF (donc ITS_SAL = 0) :
+//   NET = BRUT × (1 − 0,063) − CMU
+//   ⇒ BRUT = (NET + CMU) / 0,937
+//
+// Cas 2 — ITS_BRUT > RICF :
+//   NET = BRUT × (1 − 0,063 − a) − b + RICF − CMU
+//   ⇒ BRUT = (NET + CMU + b − RICF) / (1 − 0,063 − a)
+//
+// On essaie chaque combinaison (zone CNPS, tranche ITS, RICF/non) et on
+// retient la solution qui retombe dans ses propres bornes.
+
+export interface ParametresSursalaireDepuisNet {
+  net_souhaite: number;
+  salaire_base: number;                          // Salaire catégoriel
+  date_embauche?: string | null;
+  convention?: string;
+  etat_civil?: EtatCivilFiscal | string | null;
+  nb_enfants?: number | null;
+  primes_contrat?: PrimeContrat[];
+  autres_retenues?: number;
+  avances?: number;
+}
+
+export interface ResultatSursalaireDepuisNet {
+  sursalaire: number;
+  prime_anciennete: number;
+  primes_imposables_total: number;
+  primes_non_imposables_total: number;
+  brut_fiscal: number;              // Base CNPS / ITS = salaire_base + ancien. + sursalaire + imp.
+  brut_total: number;               // Brut affiché = brut_fiscal + non imp.
+  cnps_retraite: number;
+  cmu_salarie: number;
+  parts_fiscales: number;
+  ricf: number;
+  its_brut: number;
+  its_salarial: number;
+  net_calcule: number;              // Vérification : ≈ net_souhaite
+  tranche_its_appliquee: number;    // Index 0..5
+  ecart: number;                    // net_calcule − net_souhaite
+}
+
+// Représentation linéaire ITS_BRUT(BRUT) = a × BRUT + b par tranche
+const TRANCHES_ITS_LINEAIRES = [
+  { index: 0, bas: 0,         haut: 75_000,                 a: 0,    b: 0 },
+  { index: 1, bas: 75_000,    haut: 240_000,                a: 0.16, b: -0.16 * 75_000 },        // -12 000
+  { index: 2, bas: 240_000,   haut: 800_000,                a: 0.21, b: 26_400 - 0.21 * 240_000 }, // -24 000
+  { index: 3, bas: 800_000,   haut: 2_400_000,              a: 0.24, b: 144_000 - 0.24 * 800_000 }, // -48 000
+  { index: 4, bas: 2_400_000, haut: 8_000_000,              a: 0.28, b: 527_999 - 0.28 * 2_400_000 }, // -144 001
+  { index: 5, bas: 8_000_000, haut: Number.POSITIVE_INFINITY, a: 0.32, b: 2_095_999 - 0.32 * 8_000_000 }, // -464 001
+] as const;
+
+// Zones CNPS : segment linéaire CNPS(BRUT) = α × BRUT + β
+const ZONES_CNPS = [
+  // Plancher : BRUT < 75 000 → CNPS forfaitaire 75 000 × 6,3 % = 4 725
+  { bas: 0,         haut: 75_000,                 alpha: 0,                              beta: 75_000 * TAUX_CNPS_RETRAITE_SALARIE },
+  // Zone proportionnelle
+  { bas: 75_000,    haut: 3_375_000,              alpha: TAUX_CNPS_RETRAITE_SALARIE,     beta: 0 },
+  // Plafond : BRUT > 3 375 000 → CNPS plafonné 3 375 000 × 6,3 % = 212 625
+  { bas: 3_375_000, haut: Number.POSITIVE_INFINITY, alpha: 0,                              beta: 3_375_000 * TAUX_CNPS_RETRAITE_SALARIE },
+] as const;
+
+/**
+ * Résout l'équation NET = BRUT − CMU − CNPS(BRUT) − max(0, ITS_BRUT(BRUT) − RICF)
+ * par substitution algébrique sur chaque combinaison (zone CNPS, tranche ITS).
+ *
+ * Retourne `null` si aucune solution cohérente n'est trouvée (cas pathologique).
+ */
+function resoudreBrutFiscal(K: number, ricf: number): { brut: number; itsTrancheIndex: number } | null {
+  // K = NET + CMU + retenues + avances − primes_non_imposables
+  // On cherche BRUT tel que : K = BRUT − CNPS(BRUT) − max(0, ITS_BRUT(BRUT) − RICF)
+
+  for (const zone of ZONES_CNPS) {
+    for (const tr of TRANCHES_ITS_LINEAIRES) {
+      // ── Cas A : ITS_SAL = 0 (ITS_BRUT ≤ RICF)
+      // K = BRUT × (1 − α) − β
+      // ⇒ BRUT = (K + β) / (1 − α)
+      {
+        const denom = 1 - zone.alpha;
+        if (denom > 0) {
+          const brut = (K + zone.beta) / denom;
+          const its_brut = tr.a * brut + tr.b;
+          if (
+            brut >= zone.bas && brut < zone.haut &&
+            brut >= tr.bas && brut < tr.haut &&
+            its_brut <= ricf
+          ) {
+            return { brut, itsTrancheIndex: tr.index };
+          }
+        }
+      }
+
+      // ── Cas B : ITS_SAL = ITS_BRUT − RICF (ITS_BRUT > RICF)
+      // K = BRUT × (1 − α − a) − β − b + RICF
+      // ⇒ BRUT = (K + β + b − RICF) / (1 − α − a)
+      {
+        const denom = 1 - zone.alpha - tr.a;
+        if (denom > 0) {
+          const brut = (K + zone.beta + tr.b - ricf) / denom;
+          const its_brut = tr.a * brut + tr.b;
+          if (
+            brut >= zone.bas && brut < zone.haut &&
+            brut >= tr.bas && brut < tr.haut &&
+            its_brut > ricf
+          ) {
+            return { brut, itsTrancheIndex: tr.index };
+          }
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+export function calculerSursalaireDepuisNet(
+  params: ParametresSursalaireDepuisNet
+): ResultatSursalaireDepuisNet {
+  // ── 1. Éléments fixes (indépendants du sursalaire)
+  const anciennete = calculerPrimeAnciennete(
+    params.salaire_base,
+    params.date_embauche,
+    params.convention
+  );
+  const parts = calculerPartsFiscales(params.etat_civil, params.nb_enfants);
+  const ricf = calculerRICF(parts);
+  const cmu = calculerCMU(params.etat_civil, params.nb_enfants).employe;
+  const autresRetenues = params.autres_retenues ?? 0;
+  const avances = params.avances ?? 0;
+
+  const primes = params.primes_contrat ?? [];
+  const primesImpTotal = primes
+    .filter((p) => p.imposable)
+    .reduce((s, p) => s + (Number(p.montant) || 0), 0);
+  const primesNonImpTotal = primes
+    .filter((p) => !p.imposable)
+    .reduce((s, p) => s + (Number(p.montant) || 0), 0);
+
+  // Base imposable connue avant ajout du sursalaire
+  const brut_base_imposable = params.salaire_base + anciennete + primesImpTotal;
+
+  // K = constante de l'équation algébrique
+  // NET = BRUT_FISCAL − CNPS − CMU − ITS_SAL + primes_non_imposables − autres_retenues − avances
+  // ⇒ NET + CMU + autres_retenues + avances − primes_non_imposables = BRUT_FISCAL − CNPS − ITS_SAL
+  const K = params.net_souhaite + cmu + autresRetenues + avances - primesNonImpTotal;
+
+  const solution = resoudreBrutFiscal(K, ricf);
+
+  let brut_fiscal: number;
+  let tranche_its: number;
+
+  if (solution) {
+    brut_fiscal = solution.brut;
+    tranche_its = solution.itsTrancheIndex;
+  } else {
+    // Fallback dichotomie pour les cas hors zone (rare)
+    const fallback = calculerBrutDepuisNet(params.net_souhaite, autresRetenues, avances, {
+      etat_civil: params.etat_civil,
+      nb_enfants: params.nb_enfants,
+    });
+    brut_fiscal = fallback.brut;
+    tranche_its = TRANCHES_ITS_LINEAIRES.findIndex(
+      (t) => brut_fiscal >= t.bas && brut_fiscal < t.haut
+    );
+    if (tranche_its < 0) tranche_its = 0;
+  }
+
+  const sursalaire = Math.max(0, Math.round(brut_fiscal - brut_base_imposable));
+
+  // Recalcul du bulletin complet avec le sursalaire trouvé, pour le détail
+  const brut_fiscal_final = brut_base_imposable + sursalaire;
+  const brut_total = brut_fiscal_final + primesNonImpTotal;
+  const baseCNPS = calculerBaseCNPS(brut_fiscal_final);
+  const cnps_retraite = Math.round(baseCNPS * TAUX_CNPS_RETRAITE_SALARIE);
+  const its_brut = Math.round(appliquerBaremeITS(brut_fiscal_final));
+  const its_salarial = Math.max(0, its_brut - ricf);
+  const net_calcule =
+    brut_total - cnps_retraite - cmu - its_salarial - autresRetenues - avances;
+
+  return {
+    sursalaire,
+    prime_anciennete: anciennete,
+    primes_imposables_total: primesImpTotal,
+    primes_non_imposables_total: primesNonImpTotal,
+    brut_fiscal: brut_fiscal_final,
+    brut_total,
+    cnps_retraite,
+    cmu_salarie: cmu,
+    parts_fiscales: parts,
+    ricf,
+    its_brut,
+    its_salarial,
+    net_calcule,
+    tranche_its_appliquee: tranche_its,
+    ecart: net_calcule - params.net_souhaite,
+  };
+}
+
 // ── Indemnité de précarité (CDD) — Art. 14.8 Code du Travail ivoirien CI ─
 // Taux légal : 3% de la somme brute perçue durant tout le contrat
 export function calculerIndemnitePrecarite(sommeSalairesBruts: number): number {
