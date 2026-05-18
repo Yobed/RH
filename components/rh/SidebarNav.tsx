@@ -33,6 +33,7 @@ import {
   ShieldWarning,
   Books,
   CaretDown,
+  HandWaving,
   TreeStructure,
   CalendarCheck,
   CalendarDots,
@@ -68,6 +69,7 @@ const navGroups: NavGroup[] = [
     accent: "#818cf8",
     defaultOpen: true,
     items: [
+      { href: "/bienvenue", label: "Bienvenue", icon: HandWaving, exact: true },
       { href: "/rh", label: "Tableau de bord", icon: SquaresFour, exact: true },
       { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging },
       { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
@@ -88,8 +90,10 @@ const navGroups: NavGroup[] = [
       { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
       { href: "/conges/heatmap", label: "Heatmap absences", icon: CalendarBlank },
       { href: "/planning", label: "Planning & shifts", icon: CalendarCheck },
+      { href: "/pointage", label: "Pointage", icon: Clock },
       { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
       { href: "/onboarding", label: "Onboarding", icon: UserPlus, pulse: true },
+      { href: "/offboarding", label: "Offboarding", icon: UserMinus },
     ],
   },
   {

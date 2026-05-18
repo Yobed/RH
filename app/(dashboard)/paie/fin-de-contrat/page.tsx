@@ -61,6 +61,13 @@ export default async function FinDeContratPage({
               Calcul, simulation et archivage du solde de tout compte selon le Code du travail ivoirien.
             </p>
           </div>
+          <Link
+            href="/offboarding"
+            className="self-start rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 inline-flex items-center gap-1.5 transition-colors"
+          >
+            Checklist de restitution
+            <ExternalLink className="h-3 w-3" />
+          </Link>
         </div>
       </header>
 
