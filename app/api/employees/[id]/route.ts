@@ -145,6 +145,88 @@ export async function PUT(
     details: parsed.data.motif_modification ? { motif: parsed.data.motif_modification } : undefined
   });
 
+  // Auto-création d'événements de carrière sur changements majeurs
+  if (current && data) {
+    const today = new Date().toISOString().slice(0, 10);
+    const motif = parsed.data.motif_modification ?? null;
+    type CareerEventInsert = {
+      company_id: string;
+      employee_id: string;
+      event_type: string;
+      date_event: string;
+      description: string;
+      old_value: Record<string, unknown> | null;
+      new_value: Record<string, unknown> | null;
+      created_by: string;
+    };
+    const events: CareerEventInsert[] = [];
+
+    const pushEvent = (
+      eventType: string,
+      description: string,
+      oldVal: Record<string, unknown>,
+      newVal: Record<string, unknown>
+    ) => {
+      events.push({
+        company_id: current.company_id,
+        employee_id: params.id,
+        event_type: eventType,
+        date_event: today,
+        description: motif ? `${description} — ${motif}` : description,
+        old_value: oldVal,
+        new_value: newVal,
+        created_by: user.id,
+      });
+    };
+
+    if (parsed.data.poste !== undefined && parsed.data.poste !== current.poste) {
+      pushEvent(
+        "changement_poste",
+        `Changement de poste : ${current.poste ?? "—"} → ${parsed.data.poste}`,
+        { poste: current.poste },
+        { poste: parsed.data.poste }
+      );
+    }
+
+    if (parsed.data.departement !== undefined && parsed.data.departement !== current.departement) {
+      pushEvent(
+        "mutation",
+        `Mutation : ${current.departement ?? "—"} → ${parsed.data.departement ?? "—"}`,
+        { departement: current.departement },
+        { departement: parsed.data.departement }
+      );
+    }
+
+    if (parsed.data.categorie !== undefined && parsed.data.categorie !== current.categorie) {
+      pushEvent(
+        "promotion",
+        `Changement de catégorie : ${current.categorie ?? "—"} → ${parsed.data.categorie ?? "—"}`,
+        { categorie: current.categorie },
+        { categorie: parsed.data.categorie }
+      );
+    }
+
+    if (
+      parsed.data.salaire_brut !== undefined &&
+      parsed.data.salaire_brut !== null &&
+      Number(parsed.data.salaire_brut) !== Number(current.salaire_brut ?? 0)
+    ) {
+      const oldS = Number(current.salaire_brut ?? 0);
+      const newS = Number(parsed.data.salaire_brut);
+      pushEvent(
+        "augmentation",
+        `${newS >= oldS ? "Augmentation" : "Ajustement"} salaire : ${oldS.toLocaleString("fr-FR")} → ${newS.toLocaleString("fr-FR")} FCFA`,
+        { salaire_brut: oldS },
+        { salaire_brut: newS }
+      );
+    }
+
+    if (events.length > 0) {
+      // Insertion non bloquante : on log mais on ne fait pas échouer la requête
+      await supabase.from("career_events").insert(events);
+    }
+  }
+
   return NextResponse.json(data);
 }
 

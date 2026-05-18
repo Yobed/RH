@@ -124,6 +124,23 @@ export async function POST(req: Request) {
     items: buildDefaultChecklist(),
   });
 
+  // Auto-créer l'événement de carrière initial "embauche"
+  await supabase.from("career_events").insert({
+    company_id: companyId as string,
+    employee_id: data.id,
+    event_type: "embauche",
+    date_event: parsed.data.date_embauche,
+    description: `Embauche : ${parsed.data.poste}${parsed.data.type_contrat ? ` (${parsed.data.type_contrat})` : ""}`,
+    new_value: {
+      poste: parsed.data.poste,
+      type_contrat: parsed.data.type_contrat ?? null,
+      salaire_brut: parsed.data.salaire_brut ?? null,
+      categorie: parsed.data.categorie ?? null,
+      departement: parsed.data.departement ?? null,
+    },
+    created_by: user.id,
+  });
+
   // Auto-créer le contrat si type_contrat et salaire_brut sont renseignés
   if (parsed.data.type_contrat && parsed.data.salaire_brut != null && parsed.data.salaire_brut > 0) {
     await supabase.from("contracts").insert({

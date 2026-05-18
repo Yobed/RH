@@ -15,6 +15,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { calculerSoldeDeCompte } from "@/lib/paie-ci";
 import { logAuditEvent } from "@/lib/audit";
+import { buildDefaultOffboardingChecklist } from "@/lib/offboarding-template";
 
 export const dynamic = 'force-dynamic';
 
@@ -161,6 +162,43 @@ export async function POST(req: Request, { params }: Params) {
       .from("employees")
       .update({ statut: "inactif" })
       .eq("id", params.id);
+  }
+
+  // Auto-création de la checklist d'offboarding si elle n'existe pas
+  if (rupture?.id) {
+    const { data: existingChecklist } = await supabase
+      .from("offboarding_checklists")
+      .select("id")
+      .eq("employee_id", params.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (!existingChecklist) {
+      await supabase.from("offboarding_checklists").insert({
+        company_id: profile.company_id,
+        employee_id: params.id,
+        rupture_id: rupture.id,
+        date_sortie_prevue: d.date_sortie_effective,
+        items: buildDefaultOffboardingChecklist(),
+      });
+    } else {
+      // Si checklist existe, on la lie à cette rupture
+      await supabase
+        .from("offboarding_checklists")
+        .update({ rupture_id: rupture.id, date_sortie_prevue: d.date_sortie_effective })
+        .eq("id", existingChecklist.id);
+    }
+
+    // Crée aussi un career_event "depart"
+    await supabase.from("career_events").insert({
+      company_id: profile.company_id,
+      employee_id: params.id,
+      event_type: "depart",
+      date_event: d.date_sortie_effective,
+      description: `Départ — ${d.type_rupture.replace(/_/g, " ")}`,
+      new_value: { type_rupture: d.type_rupture, date_sortie: d.date_sortie_effective },
+      created_by: user.id,
+    });
   }
 
   await logAuditEvent({
