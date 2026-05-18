@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   FileText, Upload, Download, Trash2, Loader2,
-  FileSpreadsheet, Image, File, ChevronRight,
+  FileSpreadsheet, Image, File, ChevronRight, Sparkles, Eye,
 } from "lucide-react";
+import { DocumentAnalyzerDialog } from "@/components/rh/ged/DocumentAnalyzerDialog";
+import { DocumentVersionsDialog } from "@/components/rh/ged/DocumentVersionsDialog";
 import { createClientSupabase } from "@/lib/supabase/client";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -24,6 +26,7 @@ import { Input } from "@/components/ui/input";
 const FAMILLES = [
   "Contrat",
   "Avenant",
+  "Certificat de travail",
   "Diplômes",
   "CNI / Passeport",
   "Extrait de naissance",
@@ -40,9 +43,18 @@ const FAMILLES = [
 
 type Famille = (typeof FAMILLES)[number];
 
+const FAMILLES_OBLIGATOIRES: ReadonlyArray<Famille> = [
+  "Contrat",
+  "CNI / Passeport",
+  "CV",
+  "Casier judiciaire",
+  "Certificat de travail",
+];
+
 const FAMILLE_COLORS: Record<Famille, { bg: string; text: string; activeBg: string; activeText: string }> = {
   Contrat:               { bg: "bg-blue-50",   text: "text-blue-600",   activeBg: "bg-blue-600",   activeText: "text-white" },
   Avenant:               { bg: "bg-indigo-50", text: "text-indigo-600", activeBg: "bg-indigo-600", activeText: "text-white" },
+  "Certificat de travail":{ bg: "bg-emerald-50",text: "text-emerald-600",activeBg: "bg-emerald-600",activeText: "text-white" },
   Diplômes:              { bg: "bg-purple-50", text: "text-purple-600", activeBg: "bg-purple-600", activeText: "text-white" },
   "CNI / Passeport":     { bg: "bg-pink-50",   text: "text-pink-600",   activeBg: "bg-pink-600",   activeText: "text-white" },
   "Extrait de naissance":{ bg: "bg-rose-50",   text: "text-rose-600",   activeBg: "bg-rose-600",   activeText: "text-white" },
@@ -57,6 +69,11 @@ const FAMILLE_COLORS: Record<Famille, { bg: string; text: string; activeBg: stri
   Autre:                 { bg: "bg-gray-50",   text: "text-gray-600",   activeBg: "bg-gray-600",   activeText: "text-white" },
 };
 
+function isImage(fileType: string | null, fileUrl: string): boolean {
+  if (fileType && fileType.startsWith("image/")) return true;
+  return /\.(png|jpe?g|gif|webp|avif|bmp|svg)(\?.*)?$/i.test(fileUrl);
+}
+
 interface Document {
   id: string;
   name: string;
@@ -65,6 +82,9 @@ interface Document {
   file_type: string | null;
   file_size_kb: number | null;
   created_at: string | null;
+  ai_extracted_data?: Record<string, unknown> | null;
+  ai_summary?: string | null;
+  ai_analyzed_at?: string | null;
 }
 
 interface Employee {
@@ -257,6 +277,7 @@ function DeleteDocButton({ doc }: { doc: Document }) {
 
 export function DossierEmployeView({ employee, documents, companyId }: Props) {
   const [activeFamille, setActiveFamille] = useState<Famille>("Contrat");
+  const [analyzerDoc, setAnalyzerDoc] = useState<Document | null>(null);
 
   const byFamille: Record<string, Document[]> = {};
   documents.forEach((doc) => {
@@ -282,6 +303,8 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
               const count = byFamille[f]?.length ?? 0;
               const isActive = activeFamille === f;
               const fc = FAMILLE_COLORS[f];
+              const isObligatoire = FAMILLES_OBLIGATOIRES.includes(f);
+              const isMissing = isObligatoire && count === 0;
               return (
                 <button
                   key={f}
@@ -292,14 +315,34 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
                       : "text-slate-600 hover:bg-white hover:text-slate-900"
                   }`}
                 >
-                  <span className="truncate">{f}</span>
-                  {count > 0 && (
+                  <span className="flex items-center gap-1.5 truncate">
+                    <span className="truncate">{f}</span>
+                    {isObligatoire && (
+                      <span
+                        className={`text-[10px] font-bold leading-none ${
+                          isActive
+                            ? "text-white/80"
+                            : isMissing
+                            ? "text-rose-500"
+                            : "text-emerald-500"
+                        }`}
+                        title={isMissing ? "Document obligatoire manquant" : "Document obligatoire"}
+                      >
+                        *
+                      </span>
+                    )}
+                  </span>
+                  {count > 0 ? (
                     <span className={`inline-flex items-center justify-center h-4.5 min-w-[18px] px-1 rounded-full text-[10px] font-bold shrink-0 ${
                       isActive ? "bg-white/25 text-white" : `${fc.bg} ${fc.text}`
                     }`}>
                       {count}
                     </span>
-                  )}
+                  ) : isMissing && !isActive ? (
+                    <span className="inline-flex items-center justify-center h-4.5 min-w-[18px] px-1 rounded-full text-[9px] font-bold shrink-0 bg-rose-50 text-rose-600 uppercase tracking-wide">
+                      !
+                    </span>
+                  ) : null}
                 </button>
               );
             })}
@@ -338,57 +381,110 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
               </div>
             ) : (
               <div className="space-y-2">
-                {activeDocs.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 hover:border-slate-200 hover:shadow-sm transition-all"
-                  >
-                    {/* Icône fichier */}
-                    <div className="shrink-0">{fileIcon(doc.file_type)}</div>
-
-                    {/* Infos */}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 truncate">{doc.name}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] text-slate-400 font-mono">
-                          {formatSize(doc.file_size_kb)}
-                        </span>
-                        <span className="text-[10px] text-slate-300">·</span>
-                        <span className="text-[10px] text-slate-400">
-                          {doc.created_at
-                            ? new Date(doc.created_at).toLocaleDateString("fr-CI", {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric",
-                              })
-                            : "—"}
-                        </span>
-                        {doc.file_type && (
-                          <>
-                            <span className="text-[10px] text-slate-300">·</span>
-                            <span className="text-[10px] font-semibold text-slate-400 uppercase">
-                              {doc.file_type.split("/")[1]?.slice(0, 4)}
-                            </span>
-                          </>
+                {activeDocs.map((doc) => {
+                  const image = isImage(doc.file_type, doc.file_url);
+                  return (
+                    <div
+                      key={doc.id}
+                      className="group flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 hover:border-slate-200 hover:shadow-sm transition-all"
+                    >
+                      {/* Vignette image ou icône fichier */}
+                      <div className="shrink-0">
+                        {image ? (
+                          <a
+                            href={doc.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block h-14 w-14 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 hover:ring-2 hover:ring-indigo-300 transition-all"
+                            title="Ouvrir en grand"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={doc.file_url}
+                              alt={doc.name}
+                              className="h-full w-full object-cover"
+                              loading="lazy"
+                            />
+                          </a>
+                        ) : (
+                          <div className="h-14 w-14 rounded-lg border border-slate-100 bg-slate-50 flex items-center justify-center">
+                            {fileIcon(doc.file_type)}
+                          </div>
                         )}
                       </div>
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                      <a
-                        href={doc.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
-                        title="Télécharger"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                      </a>
-                      <DeleteDocButton doc={doc} />
+                      {/* Infos */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-slate-800 truncate">{doc.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {formatSize(doc.file_size_kb)}
+                          </span>
+                          <span className="text-[10px] text-slate-300">·</span>
+                          <span className="text-[10px] text-slate-400">
+                            {doc.created_at
+                              ? new Date(doc.created_at).toLocaleDateString("fr-CI", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                })
+                              : "—"}
+                          </span>
+                          {doc.file_type && (
+                            <>
+                              <span className="text-[10px] text-slate-300">·</span>
+                              <span className="text-[10px] font-semibold text-slate-400 uppercase">
+                                {doc.file_type.split("/")[1]?.slice(0, 4)}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Badge IA analysé */}
+                      {doc.ai_analyzed_at && (
+                        <span
+                          title={`Analysé par IA le ${new Date(doc.ai_analyzed_at).toLocaleDateString("fr-CI")}`}
+                          className="hidden sm:inline-flex items-center gap-1 rounded-full bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 shrink-0"
+                        >
+                          <Sparkles className="h-3 w-3" /> IA
+                        </span>
+                      )}
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => setAnalyzerDoc(doc)}
+                          className="inline-flex items-center gap-1 rounded-md bg-gradient-to-br from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 px-2 py-1 text-[11px] font-semibold text-white shadow-sm transition-colors"
+                          title="Ouvrir l'aperçu et l'analyse IA"
+                        >
+                          <Eye className="h-3 w-3" /> Aperçu
+                        </button>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <a
+                            href={doc.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            title="Télécharger"
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                          </a>
+                          <DocumentVersionsDialog
+                            documentId={doc.id}
+                            documentName={doc.name}
+                            documentUrl={doc.file_url}
+                            documentCreatedAt={doc.created_at}
+                            companyId={companyId}
+                            employeeId={employee.id}
+                            famille={(doc.famille ?? "Autre")}
+                          />
+                          <DeleteDocButton doc={doc} />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -415,6 +511,23 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
           <p className="text-xs text-slate-400">Dossier vide — commencez par ajouter le contrat de travail.</p>
         )}
       </div>
+
+      {analyzerDoc && (
+        <DocumentAnalyzerDialog
+          doc={{
+            id: analyzerDoc.id,
+            name: analyzerDoc.name,
+            famille: analyzerDoc.famille,
+            file_url: analyzerDoc.file_url,
+            file_type: analyzerDoc.file_type,
+            created_at: analyzerDoc.created_at,
+            ai_extracted_data: analyzerDoc.ai_extracted_data as never,
+            ai_summary: analyzerDoc.ai_summary ?? null,
+            ai_analyzed_at: analyzerDoc.ai_analyzed_at ?? null,
+          }}
+          onClose={() => setAnalyzerDoc(null)}
+        />
+      )}
     </div>
   );
 }

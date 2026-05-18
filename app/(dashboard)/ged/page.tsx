@@ -112,13 +112,19 @@ export default async function GedPage({ searchParams }: PageProps) {
             const hasContrat = stats.familles.has("Contrat");
             const hasCNI = stats.familles.has("CNI / Passeport");
             const hasCV = stats.familles.has("CV");
-            const score = [hasContrat, hasCNI, hasCV].filter(Boolean).length;
+            const hasCasier = stats.familles.has("Casier judiciaire");
+            const hasCertifTravail = stats.familles.has("Certificat de travail");
+            const pieces = [hasContrat, hasCNI, hasCV, hasCasier, hasCertifTravail];
+            const score = pieces.filter(Boolean).length;
+            const total = pieces.length;
             const dotColor =
-              score === 3
+              score === total
                 ? "bg-emerald-500"
-                : score >= 1
+                : score >= Math.ceil(total / 2)
                 ? "bg-amber-400"
-                : "bg-slate-200";
+                : score >= 1
+                ? "bg-orange-400"
+                : "bg-rose-300";
 
             const names = emp.full_name.trim().split(/\s+/);
             const initials =
@@ -137,7 +143,7 @@ export default async function GedPage({ searchParams }: PageProps) {
                 {/* Indicateur complétude */}
                 <div
                   className={`absolute top-4 right-4 h-2 w-2 rounded-full ${dotColor}`}
-                  title={`${score}/3 pièces clés présentes`}
+                  title={`${score}/${total} pièces obligatoires présentes`}
                 />
 
                 {/* Avatar + identité */}

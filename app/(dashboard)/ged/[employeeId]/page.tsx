@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronRight, FolderOpen } from "lucide-react";
 import { DossierEmployeView } from "@/components/rh/ged/DossierEmployeView";
 import { DossierCompletudeScore } from "@/components/rh/DossierCompletudeScore";
+import { EmployeeChatter } from "@/components/rh/EmployeeChatter";
 
 interface PageProps {
   params: { employeeId: string };
@@ -44,7 +45,7 @@ export default async function DossierEmployePage({ params }: PageProps) {
 
   const { data: documents } = await supabase
     .from("documents")
-    .select("id, name, famille, file_url, file_type, file_size_kb, created_at")
+    .select("id, name, famille, file_url, file_type, file_size_kb, created_at, ai_extracted_data, ai_summary, ai_analyzed_at")
     .eq("employee_id", params.employeeId)
     .eq("company_id", profile.company_id)
     .order("created_at", { ascending: false });
@@ -136,12 +137,21 @@ export default async function DossierEmployePage({ params }: PageProps) {
         size="lg"
       />
 
-      {/* Vue dossier avec onglets par famille */}
-      <DossierEmployeView
-        employee={employee}
-        documents={docList}
-        companyId={profile.company_id}
-      />
+      {/* Layout 2 colonnes : dossier + chatter style Odoo */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 items-start">
+        <DossierEmployeView
+          employee={employee}
+          documents={docList}
+          companyId={profile.company_id}
+        />
+
+        <div className="xl:sticky xl:top-4 xl:max-h-[calc(100vh-2rem)] xl:h-[calc(100vh-2rem)] xl:min-h-[600px]">
+          <EmployeeChatter
+            employeeId={employee.id}
+            employeeName={employee.full_name}
+          />
+        </div>
+      </div>
     </div>
   );
 }
