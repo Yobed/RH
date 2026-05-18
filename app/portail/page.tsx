@@ -4,7 +4,8 @@ import { requirePortailContext } from "@/lib/portail";
 import { calculerJoursAcquis, calculerSoldeConges } from "@/lib/conges-ci";
 import { format, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
-import { FileText, CalendarDays, UserCircle, ArrowRight } from "lucide-react";
+import { FileText, CalendarDays, ArrowRight } from "lucide-react";
+import { PointageWidget } from "@/components/portail/PointageWidget";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Portail salarié — RH Manager CI" };
@@ -17,7 +18,8 @@ export default async function PortailHome() {
   const supabase = createServerClient();
   const year = new Date().getFullYear();
 
-  const [{ data: emp }, { data: latestBulletin }, { data: pendingLeaves }] = await Promise.all([
+  const today = new Date().toISOString().slice(0, 10);
+  const [{ data: emp }, { data: latestBulletin }, { data: pendingLeaves }, { data: todayEntries }] = await Promise.all([
     supabase
       .from("employees")
       .select("full_name, matricule, poste, departement, date_embauche, type_contrat, salaire_brut")
@@ -36,7 +38,18 @@ export default async function PortailHome() {
       .eq("employee_id", ctx.employeeId)
       .in("statut", ["en_attente", "soumis"])
       .order("date_debut", { ascending: true }),
+    supabase
+      .from("time_entries")
+      .select("id, clock_in, clock_out, worked_minutes")
+      .eq("employee_id", ctx.employeeId)
+      .eq("date", today)
+      .order("clock_in", { ascending: true }),
   ]);
+
+  const activeEntry = (todayEntries ?? []).find((e) => !e.clock_out) ?? null;
+  const todayMinutes = (todayEntries ?? [])
+    .filter((e) => e.worked_minutes)
+    .reduce((sum, e) => sum + (e.worked_minutes ?? 0), 0);
 
   // Solde de congés
   const { data: balance } = await supabase
@@ -68,6 +81,12 @@ export default async function PortailHome() {
             : ""}
         </p>
       </header>
+
+      {/* Pointage */}
+      <PointageWidget
+        active={activeEntry ? { id: activeEntry.id, clock_in: activeEntry.clock_in } : null}
+        todayMinutes={todayMinutes}
+      />
 
       {/* Cartes synthèse */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
