@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Users, ChevronDown, ChevronRight, UserPlus, X, Check } from "lucide-react";
+import { Users, ChevronDown, ChevronRight, UserPlus, X, Check, TrendingUp } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -162,15 +163,25 @@ function OrgNodeCard({
           </span>
         )}
 
-        {node.children.length > 0 && (
-          <button
-            onClick={onToggle}
-            className="mt-2 flex items-center gap-0.5 text-[10px] text-blue-600 hover:text-blue-800"
+        <div className="mt-2 flex items-center justify-between gap-2">
+          {node.children.length > 0 ? (
+            <button
+              onClick={onToggle}
+              className="flex items-center gap-0.5 text-[10px] text-blue-600 hover:text-blue-800"
+            >
+              {collapsed ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
+              {node.children.length} rapport{node.children.length > 1 ? "s" : ""}
+            </button>
+          ) : <span />}
+          <Link
+            href={`/employes/${node.id}#parcours`}
+            className="opacity-0 group-hover:opacity-100 inline-flex items-center gap-0.5 text-[10px] text-slate-500 hover:text-slate-900 transition-opacity"
+            title="Voir le parcours"
           >
-            {collapsed ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
-            {node.children.length} rapport{node.children.length > 1 ? "s" : ""}
-          </button>
-        )}
+            <TrendingUp size={10} />
+            Parcours
+          </Link>
+        </div>
       </div>
 
       {editing && (

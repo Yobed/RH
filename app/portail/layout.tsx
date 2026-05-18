@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
-import { LayoutDashboard, FileText, CalendarDays, UserCircle, PenLine, BadgeCheck } from "lucide-react";
+import { LayoutDashboard, FileText, CalendarDays, UserCircle, PenLine, BadgeCheck, ShieldCheck, TrendingUp } from "lucide-react";
 import { LogoutButton } from "./LogoutButton";
 import { ThemeToggle } from "@/components/rh/ThemeToggle";
 
@@ -32,8 +32,10 @@ export default async function PortailLayout({ children }: { children: React.Reac
     { href: "/portail", label: "Tableau de bord", icon: LayoutDashboard },
     { href: "/portail/bulletins", label: "Mes bulletins", icon: FileText },
     { href: "/portail/conges", label: "Mes congés", icon: CalendarDays },
+    { href: "/portail/parcours", label: "Mon parcours", icon: TrendingUp },
     { href: "/portail/attestations", label: "Attestations", icon: BadgeCheck },
     { href: "/portail/signatures", label: "Signatures", icon: PenLine },
+    { href: "/portail/coffre-fort", label: "Coffre-fort", icon: ShieldCheck },
     { href: "/portail/profil", label: "Mon profil", icon: UserCircle },
   ];
 

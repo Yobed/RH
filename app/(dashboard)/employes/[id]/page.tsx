@@ -36,6 +36,7 @@ import { EmployeeCostSheet } from "@/components/employees/EmployeeCostSheet";
 import { InviterPortailButton } from "@/components/rh/InviterPortailButton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EmployeeTimeline, TimelineEvent } from "@/components/rh/EmployeeTimeline";
+import { EmployeeChatter } from "@/components/rh/EmployeeChatter";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const supabase = createServerClient();
@@ -257,7 +258,8 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
   const soldeCalc = leaveBalance?.solde ?? calculerSoldeConges(joursAcquisCalc, jours_pris_final);
 
   return (
-    <div className="p-6 md:p-8 space-y-6 bg-transparent">
+    <div className="p-6 md:p-8 bg-transparent grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6 items-start">
+      <div className="space-y-6 min-w-0">
       {/* Navigation retour */}
       <Link
         href="/employes"
@@ -385,7 +387,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </div>
 
               {/* Parcours professionnel */}
-              <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+              <div id="parcours" className="scroll-mt-20 rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                   <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                     <TrendUp className="h-3.5 w-3.5" weight="bold" />
@@ -754,6 +756,12 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           </div>
         </TabsContent>
       </Tabs>
+      </div>
+
+      {/* Chatter style Odoo — colonne droite */}
+      <div className="xl:sticky xl:top-4 xl:max-h-[calc(100vh-2rem)] xl:h-[calc(100vh-2rem)] xl:min-h-[600px]">
+        <EmployeeChatter employeeId={emp.id} employeeName={emp.full_name} />
+      </div>
     </div>
   );
 }
