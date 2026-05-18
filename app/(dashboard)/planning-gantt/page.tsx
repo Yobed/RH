@@ -49,7 +49,18 @@ export default async function PlanningGanttPage({ searchParams }: PageProps) {
   ]);
 
   return (
-    <div className="p-0">
+    <div className="p-0 planning-gantt-root">
+      <style>{`
+        @media print {
+          .planning-gantt-root { font-size: 10px; }
+          aside, header.dashboard-topbar, nav, .planning-gantt-root .sticky { position: static !important; }
+          .print\\:hidden, [data-no-print] { display: none !important; }
+          table { page-break-inside: avoid; }
+          tr { page-break-inside: avoid; }
+          body { background: white !important; }
+          @page { size: A4 landscape; margin: 10mm; }
+        }
+      `}</style>
       <PlanningGanttClient
         employees={employees ?? []}
         roles={roles ?? []}

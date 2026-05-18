@@ -75,6 +75,7 @@ export function PlanningGanttClient({
   const [seeding, setSeeding] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
   const [copying, setCopying] = useState(false);
+  const [viewMode, setViewMode] = useState<"gantt" | "list" | "stats">("gantt");
 
   const start = useMemo(() => parseISO(rangeStart), [rangeStart]);
   const days = useMemo(
@@ -232,6 +233,30 @@ export function PlanningGanttClient({
       router.refresh();
     } finally {
       setSeeding(false);
+    }
+  }
+
+  async function resizeSlot(slotId: string, daysDelta: number) {
+    const s = slots.find((x) => x.id === slotId);
+    if (!s) return;
+    const newEnd = addDays(parseISO(s.end_at), daysDelta);
+    if (newEnd.getTime() <= parseISO(s.start_at).getTime()) {
+      toast.error("La fin doit rester après le début.");
+      return;
+    }
+    const newEndISO = newEnd.toISOString();
+    setSlots((prev) => prev.map((x) => x.id === slotId ? { ...x, end_at: newEndISO } : x));
+    const res = await fetch(`/api/planning-gantt/slots/${slotId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ end_at: newEndISO }),
+    });
+    if (!res.ok) {
+      const j = (await res.json()) as { error?: string };
+      toast.error(j.error ?? "Redimensionnement échoué — rétablissement.");
+      setSlots((prev) => prev.map((x) => x.id === slotId ? s : x));
+    } else {
+      toast.success(`Durée ${daysDelta > 0 ? "étendue" : "réduite"} de ${Math.abs(daysDelta)} jour(s).`);
     }
   }
 
@@ -439,10 +464,18 @@ export function PlanningGanttClient({
 
           {/* View switcher */}
           <div className="flex items-center gap-0.5 rounded-md border border-slate-200 p-0.5 bg-white">
-            <ViewIcon icon={ChartBar} active title="Gantt" />
-            <ViewIcon icon={CalendarBlank} title="Calendrier" />
-            <ViewIcon icon={ListBullets} title="Liste" />
+            <ViewIcon icon={ChartBar}     active={viewMode === "gantt"} title="Gantt"  onClick={() => setViewMode("gantt")} />
+            <ViewIcon icon={ListBullets}  active={viewMode === "list"}  title="Liste"  onClick={() => setViewMode("list")} />
+            <ViewIcon icon={CalendarBlank} active={viewMode === "stats"} title="Analyse" onClick={() => setViewMode("stats")} />
           </div>
+
+          <button
+            onClick={() => window.print()}
+            className="hidden md:inline-flex items-center gap-1 rounded-md border border-slate-200 hover:bg-slate-50 px-2.5 py-1.5 text-[11px] font-semibold text-slate-700"
+            title="Imprimer / Exporter en PDF"
+          >
+            ⎙ PDF
+          </button>
         </div>
 
         {/* Sous-toolbar : navigation période */}
@@ -525,6 +558,20 @@ export function PlanningGanttClient({
             </div>
           </div>
         </div>
+      ) : viewMode === "list" ? (
+        <SlotsListView
+          slots={visibleSlots}
+          employees={employees}
+          roleMap={roleMap}
+          onEdit={(slot) => setEditing({ employeeId: slot.employee_id, date: format(parseISO(slot.start_at), "yyyy-MM-dd"), slot })}
+        />
+      ) : viewMode === "stats" ? (
+        <StatsView
+          slots={visibleSlots}
+          employees={employees}
+          roles={roles}
+          rangeLabel={rangeLabel}
+        />
       ) : (
       /* ─── Grille gantt ─── */
       <div className="flex-1 overflow-auto">
@@ -563,6 +610,7 @@ export function PlanningGanttClient({
                 onCellClick={(date) => setEditing({ employeeId: null, date })}
                 onSlotClick={(slot) => setEditing({ employeeId: null, date: format(parseISO(slot.start_at), "yyyy-MM-dd"), slot })}
                 onMoveSlot={moveSlot}
+                onResizeSlot={resizeSlot}
                 isOpenRow
               />
 
@@ -593,6 +641,7 @@ export function PlanningGanttClient({
                     onCellClick={(date) => setEditing({ employeeId: emp.id, date })}
                     onSlotClick={(slot) => setEditing({ employeeId: emp.id, date: format(parseISO(slot.start_at), "yyyy-MM-dd"), slot })}
                     onMoveSlot={moveSlot}
+                    onResizeSlot={resizeSlot}
                   />
                 ))
               )}
@@ -664,11 +713,17 @@ export function PlanningGanttClient({
 
 // ────────────────────────────────────────────────────────────────────────────
 function ViewIcon({
-  icon: Icon, active, title,
-}: { icon: React.ComponentType<{ className?: string; weight?: "fill" }>; active?: boolean; title: string }) {
+  icon: Icon, active, title, onClick,
+}: {
+  icon: React.ComponentType<{ className?: string; weight?: "fill" }>;
+  active?: boolean;
+  title: string;
+  onClick?: () => void;
+}) {
   return (
     <button
       title={title}
+      onClick={onClick}
       className={`p-1.5 rounded-md transition-colors ${
         active ? "bg-indigo-100 text-indigo-700" : "text-slate-500 hover:bg-slate-100"
       }`}
@@ -717,12 +772,13 @@ interface ResourceRowProps {
   onCellClick: (date: string) => void;
   onSlotClick: (slot: Slot) => void;
   onMoveSlot: (slotId: string, targetEmployeeId: string | null, targetDateISO: string) => void;
+  onResizeSlot: (slotId: string, daysDelta: number) => void;
   isOpenRow?: boolean;
 }
 
 function ResourceRow({
   resourceId, title, subtitle, matricule, days, slotsByCell, roleMap, cellMinWidth,
-  onCellClick, onSlotClick, onMoveSlot, isOpenRow,
+  onCellClick, onSlotClick, onMoveSlot, onResizeSlot, isOpenRow,
 }: ResourceRowProps) {
   const [dragOverDate, setDragOverDate] = useState<string | null>(null);
   const initials = title.trim().split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase();
@@ -813,7 +869,7 @@ function ResourceRow({
                     draggable={draggable}
                     onDragStart={draggable ? (e) => handleDragStart(e, s.id) : undefined}
                     onClick={(e) => { e.stopPropagation(); onSlotClick(s); }}
-                    className={`text-left px-2 py-1 text-[10px] font-semibold text-white transition-all hover:shadow-md ${
+                    className={`relative text-left px-2 py-1 text-[10px] font-semibold text-white transition-all hover:shadow-md ${
                       draggable ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
                     } ${s.status === "brouillon" ? "border border-dashed border-white/40" : ""} ${
                       sameDay ? "rounded-md"
@@ -850,6 +906,30 @@ function ResourceRow({
                         </div>
                         <div className="text-[9px] opacity-90 text-right">jusqu&apos;à {endH}</div>
                       </>
+                    )}
+                    {entry.isEnd && (
+                      <div className="absolute -bottom-1 right-0.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity print:hidden">
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => { e.stopPropagation(); onResizeSlot(s.id, -1); }}
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); onResizeSlot(s.id, -1); } }}
+                          className="inline-flex items-center justify-center h-4 w-4 rounded-sm bg-white/95 text-slate-700 hover:bg-rose-100 hover:text-rose-700 shadow-sm text-[10px] font-bold cursor-pointer"
+                          title="Réduire d'un jour"
+                        >
+                          −
+                        </span>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => { e.stopPropagation(); onResizeSlot(s.id, 1); }}
+                          onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); onResizeSlot(s.id, 1); } }}
+                          className="inline-flex items-center justify-center h-4 w-4 rounded-sm bg-white/95 text-slate-700 hover:bg-emerald-100 hover:text-emerald-700 shadow-sm text-[10px] font-bold cursor-pointer"
+                          title="Étendre d'un jour"
+                        >
+                          +
+                        </span>
+                      </div>
                     )}
                   </button>
                 );
@@ -1056,6 +1136,243 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">{label}</label>
       {children}
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────────────────────────────
+function SlotsListView({
+  slots, employees, roleMap, onEdit,
+}: {
+  slots: Slot[];
+  employees: Employee[];
+  roleMap: Map<string, Role>;
+  onEdit: (slot: Slot) => void;
+}) {
+  const empMap = useMemo(() => new Map(employees.map((e) => [e.id, e])), [employees]);
+
+  const sorted = [...slots].sort((a, b) => a.start_at.localeCompare(b.start_at));
+
+  if (sorted.length === 0) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-12">
+        <div className="text-center">
+          <ListBullets className="h-10 w-10 text-slate-200 mx-auto mb-2" />
+          <p className="text-sm font-semibold text-slate-500">Aucun créneau sur cette période</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 overflow-auto">
+      <table className="w-full text-[12px]">
+        <thead className="bg-slate-50 sticky top-0 z-10">
+          <tr className="text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <th className="px-4 py-2.5 border-b border-slate-200">Date</th>
+            <th className="px-4 py-2.5 border-b border-slate-200">Horaires</th>
+            <th className="px-4 py-2.5 border-b border-slate-200">Ressource</th>
+            <th className="px-4 py-2.5 border-b border-slate-200">Rôle</th>
+            <th className="px-4 py-2.5 border-b border-slate-200">Projet</th>
+            <th className="px-4 py-2.5 border-b border-slate-200">Statut</th>
+            <th className="px-4 py-2.5 border-b border-slate-200 text-right">Durée</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((s) => {
+            const role = s.role_id ? roleMap.get(s.role_id) : null;
+            const emp = s.employee_id ? empMap.get(s.employee_id) : null;
+            const sd = parseISO(s.start_at);
+            const ed = parseISO(s.end_at);
+            const mins = differenceInMinutes(ed, sd);
+            const hours = Math.round((mins / 60) * 10) / 10;
+            return (
+              <tr
+                key={s.id}
+                onClick={() => onEdit(s)}
+                className="border-b border-slate-100 hover:bg-indigo-50/30 cursor-pointer transition-colors"
+              >
+                <td className="px-4 py-2.5 font-semibold text-slate-800">
+                  {format(sd, "EEE d MMM", { locale: fr })}
+                </td>
+                <td className="px-4 py-2.5 text-slate-600 tabular-nums">
+                  {format(sd, "HH:mm")} – {format(ed, "HH:mm")}
+                </td>
+                <td className="px-4 py-2.5">
+                  {emp ? (
+                    <div>
+                      <p className="font-semibold text-slate-800">{emp.full_name}</p>
+                      <p className="text-[10px] text-slate-500">{emp.poste ?? ""}</p>
+                    </div>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+                      ⚠ Poste ouvert
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-2.5">
+                  {role ? (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                      style={{ background: role.color }}
+                    >
+                      {role.name}
+                    </span>
+                  ) : <span className="text-slate-300">—</span>}
+                </td>
+                <td className="px-4 py-2.5 text-slate-600">
+                  {s.project ?? <span className="text-slate-300">—</span>}
+                </td>
+                <td className="px-4 py-2.5">
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                      s.status === "publie" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
+                    {s.status === "publie" ? "Publié" : "Brouillon"}
+                  </span>
+                </td>
+                <td className="px-4 py-2.5 text-right font-semibold tabular-nums text-slate-700">
+                  {hours} h
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+function StatsView({
+  slots, employees, roles, rangeLabel,
+}: {
+  slots: Slot[];
+  employees: Employee[];
+  roles: Role[];
+  rangeLabel: string;
+}) {
+  const empMap = useMemo(() => new Map(employees.map((e) => [e.id, e])), [employees]);
+  const roleMap = useMemo(() => new Map(roles.map((r) => [r.id, r])), [roles]);
+
+  const minutesByEmployee = new Map<string, number>();
+  const minutesByRole = new Map<string, number>();
+  let unassignedMinutes = 0;
+  let unassignedCount = 0;
+  let totalMinutes = 0;
+
+  for (const s of slots) {
+    const m = differenceInMinutes(parseISO(s.end_at), parseISO(s.start_at));
+    totalMinutes += m;
+    if (s.employee_id) {
+      minutesByEmployee.set(s.employee_id, (minutesByEmployee.get(s.employee_id) ?? 0) + m);
+    } else {
+      unassignedMinutes += m;
+      unassignedCount++;
+    }
+    if (s.role_id) {
+      minutesByRole.set(s.role_id, (minutesByRole.get(s.role_id) ?? 0) + m);
+    }
+  }
+
+  const employeeRows = Array.from(minutesByEmployee.entries())
+    .map(([id, m]) => ({ emp: empMap.get(id), minutes: m }))
+    .filter((r) => r.emp)
+    .sort((a, b) => b.minutes - a.minutes);
+
+  const maxEmpMin = employeeRows[0]?.minutes ?? 1;
+
+  const roleRows = Array.from(minutesByRole.entries())
+    .map(([id, m]) => ({ role: roleMap.get(id), minutes: m, pct: totalMinutes > 0 ? (m / totalMinutes) * 100 : 0 }))
+    .filter((r) => r.role)
+    .sort((a, b) => b.minutes - a.minutes);
+
+  const fmtHours = (m: number) => `${Math.round((m / 60) * 10) / 10} h`;
+
+  return (
+    <div className="flex-1 overflow-auto p-5 space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-base font-bold text-slate-900">Analyse — {rangeLabel}</h2>
+          <p className="text-sm text-slate-500 mt-0.5">
+            {slots.length} créneau{slots.length > 1 ? "x" : ""} · {fmtHours(totalMinutes)} planifiées au total
+          </p>
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Kpi label="Heures totales" value={fmtHours(totalMinutes)} accent="bg-indigo-50 text-indigo-700" />
+        <Kpi label="Ressources actives" value={employeeRows.length} accent="bg-sky-50 text-sky-700" />
+        <Kpi label="Rôles couverts" value={roleRows.length} accent="bg-violet-50 text-violet-700" />
+        <Kpi
+          label="Postes ouverts"
+          value={`${unassignedCount} · ${fmtHours(unassignedMinutes)}`}
+          accent={unassignedCount > 0 ? "bg-amber-50 text-amber-700" : "bg-slate-50 text-slate-500"}
+        />
+      </div>
+
+      {/* Répartition par employé */}
+      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <h3 className="text-sm font-bold text-slate-800 mb-4">Heures par collaborateur</h3>
+        {employeeRows.length === 0 ? (
+          <p className="text-sm text-slate-400 italic">Aucun créneau affecté à un collaborateur.</p>
+        ) : (
+          <ul className="space-y-2">
+            {employeeRows.map(({ emp, minutes }) => (
+              <li key={emp!.id} className="flex items-center gap-3">
+                <p className="text-[12px] font-semibold text-slate-700 w-40 truncate shrink-0">{emp!.full_name}</p>
+                <div className="flex-1 h-5 rounded bg-slate-100 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 flex items-center justify-end pr-2 text-[10px] font-bold text-white transition-all"
+                    style={{ width: `${Math.max(8, (minutes / maxEmpMin) * 100)}%` }}
+                  >
+                    {fmtHours(minutes)}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* Répartition par rôle */}
+      <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+        <h3 className="text-sm font-bold text-slate-800 mb-4">Équilibre des rôles</h3>
+        {roleRows.length === 0 ? (
+          <p className="text-sm text-slate-400 italic">Aucun rôle planifié sur la période.</p>
+        ) : (
+          <ul className="space-y-2">
+            {roleRows.map(({ role, minutes, pct }) => (
+              <li key={role!.id} className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-2 w-40 shrink-0">
+                  <span className="h-3 w-3 rounded-sm shrink-0" style={{ background: role!.color }} />
+                  <p className="text-[12px] font-semibold text-slate-700 truncate">{role!.name}</p>
+                </span>
+                <div className="flex-1 h-5 rounded bg-slate-100 overflow-hidden">
+                  <div
+                    className="h-full flex items-center justify-end pr-2 text-[10px] font-bold text-white"
+                    style={{ width: `${Math.max(8, pct)}%`, background: role!.color }}
+                  >
+                    {pct.toFixed(0)}% · {fmtHours(minutes)}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function Kpi({ label, value, accent }: { label: string; value: string | number; accent: string }) {
+  return (
+    <div className={`rounded-xl border border-slate-100 px-4 py-3 ${accent}`}>
+      <p className="text-[10px] font-bold uppercase tracking-widest opacity-80 leading-none">{label}</p>
+      <p className="text-xl font-bold mt-2 tabular-nums leading-none">{value}</p>
     </div>
   );
 }
