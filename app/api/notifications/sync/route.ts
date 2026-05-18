@@ -200,7 +200,13 @@ async function syncForCompany(
     .eq("company_id", companyId)
     .eq("statut", "actif");
 
-  const DOCS_OBLIGATOIRES = ["CNI / Passeport", "Contrat", "CV"];
+  const DOCS_OBLIGATOIRES = [
+    "CNI / Passeport",
+    "Contrat",
+    "CV",
+    "Casier judiciaire",
+    "Certificat de travail",
+  ];
 
   for (const emp of employees ?? []) {
     const familles = new Set(emp.documents?.map((d: any) => d.famille));

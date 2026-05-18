@@ -31,23 +31,26 @@ function computeScore(
   const hasIdentity = familles.some(
     (f) => f.includes("cni") || f.includes("passeport") || f.includes("identit")
   );
-  const hasCV = familles.some((f) => f.includes("cv"));
-  const hasPhoto = familles.some(
-    (f) => f.includes("photo") || f.includes("portrait")
+  const hasCV = familles.some((f) => f === "cv" || f.startsWith("cv "));
+  const hasCasier = familles.some(
+    (f) => f.includes("casier") || f.includes("judiciaire")
+  );
+  const hasCertificatTravail = familles.some((f) =>
+    f.includes("certificat de travail")
   );
   const hasDiploma = familles.some(
     (f) =>
       f.includes("diplôme") ||
       f.includes("diplome") ||
-      f.includes("formation") ||
-      f.includes("certificat")
+      f.includes("formation")
   );
 
   return [
-    { label: "Pièce d'identité (CNI / Passeport)", points: 20, met: hasIdentity },
-    { label: "Contrat de travail signé",            points: 20, met: hasContract },
+    { label: "Pièce d'identité (CNI / Passeport)", points: 15, met: hasIdentity },
+    { label: "Contrat de travail signé",            points: 15, met: hasContract },
     { label: "CV",                                  points: 10, met: hasCV },
-    { label: "Photo",                               points: 10, met: hasPhoto },
+    { label: "Casier judiciaire",                   points: 10, met: hasCasier },
+    { label: "Certificat de travail",               points: 10, met: hasCertificatTravail },
     { label: "Visite médicale à jour",              points: 15, met: hasMedicalExam },
     { label: "Évaluation réalisée",                 points: 15, met: hasEvaluation },
     { label: "Diplômes / Formations",               points: 10, met: hasDiploma },
