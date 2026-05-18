@@ -30,7 +30,7 @@ function formatFCFA(value: number): string {
 export default async function GrilleSalarialePage() {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
+  if (!user) redirect("/login");
 
   const { data, error } = await supabase
     .from("salary_grid")

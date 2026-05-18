@@ -19,7 +19,7 @@ interface SearchProps {
 export default async function PlanningRetraitePage({ searchParams }: SearchProps) {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
+  if (!user) redirect("/login");
 
   const params = await searchParams;
   const horizonAnnees = Number(params.horizon ?? "5");

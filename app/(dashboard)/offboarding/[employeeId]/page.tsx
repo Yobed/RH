@@ -15,7 +15,7 @@ interface Props {
 export default async function OffboardingDetailPage({ params }: Props) {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
+  if (!user) redirect("/login");
 
   const { data: employee } = await supabase
     .from("employees")

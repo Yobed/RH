@@ -49,7 +49,7 @@ function ProgressBar({ pct }: { pct: number }) {
 export default async function OffboardingPage() {
   const supabase = createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
+  if (!user) redirect("/login");
 
   const [{ data: employees }, { data: checklists }, { data: ruptures }] = await Promise.all([
     supabase
