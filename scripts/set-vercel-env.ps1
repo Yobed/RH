@@ -39,7 +39,7 @@ $envVars = @(
     @{ key = "N8N_WEBHOOK_SECRET";             value = "saas-rh-ci-2025-secret";                    sensitive = $true },
     @{ key = "NEXT_PUBLIC_APP_URL";            value = "https://rh-manager-ci.vercel.app";           sensitive = $false },
     @{ key = "NEXT_PUBLIC_APP_NAME";           value = "RH Manager CI";                              sensitive = $false },
-    @{ key = "XAI_API_KEY";                    value = "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"; sensitive = $true }
+    @{ key = "XAI_API_KEY";                    value = $env:XAI_API_KEY_VALUE;                       sensitive = $true }
 )
 
 $headers = @{
