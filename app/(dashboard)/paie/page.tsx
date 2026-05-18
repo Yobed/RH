@@ -94,7 +94,7 @@ export default async function PaiePage({
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
           <p className="text-sm text-slate-600 mt-0.5">
-            CNPS retraite 6,3% + CMU 1 600 FCFA + CN 1,5% + IGR barème progressif — Nomenclature Sage CI 2026
+            CNPS retraite 6,3% + CMU 1 600 FCFA + ITS unifié (barème progressif − RICF) — Réforme 2024 CI
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export default async function PaiePage({
             <p className="mt-1 text-xs text-slate-600">{bulletinsMoisSafe.length} bulletin(s) · {currentPeriode}</p>
           </div>
           <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total cotisations (CNPS + CN + IGR)</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total cotisations (CNPS + ITS)</p>
             <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseCharges)}</p>
             <p className="mt-1 text-xs text-slate-600">*** TOTAL DES COTISATIONS *** du mois</p>
           </div>
@@ -134,7 +134,7 @@ export default async function PaiePage({
         <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2 md:grid-cols-3">
           <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 3 375 000 FCFA/mois)</span>
           <span>CMU (CNAM) salariale : <strong>1 600 FCFA</strong> forfait/mois</span>
-          <span>IGR : barème progressif (0% → 16% → 21% → 24% → 28% → 32%)</span>
+          <span>ITS : barème progressif (0% → 16% → 21% → 24% → 28% → 32%) − RICF</span>
           <span>Abattement ITS : <strong>15%</strong> charges professionnelles</span>
           <span>Charges patronales : <strong>~{Math.round((0.05 + 0.0075 + 0.077 + 0.03 + 0.01) * 100)}%</strong> + CMU 1 600 FCFA</span>
           <span>TFC (FDFP) : <strong>1,2%</strong> + Taxe Apprentissage : <strong>0,4%</strong></span>

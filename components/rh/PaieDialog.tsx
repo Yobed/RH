@@ -23,6 +23,27 @@ import { Input } from "@/components/ui/input";
 import { Pencil, Printer, Download } from "lucide-react";
 import type { Tables } from "@/types/supabase";
 
+interface SalaryGridRow {
+  id: string;
+  libelle: string;
+  code: string;
+  famille: "TEC" | "CHA" | "EMP" | "CAD" | "OUV";
+  type_remu: string;
+  salaire_base: number;
+  ordre: number;
+}
+
+const FAMILLE_LABELS: Record<SalaryGridRow["famille"], string> = {
+  TEC: "Agents techniques",
+  CHA: "Chauffeurs",
+  EMP: "Employés",
+  CAD: "Cadres / Ingénieurs",
+  OUV: "Ouvriers",
+};
+
+const SELECT_CLS =
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
+
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule" | "salaire_brut"> & {
   date_embauche: string;
   sursalaire?: number | null;
@@ -107,7 +128,18 @@ interface Props {
 export function PaieDialog({ employees, bulletin, company }: Props) {
   const isEdit = !!bulletin;
   const [open, setOpen] = useState(false);
+  const [salaryGrid, setSalaryGrid] = useState<SalaryGridRow[]>([]);
+  const [selectedCategorie, setSelectedCategorie] = useState<string>("");
   const router = useRouter();
+
+  // Charger la grille salariale au premier ouverture
+  useEffect(() => {
+    if (!open || salaryGrid.length > 0) return;
+    fetch("/api/salary-grid")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows: SalaryGridRow[]) => setSalaryGrid(Array.isArray(rows) ? rows : []))
+      .catch(() => setSalaryGrid([]));
+  }, [open, salaryGrid.length]);
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } =
     useForm<FormData>({
@@ -328,12 +360,43 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {/* 01 */}
-              <div>
+              {/* 01 — Salaire catégoriel : dropdown grille + saisie libre */}
+              <div className="space-y-1.5">
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">01</span> Salaire catégoriel (FCFA) *
                 </label>
-                <Input type="number" min="0" step="1000" {...register("salaire_brut")} className="mt-1" />
+                <select
+                  value={selectedCategorie}
+                  onChange={(e) => {
+                    setSelectedCategorie(e.target.value);
+                    const row = salaryGrid.find((r) => r.libelle === e.target.value);
+                    if (row) {
+                      setValue("salaire_brut", String(row.salaire_base));
+                    }
+                  }}
+                  className={SELECT_CLS}
+                >
+                  <option value="">— Choisir une catégorie (ou saisir ↓) —</option>
+                  {(["CAD", "TEC", "EMP", "OUV", "CHA"] as const).map((fam) => {
+                    const rows = salaryGrid.filter((r) => r.famille === fam);
+                    if (rows.length === 0) return null;
+                    return (
+                      <optgroup key={fam} label={FAMILLE_LABELS[fam]}>
+                        {rows.map((r) => (
+                          <option key={r.id} value={r.libelle}>
+                            {r.libelle} — {Math.round(r.salaire_base).toLocaleString("fr-FR")} FCFA
+                          </option>
+                        ))}
+                      </optgroup>
+                    );
+                  })}
+                </select>
+                <Input
+                  type="number"
+                  min="0"
+                  {...register("salaire_brut")}
+                  placeholder="Ou saisie libre (ex : 87 610)"
+                />
                 {errors.salaire_brut && <p className="mt-1 text-xs text-red-500">{errors.salaire_brut.message}</p>}
               </div>
 
@@ -342,7 +405,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">02</span> Sursalaire (FCFA)
                 </label>
-                <Input type="number" min="0" step="1000" {...register("sursalaire")} className="mt-1" />
+                <Input type="number" min="0" {...register("sursalaire")} className="mt-1" />
               </div>
 
               {/* 03 */}
@@ -350,7 +413,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">03</span> Prime d&apos;ancienneté (auto)
                 </label>
-                <Input type="number" min="0" step="100" {...register("prime_anciennete")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_anciennete")} className="mt-1" />
                 <p className="text-[10px] text-muted-foreground mt-0.5">
                   Auto = 1% × années service × salaire catégoriel (CCI Art.17)
                 </p>
@@ -361,7 +424,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">04</span> Prime exceptionnelle / 13e mois
                 </label>
-                <Input type="number" min="0" step="100" {...register("prime_exceptionnelle")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_exceptionnelle")} className="mt-1" />
                 {!isEdit && (
                   <p className="text-[10px] text-muted-foreground mt-0.5">
                     Auto = salaire × 75% / 12 (prorata temporis mensuel)
@@ -374,7 +437,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">05</span> Prime de salissure
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_salissure")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_salissure")} className="mt-1" />
               </div>
 
               {/* 06 */}
@@ -382,7 +445,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">06</span> Prime de dépassement
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_depassement")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_depassement")} className="mt-1" />
               </div>
 
               {/* 07 */}
@@ -390,7 +453,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">07</span> Prime liée à la fonction
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_fonction")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_fonction")} className="mt-1" />
               </div>
 
               {/* 08 */}
@@ -399,7 +462,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span className="font-mono text-muted-foreground mr-1">08</span> Indemnité de transport
                   <span className="ml-1 text-[10px] text-emerald-600 font-normal">(non imposable)</span>
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_transport")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_transport")} className="mt-1" />
               </div>
 
               {/* 09 */}
@@ -408,7 +471,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span className="font-mono text-muted-foreground mr-1">09</span> Indemnité congés payés
                   <span className="ml-1 text-[10px] text-emerald-600 font-normal">(exonérée)</span>
                 </label>
-                <Input type="number" min="0" step="1000" {...register("vacation_allowance")} className="mt-1" />
+                <Input type="number" min="0" {...register("vacation_allowance")} className="mt-1" />
               </div>
 
               {/* 10 */}
@@ -417,7 +480,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span className="font-mono text-muted-foreground mr-1">10</span> Prime de logement
                   <span className="ml-1 text-[10px] text-emerald-600 font-normal">(exonérée CI)</span>
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_logement")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_logement")} className="mt-1" />
               </div>
 
               {/* 11 */}
@@ -426,7 +489,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span className="font-mono text-muted-foreground mr-1">11</span> Prime de responsabilité
                   <span className="ml-1 text-[10px] text-slate-400 font-normal">(imposable)</span>
                 </label>
-                <Input type="number" min="0" step="1000" {...register("prime_responsabilite")} className="mt-1" />
+                <Input type="number" min="0" {...register("prime_responsabilite")} className="mt-1" />
               </div>
 
               {/* 12 */}
@@ -435,7 +498,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                   <span className="font-mono text-muted-foreground mr-1">12</span> Remboursement de frais
                   <span className="ml-1 text-[10px] text-emerald-600 font-normal">(exonéré)</span>
                 </label>
-                <Input type="number" min="0" step="1000" {...register("remboursement_frais")} className="mt-1" />
+                <Input type="number" min="0" {...register("remboursement_frais")} className="mt-1" />
               </div>
 
               {/* Heures normales */}
@@ -479,11 +542,11 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
                 <label className="text-xs font-medium text-slate-700">Autres retenues (FCFA)</label>
-                <Input type="number" min="0" step="1000" {...register("autres_retenues")} className="mt-1" />
+                <Input type="number" min="0" {...register("autres_retenues")} className="mt-1" />
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-700">Avances / Acomptes (FCFA)</label>
-                <Input type="number" min="0" step="1000" {...register("avances")} className="mt-1" />
+                <Input type="number" min="0" {...register("avances")} className="mt-1" />
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-700">
@@ -598,12 +661,20 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
                 <span>Retenue CNPS (6,3% + CMU)</span>
                 <span>{fmt(preview.withholding_cnps)}</span>
               </div>
+              {(preview.its_brut ?? 0) > 0 && (preview.ricf ?? 0) > 0 && (
+                <>
+                  <div className="flex justify-between text-slate-500 text-xs">
+                    <span className="pl-3">ITS brut (barème progressif)</span>
+                    <span>{fmt(preview.its_brut ?? 0)}</span>
+                  </div>
+                  <div className="flex justify-between text-emerald-600 text-xs">
+                    <span className="pl-3">− RICF (réduction charge famille)</span>
+                    <span>−{fmt(preview.ricf ?? 0)}</span>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between text-red-600">
-                <span>Contribution nationale CN (1,5%)</span>
-                <span>{fmt(preview.tax_cn)}</span>
-              </div>
-              <div className="flex justify-between text-red-600">
-                <span>IGR — barème progressif</span>
+                <span>ITS — barème progressif{(preview.ricf ?? 0) > 0 ? " (après RICF)" : ""}</span>
                 <span>{fmt(preview.tax_igr)}</span>
               </div>
               {nums.autres_retenues > 0 && (

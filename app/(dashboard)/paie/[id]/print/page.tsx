@@ -282,7 +282,7 @@ export default async function PrintBulletinPage({
                 <p><span className="font-semibold">Service :</span> {emp?.departement ?? "—"}</p>
                 <p><span className="font-semibold">Emploi :</span> {emp?.poste}</p>
                 <p><span className="font-semibold">Catégorie :</span> {emp?.categorie ?? "—"}</p>
-                <p><span className="font-semibold">Parts IGR :</span> {partsIGR}</p>
+                <p><span className="font-semibold">Parts ITS :</span> {partsIGR}</p>
                 <p>
                   <span className="font-semibold">Date entrée :</span>{" "}
                   {emp?.date_embauche
@@ -520,22 +520,24 @@ export default async function PrintBulletinPage({
               {/* Ligne vide */}
               <EmptyRow />
 
-              {/* ── 34 — CN (Contribution Nationale 1,5%) ── */}
+              {/* ── 34 — CN (Contribution Nationale) — supprimée réforme 2024 (fusionnée dans ITS) ── */}
+              {tax_cn > 0 && (
+                <tr>
+                  <Td className="text-center">34</Td>
+                  <Td>Contribution Nationale (CN) — ancien régime</Td>
+                  <Td right>{n(total_imposable)}</Td>
+                  <Td right>1,50</Td>
+                  <Td />
+                  <Td right>{n(tax_cn)}</Td>
+                  <Td />
+                  <Td />
+                </tr>
+              )}
+
+              {/* ── 34b — ITS (barème progressif unifié — réforme 2024 CI) ── */}
               <tr>
                 <Td className="text-center">34</Td>
-                <Td>Contribution Nationale (CN)</Td>
-                <Td right>{n(total_imposable)}</Td>
-                <Td right>1,50</Td>
-                <Td />
-                <Td right>{n(tax_cn)}</Td>
-                <Td />
-                <Td />
-              </tr>
-
-              {/* ── 34b — IGR (barème progressif) ── */}
-              <tr>
-                <Td className="text-center">34b</Td>
-                <Td>IGR, Imp. Général sur le Revenu</Td>
+                <Td>ITS — Impôt sur Traitements et Salaires{partsIGR > 1 ? ` (après RICF, ${partsIGR} parts)` : ""}</Td>
                 <Td right>{n(total_imposable)}</Td>
                 <Td />
                 <Td />
@@ -726,7 +728,7 @@ export default async function PrintBulletinPage({
                   Brut fiscal
                 </td>
                 <td className="border border-gray-400 px-1 py-0.5 text-center font-semibold">
-                  IGR
+                  ITS
                 </td>
                 <td className="border border-gray-400 px-1 py-0.5 text-center font-semibold">
                   Retraite

@@ -580,8 +580,10 @@ export interface LignesBulletin {
   nb_enfants?: number | null;
 }
 
-// Taux Contribution Nationale CI — solidarité employé
-export const TAUX_CN = 0.015;
+// Taux Contribution Nationale CI — DÉSACTIVÉ depuis la réforme 2024 (Loi de finances)
+// La CN a été fusionnée avec l'IGR dans l'ITS unifié (Art. 116 CGI CI).
+// Conservé à 0 pour rétrocompatibilité avec les anciens bulletins en DB.
+export const TAUX_CN = 0;
 
 export interface ResultatPaieComplet {
   // Colonnes existantes (rétrocompatibilité)

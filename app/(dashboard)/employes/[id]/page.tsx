@@ -634,7 +634,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   <tr>
                     <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
                     <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Brut</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Cotisations (CNPS+CN+IGR)</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Cotisations (CNPS + ITS)</th>
                     <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">NET A PAYER</th>
                     <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   </tr>
