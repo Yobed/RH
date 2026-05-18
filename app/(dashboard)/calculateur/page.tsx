@@ -1,4 +1,5 @@
 import { CalcEnversForm } from "@/components/rh/CalcEnversForm";
+import { CalcSursalaireForm } from "@/components/rh/CalcSursalaireForm";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { CalculateurRH } from "@/components/rh/CalculateurRH";
 import { CalculateurConventions } from "@/components/rh/CalculateurConventions";
@@ -23,6 +24,12 @@ const TABS: TabMeta[] = [
     label: "Je veux offrir X net — quel brut ?",
     description:
       "Partez du salaire net que vous souhaitez garantir : l'outil calcule le brut exact à inscrire sur le contrat, les retenues légales (CNPS, ITS) et le coût total pour l'entreprise.",
+  },
+  {
+    value: "net-vers-sursalaire",
+    label: "Net → Sursalaire",
+    description:
+      "À partir du net souhaité et du salaire catégoriel, calculez le sursalaire à fixer. Formule : NET = BRUT − CNPS − CMU − max(0, ITS_brut − RICF). Quand ITS_brut ≤ RICF, l'ITS salarial est ramené à 0.",
   },
   {
     value: "depart",
@@ -91,6 +98,10 @@ export default async function CalculateurPage() {
 
             {t.value === "net-vers-brut" && (
               <CalcEnversForm employees={employeeList} />
+            )}
+
+            {t.value === "net-vers-sursalaire" && (
+              <CalcSursalaireForm />
             )}
 
             {t.value === "depart" && (
