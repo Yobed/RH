@@ -29,13 +29,28 @@ export default function LoginPage() {
 
   async function onSubmit(data: LoginFormValues) {
     const supabase = createClientSupabase();
-    const { error } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
 
-    if (error) {
-      toast.error("Identifiants incorrects. Vérifiez votre email et mot de passe.");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (error) {
+        if (error.message === "Invalid login credentials") {
+          toast.error("Identifiants incorrects. Vérifiez votre email et mot de passe.");
+        } else if (error.message === "Email not confirmed") {
+          toast.error("Email non confirmé. Vérifiez votre boîte mail pour activer votre compte.");
+        } else {
+          toast.error(`Échec de connexion : ${error.message}`);
+        }
+        return;
+      }
+    } catch (err) {
+      // Erreur réseau / serveur Supabase injoignable (projet en pause, URL invalide…)
+      toast.error(
+        "Impossible de joindre le serveur. Vérifiez votre connexion ou l'état de la base Supabase."
+      );
       return;
     }
 

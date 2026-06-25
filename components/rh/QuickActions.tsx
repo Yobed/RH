@@ -4,63 +4,65 @@ import {
   UserPlus,
   FilePlus,
   CalendarPlus,
-  Calculator,
+  Money,
   ClipboardText,
-  ShieldWarning,
+  UserMinus,
   CaretRight,
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+// Orienté tâche : des verbes qui suivent le cycle de vie RH
+// (recruter → intégrer → payer → évaluer → faire partir).
 const actions = [
-  { 
-    title: "Onboarding", 
-    description: "Nouvel employé", 
-    icon: UserPlus, 
-    href: "/employes",
+  {
+    title: "Recruter",
+    description: "Offres & candidats",
+    icon: UserPlus,
+    href: "/recrutement",
     color: "oklch(0.32 0.14 252)", // indigo
-    light: "oklch(0.94 0.016 252)" 
+    light: "oklch(0.94 0.016 252)",
   },
-  { 
-    title: "Contrats", 
-    description: "Modèles CI", 
-    icon: FilePlus, 
+  {
+    title: "Créer un contrat",
+    description: "CDI · CDD · avenant",
+    icon: FilePlus,
     href: "/contrats",
     color: "oklch(0.55 0.18 155)", // emerald
-    light: "oklch(0.94 0.02 155)"
+    light: "oklch(0.94 0.02 155)",
   },
-  { 
-    title: "STC", 
-    description: "Calculateur", 
-    icon: Calculator, 
-    href: "/paie/fin-de-contrat",
+  {
+    title: "Lancer la paie",
+    description: "Bulletins du mois",
+    icon: Money,
+    href: "/paie/generer-lot",
     color: "oklch(0.78 0.13 73)", // amber
-    light: "oklch(0.96 0.02 73)"
+    light: "oklch(0.96 0.02 73)",
   },
-  { 
-    title: "Absences", 
-    description: "Gestion congés", 
-    icon: CalendarPlus, 
+  {
+    title: "Traiter une absence",
+    description: "Congés & absences",
+    icon: CalendarPlus,
     href: "/conges",
     color: "oklch(0.577 0.245 27)", // rose/red
-    light: "oklch(0.96 0.02 27)"
+    light: "oklch(0.96 0.02 27)",
   },
-  { 
-    title: "Performance", 
-    description: "Évaluations", 
-    icon: ClipboardText, 
+  {
+    title: "Évaluer un salarié",
+    description: "Performance",
+    icon: ClipboardText,
     href: "/evaluations",
     color: "oklch(0.627 0.265 303)", // violet
-    light: "oklch(0.96 0.02 303)"
+    light: "oklch(0.96 0.02 303)",
   },
-  { 
-    title: "Discipline", 
-    description: "Procédures", 
-    icon: ShieldWarning, 
-    href: "/disciplinaire",
+  {
+    title: "Préparer un départ",
+    description: "Offboarding & STC",
+    icon: UserMinus,
+    href: "/offboarding",
     color: "oklch(0.175 0.04 248)", // slate-dark
-    light: "oklch(0.94 0.01 248)"
+    light: "oklch(0.94 0.01 248)",
   },
 ];
 

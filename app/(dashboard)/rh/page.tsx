@@ -210,7 +210,7 @@ export default async function RhPage() {
 
         {/* ── ACTIONS RAPIDES ── */}
         <section className="space-y-3">
-          <SectionDivider label="Actions rapides" />
+          <SectionDivider label="Que voulez-vous faire ?" />
           <QuickActions />
         </section>
 

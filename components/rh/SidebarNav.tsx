@@ -54,6 +54,8 @@ interface NavItem {
   icon: React.ElementType;
   exact?: boolean;
   pulse?: boolean;
+  /** Texte d'aide au survol — explicite les sigles (GED, DUERP, STC…) */
+  desc?: string;
 }
 
 interface NavGroup {
@@ -69,16 +71,10 @@ const navGroups: NavGroup[] = [
     accent: "#818cf8",
     defaultOpen: true,
     items: [
-      { href: "/bienvenue", label: "Bienvenue", icon: HandWaving, exact: true },
-      { href: "/rh", label: "Tableau de bord", icon: SquaresFour, exact: true },
-      { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging },
-      { href: "/analytique", label: "Analytique", icon: ChartPieSlice, exact: true },
-      { href: "/analytique/focus", label: "Focus Stratégique", icon: Target },
-      { href: "/analytique/risque-depart", label: "Risque de départ", icon: UserMinus },
-      { href: "/analytique/prevision", label: "Prévision N+1", icon: TrendUp },
-      { href: "/analytique/cohortes", label: "Cohortes d'embauche", icon: UsersThree },
-      { href: "/analytique/retraite", label: "Planning retraite", icon: CalendarBlank },
-      { href: "/calendrier", label: "Calendrier global", icon: CalendarDots },
+      { href: "/bienvenue", label: "Bienvenue", icon: HandWaving, exact: true, desc: "Prise en main de l'application" },
+      { href: "/rh", label: "Tableau de bord", icon: SquaresFour, exact: true, desc: "Vue d'accueil : indicateurs clés et actions du jour" },
+      { href: "/rappels", label: "Rappels & Échéances", icon: BellRinging, desc: "Contrats, visites médicales et essais qui arrivent à échéance" },
+      { href: "/calendrier", label: "Calendrier global", icon: CalendarDots, desc: "Tous les évènements RH sur un calendrier" },
     ],
   },
   {
@@ -86,17 +82,25 @@ const navGroups: NavGroup[] = [
     accent: "#38bdf8",
     defaultOpen: false,
     items: [
-      { href: "/employes", label: "Fiches collaborateurs", icon: Users },
-      { href: "/employes/organigramme", label: "Organigramme", icon: TreeStructure },
-      { href: "/contrats", label: "Contrats", icon: FileText },
-      { href: "/conges", label: "Absences & Congés", icon: CalendarBlank },
-      { href: "/conges/heatmap", label: "Heatmap absences", icon: CalendarBlank },
-      { href: "/planning", label: "Planning & shifts", icon: CalendarCheck },
-      { href: "/planning-gantt", label: "Planning par ressource", icon: ChartBar, pulse: true },
-      { href: "/pointage", label: "Pointage", icon: Clock },
-      { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock },
-      { href: "/onboarding", label: "Onboarding", icon: UserPlus, pulse: true },
-      { href: "/offboarding", label: "Offboarding", icon: UserMinus },
+      { href: "/employes", label: "Fiches collaborateurs", icon: Users, desc: "Liste et dossiers des salariés" },
+      { href: "/employes/organigramme", label: "Organigramme", icon: TreeStructure, desc: "Structure hiérarchique de l'entreprise" },
+      { href: "/contrats", label: "Contrats", icon: FileText, desc: "CDI, CDD et avenants" },
+      { href: "/conges", label: "Absences & Congés", icon: CalendarBlank, desc: "Demandes et soldes de congés" },
+      { href: "/pointage", label: "Pointage", icon: Clock, desc: "Heures d'arrivée et de départ" },
+      { href: "/heures-sup", label: "Heures supplémentaires", icon: Clock, desc: "Suivi et majoration des heures sup" },
+      { href: "/medical", label: "Visites médicales", icon: FirstAid, desc: "Suivi de la médecine du travail" },
+      { href: "/onboarding", label: "Onboarding (intégration)", icon: UserPlus, pulse: true, desc: "Parcours d'arrivée d'un nouveau salarié" },
+      { href: "/offboarding", label: "Offboarding (départ)", icon: UserMinus, desc: "Parcours de départ d'un salarié" },
+    ],
+  },
+  {
+    label: "Planning",
+    accent: "#22d3ee",
+    defaultOpen: false,
+    items: [
+      { href: "/planning", label: "Planning & équipes", icon: CalendarCheck, desc: "Plannings et rotations d'équipes (shifts)" },
+      { href: "/planning-gantt", label: "Planning par ressource", icon: ChartBar, pulse: true, desc: "Vue Gantt par salarié ou par poste" },
+      { href: "/conges/heatmap", label: "Carte des absences", icon: CalendarBlank, desc: "Vue chaleur des absences sur l'année" },
     ],
   },
   {
@@ -104,14 +108,27 @@ const navGroups: NavGroup[] = [
     accent: "#34d399",
     defaultOpen: false,
     items: [
-      { href: "/paie", label: "Bulletins de paie", icon: Money, exact: true },
-      { href: "/analyses", label: "Finance & Data", icon: ChartBar },
-      { href: "/paie/generer-lot", label: "Génération en lot", icon: Stamp },
-      { href: "/paie/bordereau", label: "Bordereau de virement", icon: Bank },
-      { href: "/paie/anomalies", label: "Anomalies de paie", icon: ShieldWarning, pulse: true },
-      { href: "/paie/fin-de-contrat", label: "Fin de contrat / STC", icon: FileText },
-      { href: "/declarations", label: "Déclarations & Conformité", icon: Stamp },
-      { href: "/paie/import-sage", label: "Import Sage Paie", icon: UploadSimple },
+      { href: "/paie", label: "Bulletins de paie", icon: Money, exact: true, desc: "Édition des bulletins de salaire" },
+      { href: "/paie/generer-lot", label: "Génération en lot", icon: Stamp, desc: "Générer tous les bulletins du mois en une fois" },
+      { href: "/paie/bordereau", label: "Bordereau de virement", icon: Bank, desc: "Ordre de virement des salaires à la banque" },
+      { href: "/paie/anomalies", label: "Anomalies de paie", icon: ShieldWarning, pulse: true, desc: "Écarts et erreurs détectés sur la paie" },
+      { href: "/paie/fin-de-contrat", label: "Solde de tout compte (STC)", icon: FileText, desc: "Calcul du solde de tout compte en fin de contrat" },
+      { href: "/declarations", label: "Déclarations sociales", icon: Stamp, desc: "CNPS, ITS, FDFP et autres déclarations légales" },
+      { href: "/analyses", label: "Analyse masse salariale", icon: ChartBar, desc: "Coûts et répartition de la masse salariale" },
+      { href: "/paie/import-sage", label: "Import Sage Paie", icon: UploadSimple, desc: "Importer les données depuis Sage Paie" },
+    ],
+  },
+  {
+    label: "Analytique & Prévisions",
+    accent: "#a78bfa",
+    defaultOpen: false,
+    items: [
+      { href: "/analytique", label: "Analytique RH", icon: ChartPieSlice, exact: true, desc: "Tableaux de bord et indicateurs RH" },
+      { href: "/analytique/focus", label: "Focus stratégique", icon: Target, desc: "Synthèse des points d'attention prioritaires" },
+      { href: "/analytique/risque-depart", label: "Risque de départ", icon: UserMinus, desc: "Salariés à risque de démission (turnover)" },
+      { href: "/analytique/prevision", label: "Prévision des effectifs", icon: TrendUp, desc: "Projection des effectifs sur l'année à venir" },
+      { href: "/analytique/cohortes", label: "Cohortes d'embauche", icon: UsersThree, desc: "Suivi des salariés par année d'arrivée" },
+      { href: "/analytique/retraite", label: "Départs en retraite", icon: CalendarBlank, desc: "Salariés approchant l'âge de la retraite" },
     ],
   },
   {
@@ -119,9 +136,9 @@ const navGroups: NavGroup[] = [
     accent: "#fbbf24",
     defaultOpen: false,
     items: [
-      { href: "/documents-rh", label: "Documents RH", icon: FilePdf },
-      { href: "/ged", label: "GED", icon: Books, pulse: true },
-      { href: "/archives", label: "Archives", icon: Archive },
+      { href: "/documents-rh", label: "Documents RH", icon: FilePdf, desc: "Attestations, certificats et modèles" },
+      { href: "/ged", label: "Documents numérisés (GED)", icon: Books, pulse: true, desc: "Gestion électronique des documents : tout le coffre-fort documentaire" },
+      { href: "/archives", label: "Archives", icon: Archive, desc: "Dossiers clôturés et conservés" },
     ],
   },
   {
@@ -129,9 +146,9 @@ const navGroups: NavGroup[] = [
     accent: "#c084fc",
     defaultOpen: false,
     items: [
-      { href: "/recrutement", label: "Recrutement", icon: UserPlus },
-      { href: "/evaluations", label: "Évaluations & Performance", icon: ChartLineUp },
-      { href: "/formation", label: "Formation FDFP", icon: Student },
+      { href: "/recrutement", label: "Recrutement", icon: UserPlus, desc: "Offres d'emploi et candidatures" },
+      { href: "/evaluations", label: "Évaluations & Performance", icon: ChartLineUp, desc: "Entretiens et appréciations annuelles" },
+      { href: "/formation", label: "Formation & taxe FDFP", icon: Student, desc: "Plan de formation et taxe FDFP" },
     ],
   },
   {
@@ -139,10 +156,11 @@ const navGroups: NavGroup[] = [
     accent: "#f87171",
     defaultOpen: false,
     items: [
-      { href: "/contentieux", label: "Contentieux", icon: Scales },
-      { href: "/qhse", label: "QHSE & Accidents", icon: FirstAid },
-      { href: "/duerp", label: "DUERP", icon: ShieldWarning },
-      { href: "/bilan-social", label: "Bilan social annuel", icon: Books },
+      { href: "/disciplinaire", label: "Procédures disciplinaires", icon: ShieldWarning, desc: "Avertissements, mises à pied et sanctions" },
+      { href: "/contentieux", label: "Contentieux", icon: Scales, desc: "Litiges et inspections du travail" },
+      { href: "/qhse", label: "QHSE & Accidents", icon: FirstAid, desc: "Qualité, Hygiène, Sécurité, Environnement et accidents du travail" },
+      { href: "/duerp", label: "Risques professionnels (DUERP)", icon: ShieldWarning, desc: "Document Unique d'Évaluation des Risques Professionnels" },
+      { href: "/bilan-social", label: "Bilan social annuel", icon: Books, desc: "Synthèse sociale obligatoire de l'année" },
     ],
   },
   {
@@ -150,9 +168,9 @@ const navGroups: NavGroup[] = [
     accent: "#f472b6",
     defaultOpen: false,
     items: [
-      { href: "/reporting", label: "Reporting RH", icon: Presentation },
-      { href: "/messages", label: "Messagerie interne", icon: ChatCircleText },
-      { href: "/notifications", label: "Notifications", icon: Bell },
+      { href: "/reporting", label: "Reporting RH", icon: Presentation, desc: "Rapports et exports pour la direction" },
+      { href: "/messages", label: "Messagerie interne", icon: ChatCircleText, desc: "Échanges avec les collaborateurs" },
+      { href: "/notifications", label: "Notifications", icon: Bell, desc: "Alertes et notifications de l'application" },
     ],
   },
   {
@@ -160,8 +178,8 @@ const navGroups: NavGroup[] = [
     accent: "#2dd4bf",
     defaultOpen: false,
     items: [
-      { href: "/agent-juridique", label: "Agent juridique IA", icon: Robot },
-      { href: "/calculateur", label: "Simulateur paie", icon: Calculator },
+      { href: "/agent-juridique", label: "Agent juridique IA", icon: Robot, desc: "Assistant IA sur le droit du travail ivoirien" },
+      { href: "/calculateur", label: "Simulateur de paie", icon: Calculator, desc: "Simuler un salaire net, brut ou un coût employeur" },
     ],
   },
 ];
@@ -172,6 +190,7 @@ function NavLink({
   icon: Icon,
   exact = false,
   pulse = false,
+  desc,
   accent,
 }: NavItem & { accent: string }) {
   const pathname = usePathname();
@@ -180,6 +199,7 @@ function NavLink({
   return (
     <Link
       href={href}
+      title={desc ?? label}
       className={cn(
         "group relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-[12.5px] font-medium outline-none transition-all duration-150",
         isActive
@@ -284,17 +304,17 @@ export function SidebarNav({ role }: { role?: string }) {
       accent: "#94a3b8",
       defaultOpen: true,
       items: [
-        { href: "/parametres", label: "Paramètres", icon: Gear, exact: true },
-        { href: "/parametres/workflows", label: "Workflows approbation", icon: ChartLineUp },
-        { href: "/parametres/permissions", label: "Permissions RBAC", icon: UsersThree },
-        { href: "/parametres/delegations", label: "Délégations", icon: UserMinus },
-        { href: "/parametres/securite", label: "Sécurité & 2FA", icon: ShieldCheck },
-        { href: "/parametres/securite-events", label: "Événements sécurité", icon: ShieldWarning },
-        { href: "/parametres/audit", label: "Journal d'audit", icon: ShieldWarning },
-        { href: "/parametres/whatsapp", label: "WhatsApp Business", icon: ChatCircleText },
-        { href: "/parametres/webhooks", label: "Webhooks", icon: Plug },
-        { href: "/parametres/api", label: "API & Clés", icon: Key },
-        { href: "/paie/mobile-money", label: "Mobile Money CI", icon: DeviceMobile },
+        { href: "/parametres", label: "Paramètres", icon: Gear, exact: true, desc: "Réglages généraux de l'entreprise" },
+        { href: "/parametres/workflows", label: "Circuits d'approbation", icon: ChartLineUp, desc: "Définir qui valide les demandes (congés, paie…)" },
+        { href: "/parametres/permissions", label: "Rôles & permissions", icon: UsersThree, desc: "Droits d'accès par rôle (RBAC)" },
+        { href: "/parametres/delegations", label: "Délégations", icon: UserMinus, desc: "Déléguer ses droits pendant une absence" },
+        { href: "/parametres/securite", label: "Sécurité & 2FA", icon: ShieldCheck, desc: "Mot de passe et double authentification" },
+        { href: "/parametres/securite-events", label: "Événements de sécurité", icon: ShieldWarning, desc: "Connexions et actions sensibles" },
+        { href: "/parametres/audit", label: "Journal d'audit", icon: ShieldWarning, desc: "Historique de toutes les actions" },
+        { href: "/parametres/whatsapp", label: "WhatsApp Business", icon: ChatCircleText, desc: "Notifications via WhatsApp" },
+        { href: "/parametres/webhooks", label: "Webhooks", icon: Plug, desc: "Connexions automatisées vers d'autres outils" },
+        { href: "/parametres/api", label: "API & Clés", icon: Key, desc: "Clés d'accès pour les intégrations" },
+        { href: "/paie/mobile-money", label: "Mobile Money CI", icon: DeviceMobile, desc: "Paiement des salaires par Mobile Money" },
       ],
     });
   } else {
