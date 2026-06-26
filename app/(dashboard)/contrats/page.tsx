@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ContractDialog, type ExistingContract } from "@/components/rh/ContractDialog";
+import { PageHelp } from "@/components/rh/PageHelp";
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Contrats — RH Manager CI" };
@@ -134,7 +135,10 @@ export default async function ContratsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contrats</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contrats</h1>
+            <PageHelp text="Tous les contrats de travail (CDI, CDD, avenants) de vos salariés. L'écrit est obligatoire pour un CDD et fortement recommandé pour un CDI (Code du Travail ivoirien)." />
+          </div>
           <p className="text-sm text-slate-600 mt-0.5">
             Gestion des contrats de travail — CDD, CDI, Stage, Apprentissage
           </p>

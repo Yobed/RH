@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { MedicalExamDialog } from "@/components/rh/MedicalExamDialog";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { formatDateLocal } from "@/lib/utils";
 
 export const metadata = { title: "Santé & Sécurité — RH Manager CI" };
@@ -36,7 +37,10 @@ export default async function MedicalPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Santé & Sécurité au Travail</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Santé & Sécurité au Travail</h1>
+            <PageHelp text="Suivi des visites médicales du travail (embauche, périodiques, reprise). Organiser ces visites est une obligation de l'employeur (Code du Travail ivoirien)." />
+          </div>
           <p className="text-sm text-slate-600 mt-0.5 font-medium">Suivi des visites médicales, aptitudes et recommandations de la médecine du travail</p>
         </div>
         <div className="shrink-0">

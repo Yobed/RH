@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 import { createServerClient } from "@/lib/supabase/server";
 import { OrgChart } from "@/components/rh/OrgChart";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { GitFork, Users } from "lucide-react";
 
 export const metadata = { title: "Organigramme — RH Manager CI" };
@@ -26,6 +27,7 @@ export default async function OrganigrammePage() {
           <div className="flex items-center gap-2 mb-1">
             <GitFork className="w-5 h-5 text-primary" />
             <h1 className="text-2xl font-bold font-heading">Organigramme</h1>
+            <PageHelp text="La structure hiérarchique de l'entreprise, construite à partir du lien manager (N+1) renseigné sur chaque fiche salarié." />
           </div>
           <p className="text-sm text-slate-500">
             Structure hiérarchique de l'entreprise — cliquez sur{" "}

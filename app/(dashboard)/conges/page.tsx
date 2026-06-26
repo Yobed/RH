@@ -4,6 +4,7 @@ import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { ArretMaladieDialog } from "@/components/rh/ArretMaladieDialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { CalendarDays } from "lucide-react";
 
 export const metadata = { title: "Conges — RH Manager CI" };
@@ -107,7 +108,10 @@ export default async function CongesPage() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gestion des Congés</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gestion des Congés</h1>
+            <PageHelp text="Demandes, validations et soldes de congés. Le salarié acquiert des jours chaque mois travaillé (~2,2 jours ouvrables/mois, soit environ 26 jours/an — Code du Travail ivoirien)." />
+          </div>
           <p className="text-sm text-slate-600 mt-0.5">Droit : 2,2 jours/mois (Légal)</p>
         </div>
         <div className="flex gap-2">
