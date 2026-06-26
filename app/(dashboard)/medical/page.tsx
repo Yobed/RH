@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { MedicalExamDialog } from "@/components/rh/MedicalExamDialog";
 import { PageHelp } from "@/components/rh/PageHelp";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLocal } from "@/lib/utils";
 
 export const metadata = { title: "Santé & Sécurité — RH Manager CI" };
@@ -65,9 +66,12 @@ export default async function MedicalPage() {
       {/* Table */}
       <div className="rounded-xl border border-slate-100 bg-white overflow-hidden">
         {!exams || exams.length === 0 ? (
-          <div className="p-12 text-center">
-            <p className="text-sm font-medium text-slate-600">Aucun examen médical enregistré</p>
-            <p className="text-xs text-slate-600 mt-1">Cliquez sur «&nbsp;Ajouter&nbsp;» pour enregistrer un examen</p>
+          <div className="p-6">
+            <EmptyState
+              title="Aucun examen médical enregistré"
+              description="Planifiez la visite médicale d'embauche, périodique ou de reprise de vos salariés — une obligation de l'employeur."
+              action={<MedicalExamDialog employees={employees ?? []} />}
+            />
           </div>
         ) : (
           <table className="w-full text-sm">

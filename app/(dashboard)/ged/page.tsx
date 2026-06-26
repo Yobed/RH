@@ -4,6 +4,7 @@ export const metadata = { title: "GED — RH Manager CI" };
 import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { GedSearchEmployes } from "@/components/rh/ged/GedSearchEmployes";
+import { EmptyState } from "@/components/ui/empty-state";
 import { FolderOpen, FileText, Users } from "lucide-react";
 
 interface PageProps {
@@ -101,10 +102,19 @@ export default async function GedPage({ searchParams }: PageProps) {
 
       {/* Grille employés */}
       {!employees || employees.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-20 text-center">
-          <FolderOpen className="mx-auto h-10 w-10 text-slate-200 mb-3" />
-          <p className="text-sm font-medium text-slate-500">Aucun employé trouvé.</p>
-        </div>
+        <EmptyState
+          icon={<FolderOpen className="mx-auto h-12 w-12 text-slate-300" />}
+          title="Aucun employé trouvé"
+          description="Ajoutez des collaborateurs pour numériser et gérer leurs documents (contrats, CNI, diplômes…) ici."
+          action={
+            <Link
+              href="/employes"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
+            >
+              Voir les employés
+            </Link>
+          }
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {employees.map((emp) => {

@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { ScoreCvButton } from "@/components/rh/ScoreCvButton";
 import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
 import { CandidateDialog } from "@/components/rh/CandidateDialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import { CandidateStatusSelect } from "@/components/rh/CandidateStatusSelect";
 import { CandidatePipeline } from "@/components/rh/CandidatePipeline";
 import { RecrutementViewToggle } from "@/components/rh/RecrutementViewToggle";
@@ -146,8 +147,12 @@ export default async function RecrutementPage() {
             <TabsContent value="offres" className="space-y-4 pt-2">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {!postes || postes.length === 0 ? (
-                  <div className="col-span-full rounded-2xl border border-dashed border-slate-200 p-10 text-center">
-                    <p className="font-medium text-slate-600 text-sm">Aucune offre publiée</p>
+                  <div className="col-span-full">
+                    <EmptyState
+                      title="Aucune offre d'emploi"
+                      description="Publiez une offre pour commencer à recevoir et scorer des candidatures."
+                      action={<JobPostingDialog />}
+                    />
                   </div>
                 ) : (
                   postes.map((p) => (
