@@ -6,33 +6,35 @@
 
 @layer base {
   :root {
-    /* ── Ivoire Prestige — Light Mode ── */
-    --background: oklch(0.980 0.005 78);
-    --foreground: oklch(0.09 0.028 252);
+    /* ── Ivoire Prestige — Light Mode ──
+       Tokens en CANAUX OKLCH bruts (L C H) : le tailwind.config les enveloppe
+       en `oklch(var(--x) / <alpha-value>)` pour supporter bg-primary/50, etc. */
+    --background: 0.980 0.005 78;
+    --foreground: 0.09 0.028 252;
 
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.09 0.028 252);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.09 0.028 252);
+    --card: 1 0 0;
+    --card-foreground: 0.09 0.028 252;
+    --popover: 1 0 0;
+    --popover-foreground: 0.09 0.028 252;
 
-    --primary: oklch(0.32 0.12 252);
-    --primary-foreground: oklch(0.985 0 0);
+    --primary: 0.32 0.12 252;
+    --primary-foreground: 0.985 0 0;
 
-    --secondary: oklch(0.950 0.010 252);
-    --secondary-foreground: oklch(0.32 0.12 252);
+    --secondary: 0.950 0.010 252;
+    --secondary-foreground: 0.32 0.12 252;
 
-    --muted: oklch(0.960 0.006 80);
-    --muted-foreground: oklch(0.35 0.025 252);
+    --muted: 0.960 0.006 80;
+    --muted-foreground: 0.35 0.025 252;
 
-    --accent: oklch(0.78 0.13 73);
-    --accent-foreground: oklch(0.16 0.05 60);
+    --accent: 0.78 0.13 73;
+    --accent-foreground: 0.16 0.05 60;
 
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.985 0 0);
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
 
-    --border: oklch(0.905 0.005 78);
-    --input: oklch(0.905 0.005 78);
-    --ring: oklch(0.32 0.12 252);
+    --border: 0.905 0.005 78;
+    --input: 0.905 0.005 78;
+    --ring: 0.32 0.12 252;
     --radius: 0.75rem;
 
     --chart-1: oklch(0.32 0.12 252);
@@ -55,33 +57,33 @@
   }
 
   .dark {
-    /* ── Dark Mode — Deep Navy ── */
-    --background: oklch(0.108 0.028 248);
-    --foreground: oklch(0.95 0.008 252);
+    /* ── Dark Mode — Deep Navy ── (canaux OKLCH bruts, cf. :root) */
+    --background: 0.108 0.028 248;
+    --foreground: 0.95 0.008 252;
 
-    --card: oklch(0.155 0.030 248);
-    --card-foreground: oklch(0.95 0.008 252);
-    --popover: oklch(0.155 0.030 248);
-    --popover-foreground: oklch(0.95 0.008 252);
+    --card: 0.155 0.030 248;
+    --card-foreground: 0.95 0.008 252;
+    --popover: 0.155 0.030 248;
+    --popover-foreground: 0.95 0.008 252;
 
-    --primary: oklch(0.78 0.13 73);
-    --primary-foreground: oklch(0.12 0.04 60);
+    --primary: 0.78 0.13 73;
+    --primary-foreground: 0.12 0.04 60;
 
-    --secondary: oklch(0.195 0.028 248);
-    --secondary-foreground: oklch(0.88 0.01 252);
+    --secondary: 0.195 0.028 248;
+    --secondary-foreground: 0.88 0.01 252;
 
-    --muted: oklch(0.195 0.028 248);
-    --muted-foreground: oklch(0.68 0.018 252);
+    --muted: 0.195 0.028 248;
+    --muted-foreground: 0.68 0.018 252;
 
-    --accent: oklch(0.78 0.13 73);
-    --accent-foreground: oklch(0.12 0.04 60);
+    --accent: 0.78 0.13 73;
+    --accent-foreground: 0.12 0.04 60;
 
-    --destructive: oklch(0.65 0.22 27);
-    --destructive-foreground: oklch(0.985 0 0);
+    --destructive: 0.65 0.22 27;
+    --destructive-foreground: 0.985 0 0;
 
-    --border: oklch(0.220 0.035 248);
-    --input: oklch(0.220 0.035 248);
-    --ring: oklch(0.78 0.13 73);
+    --border: 0.220 0.035 248;
+    --input: 0.220 0.035 248;
+    --ring: 0.78 0.13 73;
 
     --chart-1: oklch(0.78 0.13 73);
     --chart-2: oklch(0.55 0.14 160);
