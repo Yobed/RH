@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import { anthropic } from "@/lib/claude";
 import { createServerClient } from "@/lib/supabase/server";
 
 interface SuggestionsBody {
@@ -36,23 +36,19 @@ export async function POST(req: NextRequest) {
 
   const body: SuggestionsBody = await req.json();
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: "ANTHROPIC_API_KEY non configurée" },
-      { status: 500 }
-    );
+  // IA gratuite (Gemini via l'adaptateur). Si la clé manque ou que l'IA échoue,
+  // on dégrade proprement vers une liste vide — le widget dashboard ne casse jamais.
+  if (!process.env.GEMINI_API_KEY) {
+    return NextResponse.json({ suggestions: [] });
   }
 
-  const client = new Anthropic({ apiKey });
-
-  const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 512,
-    messages: [
-      {
-        role: "user",
-        content: `Tu es un assistant RH expert en droit du travail ivoirien.
+  try {
+    const message = await anthropic.messages.create({
+      max_tokens: 512,
+      messages: [
+        {
+          role: "user",
+          content: `Tu es un assistant RH expert en droit du travail ivoirien.
 Voici les statistiques RH actuelles :
 - Effectif actif : ${body.totalActifs}
 - CDD expirant sous 30j : ${body.cddExpirant}
@@ -65,19 +61,19 @@ Génère exactement 3 suggestions RH prioritaires et actionnables en JSON. Forma
 {"suggestions":[{"id":"1","priorite":"haute|moyenne|basse","emoji":"🚨","titre":"...","action":"...","href":"/route"},...]}
 
 Les href doivent pointer vers /contrats, /conges, /evaluations, /contentieux, /medical, /employes, /paie selon le sujet.`,
-      },
-    ],
-  });
+        },
+      ],
+    });
 
-  const firstContent = message.content[0];
-  if (firstContent.type !== "text") {
+    const firstContent = message.content[0];
+    const match = firstContent.text.match(/\{[\s\S]*\}/);
+    const json: SuggestionsResponse = JSON.parse(
+      match?.[0] ?? '{"suggestions":[]}'
+    );
+
+    return NextResponse.json(json);
+  } catch (err) {
+    console.error("ai-suggestions (Gemini) a échoué:", err);
     return NextResponse.json({ suggestions: [] });
   }
-
-  const match = firstContent.text.match(/\{[\s\S]*\}/);
-  const json: SuggestionsResponse = JSON.parse(
-    match?.[0] ?? '{"suggestions":[]}'
-  );
-
-  return NextResponse.json(json);
 }
