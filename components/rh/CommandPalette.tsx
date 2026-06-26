@@ -268,7 +268,7 @@ export function CommandPaletteButton() {
         });
         window.dispatchEvent(event);
       }}
-      className="hidden sm:flex items-center gap-2.5 h-9 sm:w-60 md:w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-sm text-slate-400 dark:text-slate-500 hover:border-indigo-300 hover:text-slate-600 dark:hover:border-indigo-700 dark:hover:text-slate-300 transition-colors"
+      className="hidden sm:flex items-center gap-2.5 h-9 sm:w-60 md:w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-sm text-slate-400 dark:text-slate-500 hover:border-blue-300 hover:text-slate-600 dark:hover:border-blue-700 dark:hover:text-slate-300 transition-colors"
       title="Rechercher une page ou un module (Ctrl+K)"
     >
       <MagnifyingGlass className="h-4 w-4 shrink-0" weight="bold" />
