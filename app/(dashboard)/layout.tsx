@@ -34,12 +34,6 @@ export default async function DashboardLayout({
         .single()
     : { data: null };
 
-  // Demandes de congés en attente — affichées en pastille « à valider » dans la barre
-  const { count: pendingApprovals } = await supabase
-    .from("conges")
-    .select("*", { count: "exact", head: true })
-    .eq("statut", "demande");
-
   return (
     <div
       className="flex h-screen flex-col overflow-hidden bg-background"
@@ -53,7 +47,6 @@ export default async function DashboardLayout({
         fullName={profile?.full_name ?? user.email ?? null}
         role={profile?.role ?? null}
         companyName="RH Manager CI"
-        pendingApprovals={pendingApprovals ?? 0}
       />
 
       <CommandPalette />

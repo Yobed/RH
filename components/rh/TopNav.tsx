@@ -52,7 +52,6 @@ import {
   UserCircle,
 } from "@phosphor-icons/react";
 import { CommandPaletteButton } from "./CommandPalette";
-import { TopbarAlerts } from "./TopbarAlerts";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./NotificationBell";
 import { MobileSidebar } from "./MobileSidebar";
@@ -476,13 +475,10 @@ export function TopNav({
   fullName,
   role,
   companyName = "RH Manager CI",
-  pendingApprovals = 0,
 }: {
   fullName: string | null;
   role?: string | null;
   companyName?: string;
-  /** Nombre de demandes en attente de validation (congés) — affiché en pastille */
-  pendingApprovals?: number;
 }) {
   const pathname = usePathname();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -537,26 +533,11 @@ export function TopNav({
           ))}
         </nav>
 
-        {/* Actions à droite */}
+        {/* Actions à droite — épurées */}
         <div className="ml-auto flex items-center gap-1.5">
-          {/* Plus-value RH : action en attente (n'apparaît que s'il y a quelque chose à faire) */}
-          {pendingApprovals > 0 && (
-            <Link
-              href="/conges"
-              className="hidden h-8 items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 text-[12px] font-semibold text-amber-700 transition-colors hover:bg-amber-100 lg:flex dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300"
-              title={`${pendingApprovals} demande(s) de congé en attente de validation`}
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75 motion-reduce:animate-none" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
-              </span>
-              {pendingApprovals} à valider
-            </Link>
-          )}
           <div className="hidden md:block">
             <CommandPaletteButton />
           </div>
-          <TopbarAlerts />
           <ThemeToggle />
           <NotificationBell />
           <TopUserMenu fullName={fullName} role={role ?? null} />

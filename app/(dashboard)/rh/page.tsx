@@ -198,7 +198,7 @@ export default async function RhPage() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
-      <div className="relative px-4 sm:px-6 py-8 space-y-10 max-w-[1440px]">
+      <div className="relative mx-auto px-4 sm:px-6 py-8 space-y-10 max-w-[1440px]">
 
         {/* ── HERO ANIMÉ ── */}
         <DashboardHeroClient
