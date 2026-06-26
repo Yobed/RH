@@ -8,31 +8,13 @@ import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { FileText } from "@phosphor-icons/react";
 
+// « validé » = validé mais pas encore payé → ton ambre (intermédiaire), pas vert.
 const StatutBadge = ({ statut }: { statut: string }) => {
-  if (statut === "payé") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        {statut}
-      </span>
-    );
-  }
-  if (statut === "validé") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-        {statut}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-      <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-      {statut}
-    </span>
-  );
+  const tone = statut === "payé" ? "success" : statut === "validé" ? "warning" : "neutral";
+  return <StatusBadge status={statut} tone={tone} />;
 };
 
 const fmt = (n: number) =>
