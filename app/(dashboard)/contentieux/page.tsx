@@ -2,6 +2,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { LegalCaseDialog } from "@/components/rh/LegalCaseDialog";
 import { CloseLegalCaseButton } from "@/components/rh/CloseLegalCaseButton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export const metadata = { title: "Contentieux — RH Manager CI" };
 
@@ -78,9 +79,11 @@ export default async function ContentieuxPage() {
         </p>
 
         {ouverts.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 p-10 text-center">
-            <p className="text-sm font-medium text-slate-600">Aucun contentieux ouvert</p>
-          </div>
+          <EmptyState
+            title="Aucun contentieux ouvert"
+            description="Aucun litige en cours. Enregistrez un dossier dès qu'un contentieux survient pour suivre les délais légaux (inspection, prescription)."
+            action={<LegalCaseDialog employees={employees ?? []} />}
+          />
         ) : (
           <div className="space-y-3">
             {ouverts.map((c) => {

@@ -1,6 +1,7 @@
 ﻿export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { DisciplinaryDialog } from "@/components/rh/DisciplinaryDialog";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 
 export const metadata = { title: "Disciplinaire — RH Manager CI" };
@@ -86,8 +87,12 @@ export default async function DisciplinairePage() {
       {/* Table */}
       <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
         {!procedures || procedures.length === 0 ? (
-          <div className="p-12 text-center">
-            <p className="font-medium text-slate-600 text-sm">Aucune procédure enregistrée</p>
+          <div className="p-6">
+            <EmptyState
+              title="Aucune procédure disciplinaire"
+              description="Ouvrez une procédure (demande d'explication, avertissement, mise à pied…) pour la suivre et garder une trace conforme au Code du Travail."
+              action={<DisciplinaryDialog employees={employees ?? []} />}
+            />
           </div>
         ) : (
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
