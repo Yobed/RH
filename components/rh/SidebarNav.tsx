@@ -201,7 +201,7 @@ function NavLink({
       href={href}
       title={desc ?? label}
       className={cn(
-        "group relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-[12.5px] font-medium outline-none transition-all duration-150",
+        "group relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-[12.5px] font-medium outline-none transition-all duration-150 focus-visible:ring-2 focus-visible:ring-indigo-500/60",
         isActive
           ? "text-white"
           : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
@@ -245,7 +245,7 @@ function NavSection({ group }: { group: NavGroup }) {
     <div className="mb-0.5">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between px-3 py-1.5 rounded-lg transition-colors hover:bg-white/5"
+        className="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-1.5 outline-none transition-colors hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-indigo-500/60"
         aria-expanded={open}
       >
         <span className="flex items-center gap-2">

@@ -297,9 +297,9 @@ function LeafLink({ leaf, accent, onNavigate }: { leaf: NavLeaf; accent: string;
       href={leaf.href}
       onClick={onNavigate}
       style={{ "--ac": accent } as React.CSSProperties}
-      className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
+      className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 outline-none transition-colors hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-indigo-500/60 dark:hover:bg-white/5"
     >
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400 transition-colors group-hover/leaf:text-[var(--ac)] dark:bg-white/10 dark:text-slate-400">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover/leaf:text-[var(--ac)] dark:bg-white/10 dark:text-slate-400">
         <Icon weight="duotone" className="h-4 w-4" />
       </span>
       <span className="min-w-0">
@@ -307,7 +307,7 @@ function LeafLink({ leaf, accent, onNavigate }: { leaf: NavLeaf; accent: string;
           <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-100">{leaf.label}</span>
           {leaf.pulse && <span className="h-1.5 w-1.5 rounded-full bg-amber-400" aria-hidden />}
         </span>
-        <span className="mt-0.5 block text-[11px] leading-tight text-slate-400 dark:text-slate-500">{leaf.desc}</span>
+        <span className="mt-0.5 block text-[11px] leading-tight text-slate-500 dark:text-slate-400">{leaf.desc}</span>
       </span>
     </Link>
   );
@@ -335,7 +335,7 @@ function DomainItem({
   const hasMenu = !!domain.columns;
 
   const triggerCls = cn(
-    "flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 outline-none",
+    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60",
     active || open
       ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
       : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
@@ -369,7 +369,7 @@ function DomainItem({
               <div className="flex gap-5">
                 {domain.columns!.map((col) => (
                   <div key={col.title} className="w-[13.5rem]">
-                    <p className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500">
+                    <p className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
                       {col.title}
                     </p>
                     <div className="flex flex-col gap-0.5">
@@ -418,9 +418,10 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm transition-transform hover:scale-105"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-indigo-400"
         style={{ background: "linear-gradient(135deg, #6366f1 0%, #818cf8 100%)" }}
         aria-label="Menu utilisateur"
+        aria-expanded={open}
       >
         {initials}
       </button>
@@ -450,7 +451,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
               <Link
                 href="/parametres"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-indigo-400 dark:text-slate-300 dark:hover:bg-white/5"
               >
                 <UserCircle weight="duotone" className="h-4 w-4 text-slate-400" />
                 Mon profil
@@ -458,7 +459,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
               <button
                 type="button"
                 onClick={handleLogout}
-                className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-rose-600 transition-colors hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10"
+                className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-rose-600 outline-none transition-colors hover:bg-rose-50 focus-visible:ring-2 focus-visible:ring-rose-400 dark:text-rose-400 dark:hover:bg-rose-500/10"
               >
                 <SignOut weight="bold" className="h-4 w-4" />
                 Se déconnecter
@@ -546,7 +547,7 @@ export function TopNav({
               title={`${pendingApprovals} demande(s) de congé en attente de validation`}
             >
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75 motion-reduce:animate-none" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
               </span>
               {pendingApprovals} à valider
