@@ -3,6 +3,7 @@ import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { EmployeeTable } from "@/components/rh/EmployeeTable";
 import { ImportExcelModal } from "@/components/rh/ImportExcelModal";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { Users } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
@@ -69,7 +70,10 @@ export default async function EmployesPage({
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Employés</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Employés</h1>
+            <PageHelp text="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié. Tenir un registre d'employeur à jour est une obligation du Code du Travail ivoirien." />
+          </div>
           <p className="text-sm text-slate-600 mt-0.5">Gestion du personnel</p>
           {/* Mini KPIs inline */}
           <div className="flex flex-wrap items-center gap-4 mt-3">
