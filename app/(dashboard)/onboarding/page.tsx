@@ -110,7 +110,9 @@ export default async function OnboardingPage() {
           </div>
         ) : (
           <div className="divide-y divide-slate-50">
-            {rows.map(({ emp, progress, overdue, completedAt, items }) => (
+            {rows.map(({ emp, progress, overdue, completedAt, items }) => {
+              const nextItem = !completedAt ? items.find((i) => !i.done) : undefined;
+              return (
               <Link
                 key={emp.id}
                 href={`/employes/${emp.id}/onboarding`}
@@ -153,6 +155,11 @@ export default async function OnboardingPage() {
                     {emp.poste ?? "—"}{emp.departement ? ` · ${emp.departement}` : ""}
                     {emp.date_embauche ? ` · Embauché le ${new Date(emp.date_embauche).toLocaleDateString("fr-CI")}` : ""}
                   </p>
+                  {nextItem && (
+                    <p className="mt-1 truncate text-xs font-medium text-blue-600 dark:text-blue-400">
+                      → Prochaine étape : {nextItem.title}
+                    </p>
+                  )}
                 </div>
 
                 {/* Progression */}
@@ -171,7 +178,8 @@ export default async function OnboardingPage() {
 
                 <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-slate-500 shrink-0 transition-colors" />
               </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

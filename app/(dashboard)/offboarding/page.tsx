@@ -158,7 +158,9 @@ export default async function OffboardingPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {rows.map((r) => (
+              {rows.map((r) => {
+                const nextItem = !r.completedAt && r.hasChecklist ? r.items.find((i) => !i.done) : undefined;
+                return (
                 <tr key={r.emp.id} className="hover:bg-slate-50/60">
                   <td className="px-4 py-3">
                     <div className="font-semibold text-slate-900">{r.emp.full_name}</div>
@@ -203,6 +205,11 @@ export default async function OffboardingPage() {
                           )}
                         </div>
                         <ProgressBar pct={r.progress.pct} />
+                        {nextItem && (
+                          <p className="mt-1 truncate text-[11px] font-medium text-blue-600 dark:text-blue-400">
+                            → {nextItem.title}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <span className="text-xs text-amber-600 font-medium">Non créée</span>
@@ -218,7 +225,8 @@ export default async function OffboardingPage() {
                     </Link>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
