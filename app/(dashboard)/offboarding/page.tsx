@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
+import { PageHelp } from "@/components/rh/PageHelp";
 import {
   offboardingProgress,
   offboardingOverdueItems,
@@ -106,10 +107,13 @@ export default async function OffboardingPage() {
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
       <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <UserMinus className="h-6 w-6 text-rose-500" weight="duotone" />
-            Offboarding collaborateurs
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <UserMinus className="h-6 w-6 text-rose-500" weight="duotone" />
+              Offboarding collaborateurs
+            </h1>
+            <PageHelp text="Le parcours de départ d'un salarié : restitution des biens et accès, formalités de sortie et solde de tout compte (STC). Cadré par le Code du Travail ivoirien (art. 16-11)." />
+          </div>
           <p className="text-sm text-slate-500 mt-0.5">
             Restitution des biens, accès, formalités de sortie — Art. 16-11 CT-CI
           </p>
