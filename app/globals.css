@@ -9,7 +9,7 @@
     /* ── Ivoire Prestige — Light Mode ──
        Tokens en CANAUX OKLCH bruts (L C H) : le tailwind.config les enveloppe
        en `oklch(var(--x) / <alpha-value>)` pour supporter bg-primary/50, etc. */
-    --background: 0.980 0.005 78;
+    --background: 0.984 0.003 247;
     --foreground: 0.09 0.028 252;
 
     --card: 1 0 0;
@@ -23,7 +23,7 @@
     --secondary: 0.950 0.010 252;
     --secondary-foreground: 0.32 0.12 252;
 
-    --muted: 0.960 0.006 80;
+    --muted: 0.968 0.004 247;
     --muted-foreground: 0.35 0.025 252;
 
     --accent: 0.78 0.13 73;
@@ -32,8 +32,8 @@
     --destructive: 0.577 0.245 27.325;
     --destructive-foreground: 0.985 0 0;
 
-    --border: 0.905 0.005 78;
-    --input: 0.905 0.005 78;
+    --border: 0.912 0.004 250;
+    --input: 0.912 0.004 250;
     --ring: 0.32 0.12 252;
     --radius: 0.75rem;
 
