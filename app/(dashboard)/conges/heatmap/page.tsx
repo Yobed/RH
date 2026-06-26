@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { createServerClient } from "@/lib/supabase/server";
 import { HeatmapAbsences } from "@/components/rh/HeatmapAbsences";
+import { PageHelp } from "@/components/rh/PageHelp";
 
 export const metadata = { title: "Heatmap Absences — RH Manager CI" };
 
@@ -52,9 +53,12 @@ export default async function HeatmapPage() {
   return (
     <div className="p-6 md:p-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          Heatmap Absences {annee}
-        </h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            Heatmap Absences {annee}
+          </h1>
+          <PageHelp text="Vue d'ensemble des absences approuvées sur l'année, par salarié et par mois. Repère d'un coup d'œil les périodes de forte absence." />
+        </div>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
           Visualisation des absences approuvées par employé
         </p>

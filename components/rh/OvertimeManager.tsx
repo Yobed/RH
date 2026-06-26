@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { createClientSupabase } from "@/lib/supabase/client";
+import { PageHelp } from "./PageHelp";
 import { OvertimeImportDialog } from "./OvertimeImportDialog";
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -255,7 +256,10 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
           <div>
             <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Paie · Art. 24 CT-CI</p>
-            <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1">Heures supplémentaires</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900">Heures supplémentaires</h1>
+              <PageHelp text="Suivi et majoration des heures supplémentaires. En Côte d'Ivoire, elles sont majorées selon des taux légaux croissants (art. 24 et suivants du Code du Travail)." />
+            </div>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-snug">
               Saisie, contrôle et chiffrage des heures majorées.
               <span className="text-slate-700 font-medium block sm:inline sm:ml-1">· {periodLabel}</span>

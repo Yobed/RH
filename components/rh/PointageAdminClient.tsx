@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Clock, Activity, Timer } from "lucide-react";
 import { format, addDays, parseISO, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
+import { PageHelp } from "./PageHelp";
 
 export type Employee = { id: string; full_name: string; poste: string | null };
 export type TimeEntry = {
@@ -84,6 +85,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
           <div className="flex items-center gap-2 mb-1">
             <Clock className="w-5 h-5 text-primary" />
             <h1 className="text-2xl font-bold font-heading">Pointage</h1>
+            <PageHelp text="Le suivi des heures d'arrivée et de départ de vos salariés, semaine par semaine. Il sert de base au calcul des heures travaillées et des heures supplémentaires." />
           </div>
           <p className="text-sm text-slate-500">
             Heures travaillées · Semaine du {format(monday, "d MMM", { locale: fr })} au{" "}

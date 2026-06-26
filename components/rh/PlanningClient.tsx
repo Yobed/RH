@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Calendar, Plus, X, Settings, Trash2, Coffee 
 import { toast } from "sonner";
 import { format, addDays, startOfWeek, parseISO, isToday } from "date-fns";
 import { fr } from "date-fns/locale";
+import { PageHelp } from "./PageHelp";
 
 export type Employee = {
   id: string;
@@ -115,6 +116,7 @@ export function PlanningClient({ employees, shifts, assignments, weekStart }: Pr
           <div className="flex items-center gap-2 mb-1">
             <Calendar className="w-5 h-5 text-primary" />
             <h1 className="text-2xl font-bold font-heading">Planning hebdomadaire</h1>
+            <PageHelp text="Le planning des équipes (shifts), semaine par semaine : assignez des créneaux à chaque salarié et organisez les rotations." />
           </div>
           <p className="text-sm text-slate-500">{weekLabel}</p>
         </div>
