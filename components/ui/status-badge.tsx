@@ -38,6 +38,7 @@ const STATUS_TONE: Record<string, StatusTone> = {
   demande: "warning", en_attente: "warning", attente: "warning", brouillon: "warning",
   en_cours: "warning", notifie: "warning", "notifié": "warning", suspendu: "warning",
   provisoire: "warning", a_valider: "warning", entretien: "warning", planifie: "warning", "planifié": "warning",
+  valide_manager: "warning", valide_rh: "warning", soumis: "warning",
   // ⛔ Négatif / risque
   refuse: "danger", "refusé": "danger", inactif: "danger", expire: "danger", "expiré": "danger",
   rejete: "danger", "rejeté": "danger", annule: "danger", "annulé": "danger",

@@ -6,6 +6,7 @@ import { CaretUp, CaretDown, CaretLeft, CaretRight } from "@phosphor-icons/react
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Calendar as CalendarIcon, Paperclip } from "@phosphor-icons/react";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -47,30 +48,9 @@ function formatDate(d: string) {
   });
 }
 
-const StatutBadge = ({ statut }: { statut: string }) => {
-  if (statut === "approuve") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        {STATUT_LABEL[statut] ?? statut}
-      </span>
-    );
-  }
-  if (statut === "en_attente" || statut === "valide_manager") {
-    return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-        {STATUT_LABEL[statut] ?? statut}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-      <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-      {STATUT_LABEL[statut] ?? statut}
-    </span>
-  );
-};
+const StatutBadge = ({ statut }: { statut: string }) => (
+  <StatusBadge status={statut} label={STATUT_LABEL[statut] ?? statut} />
+);
 
 const ArretBadge = ({ estAt, estJustifie }: { estAt?: boolean; estJustifie?: boolean }) => {
   if (estAt) {
