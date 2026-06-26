@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: "Anomalies de paie — RH Manager CI" };
 
 import { createServerClient } from "@/lib/supabase/server";
+import { PageHelp } from "@/components/rh/PageHelp";
 import Link from "next/link";
 import {
   AlertTriangle, TrendingUp, TrendingDown,
@@ -242,7 +243,10 @@ export default async function AnomaliesPaiePage({ searchParams }: PageProps) {
           <div className="h-8 w-8 rounded-xl bg-rose-600 flex items-center justify-center">
             <AlertTriangle className="h-4 w-4 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Détection d'anomalies de paie</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Détection d'anomalies de paie</h1>
+            <PageHelp text="Repère automatiquement les écarts et erreurs de paie (salaires hors barème, cotisations incohérentes, doublons) avant de valider les bulletins." />
+          </div>
         </div>
         <p className="text-sm text-slate-500 ml-10">
           Analyse automatique du bulletin {periode} par rapport aux 3 mois précédents — variations, retenues, manquants.

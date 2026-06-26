@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
 import Link from "next/link";
@@ -92,7 +93,10 @@ export default async function PaiePage({
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
+            <PageHelp text="Les bulletins de salaire de vos collaborateurs : le net à payer est calculé à partir du brut, des cotisations CNPS et de l'ITS (impôt sur les salaires) selon le barème ivoirien." />
+          </div>
           <p className="text-sm text-slate-600 mt-0.5">
             CNPS retraite 6,3% + CMU 1 600 FCFA + ITS unifié (barème progressif − RICF) — Réforme 2024 CI
           </p>

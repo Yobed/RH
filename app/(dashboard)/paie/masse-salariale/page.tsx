@@ -1,6 +1,7 @@
 "use client";
 
 import { createClientSupabase } from "@/lib/supabase/client";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { MasseSalarialeDashboard } from "@/components/paie/MasseSalarialeDashboard";
 import Link from "next/link";
 import { 
@@ -91,7 +92,10 @@ export default function MasseSalarialePage() {
                 <div className="p-3 bg-slate-900 rounded-2xl shadow-lg shadow-slate-900/20">
                   <Layout size={24} weight="duotone" className="text-white" />
                 </div>
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight">Masse Salariale</h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-4xl font-black text-slate-900 tracking-tight">Masse Salariale</h1>
+                  <PageHelp text="L'analyse du coût total de votre personnel : répartition par département, évolution dans le temps et projection de la masse salariale." />
+                </div>
               </div>
               <p className="text-sm text-slate-500 mt-3 font-medium max-w-md">
                 Analyse consolidée des coûts salariaux globaux et conformité légale CNPS Côte d'Ivoire 2026.

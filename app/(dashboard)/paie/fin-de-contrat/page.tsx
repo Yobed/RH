@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { ArrowLeft, FileText, ExternalLink } from "lucide-react";
 import { createServerClient } from "@/lib/supabase/server";
+import { PageHelp } from "@/components/rh/PageHelp";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { safeFormatDate } from "@/lib/paie-ci";
 
@@ -56,7 +57,10 @@ export default async function FinDeContratPage({
         <div className="mt-1.5 sm:mt-2 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
           <div>
             <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Module Paie · Art. 25.1</p>
-            <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 mt-1">Fin de contrat</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900">Fin de contrat</h1>
+              <PageHelp text="Le calcul du solde de tout compte (STC) en fin de contrat : congés non pris, indemnités de préavis et de licenciement selon le Code du Travail ivoirien." />
+            </div>
             <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-snug max-w-2xl">
               Calcul, simulation et archivage du solde de tout compte selon le Code du travail ivoirien.
             </p>
