@@ -175,6 +175,7 @@ const NAV_DOMAINS: NavDomain[] = [
         items: [
           { href: "/analytique", label: "Analytique RH", desc: "Tableaux de bord", icon: ChartPieSlice },
           { href: "/analytique/focus", label: "Focus stratégique", desc: "Points d'attention", icon: Target },
+          { href: "/reporting", label: "Reporting RH", desc: "Rapports & exports", icon: Presentation },
           { href: "/calendrier", label: "Calendrier global", desc: "Tous les évènements", icon: CalendarDots },
         ],
       },
@@ -191,7 +192,7 @@ const NAV_DOMAINS: NavDomain[] = [
   },
   {
     id: "conformite",
-    label: "Qualité & Docs",
+    label: "Conformité",
     icon: ShieldCheck,
     accent: "#f43f5e",
     columns: [
@@ -222,18 +223,17 @@ const NAV_DOMAINS: NavDomain[] = [
     accent: "#14b8a6",
     columns: [
       {
-        title: "Reporting & comms",
-        items: [
-          { href: "/reporting", label: "Reporting RH", desc: "Rapports & exports", icon: Presentation },
-          { href: "/messages", label: "Messagerie interne", desc: "Échanges salariés", icon: ChatCircleText },
-          { href: "/notifications", label: "Notifications", desc: "Alertes de l'app", icon: Bell },
-        ],
-      },
-      {
-        title: "Outils & IA",
+        title: "Assistant IA",
         items: [
           { href: "/agent-juridique", label: "Agent juridique IA", desc: "Droit du travail CI", icon: Robot },
           { href: "/calculateur", label: "Simulateur de paie", desc: "Net, brut, coût employeur", icon: Calculator },
+        ],
+      },
+      {
+        title: "Communication",
+        items: [
+          { href: "/messages", label: "Messagerie interne", desc: "Échanges salariés", icon: ChatCircleText },
+          { href: "/notifications", label: "Notifications", desc: "Alertes de l'app", icon: Bell },
           { href: "/rappels", label: "Rappels & Échéances", desc: "À venir sous 30 jours", icon: BellRinging },
         ],
       },
@@ -296,12 +296,10 @@ function LeafLink({ leaf, accent, onNavigate }: { leaf: NavLeaf; accent: string;
     <Link
       href={leaf.href}
       onClick={onNavigate}
+      style={{ "--ac": accent } as React.CSSProperties}
       className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
     >
-      <span
-        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors"
-        style={{ background: `${accent}14`, color: accent }}
-      >
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400 transition-colors group-hover/leaf:text-[var(--ac)] dark:bg-white/10 dark:text-slate-400">
         <Icon weight="duotone" className="h-4 w-4" />
       </span>
       <span className="min-w-0">
@@ -337,23 +335,23 @@ function DomainItem({
   const hasMenu = !!domain.columns;
 
   const triggerCls = cn(
-    "flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors duration-150 outline-none",
-    active
-      ? "bg-slate-100 text-slate-900 dark:bg-white/10 dark:text-white"
-      : "text-slate-500 hover:bg-slate-100/70 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
+    "flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 outline-none",
+    active || open
+      ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
+      : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
   );
 
   return (
     <div className="relative" onMouseEnter={onHover}>
       {hasMenu ? (
         <button type="button" className={triggerCls} aria-expanded={open} onClick={onToggle}>
-          <Icon weight={active ? "duotone" : "regular"} className="h-4 w-4" style={{ color: active ? domain.accent : undefined }} />
+          <Icon weight={active || open ? "duotone" : "regular"} className="h-4 w-4" />
           <span>{domain.label}</span>
           <CaretDown weight="bold" className={cn("h-2.5 w-2.5 transition-transform duration-200", open && "rotate-180")} />
         </button>
       ) : (
         <Link href={domain.href!} className={triggerCls} onClick={onNavigate}>
-          <Icon weight={active ? "duotone" : "regular"} className="h-4 w-4" style={{ color: active ? domain.accent : undefined }} />
+          <Icon weight={active ? "duotone" : "regular"} className="h-4 w-4" />
           <span>{domain.label}</span>
         </Link>
       )}
@@ -477,10 +475,13 @@ export function TopNav({
   fullName,
   role,
   companyName = "RH Manager CI",
+  pendingApprovals = 0,
 }: {
   fullName: string | null;
   role?: string | null;
   companyName?: string;
+  /** Nombre de demandes en attente de validation (congés) — affiché en pastille */
+  pendingApprovals?: number;
 }) {
   const pathname = usePathname();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -537,6 +538,20 @@ export function TopNav({
 
         {/* Actions à droite */}
         <div className="ml-auto flex items-center gap-1.5">
+          {/* Plus-value RH : action en attente (n'apparaît que s'il y a quelque chose à faire) */}
+          {pendingApprovals > 0 && (
+            <Link
+              href="/conges"
+              className="hidden h-8 items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 text-[12px] font-semibold text-amber-700 transition-colors hover:bg-amber-100 lg:flex dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300"
+              title={`${pendingApprovals} demande(s) de congé en attente de validation`}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
+              </span>
+              {pendingApprovals} à valider
+            </Link>
+          )}
           <div className="hidden md:block">
             <CommandPaletteButton />
           </div>
