@@ -13,6 +13,7 @@ import {
 } from "@/components/rh/ClientIcons";
 import Link from "next/link";
 import { AiSuggestionsWidget } from "@/components/rh/AiSuggestionsWidget";
+import { ActionCenter, type ActionItem } from "@/components/rh/ActionCenter";
 
 export const metadata = { title: "Tableau de bord — RH Manager CI" };
 
@@ -196,6 +197,16 @@ export default async function RhPage() {
     month: "long",
   });
 
+  // Centre « À traiter » — actions en attente, à partir des données déjà chargées
+  const actionItems: ActionItem[] = [
+    { type: "conges", count: congesEnAttente?.length ?? 0 },
+    { type: "contentieux", count: contentieuxOuverts ?? 0 },
+    { type: "cdd", count: cddExpirant ?? 0 },
+    { type: "essai", count: essaiExpirant ?? 0 },
+    { type: "medical", count: medicalAlertsCount ?? 0 },
+    { type: "evaluation", count: evalBrouillon ?? 0 },
+  ];
+
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <div className="relative mx-auto px-4 sm:px-6 py-8 space-y-10 max-w-[1440px]">
@@ -207,6 +218,12 @@ export default async function RhPage() {
           congesEnAttente={congesEnAttente?.length ?? 0}
           dateLabel={dateLabel}
         />
+
+        {/* ── À TRAITER (centre d'action) ── */}
+        <section className="space-y-3">
+          <SectionDivider label="À traiter en priorité" />
+          <ActionCenter items={actionItems} />
+        </section>
 
         {/* ── ACTIONS RAPIDES ── */}
         <section className="space-y-3">
