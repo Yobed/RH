@@ -13,113 +13,82 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Orienté tâche : des verbes qui suivent le cycle de vie RH
-// (recruter → intégrer → payer → évaluer → faire partir).
 const actions = [
   {
     title: "Recruter",
     description: "Offres & candidats",
     icon: UserPlus,
     href: "/recrutement",
-    color: "oklch(0.32 0.14 252)", // indigo
-    light: "oklch(0.94 0.016 252)",
   },
   {
     title: "Créer un contrat",
     description: "CDI · CDD · avenant",
     icon: FilePlus,
     href: "/contrats",
-    color: "oklch(0.55 0.18 155)", // emerald
-    light: "oklch(0.94 0.02 155)",
   },
   {
     title: "Lancer la paie",
     description: "Bulletins du mois",
     icon: Money,
     href: "/paie/generer-lot",
-    color: "oklch(0.78 0.13 73)", // amber
-    light: "oklch(0.96 0.02 73)",
   },
   {
     title: "Traiter une absence",
     description: "Congés & absences",
     icon: CalendarPlus,
     href: "/conges",
-    color: "oklch(0.577 0.245 27)", // rose/red
-    light: "oklch(0.96 0.02 27)",
   },
   {
     title: "Évaluer un salarié",
     description: "Performance",
     icon: ClipboardText,
     href: "/evaluations",
-    color: "oklch(0.627 0.265 303)", // violet
-    light: "oklch(0.96 0.02 303)",
   },
   {
     title: "Préparer un départ",
     description: "Offboarding & STC",
     icon: UserMinus,
     href: "/offboarding",
-    color: "oklch(0.175 0.04 248)", // slate-dark
-    light: "oklch(0.94 0.01 248)",
   },
 ];
 
 export function QuickActions() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
       {actions.map((action, index) => (
         <motion.div
           key={action.title}
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.5, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.04 }}
         >
           <Link href={action.href} className="group relative block h-full">
             <div className={cn(
-              "relative h-full overflow-hidden rounded-[1.5rem] bg-white dark:bg-slate-950 p-5",
-              "border border-slate-100/80 dark:border-slate-800/50",
-              "shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)]",
-              "transition-all duration-500 ease-[0.22,1,0.36,1]",
-              "hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.08)]",
-              "active:scale-95"
+              "relative h-full overflow-hidden rounded-xl bg-white dark:bg-slate-900 p-4",
+              "border border-slate-200 dark:border-slate-800",
+              "shadow-sm hover:shadow-md hover:border-[#FF8200]/50 dark:hover:border-[#FF8200]/50",
+              "transition-all duration-200"
             )}>
-              {/* Internal Glow on Hover */}
-              <div 
-                className="absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-0 group-hover:opacity-[0.08] transition-opacity duration-700 blur-2xl pointer-events-none"
-                style={{ backgroundColor: action.color }}
-              />
-
-              <div className="flex flex-col h-full gap-5">
-                <div 
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-[8deg]"
-                  style={{ backgroundColor: action.light, color: action.color }}
-                >
-                  <action.icon weight="duotone" className="w-6 h-6" />
+              <div className="flex flex-col h-full justify-between gap-4">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 group-hover:bg-[#FF8200] group-hover:text-white transition-colors duration-200">
+                  <action.icon weight="duotone" className="w-5 h-5" />
                 </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-black text-sm text-slate-900 dark:text-white tracking-tightest leading-none">
+                <div className="space-y-0.5">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <p className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-100 group-hover:text-[#FF8200] transition-colors">
                       {action.title}
                     </p>
                     <CaretRight 
                       weight="bold" 
-                      className="w-3 h-3 text-slate-300 group-hover:translate-x-1 group-hover:text-slate-900 transition-all" 
+                      className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 group-hover:text-[#FF8200] transition-all shrink-0" 
                     />
                   </div>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
                     {action.description}
                   </p>
                 </div>
               </div>
-              
-              {/* Subtle accent bar at bottom */}
-              <div 
-                className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700"
-                style={{ backgroundColor: action.color }}
-              />
             </div>
           </Link>
         </motion.div>

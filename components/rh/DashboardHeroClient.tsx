@@ -40,12 +40,9 @@ function useGreeting() {
 
 function AnimatedBar({ value, delay = 0 }: { value: number; delay?: number }) {
   return (
-    <div className="relative h-1.5 w-full rounded-full bg-muted overflow-hidden">
+    <div className="relative h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
       <motion.div
-        className="absolute inset-y-0 left-0 rounded-full"
-        style={{
-          background: "linear-gradient(90deg, oklch(0.32 0.14 252), oklch(0.78 0.13 73))",
-        }}
+        className="absolute inset-y-0 left-0 rounded-full bg-[#FF8200]"
         initial={{ width: 0 }}
         animate={{ width: `${value}%` }}
         transition={{ duration: 1.2, delay, ease: [0.22, 1, 0.36, 1] }}
