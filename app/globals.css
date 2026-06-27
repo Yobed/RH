@@ -129,13 +129,23 @@
   .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: var(--font-sans);
     font-weight: 600; /* Entre 500 et 700 */
-    line-height: 1;
-    letter-spacing: -0.025em;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: inherit;
+  }
+
+  .text-brand-orange,
+  .h-orange {
     color: #FF8200 !important;
   }
 
   th, thead th {
-    color: #FF8200 !important;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: oklch(0.35 0.02 252);
+  }
+  .dark th, .dark thead th {
+    color: oklch(0.82 0.012 252);
   }
 
   p {

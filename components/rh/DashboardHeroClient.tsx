@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -64,67 +64,41 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
       animate="show"
       className="relative"
     >
-      {/* Ambient blob decoration */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-12 -right-16 h-64 w-64 rounded-full opacity-[0.12] dark:opacity-[0.08]"
-        style={{
-          background: "radial-gradient(circle, oklch(0.78 0.13 73) 0%, transparent 70%)",
-          filter: "blur(48px)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-8 -left-8 h-48 w-48 rounded-full opacity-[0.08] dark:opacity-[0.05]"
-        style={{
-          background: "radial-gradient(circle, oklch(0.55 0.18 252) 0%, transparent 70%)",
-          filter: "blur(40px)",
-        }}
-      />
-
-      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-slate-200/60 dark:border-slate-800/60">
         {/* Left — heading block */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <motion.p
             variants={fadeUp}
-            className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-400"
           >
             {dateLabel}
           </motion.p>
 
           <motion.div variants={fadeUp} className="space-y-1">
-            <p className="text-sm font-medium text-[oklch(0.78_0.13_73)]">
+            <p className="text-sm font-semibold text-[#FF8200]">
               {greeting}
             </p>
             <h1
-              className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold leading-[1.08] tracking-tight text-foreground"
-              style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white"
             >
               Tableau de bord{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, oklch(0.32 0.14 252) 0%, oklch(0.78 0.13 73) 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
+              <span className="text-[#FF8200]">
                 RH
               </span>
             </h1>
-            <p className="text-sm font-medium text-muted-foreground">
-              Capital humain — Côte d&apos;Ivoire · Droit ivoirien
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              Gestion du capital humain · Législation & Droit ivoirien
             </p>
           </motion.div>
 
           {/* Inline live stats row */}
           <motion.div
             variants={fadeUp}
-            className="flex flex-wrap items-center gap-3 pt-1"
+            className="flex flex-wrap items-center gap-3 pt-2"
           >
             {[
               {
-                label: "actifs",
+                label: "collaborateurs actifs",
                 value: totalActifs,
                 color: "bg-emerald-500",
                 textColor: "text-emerald-700 dark:text-emerald-400",
@@ -132,19 +106,19 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               {
                 label: "congés en attente",
                 value: congesEnAttente,
-                color: "bg-amber-400",
+                color: "bg-amber-500",
                 textColor: "text-amber-700 dark:text-amber-400",
               },
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 shadow-sm"
+                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 px-3 py-1.5 shadow-sm"
               >
                 <span className={`h-2 w-2 rounded-full shrink-0 ${stat.color}`} />
                 <span className={`text-xs font-bold tabular-nums ${stat.textColor}`}>
                   {stat.value}
                 </span>
-                <span className="text-[10px] text-muted-foreground">{stat.label}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -153,27 +127,27 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
         {/* Right — compliance card */}
         <motion.div
           variants={scaleIn}
-          className="shrink-0 rounded-2xl border border-border bg-card p-5 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] glow-hover min-w-[220px]"
+          className="shrink-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm min-w-[220px]"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-3 text-center">
             Score conformité
           </p>
 
           {/* Ring */}
-          <div className="relative flex items-center justify-center mb-4">
-            <svg className="h-20 w-20 -rotate-90" viewBox="0 0 80 80">
+          <div className="relative flex items-center justify-center mb-3">
+            <svg className="h-16 w-16 -rotate-90" viewBox="0 0 80 80">
               <circle
                 cx="40" cy="40" r="34"
                 fill="none"
-                stroke="oklch(0.93 0.005 78)"
-                strokeWidth="7"
-                className="dark:stroke-[oklch(0.22_0.035_248)]"
+                stroke="#E2E8F0"
+                strokeWidth="6"
+                className="dark:stroke-slate-800"
               />
               <motion.circle
                 cx="40" cy="40" r="34"
                 fill="none"
-                stroke="url(#scoreGrad)"
-                strokeWidth="7"
+                stroke="#FF8200"
+                strokeWidth="6"
                 strokeLinecap="round"
                 strokeDasharray={`${2 * Math.PI * 34}`}
                 initial={{ strokeDashoffset: 2 * Math.PI * 34 }}
@@ -182,32 +156,17 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
                 }}
                 transition={{ duration: 1.4, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               />
-              <defs>
-                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="oklch(0.32 0.14 252)" />
-                  <stop offset="100%" stopColor="oklch(0.78 0.13 73)" />
-                </linearGradient>
-              </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span
-                className="text-2xl font-bold tabular-nums"
-                style={{
-                  background: "linear-gradient(135deg, oklch(0.32 0.14 252), oklch(0.78 0.13 73))",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  fontFamily: "var(--font-display, var(--font-sans))",
-                }}
-              >
+              <span className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
                 {complianceScore}
               </span>
-              <span className="text-[9px] text-muted-foreground uppercase tracking-wider">/ 100</span>
+              <span className="text-[9px] text-slate-400 uppercase font-medium">/ 100</span>
             </div>
           </div>
 
           <AnimatedBar value={complianceScore} delay={0.4} />
-          <p className="mt-2 text-[10px] text-center text-muted-foreground">
+          <p className="mt-2 text-xs font-semibold text-center text-slate-600 dark:text-slate-300">
             {complianceScore >= 85
               ? "Excellent"
               : complianceScore >= 70

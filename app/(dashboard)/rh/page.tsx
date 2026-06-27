@@ -499,50 +499,49 @@ export default async function RhPage() {
             <div className="overflow-x-auto -mx-2 px-2">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-700">
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600">
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
+                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                       Collaborateur
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600 hidden sm:table-cell">
+                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 hidden sm:table-cell">
                       Poste
                     </th>
-                    <th className="pb-3 text-left text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600 hidden sm:table-cell">
+                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 hidden sm:table-cell">
                       Contrat
                     </th>
-                    <th className="pb-3 text-right text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-600">
+                    <th className="py-2.5 px-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                       Statut
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 dark:divide-slate-700/40">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {derniersEmployes?.map((emp) => (
-                    <tr key={emp.id} className="group hover:bg-slate-50/60 dark:hover:bg-[oklch(0.18_0.028_248)] transition-colors">
-                      <td className="py-3.5">
+                    <tr key={emp.id} className="group hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                      <td className="py-3 px-3">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className="h-8 w-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0"
-                            style={{ background: "oklch(0.175 0.045 248)", color: "oklch(0.78 0.13 73)" }}
+                            className="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 bg-slate-900 text-[#FF8200] dark:bg-slate-800"
                           >
                             {emp.full_name?.charAt(0)}
                           </div>
-                          <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">{emp.full_name}</span>
+                          <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">{emp.full_name}</span>
                         </div>
                       </td>
-                      <td className="py-3.5 hidden sm:table-cell">
-                        <p className="text-xs font-medium text-slate-700 dark:text-slate-300">{emp.poste}</p>
-                        <p className="text-[10px] text-slate-600 dark:text-slate-600 font-medium uppercase tracking-wide mt-0.5">
+                      <td className="py-3 px-3 hidden sm:table-cell">
+                        <p className="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200">{emp.poste}</p>
+                        <p className="text-[11px] text-slate-500 font-medium uppercase tracking-wide mt-0.5">
                           {emp.departement ?? "—"}
                         </p>
                       </td>
-                      <td className="py-3.5 hidden sm:table-cell">
-                        <span className="text-[10px] font-semibold uppercase tracking-wide bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-600 px-2 py-0.5 rounded-md">
+                      <td className="py-3 px-3 hidden sm:table-cell">
+                        <span className="text-xs font-semibold uppercase tracking-wide bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md">
                           {emp.type_contrat ?? "—"}
                         </span>
                       </td>
-                      <td className="py-3.5 text-right">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50">
+                      <td className="py-3 px-3 text-right">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50">
                           <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                          <span className="text-[9px] font-bold uppercase text-emerald-700 dark:text-emerald-400 tracking-wide">
+                          <span className="text-xs font-bold uppercase text-emerald-700 dark:text-emerald-400 tracking-wide">
                             {emp.statut}
                           </span>
                         </div>
@@ -601,12 +600,12 @@ function PenaltyRow({
 
 function SectionDivider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="h-1 w-1 rounded-full bg-[oklch(0.78_0.13_73)]" />
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-600 whitespace-nowrap">
+    <div className="flex items-center gap-2.5 pt-2 pb-1">
+      <div className="h-2 w-2 rounded-full bg-[#FF8200]" />
+      <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 whitespace-nowrap">
         {label}
-      </p>
-      <div className="flex-1 h-px bg-gradient-to-r from-slate-200 dark:from-slate-700 to-transparent" />
+      </h2>
+      <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
     </div>
   );
 }
