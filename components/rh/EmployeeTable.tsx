@@ -61,27 +61,18 @@ function getInitials(name: string): string {
 
 type StatutKey = "actif" | "inactif" | "suspendu";
 
-const statutConfig: Record<StatutKey, { label: string; dot: string; bg: string; text: string; oklch: string }> = {
+const statutConfig: Record<StatutKey, { label: string; dot: string }> = {
   actif: {
     label: "Actif",
-    dot: "bg-emerald-500",
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-600",
-    oklch: "oklch(0.55 0.18 155)"
+    dot: "bg-slate-400",
   },
   inactif: {
     label: "Inactif",
-    dot: "bg-slate-400",
-    bg: "bg-slate-400/10",
-    text: "text-slate-600",
-    oklch: "oklch(0.55 0.02 248)"
+    dot: "bg-slate-300",
   },
   suspendu: {
     label: "Suspendu",
-    dot: "bg-amber-500",
-    bg: "bg-amber-500/10",
-    text: "text-amber-600",
-    oklch: "oklch(0.78 0.13 73)"
+    dot: "bg-slate-300",
   },
 };
 
@@ -90,13 +81,9 @@ function StatutBadge({ statut }: { statut: string | null }) {
   const cfg = statutConfig[key] ?? statutConfig.inactif;
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest",
-        cfg.bg,
-        cfg.text
-      )}
+      className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600"
     >
-      <span className={cn("h-1.5 w-1.5 rounded-full shrink-0 animate-pulse", cfg.dot)} />
+      <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", cfg.dot)} />
       {cfg.label}
     </span>
   );
@@ -197,29 +184,29 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
   return (
     <div className="space-y-8">
       {/* Premium Search & Filters Area */}
-      <div className="pro-card p-6 flex flex-col xl:flex-row gap-4 items-center">
+      <div className="p-4 flex flex-col xl:flex-row gap-4 items-center bg-white border border-slate-200 rounded-xl shadow-sm">
         <div className="relative flex-1 group w-full">
-          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#E06D00] transition-colors">
-            <MagnifyingGlass size={20} weight="bold" />
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#FF8200] transition-colors">
+            <MagnifyingGlass size={18} weight="bold" />
           </div>
           <input
             type="text"
-            placeholder="Rechercher un talent (nom, poste, matricule...)"
+            placeholder="Rechercher un collaborateur (nom, poste, matricule...)"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full h-14 pl-14 pr-6 rounded-2xl bg-slate-50/50 border border-transparent font-bold text-sm focus:bg-white focus:border-[#E06D00]/30 focus:ring-4 focus:ring-[#E06D00]/10 transition-all outline-none"
+            className="w-full h-11 pl-11 pr-4 rounded-lg bg-white border border-slate-200 font-medium text-sm focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all outline-none"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
           <div className="relative group">
-             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#E06D00] z-10">
-               <Funnel size={16} weight="bold" />
+             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF8200] z-10">
+               <Funnel size={14} weight="bold" />
              </div>
              <select
               value={filterStatut}
               onChange={(e) => handleStatutChange(e.target.value)}
-              className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border border-transparent font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:bg-white focus:border-[#E06D00]/30 focus:ring-4 focus:ring-[#E06D00]/10 transition-all min-w-[200px]"
+              className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all min-w-[180px]"
             >
               <option value="tous">Tous les statuts</option>
               <option value="actif">Statut : Actif</option>
@@ -231,13 +218,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
 
           {contrats.length > 0 && (
             <div className="relative group">
-               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#E06D00] z-10">
-                 <Briefcase size={16} weight="bold" />
+               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF8200] z-10">
+                 <Briefcase size={14} weight="bold" />
                </div>
                <select
                 value={filterContrat}
                 onChange={(e) => handleContratChange(e.target.value)}
-                className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border border-transparent font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:bg-white focus:border-[#E06D00]/30 focus:ring-4 focus:ring-[#E06D00]/10 transition-all min-w-[200px]"
+                className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all min-w-[180px]"
               >
                 <option value="tous">Tous les contrats</option>
                 {contrats.map((c) => (
@@ -251,45 +238,45 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
       </div>
 
       {/* Main Table Interface */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.04)] overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-50">
+              <tr className="border-b border-slate-200 bg-slate-50/50">
                 <th 
-                  className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 cursor-pointer hover:text-slate-700 transition-colors"
+                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 transition-colors"
                   onClick={() => handleSort("full_name")}
                 >
                   Collaborateur <SortIcon column="full_name" />
                 </th>
                 <th 
-                  className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden lg:table-cell cursor-pointer hover:text-slate-700 transition-colors"
+                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden lg:table-cell cursor-pointer hover:text-slate-800 transition-colors"
                   onClick={() => handleSort("matricule")}
                 >
                   Identification <SortIcon column="matricule" />
                 </th>
                 <th 
-                  className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden md:table-cell cursor-pointer hover:text-slate-700 transition-colors"
+                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden md:table-cell cursor-pointer hover:text-slate-800 transition-colors"
                   onClick={() => handleSort("type_contrat")}
                 >
                   Contrat & Dept <SortIcon column="type_contrat" />
                 </th>
                 <th 
-                  className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hidden xl:table-cell cursor-pointer hover:text-slate-700 transition-colors"
+                  className="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 hidden xl:table-cell cursor-pointer hover:text-slate-800 transition-colors"
                   onClick={() => handleSort("salaire_brut")}
                 >
                   Rémunération <SortIcon column="salaire_brut" />
                 </th>
                 <th 
-                  className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 cursor-pointer hover:text-slate-700 transition-colors"
+                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 transition-colors"
                   onClick={() => handleSort("statut")}
                 >
                   Statut <SortIcon column="statut" />
                 </th>
-                <th className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Action</th>
+                <th className="px-6 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50/50">
+            <tbody className="divide-y divide-slate-100">
               <AnimatePresence mode="popLayout">
                 {employees.map((emp, i) => (
                   <motion.tr
@@ -298,69 +285,53 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.4, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] }}
-                    className="group hover:bg-slate-50/50 transition-all duration-300"
+                    className="group hover:bg-slate-50 transition-colors duration-200"
                   >
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-4">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-[3px] border-white shadow-lg flex items-center justify-center text-white font-black text-xs group-hover:bg-[#E06D00] group-hover:rotate-[6deg] transition-all duration-500">
+                          <div className="w-10 h-10 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-semibold text-xs transition-colors duration-300">
                              {getInitials(emp.full_name)}
                           </div>
                           <div className={cn(
-                            "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white",
+                            "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-white",
                             statutConfig[emp.statut as StatutKey]?.dot || "bg-slate-300"
                           )} />
                         </div>
                         <div className="min-w-0">
                           <Link 
                             href={`/employes/${emp.id}`}
-                            className="text-sm font-black text-slate-900 tracking-tight leading-none hover:text-[#E06D00] transition-colors flex items-center gap-1.5"
+                            className="text-sm font-semibold text-slate-900 tracking-tight leading-none hover:text-[#FF8200] transition-colors"
                           >
                             {emp.full_name}
-                            <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#E06D00]" />
                           </Link>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">{emp.poste}</p>
+                          <p className="text-xs text-slate-500 font-medium mt-1 truncate">{emp.poste}</p>
                         </div>
                       </div>
                     </td>
 
-                    <td className="px-6 py-6 hidden lg:table-cell">
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex items-center gap-2 text-slate-400 font-bold">
-                          <IdentificationCard size={14} />
-                          <span className="text-[11px] font-mono tabular-nums tracking-wider uppercase">{emp.matricule}</span>
+                    <td className="px-6 py-4 hidden lg:table-cell">
+                      <div className="text-xs font-mono text-slate-600">{emp.matricule}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400">{emp.genre || 'N/A'}</div>
+                    </td>
+
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      <div className="flex flex-col gap-1">
+                        <div className="inline-flex items-center px-2 py-0.5 bg-slate-100 rounded text-[10px] font-semibold uppercase tracking-wider text-slate-600 w-max">
+                           {emp.type_contrat || '—'}
                         </div>
-                        <div className="flex items-center gap-2 text-slate-400 font-bold">
-                          <UserCircle size={14} />
-                          <span className="text-[10px] uppercase tracking-widest">{emp.genre || 'N/A'}</span>
-                        </div>
+                        <span className="text-xs text-slate-500">{emp.departement || 'Non affecté'}</span>
                       </div>
                     </td>
 
-                    <td className="px-6 py-6 hidden md:table-cell">
-                      <div className="flex flex-col gap-2">
-                        <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-slate-100 rounded-lg w-max">
-                           <Briefcase size={12} className="text-slate-500" />
-                           <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{emp.type_contrat || '—'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-1 text-slate-400">
-                           <Buildings size={12} />
-                           <span className="text-[10px] font-bold uppercase tracking-widest">{emp.departement || 'Non affecté'}</span>
-                        </div>
+                    <td className="px-6 py-4 text-right hidden xl:table-cell">
+                      <div className="text-sm font-semibold text-slate-900">
+                         {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
                       </div>
+                      <span className="text-[10px] text-slate-400">Brut Mensuel</span>
                     </td>
 
-                    <td className="px-6 py-6 text-right hidden xl:table-cell">
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="flex items-center gap-2 text-slate-900 font-black text-sm tracking-tight">
-                           {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
-                           <CurrencyCircleDollar size={16} className="text-[#E06D00]" />
-                        </div>
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">Salaire Brut Mensuel</span>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-6">
+                    <td className="px-6 py-4">
                       <StatutBadge statut={emp.statut} />
                     </td>
 
@@ -430,11 +401,10 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
           />
         )}
 
-        <div className="bg-slate-50/50 px-8 py-4 border-t border-slate-50 flex items-center justify-between">
+        <div className="bg-slate-50/50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-slate-300" />
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline">
-                {totalCount} Talent{totalCount > 1 ? 's' : ''} indexé{totalCount > 1 ? 's' : ''}
+              <span className="text-xs text-slate-500 font-medium">
+                {totalCount} collaborateur{totalCount > 1 ? 's' : ''} au total
               </span>
            </div>
            
@@ -444,7 +414,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
               onPageChange={handlePageChange}
            />
 
-           <p className="text-[9px] text-slate-300 font-black uppercase tracking-[0.3em] hidden lg:block">Base RH Côte d'Ivoire v4.0</p>
+           <p className="text-[10px] text-slate-400 font-medium hidden lg:block">Base RH Côte d'Ivoire v4.0</p>
         </div>
       </div>
     </div>

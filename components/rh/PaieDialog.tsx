@@ -320,17 +320,17 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>
+      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh] bg-white border-slate-200 p-0">
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-slate-100">
+          <DialogTitle className="text-base font-semibold text-slate-800">
             {isEdit ? `Modifier le bulletin — ${bulletin!.periode}` : "Nouveau bulletin de paie"}
           </DialogTitle>
           {isEdit && (
-            <p className="text-sm text-muted-foreground">{bulletin!.employee_name}</p>
+            <p className="text-xs text-slate-500 mt-0.5">{bulletin!.employee_name}</p>
           )}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-5">
 
           {/* Employé + Période */}
           {!isEdit && (
@@ -354,8 +354,8 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
           )}
 
           {/* ── ÉLÉMENTS DE SALAIRE ─────────────────────────────────── */}
-          <div className="rounded-lg border bg-slate-50 p-3 space-y-2">
-            <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Éléments de salaire
             </p>
 
@@ -511,8 +511,8 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
           </div>
 
           {/* ── HEURES SUPPLÉMENTAIRES ───────────────────────────────── */}
-          <div className="rounded-lg border bg-slate-50 p-3 space-y-2">
-            <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Heures Supplémentaires
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -535,8 +535,8 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
           </div>
 
           {/* ── RETENUES DIVERSES ────────────────────────────────────── */}
-          <div className="rounded-lg border bg-slate-50 p-3 space-y-2">
-            <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">
+          <div className="space-y-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Retenues
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -560,9 +560,9 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
 
           {/* ── APERÇU SAGE ──────────────────────────────────────────── */}
           {preview && (
-            <div className="rounded-lg border bg-slate-50 p-4 space-y-1 text-sm">
+            <div className="rounded border border-slate-200 bg-white p-4 space-y-1 text-sm">
               <div className="flex justify-between items-center mb-3">
-                <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                   Aperçu bulletin — nomenclature Sage
                 </p>
                 <Button
@@ -705,15 +705,19 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
               </div>
 
               {/* NET À PAYER */}
-              <div className="border-t pt-2 mt-2 flex justify-between font-bold text-emerald-700 text-base">
-                <span>NET A PAYER</span>
+              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#FF8200] text-base">
+                <span>NET À PAYER</span>
                 <span>{fmt(preview.net_to_pay)}</span>
               </div>
             </div>
           )}
 
-          <DialogFooter>
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+          <DialogFooter className="pt-2 border-t border-slate-100">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto bg-[#FF8200] hover:bg-[#E06D00] text-white border-0"
+            >
               {isSubmitting ? (isEdit ? "Enregistrement..." : "Création...") : (isEdit ? "Enregistrer" : "Créer le bulletin")}
             </Button>
           </DialogFooter>

@@ -24,25 +24,22 @@ interface Props {
 
 const PRIORITY_STYLES: Record<
   Suggestion["priorite"],
-  { card: string; badge: string; badgeText: string; dot: string }
+  { card: string; badge: string; badgeText: string }
 > = {
   haute: {
-    card: "bg-red-50/40 dark:bg-red-950/20 border-red-200/80 dark:border-red-900/50 hover:border-red-300",
-    badge: "bg-red-100/80 dark:bg-red-900/40 border-red-200 dark:border-red-800",
-    badgeText: "text-red-700 dark:text-red-300",
-    dot: "bg-red-500",
+    card: "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700",
+    badge: "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700",
+    badgeText: "text-slate-600 dark:text-slate-400",
   },
   moyenne: {
-    card: "bg-amber-50/40 dark:bg-amber-950/20 border-amber-200/80 dark:border-amber-900/50 hover:border-amber-300",
-    badge: "bg-amber-100/80 dark:bg-amber-900/40 border-amber-200 dark:border-amber-800",
-    badgeText: "text-amber-700 dark:text-amber-300",
-    dot: "bg-amber-500",
+    card: "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700",
+    badge: "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700",
+    badgeText: "text-slate-600 dark:text-slate-400",
   },
   basse: {
-    card: "bg-slate-50/80 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-800 hover:border-slate-300",
-    badge: "bg-slate-200/60 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600",
-    badgeText: "text-slate-700 dark:text-slate-300",
-    dot: "bg-slate-400",
+    card: "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700",
+    badge: "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700",
+    badgeText: "text-slate-500 dark:text-slate-500",
   },
 };
 
@@ -110,7 +107,7 @@ export function AiSuggestionsWidget({
     <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5 transition-all">
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-amber-50 text-[#E06D00] dark:bg-amber-950/40 dark:text-[#F58220]">
+        <div className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-[#FF8200]/10 text-[#FF8200]">
           <Robot weight="duotone" size={18} />
         </div>
         <div>
@@ -128,7 +125,7 @@ export function AiSuggestionsWidget({
         <div className="flex items-center gap-2.5 py-6 justify-center">
           <SpinnerGap
             size={18}
-            className="animate-spin text-[#E06D00] dark:text-[#F58220]"
+            className="animate-spin text-[#FF8200]"
           />
           <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
             Analyse en cours…
@@ -161,9 +158,8 @@ export function AiSuggestionsWidget({
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-lg leading-none">{s.emoji}</span>
                   <span
-                    className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[10px] font-semibold tracking-wide ${styles.badge} ${styles.badgeText}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[10px] font-semibold tracking-wide ${styles.badge} ${styles.badgeText}`}
                   >
-                    <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${styles.dot}`} />
                     {PRIORITY_LABEL[s.priorite]}
                   </span>
                 </div>
@@ -181,7 +177,7 @@ export function AiSuggestionsWidget({
                 {/* CTA */}
                 <Link
                   href={s.href}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#E06D00] dark:text-[#F58220] hover:underline transition-all self-start group pt-1"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#FF8200] hover:text-[#E06D00] hover:underline transition-all self-start group pt-1"
                 >
                   Agir
                   <ArrowRight

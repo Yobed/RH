@@ -134,11 +134,11 @@
 
   .text-brand-orange,
   .h-orange {
-    color: #E06D00 !important;
+    color: #FF8200 !important;
   }
   .dark .text-brand-orange,
   .dark .h-orange {
-    color: #F58220 !important;
+    color: #FF8200 !important;
   }
 
   th, thead th {
@@ -161,7 +161,7 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: oklch(0.82 0.008 240); border-radius: 99px; }
-  ::-webkit-scrollbar-thumb:hover { background: #E06D00; }
+  ::-webkit-scrollbar-thumb:hover { background: #FF8200; }
   .dark ::-webkit-scrollbar-thumb { background: oklch(0.25 0.025 260); }
   .dark ::-webkit-scrollbar-thumb:hover { background: #F58220; }
 

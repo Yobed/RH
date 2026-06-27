@@ -157,9 +157,9 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="gap-2 border-primary/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 shadow-sm"
+          className="gap-2 border-slate-200 hover:bg-[#FF8200]/10 hover:text-[#FF8200] hover:border-[#FF8200]/30 transition-all duration-300 shadow-sm rounded-xl"
         >
-          <Stethoscope className="h-4 w-4 text-primary" />
+          <Stethoscope className="h-4 w-4 text-[#FF8200]" />
           Déclarer un arrêt
         </Button>
       </DialogTrigger>
@@ -173,15 +173,15 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
           className="flex flex-col min-h-0"
         >
           {/* En-tête fixe */}
-          <div className="bg-primary/5 px-6 py-5 border-b border-border/50 rounded-t-2xl shrink-0">
+          <div className="bg-[#FF8200]/5 px-6 py-5 border-b border-slate-100 rounded-t-2xl shrink-0">
             <DialogHeader>
-              <DialogTitle className="text-xl font-heading flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Stethoscope className="h-5 w-5 text-primary" />
+              <DialogTitle className="text-xl font-bold text-slate-900 flex items-center gap-3">
+                <div className="p-2 bg-[#FF8200]/10 rounded-xl">
+                  <Stethoscope className="h-5 w-5 text-[#FF8200]" />
                 </div>
                 Déclarer un arrêt maladie
               </DialogTitle>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Enregistrez une absence médicale pour mettre à jour le planning et la paie.
               </p>
             </DialogHeader>
@@ -193,8 +193,8 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
 
               {/* Employé */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                <Label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-slate-400" />
                   Sélection de l&apos;employé
                 </Label>
                 <Controller
@@ -202,16 +202,16 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   name="employee_id"
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-11 bg-muted/30 border-muted-foreground/10 hover:border-primary/30 transition-colors">
+                      <SelectTrigger className="h-11 bg-white border-slate-200 rounded-xl hover:border-[#FF8200]/50 focus:ring-2 focus:ring-[#FF8200] transition-colors">
                         <SelectValue placeholder="Choisir un collaborateur..." />
                       </SelectTrigger>
                       {/* bg-white explicite pour éviter la transparence */}
-                      <SelectContent className="z-[9999] bg-white border border-slate-200 shadow-xl">
+                      <SelectContent className="z-[9999] bg-white border border-slate-200 shadow-xl rounded-xl">
                         {employees.map((e) => (
                           <SelectItem
                             key={e.id}
                             value={e.id}
-                            className="cursor-pointer hover:bg-slate-50"
+                            className="cursor-pointer hover:bg-slate-50 rounded-lg"
                           >
                             {e.full_name ?? 'Employé sans nom'}
                           </SelectItem>
@@ -221,7 +221,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   )}
                 />
                 {errors.employee_id && (
-                  <p className="text-xs text-destructive font-medium flex items-center gap-1">
+                  <p className="text-xs text-red-500 font-medium flex items-center gap-1">
                     <AlertCircle className="h-3 w-3" />
                     {errors.employee_id.message}
                   </p>
@@ -231,33 +231,33 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
               {/* Dates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-slate-400" />
                     Date de début
                   </Label>
                   <Input
                     type="date"
-                    className="h-11 bg-muted/30 border-muted-foreground/10"
+                    className="h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-[#FF8200]"
                     {...register('date_debut')}
                     onChange={(e) => handleDateChange('date_debut', e.target.value)}
                   />
                   {errors.date_debut && (
-                    <p className="text-xs text-destructive">{errors.date_debut.message}</p>
+                    <p className="text-xs text-red-500">{errors.date_debut.message}</p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <Label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-slate-400" />
                     Date de fin
                   </Label>
                   <Input
                     type="date"
-                    className="h-11 bg-muted/30 border-muted-foreground/10"
+                    className="h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-[#FF8200]"
                     {...register('date_fin')}
                     onChange={(e) => handleDateChange('date_fin', e.target.value)}
                   />
                   {errors.date_fin && (
-                    <p className="text-xs text-destructive">{errors.date_fin.message}</p>
+                    <p className="text-xs text-red-500">{errors.date_fin.message}</p>
                   )}
                 </div>
                 </div>
@@ -271,13 +271,13 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3"
+                      className="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex items-start gap-3"
                     >
-                      <div className="p-2 bg-blue-100 rounded-lg shrink-0">
+                      <div className="p-2 bg-blue-100/80 rounded-lg shrink-0">
                         <Stethoscope className="h-4 w-4 text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-blue-800">Accident de Travail (AT)</h4>
+                        <h4 className="text-sm font-semibold text-blue-900">Accident de Travail (AT)</h4>
                         <p className="text-xs text-blue-700 mt-0.5">
                           En cas d&apos;accident professionnel, le maintien de salaire est de <span className="font-bold">100%</span> (sous réserve de déclaration à la CNPS). 
                           L&apos;impact sur les conges est neutralisé pendant 12 mois.
@@ -293,13 +293,13 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3"
+                      className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 flex items-start gap-3"
                     >
-                      <div className="p-2 bg-emerald-100 rounded-lg shrink-0">
+                      <div className="p-2 bg-emerald-100/80 rounded-lg shrink-0">
                         <CheckCircle className="h-4 w-4 text-emerald-600" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-emerald-800">Absence justifiée (CCI Art. 42)</h4>
+                        <h4 className="text-sm font-semibold text-emerald-900">Absence justifiée (CCI Art. 42)</h4>
                         <p className="text-xs text-emerald-700 mt-1">
                           Certificat médical fourni — absence justifiée. Aucune retenue salariale ne sera appliquée pour ces{' '}
                           <span className="font-bold">{nbJours} jour{nbJours > 1 ? 's' : ''}</span> (CCI Art. 42).
@@ -315,13 +315,13 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3"
+                      className="bg-amber-50/70 border border-amber-200 rounded-xl p-4 flex items-start gap-3"
                     >
-                      <div className="p-2 bg-amber-100 rounded-lg shrink-0">
+                      <div className="p-2 bg-amber-100/80 rounded-lg shrink-0">
                         <TrendingDown className="h-4 w-4 text-amber-600" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-semibold text-amber-800">Absence non justifiée</h4>
+                        <h4 className="text-sm font-semibold text-amber-900">Absence non justifiée</h4>
                         <p className="text-xs text-amber-700 mt-0.5">
                           Sans certificat médical, l&apos;absence de{' '}
                           <span className="font-bold">{nbJours} jour{nbJours > 1 ? 's' : ''}</span>{' '}
@@ -334,13 +334,13 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                             const daily = base / 26;
                             const impact = Math.round(nbJours * daily);
                             return (
-                              <p className="text-[10px] text-amber-600 mt-1 font-medium italic">
+                              <p className="text-[10px] text-amber-700 mt-1 font-medium italic">
                                 Impact estimé : -{new Intl.NumberFormat('fr-CI').format(impact)} FCFA.
                               </p>
                             );
                           }
                           return (
-                            <p className="text-[10px] text-amber-600 mt-1 font-medium italic">
+                            <p className="text-[10px] text-amber-700 mt-1 font-medium italic">
                               Impact estimé : -{new Intl.NumberFormat('fr-CI').format(Math.round(nbJours * 2500))} FCFA (indicatif).
                             </p>
                           );
@@ -352,7 +352,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
               </AnimatePresence>
 
               {/* Accident de travail */}
-              <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-xl border border-border/50">
+              <div className="flex items-center gap-3 p-4 bg-slate-50/60 rounded-xl border border-slate-200">
                 <Controller
                   control={control}
                   name="est_at"
@@ -361,17 +361,17 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       id="est_at"
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="h-5 w-5 rounded-md border-primary/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      className="h-5 w-5 rounded-md border-slate-300 data-[state=checked]:bg-[#FF8200] data-[state=checked]:border-[#FF8200]"
                     />
                   )}
                 />
                 <div className="flex-1">
-                  <Label htmlFor="est_at" className="cursor-pointer font-medium text-sm flex items-center gap-2">
+                  <Label htmlFor="est_at" className="cursor-pointer font-medium text-sm text-slate-800 flex items-center gap-2">
                     Accident de travail (AT)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                          <Info className="h-3.5 w-3.5 text-slate-400 cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-[200px] bg-white border border-slate-200 text-slate-800">
                           L&apos;AT nécessite une déclaration CNPS sous 48h.
@@ -379,13 +379,13 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       </Tooltip>
                     </TooltipProvider>
                   </Label>
-                  <p className="text-[10px] text-muted-foreground">Cochez si l&apos;arrêt est d&apos;origine professionnelle.</p>
+                  <p className="text-[10px] text-slate-500">Cochez si l&apos;arrêt est d&apos;origine professionnelle.</p>
                 </div>
               </div>
 
               {/* Justificatif */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium">
+                <Label className="text-sm font-medium text-slate-700">
                   Justificatif médical
                   <span className="text-slate-400 font-normal ml-1">(optionnel — neutralise l&apos;impact salarial)</span>
                 </Label>
@@ -393,10 +393,10 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileChange}
-                  className="cursor-pointer file:cursor-pointer file:bg-primary/10 file:text-primary file:border-none file:rounded-md file:px-3 file:py-1 file:mr-4 h-12 bg-muted/10 border-dashed border-2 hover:border-primary/30 transition-all pt-2.5"
+                  className="cursor-pointer file:cursor-pointer file:bg-[#FF8200]/10 file:text-[#FF8200] file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-4 h-12 bg-white border-dashed border-2 border-slate-200 hover:border-[#FF8200]/40 transition-all pt-2.5 rounded-xl"
                 />
                 {fileError ? (
-                  <p className="text-xs text-destructive flex items-center gap-1 font-medium">
+                  <p className="text-xs text-red-500 flex items-center gap-1 font-medium">
                     <AlertCircle className="h-3 w-3" />
                     {fileError}
                   </p>
@@ -406,7 +406,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                     {selectedFile.name}
                   </p>
                 ) : (
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[10px] text-slate-500">
                     PDF, JPG ou PNG · max 10 Mo
                   </p>
                 )}
@@ -414,10 +414,10 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
 
               {/* Commentaire */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Observations</Label>
+                <Label className="text-sm font-medium text-slate-700">Observations</Label>
                 <Textarea
                   rows={2}
-                  className="bg-muted/30 border-muted-foreground/10 focus:border-primary/50 transition-all resize-none"
+                  className="bg-white border-slate-200 focus-visible:ring-[#FF8200] rounded-xl transition-all resize-none"
                   placeholder="Détails supplémentaires sur la nature de l'arrêt..."
                   {...register('commentaire')}
                 />
@@ -426,11 +426,11 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
           </div>
 
           {/* Pied fixe */}
-          <div className="flex justify-end gap-3 px-6 py-4 border-t border-border/50 bg-muted/5 rounded-b-2xl shrink-0">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/50 rounded-b-2xl shrink-0">
             <Button
               type="button"
               variant="ghost"
-              className="hover:bg-muted/50 rounded-xl px-6"
+              className="hover:bg-slate-200/50 text-slate-700 rounded-xl px-6"
               onClick={() => { setOpen(false); reset(); setSelectedFile(null); }}
               disabled={loading}
             >
@@ -439,7 +439,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
             <Button
               type="submit"
               form="arret-form"
-              className="bg-primary hover:bg-primary/90 rounded-xl px-8 shadow-lg shadow-primary/20"
+              className="bg-[#FF8200] hover:bg-[#E06D00] text-white font-semibold rounded-xl px-8 shadow-md shadow-[#FF8200]/20"
               disabled={loading || !!fileError}
             >
               {loading ? (

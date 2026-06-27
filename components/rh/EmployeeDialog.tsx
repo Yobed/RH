@@ -42,7 +42,7 @@ const FAMILLE_LABELS: Record<SalaryGridRow["famille"], string> = {
 };
 
 const selectClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50";
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200] disabled:cursor-not-allowed disabled:opacity-50";
 
 const schema = z
   .object({
@@ -345,7 +345,7 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
             employee ? (
               <Button variant="ghost" size="sm" aria-label="Modifier" />
             ) : (
-              <Button />
+              <Button className="bg-[#FF8200] hover:bg-[#E06D00] text-white border-0" />
             )
           }
         >
@@ -360,16 +360,16 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>{employee ? "Modifier l'employé" : "Nouvel employé"}</DialogTitle>
+      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh] bg-white border-slate-200 p-0">
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-slate-100">
+          <DialogTitle className="text-base font-semibold text-slate-800">{employee ? "Modifier l'employé" : "Nouvel employé"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-5">
 
           {/* ── IDENTITÉ ─────────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Identité
             </p>
 
@@ -479,7 +479,7 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
 
           {/* ── PIÈCE D'IDENTITÉ & CNPS ──────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Pièce d&apos;identité & Sécurité sociale
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -500,7 +500,7 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
 
           {/* ── COORDONNÉES ──────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Coordonnées
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -555,7 +555,7 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
 
           {/* ── POSTE & CONTRAT ──────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Poste & Contrat
             </p>
 
@@ -701,9 +701,9 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
 
           {/* ── PRIMES & INDEMNITÉS ──────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
               Primes & Indemnités habituelles
-              <span className="ml-2 font-normal normal-case text-muted-foreground/70">
+              <span className="ml-2 font-normal normal-case text-slate-400/70">
                 (reprises automatiquement à chaque bulletin)
               </span>
             </p>
@@ -765,7 +765,7 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
                 <input
                   type="checkbox"
                   {...register("consent_donnees_personnelles")}
-                  className="h-4 w-4 mt-0.5 rounded border-slate-300"
+                  className="h-4 w-4 mt-0.5 rounded border-slate-300 accent-[#FF8200] text-[#FF8200] focus:ring-[#FF8200]"
                 />
                 <span className="text-xs text-slate-700 leading-relaxed">
                   Le salarié consent au traitement de ses données personnelles
@@ -779,7 +779,7 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
           {/* ── MOTIF MODIFICATION (édition uniquement) ──────────── */}
           {employee && (
             <section className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
                 Motif de modification
               </p>
               <div>
@@ -796,8 +796,12 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
             </section>
           )}
 
-          <DialogFooter>
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+          <DialogFooter className="pt-2 border-t border-slate-100">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto bg-[#FF8200] hover:bg-[#E06D00] text-white border-0"
+            >
               {isSubmitting
                 ? "Enregistrement..."
                 : employee

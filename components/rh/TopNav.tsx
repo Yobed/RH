@@ -298,7 +298,7 @@ function LeafLink({ leaf, accent, onNavigate }: { leaf: NavLeaf; accent: string;
       style={{ "--ac": accent } as React.CSSProperties}
       className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 outline-none transition-colors hover:bg-slate-100/80 focus-visible:ring-2 focus-visible:ring-amber-500/60 dark:hover:bg-white/5"
     >
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100/90 text-slate-600 transition-colors group-hover/leaf:bg-amber-500/10 group-hover/leaf:text-[#E06D00] dark:bg-white/10 dark:text-slate-300 dark:group-hover/leaf:text-[#F58220]">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover/leaf:bg-[#FF8200]/10 group-hover/leaf:text-[#FF8200]">
         <Icon weight="duotone" className="h-4 w-4" />
       </span>
       <span className="min-w-0">
@@ -334,10 +334,10 @@ function DomainItem({
   const hasMenu = !!domain.columns;
 
   const triggerCls = cn(
-    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#E06D00]",
+    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200]/60",
     active || open
-      ? "bg-amber-500/10 text-[#E06D00] font-semibold dark:bg-amber-500/20 dark:text-[#F58220]"
-      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+      ? "bg-[#FF8200]/10 text-[#FF8200] font-semibold"
+      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
   );
 
   return (
@@ -417,7 +417,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-amber-500 bg-gradient-to-br from-[#E06D00] to-[#F58220]"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#FF8200]/50 bg-gradient-to-br from-[#FF8200] to-[#E06D00]"
         aria-label="Menu utilisateur"
         aria-expanded={open}
       >
@@ -435,7 +435,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#E06D00] to-[#F58220]"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#FF8200] to-[#E06D00]"
               >
                 {initials}
               </span>
@@ -506,7 +506,7 @@ export function TopNav({
 
         {/* Logo */}
         <Link href="/rh" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#E06D00] to-[#F58220] text-white shadow-sm transition-transform hover:scale-105">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#FF8200] to-[#E06D00] text-white shadow-sm transition-transform hover:scale-105">
             <Buildings weight="fill" className="h-4 w-4" />
           </span>
           <span className="hidden flex-col leading-none xl:flex">

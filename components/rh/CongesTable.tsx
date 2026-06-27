@@ -6,8 +6,8 @@ import { CaretUp, CaretDown, CaretLeft, CaretRight } from "@phosphor-icons/react
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { Calendar as CalendarIcon, Paperclip } from "@phosphor-icons/react";
+import { cn } from "@/lib/utils";
 
 const TYPE_LABELS: Record<string, string> = {
   annuel: "Congé annuel",
@@ -19,11 +19,25 @@ const TYPE_LABELS: Record<string, string> = {
   exceptionnel: "Exceptionnel",
 };
 
-const STATUT_LABEL: Record<string, string> = {
-  en_attente: "En attente",
-  valide_manager: "Validé manager",
-  approuve: "Approuvé",
-  refuse: "Refusé",
+type StatutKey = "en_attente" | "valide_manager" | "approuve" | "refuse";
+
+const statutConfig: Record<StatutKey, { label: string; dot: string }> = {
+  en_attente: {
+    label: "En attente",
+    dot: "bg-slate-400",
+  },
+  valide_manager: {
+    label: "Validé manager",
+    dot: "bg-slate-400",
+  },
+  approuve: {
+    label: "Approuvé",
+    dot: "bg-slate-400",
+  },
+  refuse: {
+    label: "Refusé",
+    dot: "bg-slate-300",
+  },
 };
 
 function formatDate(d: string) {
@@ -48,23 +62,41 @@ function formatDate(d: string) {
   });
 }
 
-const StatutBadge = ({ statut }: { statut: string }) => (
-  <StatusBadge status={statut} label={STATUT_LABEL[statut] ?? statut} />
-);
+function StatutBadge({ statut }: { statut: string }) {
+  const key = (statut ?? "en_attente") as StatutKey;
+  const cfg = statutConfig[key] ?? statutConfig.en_attente;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600"
+    >
+      <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", cfg.dot)} />
+      {cfg.label}
+    </span>
+  );
+}
 
 const ArretBadge = ({ estAt, estJustifie }: { estAt?: boolean; estJustifie?: boolean }) => {
   if (estAt) {
     return (
-      <span className="inline-flex items-center rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-medium text-orange-700">AT</span>
+      <span className="inline-flex items-center rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+        <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-[#FF8200] mr-1.5" />
+        Accident Travail
+      </span>
     );
   }
   if (estJustifie) {
     return (
-      <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">Justifié</span>
+      <span className="inline-flex items-center rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+        <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-slate-400 mr-1.5" />
+        Justifié
+      </span>
     );
   }
   return (
-    <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-600">Non justifié</span>
+    <span className="inline-flex items-center rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+      <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-slate-300 mr-1.5" />
+      Non justifié
+    </span>
   );
 };
 

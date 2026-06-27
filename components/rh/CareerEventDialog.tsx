@@ -76,22 +76,22 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm">
-            <PlusIcon className="h-4 w-4 mr-2" />
+          <Button variant="outline" size="sm" className="border-slate-200 hover:bg-[#FF8200]/10 hover:text-[#FF8200] hover:border-[#FF8200]/30 transition-all">
+            <PlusIcon className="h-4 w-4 mr-2 text-[#FF8200]" />
             Ajouter un événement
           </Button>
         }
       />
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] rounded-2xl bg-white border-slate-200 shadow-2xl">
         <DialogHeader>
-          <DialogTitle>Nouvel événement de carrière</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-slate-900">Nouvel événement de carrière</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Type d'événement</label>
+            <label className="text-sm font-medium text-slate-700">Type d'événement</label>
             <select
               {...register("event_type")}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-[#FF8200] focus:outline-none transition-all"
             >
               <option value="promotion">Promotion</option>
               <option value="mutation">Mutation</option>
@@ -103,29 +103,31 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium">Date</label>
-            <Input type="date" {...register("date_event")} />
+            <label className="text-sm font-medium text-slate-700">Date</label>
+            <Input type="date" {...register("date_event")} className="rounded-xl focus-visible:ring-[#FF8200]" />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
+            <label className="text-sm font-medium text-slate-700">Description</label>
             <Input 
               {...register("description")} 
               placeholder="Ex: Passage au grade de Senior Manager" 
+              className="rounded-xl focus-visible:ring-[#FF8200]"
             />
             {errors.description && <p className="text-xs text-red-500">{errors.description.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-muted-foreground">Détails ou modifications (optionnel)</label>
+            <label className="text-sm font-medium text-slate-500">Détails ou modifications (optionnel)</label>
             <Input 
               {...register("details")} 
               placeholder="Ex: Agence d'Abobo, +50k FCFA..." 
+              className="rounded-xl focus-visible:ring-[#FF8200]"
             />
           </div>
 
           <div className="pt-4 flex justify-end">
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-semibold shadow-md shadow-[#FF8200]/20 px-6">
               {isSubmitting ? "Enregistrement..." : "Enregistrer l'événement"}
             </Button>
           </div>

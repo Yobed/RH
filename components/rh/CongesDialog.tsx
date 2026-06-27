@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -234,40 +235,49 @@ export function CongesDialog({ employees }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Nouvelle demande
+        <Button className="inline-flex items-center justify-center rounded-2xl bg-[#FF8200] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#FF8200]/20 hover:bg-[#E06D00] transition-all duration-200 gap-2">
+          <PlusIcon className="h-4 w-4" />
+          <span>Nouvelle demande</span>
         </Button>
       </DialogTrigger>
 
-      {/* flex flex-col + pas d'overflow-hidden — évite de clipper les dropdowns */}
-      <DialogContent className="sm:max-w-lg p-0 flex flex-col max-h-[90vh] bg-white border border-slate-200 rounded-2xl shadow-2xl">
-        {/* En-tête fixe */}
-        <div className="px-6 py-5 border-b border-slate-100 shrink-0">
-          <DialogHeader>
-            <DialogTitle>Nouvelle demande de congé</DialogTitle>
-            <p className="text-xs text-slate-500 mt-0.5">CT-CI 2026 — droit : 2,2 j/mois (26,4 j/an)</p>
+      <DialogContent className="sm:max-w-xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
+        <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] relative">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF8200]" />
+
+          {/* En-tête fixe */}
+          <DialogHeader className="p-8 pb-4 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-[#FF8200]/10 text-[#FF8200]">
+                <PlusIcon className="h-6 w-6" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-bold tracking-tight text-slate-900">
+                  Nouvelle demande de congé
+                </DialogTitle>
+                <p className="text-xs text-slate-500 mt-1">
+                  CT-CI 2026 — droit : 2,2 j/mois (26,4 j/an)
+                </p>
+              </div>
+            </div>
           </DialogHeader>
-        </div>
 
-        {/* Corps scrollable */}
-        <div className="overflow-y-auto flex-1 px-6 py-5">
-          <form id="conges-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
+          {/* Corps scrollable */}
+          <form id="conges-form" onSubmit={handleSubmit(onSubmit)} className="px-8 pb-8 flex-1 overflow-y-auto space-y-6 scrollbar-hide">
             {/* Employé */}
-            <div className="space-y-1">
-              <Label>Employé *</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">Employé *</Label>
               <Controller
                 control={control}
                 name="employee_id"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
                       <SelectValue placeholder="Sélectionner un employé" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-slate-200 shadow-xl z-[9999]">
+                    <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
                       {employees.map((e) => (
-                        <SelectItem key={e.id} value={e.id} className="cursor-pointer hover:bg-slate-50">
+                        <SelectItem key={e.id} value={e.id} className="cursor-pointer hover:bg-slate-50 rounded-lg">
                           {e.full_name} {e.matricule ? `(${e.matricule})` : ""}
                         </SelectItem>
                       ))}
@@ -281,19 +291,19 @@ export function CongesDialog({ employees }: Props) {
             </div>
 
             {/* Type */}
-            <div className="space-y-1">
-              <Label>Type de congé *</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">Type de congé *</Label>
               <Controller
                 control={control}
                 name="type"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-slate-200 shadow-xl z-[9999]">
+                    <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
                       {Object.entries(TYPE_LABELS).map(([val, label]) => (
-                        <SelectItem key={val} value={val} className="cursor-pointer hover:bg-slate-50">
+                        <SelectItem key={val} value={val} className="cursor-pointer hover:bg-slate-50 rounded-lg">
                           {label}
                         </SelectItem>
                       ))}
@@ -305,118 +315,118 @@ export function CongesDialog({ employees }: Props) {
 
             {/* Impact salaire par type */}
             {impact && (
-              <div className={`rounded-lg border p-3 flex gap-2.5 ${impact.color}`}>
-                <Info className="h-4 w-4 mt-0.5 shrink-0 opacity-70" />
+              <div className={`rounded-xl border p-4 flex gap-3 ${impact.color}`}>
+                <Info className="h-5 w-5 mt-0.5 shrink-0 opacity-80" />
                 <div>
-                  <p className="text-xs font-semibold">{impact.label}</p>
-                  <p className="text-xs mt-0.5 opacity-80">{impact.detail}</p>
+                  <p className="text-xs font-bold">{impact.label}</p>
+                  <p className="text-xs mt-0.5 leading-relaxed opacity-90">{impact.detail}</p>
                 </div>
               </div>
             )}
 
             {/* Solde congés annuels */}
             {typeConge === "annuel" && employeeId && (
-              <div className="rounded-lg border bg-emerald-50 border-emerald-200 p-3 text-sm">
+              <div className="rounded-xl border bg-emerald-50/70 border-emerald-200 p-4 text-sm">
                 {loadingSolde ? (
-                  <p className="text-emerald-700 text-xs">Chargement du solde…</p>
+                  <p className="text-emerald-700 text-xs font-medium">Chargement du solde…</p>
                 ) : solde ? (
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div>
-                      <p className="text-[10px] uppercase text-emerald-600 font-semibold tracking-wider">Acquis {solde.annee}</p>
-                      <p className="text-base font-bold text-emerald-700">{solde.jours_acquis.toFixed(1)} j</p>
+                      <p className="text-[10px] uppercase text-emerald-600 font-bold tracking-wider">Acquis {solde.annee}</p>
+                      <p className="text-lg font-bold text-emerald-700">{solde.jours_acquis.toFixed(1)} j</p>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase text-emerald-600 font-semibold tracking-wider">Pris</p>
-                      <p className="text-base font-bold text-emerald-700">{solde.jours_pris.toFixed(1)} j</p>
+                      <p className="text-[10px] uppercase text-emerald-600 font-bold tracking-wider">Pris</p>
+                      <p className="text-lg font-bold text-emerald-700">{solde.jours_pris.toFixed(1)} j</p>
                     </div>
                     <div>
-                      <p className="text-[10px] uppercase text-emerald-700 font-semibold tracking-wider">Solde</p>
-                      <p className={`text-base font-bold ${solde.solde <= 0 ? "text-red-600" : "text-emerald-800"}`}>
+                      <p className="text-[10px] uppercase text-emerald-700 font-bold tracking-wider">Solde</p>
+                      <p className={`text-lg font-bold ${solde.solde <= 0 ? "text-red-600" : "text-emerald-800"}`}>
                         {solde.solde.toFixed(1)} j
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-amber-700 text-xs">Solde indisponible</p>
+                  <p className="text-amber-700 text-xs font-medium">Solde indisponible</p>
                 )}
               </div>
             )}
 
             {/* Dates */}
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <Label className="text-sm font-medium">Date de départ *</Label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-semibold text-slate-700">Date de départ *</Label>
                 <Input
                   type="date"
                   {...register("date_debut")}
-                  className="mt-1"
+                  className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]"
                   onChange={(e) => {
                     register("date_debut").onChange(e);
                     calcJours(e.target.value, dateFin);
                   }}
                 />
                 {errors.date_debut && (
-                  <p className="mt-1 text-xs text-red-500">{errors.date_debut.message}</p>
+                  <p className="mt-1 text-xs text-red-500 font-medium">{errors.date_debut.message}</p>
                 )}
               </div>
-              <div>
-                <Label className="text-sm font-medium">Date de fin *</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-semibold text-slate-700">Date de fin *</Label>
                 <Input
                   type="date"
                   {...register("date_fin")}
-                  className="mt-1"
+                  className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]"
                   onChange={(e) => {
                     register("date_fin").onChange(e);
                     calcJours(dateDebut, e.target.value);
                   }}
                 />
                 {errors.date_fin && (
-                  <p className="mt-1 text-xs text-red-500">{errors.date_fin.message}</p>
+                  <p className="mt-1 text-xs text-red-500 font-medium">{errors.date_fin.message}</p>
                 )}
               </div>
             </div>
 
             {/* Nb jours + reprise */}
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <Label className="text-sm font-medium">Nombre de jours *</Label>
-                <Input type="number" min="0.5" step="0.5" {...register("nb_jours")} className="mt-1" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label className="text-sm font-semibold text-slate-700">Nombre de jours *</Label>
+                <Input type="number" min="0.5" step="0.5" {...register("nb_jours")} className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]" />
                 {errors.nb_jours && (
-                  <p className="mt-1 text-xs text-red-500">{errors.nb_jours.message}</p>
+                  <p className="mt-1 text-xs text-red-500 font-medium">{errors.nb_jours.message}</p>
                 )}
               </div>
-              <div>
-                <Label className="text-sm font-medium">Date de reprise</Label>
-                <Input type="date" {...register("date_reprise")} className="mt-1" />
-                <p className="mt-0.5 text-[10px] text-muted-foreground">Auto-calculée — modifiable</p>
+              <div className="space-y-1.5">
+                <Label className="text-sm font-semibold text-slate-700">Date de reprise</Label>
+                <Input type="date" {...register("date_reprise")} className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]" />
+                <p className="mt-0.5 text-[10px] text-slate-400 font-medium">Auto-calculée — modifiable</p>
               </div>
             </div>
 
             {/* Fractionné */}
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" {...register("conge_fractionne")} className="h-4 w-4 rounded border-gray-300" />
-              <span className="text-sm">
+            <label className="flex items-center gap-3 cursor-pointer select-none py-1">
+              <input type="checkbox" {...register("conge_fractionne")} className="h-4 w-4 rounded border-slate-300 accent-[#FF8200] focus:ring-[#FF8200]" />
+              <span className="text-sm font-medium text-slate-700">
                 Congé fractionné
-                <span className="ml-1 text-[10px] text-muted-foreground font-normal">(Art. 25 CT-CI)</span>
+                <span className="ml-1.5 text-xs text-slate-400 font-normal">(Art. 25 CT-CI)</span>
               </span>
             </label>
 
             {/* Remplaçant */}
-            <div className="space-y-1">
-              <Label>Remplaçant désigné</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-semibold text-slate-700">Remplaçant désigné</Label>
               <Controller
                 control={control}
                 name="remplacant_id"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                    <SelectTrigger className="mt-1">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
                       <SelectValue placeholder="— Aucun / À définir —" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-slate-200 shadow-xl z-[9999]">
+                    <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
                       {employees
                         .filter((e) => e.id !== employeeId)
                         .map((e) => (
-                          <SelectItem key={e.id} value={e.id} className="cursor-pointer hover:bg-slate-50">
+                          <SelectItem key={e.id} value={e.id} className="cursor-pointer hover:bg-slate-50 rounded-lg">
                             {e.full_name} {e.matricule ? `(${e.matricule})` : ""}
                           </SelectItem>
                         ))}
@@ -429,9 +439,9 @@ export function CongesDialog({ employees }: Props) {
             {/* Justificatif — upload fichier */}
             {needsJustificatif && (
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium">
+                <Label className="text-sm font-semibold text-slate-700">
                   Pièce justificative
-                  <span className="ml-1.5 text-[10px] text-amber-600 font-normal">
+                  <span className="ml-1.5 text-xs text-amber-600 font-normal">
                     {typeConge === "maladie" ? "(certificat médical — neutralise la retenue salariale)" : "(pièce obligatoire)"}
                   </span>
                 </Label>
@@ -440,49 +450,54 @@ export function CongesDialog({ employees }: Props) {
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileChange}
-                  className="cursor-pointer file:cursor-pointer file:bg-primary/10 file:text-primary file:border-none file:rounded-md file:px-3 file:py-1 file:mr-3 h-11 bg-muted/10 border-dashed border-2 hover:border-primary/30 transition-all pt-2"
+                  className="cursor-pointer file:cursor-pointer file:bg-[#FF8200]/10 file:text-[#FF8200] file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-3 h-12 bg-slate-50/50 border-dashed border-2 border-slate-200 hover:border-[#FF8200]/40 transition-all pt-2 rounded-xl"
                 />
                 {fileError ? (
-                  <p className="text-xs text-red-600 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />{fileError}
+                  <p className="text-xs text-red-600 font-medium flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />{fileError}
                   </p>
                 ) : selectedFile ? (
-                  <p className="text-xs text-emerald-600 flex items-center gap-1">
-                    <CheckCircle className="h-3 w-3" />{selectedFile.name}
+                  <p className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                    <CheckCircle className="h-3.5 w-3.5" />{selectedFile.name}
                   </p>
                 ) : (
-                  <p className="text-[10px] text-slate-400 flex items-center gap-1">
-                    <Paperclip className="h-3 w-3" />PDF, JPG ou PNG · max 10 Mo
+                  <p className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <Paperclip className="h-3.5 w-3.5" />PDF, JPG ou PNG · max 10 Mo
                   </p>
                 )}
               </div>
             )}
 
             {/* Commentaire */}
-            <div>
-              <Label className="text-sm font-medium">Commentaire</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm font-semibold text-slate-700">Commentaire</Label>
               <Textarea
                 {...register("commentaire")}
                 placeholder="Motif ou précision..."
-                className="mt-1 min-h-[60px] resize-none"
+                className="min-h-[80px] resize-none rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]"
               />
             </div>
-          </form>
-        </div>
 
-        {/* Pied fixe */}
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-100 shrink-0">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => { setOpen(false); reset(); setSolde(null); }}
-            disabled={isSubmitting}
-          >
-            Annuler
-          </Button>
-          <Button type="submit" form="conges-form" disabled={isSubmitting}>
-            {isSubmitting ? "Enregistrement…" : "Enregistrer la demande"}
-          </Button>
+            <DialogFooter className="pt-4 sticky bottom-0 bg-white -mx-8 px-8 mt-6 border-t border-slate-100 flex items-center justify-end gap-3">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => { setOpen(false); reset(); setSolde(null); }}
+                disabled={isSubmitting}
+                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              >
+                Annuler
+              </Button>
+              <Button 
+                type="submit" 
+                form="conges-form" 
+                disabled={isSubmitting} 
+                className="h-11 rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-bold px-6 shadow-lg shadow-[#FF8200]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+              >
+                {isSubmitting ? "Enregistrement…" : "Enregistrer la demande"}
+              </Button>
+            </DialogFooter>
+          </form>
         </div>
       </DialogContent>
     </Dialog>

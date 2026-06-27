@@ -26,10 +26,10 @@ interface ComplianceAlertListProps {
 }
 
 const typeConfig = {
-  CONTRACT: { icon: FileText, className: "bg-orange-50 text-[#E06D00] dark:bg-orange-950/40 dark:text-[#F58220]" },
-  TRIAL: { icon: Clock, className: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400" },
-  MEDICAL: { icon: Pulse, className: "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400" },
-  DOCUMENT: { icon: ShieldWarning, className: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400" },
+  CONTRACT: { icon: FileText, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
+  TRIAL: { icon: Clock, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
+  MEDICAL: { icon: Pulse, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
+  DOCUMENT: { icon: ShieldWarning, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
 };
 
 export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
@@ -39,7 +39,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
     <div className="rounded-xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm overflow-hidden flex flex-col h-full">
       <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#E06D00]/10 text-[#E06D00] dark:bg-[#F58220]/10 dark:text-[#F58220] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60">
             <Warning weight="bold" className="h-4 w-4" />
           </div>
           <div>
@@ -72,7 +72,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
                 <div className="min-w-0">
                   <Link 
                     href={`/employes/${alert.id}`} 
-                    className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate block hover:text-[#E06D00] dark:hover:text-[#F58220] transition-colors"
+                    className="text-sm font-semibold text-slate-900 truncate block hover:text-[#FF8200] transition-colors"
                   >
                     {alert.employeeName}
                   </Link>
@@ -94,14 +94,13 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
               
               <div className="flex items-center gap-3 shrink-0">
                 {alert.urgency === "high" && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50">
-                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-rose-700 dark:text-rose-300 uppercase tracking-wide">Urgent</span>
-                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                    Urgent
+                  </span>
                 )}
                 <Link 
                   href={`/employes/${alert.id}`} 
-                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-[#E06D00] hover:text-white hover:border-[#E06D00] dark:hover:bg-[#F58220] dark:hover:text-white dark:hover:border-[#F58220] transition-colors duration-150"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-[#FF8200] hover:text-white hover:border-[#FF8200] transition-colors duration-150"
                 >
                   <CaretRight weight="bold" className="h-3.5 w-3.5" />
                 </Link>
@@ -114,7 +113,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
       <div className="p-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800/80 mt-auto">
         <Link 
           href="/reporting" 
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-[#E06D00] dark:hover:text-[#F58220] transition-colors shadow-xs"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF8200] transition-colors shadow-xs"
         >
           Accéder au centre de conformité
         </Link>

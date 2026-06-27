@@ -71,7 +71,7 @@ export function MedicalExamDialog({ employees }: { employees: Employee[] }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white" />}>
+      <DialogTrigger render={<Button className="gap-2 bg-[#FF8200] hover:bg-[#E06D00] text-white shadow-sm font-semibold" />}>
         <Plus className="h-4 w-4" />
         Nouvel Examen
       </DialogTrigger>
@@ -79,7 +79,7 @@ export function MedicalExamDialog({ employees }: { employees: Employee[] }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Stethoscope className="h-5 w-5 text-blue-600" />
+              <Stethoscope className="h-5 w-5 text-[#FF8200]" />
               Enregistrer une Visite Médicale
             </DialogTitle>
             <DialogDescription>
@@ -123,7 +123,7 @@ export function MedicalExamDialog({ employees }: { employees: Employee[] }) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="date_examen">Date de la visite</Label>
-                <Input id="date_examen" name="date_examen" type="date" required />
+                <Input id="date_examen" name="date_examen" type="date" required className="focus-visible:ring-[#FF8200]" />
               </div>
             </div>
 
@@ -143,7 +143,7 @@ export function MedicalExamDialog({ employees }: { employees: Employee[] }) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="prochaine_visite">Prochaine visite (Optionnel)</Label>
-                <Input id="prochaine_visite" name="prochaine_visite" type="date" />
+                <Input id="prochaine_visite" name="prochaine_visite" type="date" className="focus-visible:ring-[#FF8200]" />
               </div>
             </div>
 
@@ -154,6 +154,7 @@ export function MedicalExamDialog({ employees }: { employees: Employee[] }) {
                 name="recommandations"
                 placeholder="Ex: Port de charges interdit, aménagement de poste..."
                 rows={3}
+                className="focus-visible:ring-[#FF8200]"
               />
             </div>
           </div>
@@ -162,7 +163,7 @@ export function MedicalExamDialog({ employees }: { employees: Employee[] }) {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>
-            <Button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" disabled={loading} className="bg-[#FF8200] hover:bg-[#E06D00] text-white shadow-sm font-semibold">
               {loading ? "Enregistrement..." : "Enregistrer"}
             </Button>
           </DialogFooter>

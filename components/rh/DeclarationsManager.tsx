@@ -337,7 +337,7 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
             <select
               value={genKind}
               onChange={(e) => setGenKind(e.target.value)}
-              className="mt-1 h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+              className="mt-1 h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all"
             >
               <optgroup label="Sociales (CNPS)">
                 {SOCIAL_KINDS.map((k) => (
@@ -359,7 +359,7 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
               <select
                 value={genPeriode}
                 onChange={(e) => setGenPeriode(e.target.value)}
-                className="mt-1 h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+                className="mt-1 h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:outline-none focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all"
               >
                 {availablePeriods.length === 0 && <option value="">— Aucun bulletin —</option>}
                 {availablePeriods.map((p) => (
@@ -373,7 +373,7 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
                 max="2099"
                 value={genYear}
                 onChange={(e) => setGenYear(e.target.value)}
-                className="mt-1 h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 tabular-nums focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-300"
+                className="mt-1 h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 tabular-nums focus:outline-none focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all"
               />
             )}
           </div>
@@ -398,7 +398,7 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
             <button
               onClick={() => handleGenerate(true)}
               disabled={generating || previewing}
-              className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+              className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-[#FF8200] hover:bg-[#E06D00] border-0 px-4 text-sm font-medium text-white disabled:opacity-50 transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
               {generating ? "Génération…" : "Générer CSV & archiver"}
@@ -432,7 +432,7 @@ export function DeclarationsManager({ socialDeclarations, taxDeclarations, avail
                 className={[
                   "px-4 py-2.5 text-sm whitespace-nowrap border-b-2 transition-colors",
                   active
-                    ? "border-slate-900 text-slate-900 font-semibold"
+                    ? "border-[#FF8200] text-[#FF8200] font-semibold"
                     : "border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300",
                 ].join(" ")}
               >
@@ -645,7 +645,7 @@ function DeclarationTable({
                 <button
                   onClick={() => onMarkSubmitted(r.id, kindClass)}
                   disabled={submittingId === r.id}
-                  className="mt-3 w-full text-xs px-3 h-8 rounded-md bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50"
+                  className="mt-3 w-full text-xs px-3 h-8 rounded-md bg-[#FF8200] hover:bg-[#E06D00] border-0 text-white disabled:opacity-50 transition-colors"
                 >
                   {submittingId === r.id ? "…" : "Marquer comme soumis"}
                 </button>
@@ -842,7 +842,7 @@ function PreviewDialog({
             <button
               onClick={onConfirm}
               disabled={generating}
-              className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+              className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-[#FF8200] hover:bg-[#E06D00] border-0 px-4 text-sm font-medium text-white disabled:opacity-50 transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
               {generating ? "Archivage…" : "Confirmer & télécharger"}
@@ -860,7 +860,7 @@ function SummaryCell({
   label: string; value: string; accent?: "primary" | "danger" | "neutral";
 }) {
   const valueColor =
-    accent === "primary" ? "text-slate-900 font-semibold" :
+    accent === "primary" ? "text-[#FF8200] font-semibold" :
     accent === "danger" ? "text-rose-700 font-semibold" :
     "text-slate-900";
   return (

@@ -42,7 +42,7 @@ function AnimatedBar({ value, delay = 0 }: { value: number; delay?: number }) {
   return (
     <div className="relative h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
       <motion.div
-        className="absolute inset-y-0 left-0 rounded-full bg-[#E06D00]"
+        className="absolute inset-y-0 left-0 rounded-full bg-[#FF8200]"
         initial={{ width: 0 }}
         animate={{ width: `${value}%` }}
         transition={{ duration: 1.2, delay, ease: [0.22, 1, 0.36, 1] }}
@@ -72,14 +72,14 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
           </motion.p>
 
           <motion.div variants={fadeUp} className="space-y-1">
-            <p className="text-sm font-bold tracking-wide text-[#E06D00] dark:text-[#F58220]">
+            <p className="text-sm font-bold tracking-wide text-[#FF8200]">
               {greeting}
             </p>
             <h1
               className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white"
             >
               Tableau de bord{" "}
-              <span className="text-[#E06D00] dark:text-[#F58220]">
+              <span className="text-[#FF8200]">
                 RH
               </span>
             </h1>
@@ -97,25 +97,16 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               {
                 label: "collaborateurs actifs",
                 value: totalActifs,
-                color: "bg-emerald-500",
-                textColor: "text-emerald-700 dark:text-emerald-400",
-              },
-              {
-                label: "congés en attente",
-                value: congesEnAttente,
-                color: "bg-amber-500",
-                textColor: "text-amber-700 dark:text-amber-400",
               },
             ].map((stat) => (
               <div
                 key={stat.label}
                 className="flex items-center gap-2 rounded-lg border border-slate-200/90 bg-white dark:border-slate-800/80 dark:bg-slate-900/90 px-3.5 py-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
               >
-                <span className={`h-2 w-2 rounded-full shrink-0 ${stat.color} animate-pulse`} />
-                <span className={`text-xs font-bold tabular-nums ${stat.textColor}`}>
+                <span className="text-xs font-bold tabular-nums text-slate-800 dark:text-slate-200">
                   {stat.value}
                 </span>
-                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">{stat.label}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -143,7 +134,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               <motion.circle
                 cx="40" cy="40" r="34"
                 fill="none"
-                stroke="#E06D00"
+                stroke="#FF8200"
                 strokeWidth="6"
                 strokeLinecap="round"
                 strokeDasharray={`${2 * Math.PI * 34}`}

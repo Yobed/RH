@@ -88,10 +88,10 @@ export function ExecutiveRhCockpit({
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               }`}
             >
-              <Sparkles className="h-4 w-4 text-[#E06D00] dark:text-[#F58220]" />
+              <Sparkles className="h-4 w-4 text-[#FF8200]" />
               Vue d'ensemble & Urgences
               {allAlerts.length > 0 && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-[#E06D00] text-white font-black">
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-[#FF8200] text-white font-black">
                   {allAlerts.length}
                 </span>
               )}
@@ -122,10 +122,10 @@ export function ExecutiveRhCockpit({
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-3 text-xs font-medium text-slate-500 dark:text-slate-400">
+          <div className="hidden md:flex items-center gap-3 text-xs font-medium text-slate-400 dark:text-slate-500">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Système actif
+              <span className="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-600" />
+              En ligne
             </span>
           </div>
         </div>
@@ -348,7 +348,7 @@ export function ExecutiveRhCockpit({
                         return (
                           <div key={c.id} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                             <div className="flex items-center gap-3">
-                              <div className="h-9 w-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 bg-amber-500/10 text-[#E06D00] dark:bg-amber-400/10 dark:text-[#F58220]">
+                              <div className="h-9 w-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                                 {emp?.full_name?.charAt(0) ?? "?"}
                               </div>
                               <div>
@@ -433,7 +433,7 @@ export function ExecutiveRhCockpit({
                         <tr key={emp.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="h-9 w-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 bg-amber-500/10 text-[#E06D00] dark:bg-amber-400/10 dark:text-[#F58220]">
+                              <div className="h-9 w-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                                 {emp.full_name?.charAt(0)}
                               </div>
                               <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm">{emp.full_name}</span>
@@ -451,12 +451,9 @@ export function ExecutiveRhCockpit({
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-right">
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50">
-                              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                              <span className="text-xs font-bold uppercase text-emerald-700 dark:text-emerald-400 tracking-wide">
-                                {emp.statut}
-                              </span>
-                            </div>
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-400">
+                              {emp.statut}
+                            </span>
                           </td>
                         </tr>
                       ))}
@@ -476,7 +473,7 @@ export function ExecutiveRhCockpit({
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 pt-2 pb-2">
-      <div className="w-1 h-5 rounded-full bg-[#E06D00] dark:bg-[#F58220] shrink-0" />
+      <div className="w-1 h-5 rounded-full bg-[#FF8200] shrink-0" />
       <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-800 dark:text-slate-100 whitespace-nowrap">
         {label}
       </h2>
@@ -502,20 +499,21 @@ function PenaltyRow({
 }) {
   const isHigh = severity === "high";
   return (
-    <div className={`flex items-center justify-between gap-3 rounded-xl px-3 py-2 border ${isHigh ? "bg-red-50 dark:bg-red-900/15 border-red-100 dark:border-red-800/40" : "bg-amber-50 dark:bg-amber-900/15 border-amber-100 dark:border-amber-800/40"}`}>
-      <div className="flex items-center gap-2 min-w-0">
-        <div className={`h-2 w-2 shrink-0 rounded-full ${isHigh ? "bg-red-500" : "bg-amber-500"}`} />
+    <div className="flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <div className={`w-0.5 h-8 shrink-0 rounded-full self-stretch ${isHigh ? "bg-rose-400" : "bg-amber-400"}`} />
         <div className="min-w-0">
-          <p className={`text-xs font-semibold ${isHigh ? "text-red-800 dark:text-red-300" : "text-amber-800 dark:text-amber-300"}`}>{label}</p>
+          <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{label}</p>
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{detail}</p>
         </div>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <span className={`text-[10px] font-bold ${isHigh ? "text-red-700 dark:text-red-400" : "text-amber-700 dark:text-amber-400"}`}>
+        <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
           -{points} pts
         </span>
         <Link
           href={href}
-          className={`text-[10px] font-semibold underline underline-offset-2 ${isHigh ? "text-red-700 dark:text-red-400" : "text-amber-700 dark:text-amber-400"}`}
+          className="text-[10px] font-semibold text-[#FF8200] hover:text-[#E06D00] hover:underline underline-offset-2"
         >
           {linkLabel}
         </Link>

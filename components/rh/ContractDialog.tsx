@@ -6,7 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlusIcon, AlertTriangle, Pencil } from "lucide-react";
+import { 
+  FileText, 
+  User, 
+  Calendar, 
+  CurrencyDollar, 
+  Briefcase, 
+  ShieldCheck, 
+  WarningCircle, 
+  Plus, 
+  PencilSimple,
+  CheckCircle,
+  X
+} from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 
 import {
   Dialog,
@@ -51,7 +64,6 @@ const schema = z
     date_fin_essai: z.string().optional(),
     salaire_brut: z.string().min(1, "Salaire obligatoire"),
     renouvellement_count: z.string().optional(),
-    // Nouveaux champs
     lieu_travail: z.string().max(150).optional(),
     duree_hebdo: z.string().optional(),
     description_poste: z.string().optional(),
@@ -106,7 +118,18 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 const selectClass =
-  "w-full rounded-md border border-input bg-white dark:bg-slate-950 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50";
+  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300 h-11";
+
+const labelClass = "text-sm font-semibold text-slate-700 flex items-center gap-2 mb-1.5";
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return (
+    <p className="mt-1 text-xs text-red-500 font-medium flex items-center gap-1">
+      <X weight="bold" size={12} /> {message}
+    </p>
+  );
+}
 
 interface Employee {
   id: string;
@@ -236,7 +259,10 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
       return;
     }
 
-    toast.success(isEdit ? "Contrat modifié" : "Contrat créé");
+    toast.success(isEdit ? "Contrat modifié avec succès" : "Contrat créé avec succès", {
+      icon: <CheckCircle weight="fill" className="text-emerald-500 w-5 h-5" />,
+      className: "rounded-2xl border-none shadow-2xl bg-white",
+    });
     setOpen(false);
     reset();
     router.refresh();
@@ -244,239 +270,347 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {isEdit ? (
-        <DialogTrigger render={<Button variant="ghost" size="sm" />}>
-          <Pencil className="h-4 w-4" />
-        </DialogTrigger>
-      ) : (
-        <DialogTrigger render={<Button />}>
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Nouveau contrat
-        </DialogTrigger>
-      )}
+      <DialogTrigger asChild>
+        {isEdit ? (
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl hover:bg-slate-100 text-slate-600">
+            <PencilSimple className="h-4 w-4 text-[#FF8200]" />
+          </Button>
+        ) : (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center justify-center rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-[#FF8200]/20 transition-all duration-200 gap-2"
+          >
+            <Plus weight="bold" className="h-4 w-4" />
+            <span>Nouveau contrat</span>
+          </motion.button>
+        )}
+      </DialogTrigger>
 
-      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>{isEdit ? "Modifier le contrat" : "Nouveau contrat"}</DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 mt-2">
-
-          {/* ── PARTIES ──────────────────────────────────────────── */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
-              Parties au contrat
-            </p>
-
-            {!isEdit && (
-              <div>
-                <label className="text-sm font-medium">Employé *</label>
-                <select {...register("employee_id")} className={`mt-1 ${selectClass}`}>
-                  <option value="">— Sélectionner un employé —</option>
-                  {employees.map((e) => (
-                    <option key={e.id} value={e.id}>{e.full_name}</option>
-                  ))}
-                </select>
-                {errors.employee_id && <p className="mt-1 text-xs text-red-500">{errors.employee_id.message}</p>}
-              </div>
-            )}
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Signataire (employeur)</label>
-                <Input {...register("signataire_nom")} placeholder="NOM Prénom — DG / DRH" className="mt-1" />
+      <DialogContent className="sm:max-w-2xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
+        <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] relative">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF8200]" />
+          
+          <DialogHeader className="p-8 pb-4 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-[#FF8200]/10 text-[#FF8200]">
+                <FileText size={28} weight="duotone" />
               </div>
               <div>
-                <label className="text-sm font-medium">Date de signature</label>
-                <Input type="date" {...register("date_signature")} className="mt-1" />
+                <DialogTitle className="text-2xl font-bold tracking-tight text-slate-900">
+                  {isEdit ? "Modifier le contrat" : "Nouveau contrat"}
+                </DialogTitle>
+                <p className="text-xs text-slate-500 mt-1">
+                  Code du Travail CI — Décret n°96-195
+                </p>
               </div>
             </div>
-          </section>
+          </DialogHeader>
 
-          {/* ── NATURE DU CONTRAT ─────────────────────────────────── */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
-              Nature du contrat
-            </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Catégorie professionnelle *</label>
-                <select {...register("categorie")} className={`mt-1 ${selectClass}`}>
-                  <option value="Ouvrier / Employé">Ouvrier / Employé — essai max 1 mois</option>
-                  <option value="Agent de maîtrise / Technicien">Agent de maîtrise / Technicien — essai max 2 mois</option>
-                  <option value="Cadre / Ingénieur">Cadre / Ingénieur — essai max 3 mois</option>
-                  <option value="Cadre supérieur">Cadre supérieur — essai max 6 mois</option>
-                </select>
-                <p className="mt-0.5 text-xs text-muted-foreground">Décret n°96-195 — période d'essai auto-calculée</p>
+          <form onSubmit={handleSubmit(onSubmit)} className="px-8 pb-8 flex-1 overflow-y-auto space-y-8 scrollbar-hide">
+            {/* ── PARTIES ─────────────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Parties au contrat
               </div>
-              <div>
-                <label className="text-sm font-medium">Type de contrat *</label>
-                <select {...register("type_contrat")} className={`mt-1 ${selectClass}`}>
-                  <option value="CDI">CDI</option>
-                  <option value="CDD">CDD</option>
-                  <option value="Stage">Stage</option>
-                  <option value="Apprentissage">Apprentissage</option>
-                </select>
-                {errors.type_contrat && <p className="mt-1 text-xs text-red-500">{errors.type_contrat.message}</p>}
+
+              {!isEdit && (
+                <div>
+                  <label className={labelClass}>
+                    <User weight="duotone" />
+                    Employé *
+                  </label>
+                  <select {...register("employee_id")} className={selectClass}>
+                    <option value="">— Sélectionner un employé —</option>
+                    {employees.map((e) => (
+                      <option key={e.id} value={e.id}>{e.full_name}</option>
+                    ))}
+                  </select>
+                  <FieldError message={errors.employee_id?.message} />
+                </div>
+              )}
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <User weight="duotone" />
+                    Signataire (employeur)
+                  </label>
+                  <Input 
+                    {...register("signataire_nom")} 
+                    placeholder="NOM Prénom — DG / DRH" 
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <Calendar weight="duotone" />
+                    Date de signature
+                  </label>
+                  <Input 
+                    type="date" 
+                    {...register("date_signature")} 
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                  />
+                </div>
               </div>
             </div>
 
-            {typeContrat === "CDD" && (
-              <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-                <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                <span>CDD : max 24 mois renouvellements inclus · max 2 renouvellements. Au-delà → conversion CDI automatique (Art. 15 CT-CI 2025).</span>
+            {/* ── NATURE DU CONTRAT ─────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Nature &amp; Type du contrat
               </div>
-            )}
 
-            {needsMotifCdd && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <Briefcase weight="duotone" />
+                    Catégorie professionnelle *
+                  </label>
+                  <select {...register("categorie")} className={selectClass}>
+                    <option value="Ouvrier / Employé">Ouvrier / Employé — essai max 1 mois</option>
+                    <option value="Agent de maîtrise / Technicien">Agent de maîtrise / Technicien — essai max 2 mois</option>
+                    <option value="Cadre / Ingénieur">Cadre / Ingénieur — essai max 3 mois</option>
+                    <option value="Cadre supérieur">Cadre supérieur — essai max 6 mois</option>
+                  </select>
+                  <p className="mt-1 text-[10px] text-slate-400">Décret n°96-195 — période d&apos;essai auto-calculée</p>
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <FileText weight="duotone" />
+                    Type de contrat *
+                  </label>
+                  <select {...register("type_contrat")} className={selectClass}>
+                    <option value="CDI">CDI</option>
+                    <option value="CDD">CDD</option>
+                    <option value="Stage">Stage</option>
+                    <option value="Apprentissage">Apprentissage</option>
+                  </select>
+                  <FieldError message={errors.type_contrat?.message} />
+                </div>
+              </div>
+
+              {typeContrat === "CDD" && (
+                <div className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/70 p-3.5 text-xs text-amber-800">
+                  <WarningCircle weight="fill" className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" />
+                  <span className="leading-relaxed">CDD : max 24 mois renouvellements inclus · max 2 renouvellements. Au-delà → conversion CDI automatique (Art. 15 CT-CI 2025).</span>
+                </div>
+              )}
+
+              {needsMotifCdd && (
+                <div>
+                  <label className={labelClass}>
+                    <WarningCircle weight="duotone" />
+                    Motif du CDD *{" "}
+                    <span className="text-[10px] font-normal text-slate-400">(Art. 14 CT-CI — obligatoire)</span>
+                  </label>
+                  <Textarea
+                    {...register("motif_cdd")}
+                    placeholder="Ex : Remplacement de M. KONE absent pour maladie / Surcroît temporaire d'activité…"
+                    className="rounded-xl bg-white border-slate-200 min-h-[75px] focus-visible:ring-[#FF8200]"
+                  />
+                  <FieldError message={errors.motif_cdd?.message} />
+                </div>
+              )}
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <Briefcase weight="duotone" />
+                    Convention collective
+                  </label>
+                  <Input 
+                    {...register("convention_collective")} 
+                    placeholder="Interprofessionnelle / BTP / Commerce…" 
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <Briefcase weight="duotone" />
+                    Durée hebdomadaire (h)
+                  </label>
+                  <Input 
+                    type="number" min="1" max="60" step="0.5" 
+                    {...register("duree_hebdo")} 
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                  />
+                  <p className="mt-1 text-[10px] text-slate-400">Légal CI : 40h/semaine (Décret n°96-204)</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ── POSTE & LIEU ──────────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Poste &amp; Lieu d&apos;exécution
+              </div>
+
               <div>
-                <label className="text-sm font-medium">Motif du CDD * <span className="text-[10px] font-normal text-muted-foreground">(Art. 14 CT-CI — obligatoire)</span></label>
+                <label className={labelClass}>
+                  <Briefcase weight="duotone" />
+                  Lieu de travail
+                </label>
+                <Input 
+                  {...register("lieu_travail")} 
+                  placeholder="Siège social — Abidjan Plateau / Antenne Bouaké…" 
+                  className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                />
+              </div>
+
+              <div>
+                <label className={labelClass}>
+                  <FileText weight="duotone" />
+                  Description du poste / Missions principales
+                </label>
                 <Textarea
-                  {...register("motif_cdd")}
-                  placeholder="Ex : Remplacement de M. KONE absent pour maladie / Surcroît temporaire d'activité lié à la campagne agricole…"
-                  className="mt-1 min-h-[70px]"
+                  {...register("description_poste")}
+                  placeholder="Résumé des responsabilités et missions confiées…"
+                  className="rounded-xl bg-white border-slate-200 min-h-[85px] focus-visible:ring-[#FF8200]"
                 />
-                {errors.motif_cdd && <p className="mt-1 text-xs text-red-500">{errors.motif_cdd.message}</p>}
-              </div>
-            )}
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Convention collective</label>
-                <Input {...register("convention_collective")} placeholder="Interprofessionnelle / BTP / Commerce…" className="mt-1" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Durée hebdomadaire (h)</label>
-                <Input type="number" min="1" max="60" step="0.5" {...register("duree_hebdo")} className="mt-1" />
-                <p className="mt-0.5 text-[10px] text-muted-foreground">Légal CI : 40h/semaine (Décret n°96-204)</p>
               </div>
             </div>
-          </section>
 
-          {/* ── POSTE & LIEU ──────────────────────────────────────── */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
-              Poste & Lieu d&apos;exécution
-            </p>
-
-            <div>
-              <label className="text-sm font-medium">Lieu de travail</label>
-              <Input {...register("lieu_travail")} placeholder="Siège social — Abidjan Plateau / Antenne Bouaké…" className="mt-1" />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Description du poste / Missions principales</label>
-              <Textarea
-                {...register("description_poste")}
-                placeholder="Résumé des responsabilités et missions confiées…"
-                className="mt-1 min-h-[80px]"
-              />
-            </div>
-          </section>
-
-          {/* ── DURÉE ────────────────────────────────────────────── */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
-              Durée du contrat
-            </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Date de début *</label>
-                <Input type="date" {...register("date_debut")} className="mt-1" />
-                {errors.date_debut && <p className="mt-1 text-xs text-red-500">{errors.date_debut.message}</p>}
+            {/* ── DURÉE ────────────────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Durée &amp; Rémunération
               </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <Calendar weight="duotone" />
+                    Date de début *
+                  </label>
+                  <Input 
+                    type="date" 
+                    {...register("date_debut")} 
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                  />
+                  <FieldError message={errors.date_debut?.message} />
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <Calendar weight="duotone" />
+                    Date de fin {needsDateFin ? "*" : ""}
+                  </label>
+                  <Input
+                    type="date"
+                    {...register("date_fin")}
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                    disabled={typeContrat === "CDI"}
+                    min={dateDebut || undefined}
+                  />
+                  <FieldError message={errors.date_fin?.message} />
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelClass}>
+                    <Calendar weight="duotone" />
+                    Fin période d&apos;essai
+                  </label>
+                  <Input 
+                    type="date" 
+                    {...register("date_fin_essai")} 
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    min={dateDebut || undefined} 
+                  />
+                  <FieldError message={errors.date_fin_essai?.message} />
+                  <p className="mt-1 text-[10px] text-slate-400">Auto-calculée · modifiable manuellement</p>
+                </div>
+                <div>
+                  <label className={labelClass}>
+                    <CurrencyDollar weight="duotone" />
+                    Salaire brut (FCFA) *
+                  </label>
+                  <Input
+                    type="number" min="0" step="1000"
+                    {...register("salaire_brut")}
+                    placeholder="150000"
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                  />
+                  <FieldError message={errors.salaire_brut?.message} />
+                </div>
+              </div>
+
+              {typeContrat === "CDD" && (
+                <div>
+                  <label className={labelClass}>
+                    <FileText weight="duotone" />
+                    Numéro de renouvellement
+                  </label>
+                  <select {...register("renouvellement_count")} className={selectClass}>
+                    <option value="0">Contrat initial</option>
+                    <option value="1">1er renouvellement</option>
+                    <option value="2">2e renouvellement (dernier autorisé)</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {/* ── AVANTAGES & CLAUSES ───────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Avantages &amp; Clauses Particulières
+              </div>
+
               <div>
-                <label className="text-sm font-medium">Date de fin {needsDateFin ? "*" : ""}</label>
-                <Input
-                  type="date"
-                  {...register("date_fin")}
-                  className="mt-1"
-                  disabled={typeContrat === "CDI"}
-                  min={dateDebut || undefined}
+                <label className={labelClass}>
+                  <ShieldCheck weight="duotone" />
+                  Avantages en nature
+                </label>
+                <Textarea
+                  {...register("avantages_nature")}
+                  placeholder="Véhicule de fonction · Logement de fonction · Tickets repas · Téléphone…"
+                  className="rounded-xl bg-white border-slate-200 min-h-[65px] focus-visible:ring-[#FF8200]"
                 />
-                {errors.date_fin && <p className="mt-1 text-xs text-red-500">{errors.date_fin.message}</p>}
+              </div>
+
+              <div className="flex flex-col gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    {...register("clause_non_concurrence")}
+                    className="h-4 w-4 rounded-md border-slate-300 accent-[#FF8200]"
+                  />
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">
+                    Clause de non-concurrence
+                    <span className="ml-1.5 text-[10px] text-slate-400 font-normal block sm:inline">(durée et périmètre à préciser dans le contrat)</span>
+                  </span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    {...register("clause_confidentialite")}
+                    className="h-4 w-4 rounded-md border-slate-300 accent-[#FF8200]"
+                  />
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">Clause de confidentialité / NDA</span>
+                </label>
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium">Fin période d&apos;essai</label>
-                <Input type="date" {...register("date_fin_essai")} className="mt-1" min={dateDebut || undefined} />
-                {errors.date_fin_essai && <p className="mt-1 text-xs text-red-500">{errors.date_fin_essai.message}</p>}
-                <p className="mt-0.5 text-xs text-muted-foreground">Auto-calculée · modifiable manuellement</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Salaire brut (FCFA) *</label>
-                <Input
-                  type="number" min="0" step="1000"
-                  {...register("salaire_brut")}
-                  placeholder="150000"
-                  className="mt-1"
-                />
-                {errors.salaire_brut && <p className="mt-1 text-xs text-red-500">{errors.salaire_brut.message}</p>}
-              </div>
-            </div>
-
-            {typeContrat === "CDD" && (
-              <div>
-                <label className="text-sm font-medium">Numéro de renouvellement</label>
-                <select {...register("renouvellement_count")} className={`mt-1 ${selectClass}`}>
-                  <option value="0">Contrat initial</option>
-                  <option value="1">1er renouvellement</option>
-                  <option value="2">2e renouvellement (dernier autorisé)</option>
-                </select>
-              </div>
-            )}
-          </section>
-
-          {/* ── AVANTAGES & CLAUSES ───────────────────────────────── */}
-          <section className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1">
-              Avantages & Clauses
-            </p>
-
-            <div>
-              <label className="text-sm font-medium">Avantages en nature</label>
-              <Textarea
-                {...register("avantages_nature")}
-                placeholder="Véhicule de fonction · Logement de fonction · Tickets repas · Téléphone…"
-                className="mt-1 min-h-[60px]"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  {...register("clause_non_concurrence")}
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-                <span className="text-sm">
-                  Clause de non-concurrence
-                  <span className="ml-1 text-[10px] text-muted-foreground font-normal">(durée et périmètre à préciser dans le corps du contrat)</span>
-                </span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  {...register("clause_confidentialite")}
-                  className="h-4 w-4 rounded border-gray-300"
-                />
-                <span className="text-sm">Clause de confidentialité / NDA</span>
-              </label>
-            </div>
-          </section>
-
-          <DialogFooter>
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-              {isSubmitting
-                ? isEdit ? "Modification..." : "Enregistrement..."
-                : isEdit ? "Enregistrer les modifications" : "Créer le contrat"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-4 sticky bottom-0 bg-white -mx-8 px-8 mt-4 border-t border-slate-100 shrink-0">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-12 rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-bold shadow-lg shadow-[#FF8200]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+              >
+                {isSubmitting
+                  ? isEdit ? "Modification..." : "Enregistrement..."
+                  : isEdit ? "Enregistrer les modifications" : "Créer le contrat"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

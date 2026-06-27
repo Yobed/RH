@@ -2,13 +2,29 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle, AlertTriangle } from "lucide-react";
+import { 
+  WarningOctagon, 
+  User, 
+  Calendar, 
+  FileText, 
+  Plus, 
+  WarningCircle, 
+  CheckCircle,
+  X 
+} from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 interface EmployeeOption {
@@ -55,6 +71,8 @@ function computeDeadline(dateIncident: string | null): DeadlineState | null {
   };
 }
 
+const labelClass = "text-sm font-semibold text-slate-700 flex items-center gap-2 mb-1.5";
+
 export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -88,13 +106,16 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Erreur de création");
-      toast.success("Procédure initiée");
+      toast.success("Procédure initiée avec succès", {
+        icon: <CheckCircle weight="fill" className="text-emerald-500 w-5 h-5" />,
+        className: "rounded-2xl border-none shadow-2xl bg-white",
+      });
       setOpen(false);
       setDateIncident("");
       setType("");
       router.refresh();
     } catch {
-      toast.error("Erreur lors de la création");
+      toast.error("Erreur lors de la création de la procédure");
     } finally {
       setLoading(false);
     }
@@ -102,127 +123,192 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Nouvelle procédure
-          </Button>
-        }
-      />
-      <DialogContent className="sm:max-w-lg max-h-[92vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Initier une procédure disciplinaire</DialogTitle>
-          <DialogDescription className="text-xs">
-            Workflow conforme aux Art. 28 et 29 du Code du travail ivoirien.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogTrigger asChild>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="inline-flex items-center justify-center rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-[#FF8200]/20 transition-all duration-200 gap-2"
+        >
+          <Plus weight="bold" className="h-4 w-4" />
+          <span>Nouvelle procédure</span>
+        </motion.button>
+      </DialogTrigger>
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="employee_id">Salarié *</Label>
-            <Select name="employee_id" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un salarié" />
-              </SelectTrigger>
-              <SelectContent>
-                {employees?.map((emp) => (
-                  <SelectItem key={emp.id} value={emp.id}>
-                    {emp.full_name} ({emp.poste || "Sans poste"})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      <DialogContent className="sm:max-w-xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
+        <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] relative">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF8200]" />
 
-          <div className="space-y-2">
-            <Label htmlFor="type">Type de procédure *</Label>
-            <Select name="type" required value={type} onValueChange={(v) => setType(v ?? "")}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choisir un type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="DEMANDE_EXPLICATION">Demande d'explication</SelectItem>
-                <SelectItem value="AVERTISSEMENT">Avertissement</SelectItem>
-                <SelectItem value="MISE_A_PIED">Mise à pied</SelectItem>
-                <SelectItem value="LICENCIEMENT">Licenciement</SelectItem>
-                <SelectItem value="AUTRE">Autre</SelectItem>
-              </SelectContent>
-            </Select>
-            {isFauteGrave && (
-              <p className="text-[11px] text-amber-700 leading-relaxed">
-                Faute grave : convocation préalable obligatoire avec délai minimum
-                de 48 h entre la convocation et l'audition (Art. 29 CT-CI).
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="date_incident">Date des faits *</Label>
-            <Input
-              type="date"
-              id="date_incident"
-              name="date_incident"
-              required
-              value={dateIncident}
-              onChange={(e) => setDateIncident(e.target.value)}
-              max={new Date().toISOString().split("T")[0]}
-            />
-            {deadline && (
-              <div
-                className={[
-                  "rounded-md border px-3 py-2 text-xs flex items-start gap-2",
-                  deadline.level === "danger" && "border-rose-200 bg-rose-50/60 text-rose-900",
-                  deadline.level === "warn" && "border-amber-200 bg-amber-50/60 text-amber-900",
-                  deadline.level === "info" && "border-slate-200 bg-slate-50 text-slate-700",
-                ].filter(Boolean).join(" ")}
-              >
-                <AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                <span className="leading-relaxed">{deadline.message}</span>
+          <DialogHeader className="p-8 pb-4 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-[#FF8200]/10 text-[#FF8200]">
+                <WarningOctagon size={28} weight="duotone" />
               </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="date_convocation" className="text-xs">
-                Date de convocation
-              </Label>
-              <Input type="date" id="date_convocation" name="date_convocation" />
+              <div>
+                <DialogTitle className="text-2xl font-bold tracking-tight text-slate-900">
+                  Procédure Disciplinaire
+                </DialogTitle>
+                <p className="text-xs text-slate-500 mt-1">
+                  Conforme aux Art. 28 et 29 du Code du travail ivoirien
+                </p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="date_audition" className="text-xs">
-                Date d'audition
-              </Label>
-              <Input type="date" id="date_audition" name="date_audition" />
+          </DialogHeader>
+
+          <form onSubmit={onSubmit} className="px-8 pb-8 flex-1 overflow-y-auto space-y-8 scrollbar-hide">
+            {/* ── CONCERNE ─────────────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Salarié &amp; Nature des faits
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>
+                    <User weight="duotone" />
+                    Salarié *
+                  </label>
+                  <Select name="employee_id" required>
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
+                      <SelectValue placeholder="Sélectionner un salarié" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
+                      {employees?.map((emp) => (
+                        <SelectItem key={emp.id} value={emp.id} className="cursor-pointer hover:bg-slate-50 rounded-lg">
+                          {emp.full_name} ({emp.poste || "Sans poste"})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className={labelClass}>
+                    <WarningOctagon weight="duotone" />
+                    Type de procédure *
+                  </label>
+                  <Select name="type" required value={type} onValueChange={(v) => setType(v ?? "")}>
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
+                      <SelectValue placeholder="Choisir un type de sanction ou demande" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
+                      <SelectItem value="DEMANDE_EXPLICATION" className="cursor-pointer hover:bg-slate-50 rounded-lg">Demande d'explication</SelectItem>
+                      <SelectItem value="AVERTISSEMENT" className="cursor-pointer hover:bg-slate-50 rounded-lg">Avertissement</SelectItem>
+                      <SelectItem value="MISE_A_PIED" className="cursor-pointer hover:bg-slate-50 rounded-lg">Mise à pied</SelectItem>
+                      <SelectItem value="LICENCIEMENT" className="cursor-pointer hover:bg-slate-50 rounded-lg">Licenciement</SelectItem>
+                      <SelectItem value="AUTRE" className="cursor-pointer hover:bg-slate-50 rounded-lg">Autre</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {isFauteGrave && (
+                    <p className="mt-2 text-[11px] text-amber-800 bg-amber-50/80 p-3 rounded-xl border border-amber-200/80 leading-relaxed flex items-start gap-2">
+                      <WarningCircle weight="fill" className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <span>Faute grave : convocation préalable obligatoire avec délai minimum de 48 h entre la convocation et l'audition (Art. 29 CT-CI).</span>
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="motif">Motif / Description des faits *</Label>
-            <Textarea
-              id="motif"
-              name="motif"
-              required
-              minLength={10}
-              rows={4}
-              placeholder="Détaillez les faits reprochés (lieu, témoins, conséquences)…"
-            />
-            <p className="text-[10px] text-slate-500 leading-snug">
-              Le motif doit être précis et factuel. Une description vague rendrait
-              la sanction attaquable pour défaut de cause réelle et sérieuse.
-            </p>
-          </div>
+            {/* ── CHRONOLOGIE ──────────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Chronologie &amp; Délais Légaux
+              </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Annuler
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Création…" : "Initier la procédure"}
-            </Button>
-          </DialogFooter>
-        </form>
+              <div className="space-y-4">
+                <div>
+                  <label className={labelClass}>
+                    <Calendar weight="duotone" />
+                    Date des faits *
+                  </label>
+                  <Input
+                    type="date"
+                    id="date_incident"
+                    name="date_incident"
+                    required
+                    value={dateIncident}
+                    onChange={(e) => setDateIncident(e.target.value)}
+                    max={new Date().toISOString().split("T")[0]}
+                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                  />
+                  {deadline && (
+                    <div
+                      className={[
+                        "mt-2.5 rounded-xl border p-3 text-xs flex items-start gap-2.5 transition-all",
+                        deadline.level === "danger" && "border-rose-200 bg-rose-50/80 text-rose-900",
+                        deadline.level === "warn" && "border-amber-200 bg-amber-50/80 text-amber-900",
+                        deadline.level === "info" && "border-slate-200 bg-slate-50/80 text-slate-700",
+                      ].filter(Boolean).join(" ")}
+                    >
+                      <WarningCircle weight="fill" className={`h-4 w-4 shrink-0 mt-0.5 ${
+                        deadline.level === "danger" ? "text-rose-600" : deadline.level === "warn" ? "text-amber-600" : "text-[#FF8200]"
+                      }`} />
+                      <span className="leading-relaxed">{deadline.message}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>
+                      <Calendar weight="duotone" />
+                      Date de convocation
+                    </label>
+                    <Input type="date" id="date_convocation" name="date_convocation" className="rounded-xl h-11 focus-visible:ring-[#FF8200]" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>
+                      <Calendar weight="duotone" />
+                      Date d'audition
+                    </label>
+                    <Input type="date" id="date_audition" name="date_audition" className="rounded-xl h-11 focus-visible:ring-[#FF8200]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── MOTIF ────────────────────────────── */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                Motif &amp; Description
+              </div>
+
+              <div>
+                <label className={labelClass}>
+                  <FileText weight="duotone" />
+                  Motif / Description des faits *
+                </label>
+                <Textarea
+                  id="motif"
+                  name="motif"
+                  required
+                  minLength={10}
+                  rows={4}
+                  placeholder="Détaillez les faits reprochés (lieu, témoins, conséquences)…"
+                  className="rounded-xl bg-white border-slate-200 min-h-[100px] focus-visible:ring-[#FF8200]"
+                />
+                <p className="mt-1.5 text-[11px] text-slate-500 leading-snug">
+                  Le motif doit être précis et factuel. Une description vague rendrait la sanction attaquable pour défaut de cause réelle et sérieuse.
+                </p>
+              </div>
+            </div>
+
+            <DialogFooter className="pt-4 sticky bottom-0 bg-white -mx-8 px-8 mt-4 border-t border-slate-100 shrink-0 flex items-center justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => setOpen(false)} className="h-12 px-6 rounded-2xl border-slate-200 font-medium text-slate-700 hover:bg-slate-50">
+                Annuler
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="h-12 px-6 rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-bold shadow-lg shadow-[#FF8200]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+              >
+                {loading ? "Création…" : "Initier la procédure"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

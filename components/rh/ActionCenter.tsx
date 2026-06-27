@@ -89,16 +89,10 @@ const CONFIG: Record<ActionType, ActionConfig> = {
 
 const PRIORITY_ORDER: Record<Priority, number> = { haute: 0, moyenne: 1, basse: 2 };
 
-const DOT: Record<Priority, string> = {
-  haute: "bg-rose-500",
-  moyenne: "bg-amber-500",
-  basse: "bg-slate-400",
-};
-
 const TINT: Record<Priority, string> = {
-  haute: "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400",
-  moyenne: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
-  basse: "bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-slate-400",
+  haute: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300",
+  moyenne: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300",
+  basse: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300",
 };
 
 export function ActionCenter({ items }: { items: ActionItem[] }) {
@@ -111,9 +105,9 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
   // État positif : rien à traiter
   if (actionable.length === 0) {
     return (
-      <div className="flex items-center gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-5 py-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+      <div className="flex items-center gap-3 rounded-xl border border-slate-200/60 bg-slate-50/50 px-5 py-4 dark:border-slate-850/60 dark:bg-slate-900/30">
         <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
-        <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
           Tout est à jour — aucune action en attente.
         </p>
       </div>
@@ -126,7 +120,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/30">
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white">À traiter</h2>
-          <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">
+          <span className="rounded-full bg-slate-100 border border-slate-250/60 px-2 py-0.5 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:border-slate-700/60 dark:text-slate-300">
             {total}
           </span>
         </div>
@@ -152,12 +146,11 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className="flex items-center gap-2 min-w-0 flex-1">
-                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT[cfg.priority]}`} aria-hidden />
-                  <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#E06D00] dark:group-hover:text-[#F58220] transition-colors">
+                  <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#FF8200] transition-colors">
                     {cfg.label(item.count)}
                   </span>
                 </span>
-                <span className="flex shrink-0 items-center gap-1 rounded-lg bg-[#E06D00] dark:bg-[#F58220] px-3 py-1.5 text-xs font-bold text-white transition-all hover:opacity-90 shadow-xs">
+                <span className="flex shrink-0 items-center gap-1 rounded-lg bg-[#FF8200] hover:bg-[#E06D00] px-3 py-1.5 text-xs font-bold text-white transition-colors shadow-xs">
                   {cfg.cta}
                   <ArrowRight className="h-3 w-3" />
                 </span>
