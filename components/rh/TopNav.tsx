@@ -334,10 +334,10 @@ function DomainItem({
   const hasMenu = !!domain.columns;
 
   const triggerCls = cn(
-    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60",
+    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200]",
     active || open
-      ? "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300"
-      : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
+      ? "bg-orange-50 text-[#FF8200] font-semibold dark:bg-orange-950/40 dark:text-[#FF8200]"
+      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
   );
 
   return (
@@ -436,8 +436,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white"
-                style={{ background: "linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)" }}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#FF8200] to-[#FF6F00]"
               >
                 {initials}
               </span>
@@ -508,8 +507,8 @@ export function TopNav({
 
         {/* Logo */}
         <Link href="/rh" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 shadow-sm">
-            <Buildings weight="fill" className="h-4 w-4 text-white" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF8200] text-white shadow-sm">
+            <Buildings weight="fill" className="h-4 w-4" />
           </span>
           <span className="hidden flex-col leading-none xl:flex">
             <span className="text-[13px] font-bold tracking-tight text-slate-900 dark:text-white">{companyName}</span>
