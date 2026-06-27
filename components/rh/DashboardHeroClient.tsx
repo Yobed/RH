@@ -115,7 +115,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
         {/* Right — compliance card */}
         <motion.div
           variants={scaleIn}
-          className="shrink-0 rounded-xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] min-w-[220px]"
+          className="shrink-0 rounded-3xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-5 sm:p-6 shadow-sm min-w-[220px]"
         >
           <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 text-center">
             Score conformité

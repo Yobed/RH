@@ -80,12 +80,12 @@ interface NavDomain {
 }
 
 const NAV_DOMAINS: NavDomain[] = [
-  { id: "dashboard", label: "Tableau de bord", icon: SquaresFour, accent: "#6366f1", href: "/rh" },
+  { id: "dashboard", label: "Tableau de bord", icon: SquaresFour, accent: "#FF8200", href: "/rh" },
   {
     id: "people",
     label: "Collaborateurs",
     icon: Users,
-    accent: "#0ea5e9",
+    accent: "#FF8200",
     columns: [
       {
         title: "Équipe",
@@ -125,7 +125,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "paie",
     label: "Paie",
     icon: Money,
-    accent: "#10b981",
+    accent: "#FF8200",
     columns: [
       {
         title: "Paie du mois",
@@ -151,7 +151,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "talents",
     label: "Talents",
     icon: Student,
-    accent: "#a855f7",
+    accent: "#FF8200",
     columns: [
       {
         title: "Développement RH",
@@ -167,7 +167,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "analytique",
     label: "Analytique",
     icon: ChartPieSlice,
-    accent: "#8b5cf6",
+    accent: "#FF8200",
     columns: [
       {
         title: "Indicateurs",
@@ -193,7 +193,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "conformite",
     label: "Conformité",
     icon: ShieldCheck,
-    accent: "#f43f5e",
+    accent: "#FF8200",
     columns: [
       {
         title: "Qualité & risques",
@@ -219,7 +219,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "outils",
     label: "Outils",
     icon: Robot,
-    accent: "#14b8a6",
+    accent: "#FF8200",
     columns: [
       {
         title: "Assistant IA",
@@ -242,7 +242,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "admin",
     label: "Administration",
     icon: Gear,
-    accent: "#64748b",
+    accent: "#FF8200",
     adminOnly: true,
     columns: [
       {
