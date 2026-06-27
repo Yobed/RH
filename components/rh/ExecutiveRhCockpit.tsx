@@ -106,6 +106,7 @@ export function ExecutiveRhCockpit({
 }: ExecutiveRhCockpitProps) {
   // 5 Odoo-Executive View Modes
   const [viewMode, setViewMode] = useState<"overview" | "kanban" | "list" | "pivot" | "ai_copilot">("overview");
+  const [overviewSubTab, setOverviewSubTab] = useState<"synthese" | "operations" | "conformite">("synthese");
   const [kanbanGroupBy, setKanbanGroupBy] = useState<"department" | "stage">("department");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>("all");
@@ -391,7 +392,7 @@ export function ExecutiveRhCockpit({
         <AnimatePresence mode="wait">
           
           {/* ────────────────────────────────────────────────────────────── */}
-          {/* 1. VUE OVERVIEW (APERÇU SYNTHÉTIQUE)                          */}
+          {/* 1. VUE OVERVIEW (APERÇU SYNTHÉTIQUE MODULAIRE)                   */}
           {/* ────────────────────────────────────────────────────────────── */}
           {viewMode === "overview" && (
             <motion.div
@@ -404,43 +405,81 @@ export function ExecutiveRhCockpit({
               {/* HR Suite Modules Navigation Bar */}
               <HrSuiteModulesWidget />
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* Left Main Stream (8 cols): Priority Actions, Workflow Tasks, Absences & Charts */}
-                <div className="lg:col-span-8 space-y-6">
-                  <ActionCenter items={actionItems} />
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <MesTachesWidget />
-                    <MonCalendrierAbsencesWidget />
-                  </div>
-
-                  <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
-                  
-                  <TableauAffichageWidget />
+              {/* Cognitive Load Reduction Sub-Navigation Bar */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-2.5 sm:p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+                <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar">
+                  {[
+                    { id: "synthese", label: "📊 Synthèse Stratégique", desc: "KPIs, Arbitrages & Analytique" },
+                    { id: "operations", label: "⚡ Opérations & Quotidien", desc: "Pointage, Absences & Agenda" },
+                    { id: "conformite", label: "🛡️ Conformité & Audits", desc: "Alertes Juridiques & Ressources" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setOverviewSubTab(tab.id as any)}
+                      className={`px-4 py-2 rounded-xl text-xs font-black transition-all text-left whitespace-nowrap ${
+                        overviewSubTab === tab.id
+                          ? "bg-[#FF8200] text-white shadow-md shadow-[#FF8200]/20"
+                          : "bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
-
-                {/* Right Executive Control Stream (4 cols): Time/Biometrics, AI Co-Pilot, Events, Compliance & Resources */}
-                <div className="lg:col-span-4 space-y-6">
-                  <ChronometreWidget />
-                  
-                  <AiSuggestionsWidget
-                    totalActifs={totalActifs}
-                    cddExpirant={cddExpirant}
-                    medicalAlertsCount={medicalAlertsCount}
-                    evalBrouillon={evalBrouillon}
-                    contentieuxOuverts={contentieuxOuverts}
-                    congesEnAttente={congesEnAttente?.length ?? 0}
-                  />
-                  
-                  <AnniversairesEvenementsWidget />
-                  
-                  <ComplianceAlertList alerts={allAlerts} />
-                  
-                  <QuickActions />
-                  
-                  <RessourcesInteretWidget />
+                <div className="hidden lg:block text-[11px] font-bold text-slate-400 pr-2">
+                  Espace d'Arbitrage Thématique
                 </div>
               </div>
+
+              {/* SUB-TAB 1: SYNTHÈSE STRATÉGIQUE (Focus Cockpit) */}
+              {overviewSubTab === "synthese" && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <div className="lg:col-span-8 space-y-6">
+                    <ActionCenter items={actionItems} />
+                    <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                  </div>
+                  <div className="lg:col-span-4 space-y-6">
+                    <AiSuggestionsWidget
+                      totalActifs={totalActifs}
+                      cddExpirant={cddExpirant}
+                      medicalAlertsCount={medicalAlertsCount}
+                      evalBrouillon={evalBrouillon}
+                      contentieuxOuverts={contentieuxOuverts}
+                      congesEnAttente={congesEnAttente?.length ?? 0}
+                    />
+                    <TableauAffichageWidget />
+                  </div>
+                </div>
+              )}
+
+              {/* SUB-TAB 2: OPÉRATIONS & QUOTIDIEN */}
+              {overviewSubTab === "operations" && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <div className="lg:col-span-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <MesTachesWidget />
+                      <MonCalendrierAbsencesWidget />
+                    </div>
+                  </div>
+                  <div className="lg:col-span-4 space-y-6">
+                    <ChronometreWidget />
+                    <AnniversairesEvenementsWidget />
+                  </div>
+                </div>
+              )}
+
+              {/* SUB-TAB 3: CONFORMITÉ & AUDITS */}
+              {overviewSubTab === "conformite" && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <div className="lg:col-span-8 space-y-6">
+                    <ComplianceAlertList alerts={allAlerts} />
+                  </div>
+                  <div className="lg:col-span-4 space-y-6">
+                    <QuickActions />
+                    <RessourcesInteretWidget />
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
 
