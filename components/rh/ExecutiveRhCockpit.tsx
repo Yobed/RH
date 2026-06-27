@@ -15,6 +15,7 @@ import { TableauAffichageWidget } from "@/components/rh/TableauAffichageWidget";
 import { AnniversairesEvenementsWidget } from "@/components/rh/AnniversairesEvenementsWidget";
 import { HrSuiteModulesWidget } from "@/components/rh/HrSuiteModulesWidget";
 import { RessourcesInteretWidget } from "@/components/rh/RessourcesInteretWidget";
+import { ParcoursGuidesWidget } from "@/components/rh/ParcoursGuidesWidget";
 import {
   UsersIcon as Users,
   WarningIcon as FileWarning,
@@ -589,23 +590,43 @@ export function ExecutiveRhCockpit({
                 </div>
               </div>
 
-              {/* SUB-TAB 1: SYNTHÈSE STRATÉGIQUE (Focus Cockpit) */}
+              {/* SUB-TAB 1: SYNTHÈSE STRATÉGIQUE (Focus Cockpit Ultra-Décisionnel) */}
               {overviewSubTab === "synthese" && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  <div className="lg:col-span-8 space-y-6">
-                    <ActionCenter items={actionItems} />
-                    <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                <div className="space-y-6">
+                  {/* 1. Bloc Action Primordial : Flux RH Intelligents (Amplifié) */}
+                  <ActionCenter items={actionItems} />
+
+                  {/* 2. Parcours Guidés de Pilotage (4 Procédures Fréquentes) */}
+                  <ParcoursGuidesWidget />
+
+                  {/* 3. Vues de Pilotage & Analytics (Séparées de l'Action Directe) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <div className="lg:col-span-8 space-y-6">
+                      <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                    </div>
+                    <div className="lg:col-span-4 space-y-6">
+                      <AiSuggestionsWidget
+                        totalActifs={totalActifs}
+                        cddExpirant={cddExpirant}
+                        medicalAlertsCount={medicalAlertsCount}
+                        evalBrouillon={evalBrouillon}
+                        contentieuxOuverts={contentieuxOuverts}
+                        congesEnAttente={congesEnAttente?.length ?? 0}
+                      />
+                    </div>
                   </div>
-                  <div className="lg:col-span-4 space-y-6">
-                    <AiSuggestionsWidget
-                      totalActifs={totalActifs}
-                      cddExpirant={cddExpirant}
-                      medicalAlertsCount={medicalAlertsCount}
-                      evalBrouillon={evalBrouillon}
-                      contentieuxOuverts={contentieuxOuverts}
-                      congesEnAttente={congesEnAttente?.length ?? 0}
-                    />
-                    <TableauAffichageWidget />
+
+                  {/* 4. Couche Communautaire Secondaire (Tableau d'Affichage) */}
+                  <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-xs font-black uppercase text-slate-400 tracking-wider">
+                        📢 Espace Communautaire & Affichage Interne
+                      </span>
+                      <div className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800" />
+                    </div>
+                    <div className="max-w-2xl">
+                      <TableauAffichageWidget />
+                    </div>
                   </div>
                 </div>
               )}

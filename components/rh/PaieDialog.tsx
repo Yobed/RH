@@ -118,16 +118,48 @@ function currentPeriode() {
 }
 
 interface Props {
-  employees: Employee[];
+  employees?: Employee[];
   bulletin?: BulletinEditable; // mode édition si fourni
   company?: CompanyInfo | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-
-
-export function PaieDialog({ employees, bulletin, company }: Props) {
+export function PaieDialog({
+  employees: initialEmployees = [],
+  bulletin,
+  company,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  onSuccess,
+}: Props) {
   const isEdit = !!bulletin;
-  const [open, setOpen] = useState(false);
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(newOpen);
+    }
+    setControlledOpen?.(newOpen);
+  };
+
+  const [fetchedEmployees, setFetchedEmployees] = useState<Employee[]>([]);
+  const employees = initialEmployees.length > 0 ? initialEmployees : fetchedEmployees;
+
+  useEffect(() => {
+    if (open && initialEmployees.length === 0) {
+      fetch("/api/employees")
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => {
+          if (Array.isArray(data)) setFetchedEmployees(data);
+        })
+        .catch(() => {});
+    }
+  }, [open, initialEmployees.length]);
+
   const [salaryGrid, setSalaryGrid] = useState<SalaryGridRow[]>([]);
   const [selectedCategorie, setSelectedCategorie] = useState<string>("");
   const router = useRouter();
@@ -280,7 +312,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
     }
 
     toast.success(isEdit ? "Bulletin mis à jour" : "Bulletin de paie créé");
-    setOpen(false);
+    handleOpenChange(false);
     if (!isEdit) reset({
       periode: currentPeriode(),
       sursalaire: "0", prime_anciennete: "0", prime_exceptionnelle: "0",
@@ -291,6 +323,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
       heures_sup_h15: "0", heures_sup_h50: "0", heures_sup_h75: "0",
       autres_retenues: "0", avances: "0", nb_jours_absence: "0",
     });
+    onSuccess?.();
     router.refresh();
   }
 
@@ -308,7 +341,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       {isEdit ? (
         <DialogTrigger render={<Button variant="ghost" size="sm" />}>
           <Pencil className="h-3.5 w-3.5" />

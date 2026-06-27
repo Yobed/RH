@@ -32,7 +32,10 @@ import type { Tables } from "@/types/supabase";
 type Employee = Pick<Tables<"employees">, "id" | "full_name" | "matricule">;
 
 interface Props {
-  employees: Employee[];
+  employees?: Employee[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
 const schema = z.object({
@@ -105,8 +108,37 @@ interface SoldeConges {
 const ALLOWED_MIME = ["application/pdf", "image/jpeg", "image/png"];
 const MAX_SIZE = 10 * 1024 * 1024;
 
-export function CongesDialog({ employees }: Props) {
-  const [open, setOpen] = useState(false);
+export function CongesDialog({
+  employees: initialEmployees = [],
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  onSuccess,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(newOpen);
+    }
+    setControlledOpen?.(newOpen);
+  };
+
+  const [fetchedEmployees, setFetchedEmployees] = useState<Employee[]>([]);
+  const employees = initialEmployees.length > 0 ? initialEmployees : fetchedEmployees;
+
+  useEffect(() => {
+    if (open && initialEmployees.length === 0) {
+      fetch("/api/employees")
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => {
+          if (Array.isArray(data)) setFetchedEmployees(data);
+        })
+        .catch(() => {});
+    }
+  }, [open, initialEmployees.length]);
+
   const [solde, setSolde] = useState<SoldeConges | null>(null);
   const [loadingSolde, setLoadingSolde] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -224,16 +256,17 @@ export function CongesDialog({ employees }: Props) {
     }
 
     toast.success("Demande de congé enregistrée — en attente de validation");
-    setOpen(false);
+    handleOpenChange(false);
     reset();
     setSolde(null);
     setSelectedFile(null);
     setFileError(null);
+    onSuccess?.();
     router.refresh();
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="inline-flex items-center justify-center rounded-2xl bg-[#2563eb] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#2563eb]/20 hover:bg-[#1d4ed8] transition-all duration-200 gap-2">
           <PlusIcon className="h-4 w-4" />
@@ -482,7 +515,7 @@ export function CongesDialog({ employees }: Props) {
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => { setOpen(false); reset(); setSolde(null); }}
+                onClick={() => { handleOpenChange(false); reset(); setSolde(null); }}
                 disabled={isSubmitting}
                 className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
               >

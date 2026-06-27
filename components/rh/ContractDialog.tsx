@@ -159,13 +159,47 @@ export interface ExistingContract {
 }
 
 interface Props {
-  employees: Employee[];
+  employees?: Employee[];
   defaultEmployeeId?: string;
   contract?: ExistingContract;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-export function ContractDialog({ employees, defaultEmployeeId, contract }: Props) {
-  const [open, setOpen] = useState(false);
+export function ContractDialog({
+  employees: initialEmployees = [],
+  defaultEmployeeId,
+  contract,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  onSuccess,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(newOpen);
+    }
+    setControlledOpen?.(newOpen);
+  };
+
+  const [fetchedEmployees, setFetchedEmployees] = useState<Employee[]>([]);
+  const employees = initialEmployees.length > 0 ? initialEmployees : fetchedEmployees;
+
+  useEffect(() => {
+    if (open && initialEmployees.length === 0) {
+      fetch("/api/employees")
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => {
+          if (Array.isArray(data)) setFetchedEmployees(data);
+        })
+        .catch(() => {});
+    }
+  }, [open, initialEmployees.length]);
+
   const router = useRouter();
   const isEdit = !!contract;
 
@@ -263,13 +297,14 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
       icon: <CheckCircle weight="fill" className="text-emerald-500 w-5 h-5" />,
       className: "rounded-2xl border-none shadow-2xl bg-white",
     });
-    setOpen(false);
+    handleOpenChange(false);
     reset();
+    onSuccess?.();
     router.refresh();
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {isEdit ? (
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl hover:bg-slate-100 text-slate-600">

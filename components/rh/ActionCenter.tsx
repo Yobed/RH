@@ -33,6 +33,7 @@ export interface ActionItem {
 }
 
 type Priority = "haute" | "moyenne" | "basse";
+type Category = "Urgence" | "Opérationnel" | "Analyse";
 
 interface ActionConfig {
   label: (n: number) => string;
@@ -40,22 +41,17 @@ interface ActionConfig {
   cta: string;
   icon: LucideIcon;
   priority: Priority;
+  category: Category;
 }
 
 const CONFIG: Record<ActionType, ActionConfig> = {
-  conges: {
-    label: (n) => `${n} demande${n > 1 ? "s" : ""} de congé à valider`,
-    href: "/conges",
-    cta: "Valider",
-    icon: CalendarCheck,
-    priority: "haute",
-  },
   contentieux: {
-    label: (n) => `${n} contentieux ouvert${n > 1 ? "s" : ""}`,
+    label: (n) => `${n} contentieux RH ouvert${n > 1 ? "s" : ""} à régulariser`,
     href: "/contentieux",
     cta: "Traiter",
     icon: Scale,
     priority: "haute",
+    category: "Urgence",
   },
   cdd: {
     label: (n) => `${n} CDD arrive${n > 1 ? "nt" : ""} à échéance (< 30 j)`,
@@ -63,6 +59,15 @@ const CONFIG: Record<ActionType, ActionConfig> = {
     cta: "Consulter",
     icon: FileWarning,
     priority: "haute",
+    category: "Urgence",
+  },
+  conges: {
+    label: (n) => `${n} demande${n > 1 ? "s" : ""} de congé en attente d'arbitrage`,
+    href: "/conges",
+    cta: "Valider",
+    icon: CalendarCheck,
+    priority: "haute",
+    category: "Opérationnel",
   },
   essai: {
     label: (n) => `${n} période${n > 1 ? "s" : ""} d'essai s'achève${n > 1 ? "nt" : ""} (< 30 j)`,
@@ -70,6 +75,7 @@ const CONFIG: Record<ActionType, ActionConfig> = {
     cta: "Décider",
     icon: Clock,
     priority: "moyenne",
+    category: "Opérationnel",
   },
   medical: {
     label: (n) => `${n} visite${n > 1 ? "s" : ""} médicale${n > 1 ? "s" : ""} à planifier`,
@@ -77,13 +83,15 @@ const CONFIG: Record<ActionType, ActionConfig> = {
     cta: "Planifier",
     icon: HeartPulse,
     priority: "moyenne",
+    category: "Analyse",
   },
   evaluation: {
-    label: (n) => `${n} évaluation${n > 1 ? "s" : ""} en brouillon`,
+    label: (n) => `${n} évaluation${n > 1 ? "s" : ""} annuelle${n > 1 ? "s" : ""} en brouillon`,
     href: "/evaluations",
     cta: "Finaliser",
     icon: ClipboardList,
     priority: "basse",
+    category: "Analyse",
   },
 };
 
@@ -95,10 +103,10 @@ const TINT: Record<Priority, string> = {
   basse: "bg-sky-500/10 border border-sky-500/30 text-sky-600 dark:bg-sky-950/50 dark:border-sky-800/60 dark:text-sky-400",
 };
 
-const BADGE_TINT: Record<Priority, string> = {
-  haute: "bg-rose-100 text-rose-800 font-black dark:bg-rose-900/60 dark:text-rose-200",
-  moyenne: "bg-amber-100 text-amber-800 font-black dark:bg-amber-900/60 dark:text-amber-200",
-  basse: "bg-slate-100 text-slate-700 font-black dark:bg-slate-800 dark:text-slate-300",
+const CATEGORY_BADGE: Record<Category, string> = {
+  Urgence: "bg-rose-600 text-white shadow-xs font-black",
+  Opérationnel: "bg-amber-600 text-white shadow-xs font-black",
+  Analyse: "bg-sky-600 text-white shadow-xs font-black",
 };
 
 export function ActionCenter({ items }: { items: ActionItem[] }) {
@@ -126,53 +134,64 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border-2 border-slate-300/80 dark:border-slate-700 bg-white shadow-2xl shadow-slate-300/40 dark:bg-slate-900 dark:shadow-none transition-all duration-300">
-      {/* En-tête Studio RH Prioritaire */}
-      <div className="relative flex items-center justify-between border-b border-slate-200 px-6 py-4.5 dark:border-slate-800 bg-gradient-to-r from-amber-500/10 via-white to-orange-500/10 dark:from-slate-800 dark:to-slate-900 border-t-4 border-t-[#FF8200]">
+    <div className="overflow-hidden rounded-3xl border-2 border-slate-300/90 dark:border-slate-700 bg-white shadow-2xl shadow-slate-300/40 dark:bg-slate-900 dark:shadow-none transition-all duration-300">
+      {/* En-tête Studio RH Prioritaire Amplifié */}
+      <div className="relative flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 px-6 py-4.5 dark:border-slate-800 bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-orange-500/10 dark:from-slate-800 dark:to-slate-900 border-t-4 border-t-[#FF8200] gap-3">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-3.5 w-3.5 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF8200] opacity-75" />
-            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#FF8200]" />
+          <div className="flex h-3.5 w-3.5 relative shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
+            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-600" />
           </div>
-          <h2 className="text-lg font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            <span>À Traiter en Priorité</span>
-            <span className="text-[10px] font-black uppercase tracking-wider bg-rose-500 text-white px-2 py-0.5 rounded-md shadow-xs">
-              Urgent
-            </span>
-          </h2>
-          <span className="rounded-full bg-[#FF8200] text-white px-3 py-0.5 text-xs font-black shadow-xs">
-            {total} dossier{total > 1 ? "s" : ""}
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                Flux RH Intelligents — Décisions Prioritaires
+              </h2>
+              <span className="rounded-full bg-[#FF8200] text-white px-2.5 py-0.5 text-xs font-black shadow-xs">
+                {total} à traiter
+              </span>
+            </div>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+              Actions directes ordonnées par Urgence, Opérationnel et Analyse
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 bg-white/80 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+            ⚡ Hub Ultra-Décisionnel
           </span>
         </div>
-        <span className="hidden sm:inline text-[11px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
-          Flux RH Intelligents
-        </span>
       </div>
 
-      {/* Liste */}
+      {/* Liste des Actions */}
       <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-        {actionable.map((item) => {
+        {actionable.map((item, index) => {
           const cfg = CONFIG[item.type];
           const Icon = cfg.icon;
+          const isTop3 = index < 3;
           return (
-            <li key={item.type}>
+            <li key={item.type} className={isTop3 ? "bg-slate-50/50 dark:bg-slate-800/30" : ""}>
               <Link
                 href={cfg.href}
-                className="group flex items-center justify-between gap-4 px-6 py-4 outline-none transition-all hover:bg-orange-50/50 focus-visible:bg-slate-50 dark:hover:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"
+                className="group flex items-center justify-between gap-4 px-6 py-4 outline-none transition-all hover:bg-orange-50/60 focus-visible:bg-slate-50 dark:hover:bg-slate-800/80"
               >
                 <div className="flex items-center gap-4 min-w-0 flex-1">
-                  <span
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform group-hover:scale-105 ${TINT[cfg.priority]}`}
-                  >
+                  {/* Badge d'Ordre Décisionnel Top 3 */}
+                  <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform group-hover:scale-105 relative ${TINT[cfg.priority]}`}>
                     <Icon className="h-5.5 w-5.5 stroke-[2.25]" />
+                    {isTop3 && (
+                      <span className="absolute -top-1.5 -left-1.5 h-5 w-5 rounded-full bg-[#FF8200] text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs">
+                        #{index + 1}
+                      </span>
+                    )}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className="truncate text-sm font-black text-slate-900 dark:text-slate-100 group-hover:text-[#FF8200] transition-colors">
                         {cfg.label(item.count)}
                       </span>
-                      <span className={`text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full ${BADGE_TINT[cfg.priority]}`}>
-                        {cfg.priority}
+                      <span className={`text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-md ${CATEGORY_BADGE[cfg.category]}`}>
+                        {cfg.category}
                       </span>
                     </div>
                   </div>

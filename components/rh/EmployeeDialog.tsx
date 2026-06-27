@@ -236,10 +236,30 @@ interface Props {
   employee?: EmployeeWithPrimes;
   employees?: { id: string; full_name: string }[];
   trigger?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
-  const [open, setOpen] = useState(false);
+export function EmployeeDialog({
+  employee,
+  employees = [],
+  trigger,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  onSuccess,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : uncontrolledOpen;
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(newOpen);
+    }
+    setControlledOpen?.(newOpen);
+  };
+
   const [suggestedMatricule, setSuggestedMatricule] = useState<string>("");
   const [salaryGrid, setSalaryGrid] = useState<SalaryGridRow[]>([]);
   const router = useRouter();
@@ -322,19 +342,20 @@ export function EmployeeDialog({ employee, employees = [], trigger }: Props) {
     }
 
     toast.success(employee ? "Employé modifié" : "Employé ajouté");
-    setOpen(false);
+    handleOpenChange(false);
     reset();
+    onSuccess?.();
     router.refresh();
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       {trigger ? (
         <div
           role="button"
           tabIndex={0}
-          onClick={() => setOpen(true)}
-          onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
+          onClick={() => handleOpenChange(true)}
+          onKeyDown={(e) => e.key === "Enter" && handleOpenChange(true)}
           className="contents"
         >
           {trigger}
