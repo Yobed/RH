@@ -80,30 +80,30 @@ export function KpiCard({
         "border",
         cfg.border,
         "shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.06)] transition-all duration-250",
-        featured ? "p-6 sm:p-7" : "p-4 sm:p-5"
+        featured ? "p-7 sm:p-8" : "p-5 sm:p-6"
       )}
     >
       <div className="relative z-10">
         {/* Header */}
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className={cn("h-2 w-2 rounded-full shrink-0 animate-pulse", cfg.dot)} />
-            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className={cn("h-2.5 w-2.5 rounded-full shrink-0 animate-pulse", cfg.dot)} />
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate">
               {label}
             </p>
           </div>
-          <div className={cn("rounded-lg p-2 shrink-0 transition-transform duration-200 group-hover:scale-110", cfg.iconWrap)}>
-            <Icon weight="duotone" className={featured ? "h-5 w-5" : "h-4 w-4"} />
+          <div className={cn("rounded-xl shrink-0 transition-transform duration-200 group-hover:scale-110", featured ? "p-3" : "p-2.5", cfg.iconWrap)}>
+            <Icon weight="duotone" className={featured ? "h-6 w-6" : "h-5 w-5"} />
           </div>
         </div>
 
         {/* Value */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           {isNumber ? (
             <span
               className={cn(
                 "font-extrabold tracking-tight tabular-nums leading-none",
-                featured ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl",
+                featured ? "text-5xl sm:text-6xl" : "text-3xl sm:text-[2.5rem]",
                 cfg.value
               )}
             >
@@ -113,7 +113,7 @@ export function KpiCard({
             <span
               className={cn(
                 "font-extrabold tracking-tight tabular-nums leading-none",
-                featured ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl",
+                featured ? "text-5xl sm:text-6xl" : "text-3xl sm:text-[2.5rem]",
                 cfg.value
               )}
             >
@@ -121,7 +121,7 @@ export function KpiCard({
             </span>
           )}
           {description && (
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-normal mt-1.5">
+            <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400 leading-normal mt-2">
               {description}
             </span>
           )}

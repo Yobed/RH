@@ -160,17 +160,19 @@ export function ExecutiveRhCockpit({
                   </section>
 
                   {/* Bento KPIs */}
-                  <section className="space-y-3">
+                  <section className="space-y-4">
                     <SectionDivider label="Métriques Synthétiques" />
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      <KpiCard
-                        label="Effectif actif"
-                        value={totalActifs}
-                        icon={Users}
-                        description="Collaborateurs"
-                        index={0}
-                        featured
-                      />
+                    {/* Featured KPI - full width */}
+                    <KpiCard
+                      label="Effectif actif"
+                      value={totalActifs}
+                      icon={Users}
+                      description="Collaborateurs en poste"
+                      index={0}
+                      featured
+                    />
+                    {/* Secondary KPIs - 2 columns for better readability */}
+                    <div className="grid grid-cols-2 gap-4">
                       <KpiCard
                         label="Recrutements"
                         value={postesOuverts}
@@ -473,12 +475,12 @@ export function ExecutiveRhCockpit({
 
 function SectionDivider({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-2.5 pt-1 pb-1">
-      <div className="h-2 w-2 rounded-full bg-[#E06D00] dark:bg-[#F58220]" />
-      <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 whitespace-nowrap">
+    <div className="flex items-center gap-3 pt-2 pb-2">
+      <div className="w-1 h-5 rounded-full bg-[#E06D00] dark:bg-[#F58220] shrink-0" />
+      <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-800 dark:text-slate-100 whitespace-nowrap">
         {label}
       </h2>
-      <div className="flex-1 h-px bg-slate-200 dark:bg-slate-800" />
+      <div className="flex-1 h-px bg-gradient-to-r from-slate-300 via-slate-200 to-transparent dark:from-slate-700 dark:via-slate-800 dark:to-transparent" />
     </div>
   );
 }
