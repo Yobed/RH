@@ -4,7 +4,11 @@ import { EmployeeTable } from "@/components/rh/EmployeeTable";
 import { ImportExcelModal } from "@/components/rh/ImportExcelModal";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHelp } from "@/components/rh/PageHelp";
-import { Users } from "lucide-react";
+import { 
+  Users, 
+  Download, 
+  IdentificationBadge
+} from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: "Employés — RH Manager CI" };
@@ -59,80 +63,79 @@ export default async function EmployesPage({
   // KPIs
   const { count: totalActifs } = await supabase.from("employees").select("*", { count: "exact", head: true }).eq("statut", "actif");
   const { count: totalFemmes } = await supabase.from("employees").select("*", { count: "exact", head: true }).eq("statut", "actif").eq("genre", "F");
+  const { count: totalCDI } = await supabase.from("employees").select("*", { count: "exact", head: true }).eq("type_contrat", "CDI");
   
   const total = allEmployees?.length ?? 0;
   const actifs = totalActifs ?? 0;
   const femmes = totalFemmes ?? 0;
-  const pctFemmes = actifs > 0 && femmes > 0 ? Math.round((femmes / actifs) * 100) : null;
+  const cdiCount = totalCDI ?? 0;
+  const pctFemmes = actifs > 0 && femmes > 0 ? Math.round((femmes / actifs) * 100) : 0;
+
+  const stats = {
+    total,
+    actifs,
+    cdiCount,
+    pctFemmes,
+    femmes
+  };
 
   return (
-    <div className="p-6 md:p-8 space-y-6 bg-transparent">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="p-6 md:p-8 space-y-6 bg-slate-50/50 min-h-screen">
+      {/* 1. Sleek Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Employés</h1>
-            <PageHelp text="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié. Tenir un registre d'employeur à jour est une obligation du Code du Travail ivoirien." />
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200/80">
+              <IdentificationBadge size={14} weight="bold" className="text-[#FF8200]" />
+              Effectif RH
+            </span>
+            <PageHelp text="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié." />
           </div>
-          <p className="text-sm text-slate-600 mt-0.5">Gestion du personnel</p>
-          {/* Mini KPIs inline */}
-          <div className="flex flex-wrap items-center gap-4 mt-3">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-slate-400 shrink-0" />
-              <span className="text-sm text-slate-600">
-                <span className="font-semibold font-mono tabular-nums text-slate-900">{total}</span>
-                {" "}au total
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
-              <span className="text-sm text-slate-600">
-                <span className="font-semibold font-mono tabular-nums text-slate-900">{actifs}</span>
-                {" "}actif{actifs > 1 ? "s" : ""}
-              </span>
-            </div>
-            {pctFemmes !== null && (
-              <div className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-violet-400 shrink-0" />
-                <span className="text-sm text-slate-600">
-                  <span className="font-semibold font-mono tabular-nums text-slate-900">{pctFemmes} %</span>
-                  {" "}femmes
-                </span>
-              </div>
-            )}
-          </div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            Gestion des Collaborateurs
+          </h1>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+
+        {/* Primary Action Cluster */}
+        <div className="flex items-center gap-2.5">
           <a
             href="/api/employees/export?statut=actif"
             download
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-2xs active:scale-[0.98]"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-            Exporter Excel
+            <Download size={16} className="text-slate-500" weight="bold" />
+            <span>Exporter</span>
           </a>
           <ImportExcelModal />
           <EmployeeDialog employees={allEmployees ?? []} />
         </div>
       </div>
 
+      {/* 2. Unified Master Workstation Shell */}
       {!employees || employees.length === 0 ? (
-        <EmptyState
-          icon={<Users className="h-14 w-14 text-slate-300" />}
-          title="Aucun collaborateur"
-          description="Votre base de données est vide ou aucun résultat ne correspond à votre recherche."
-          action={
-            <div className="flex gap-2">
-              <ImportExcelModal />
-              <EmployeeDialog employees={allEmployees ?? []} />
-            </div>
-          }
-        />
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-12 shadow-2xs">
+          <EmptyState
+            icon={<Users size={56} className="text-slate-300" weight="duotone" />}
+            title="Aucun collaborateur trouvé"
+            description="Votre base de données ne contient aucun résultat correspondant aux filtres actifs."
+            action={
+              <div className="flex gap-3">
+                <ImportExcelModal />
+                <EmployeeDialog employees={allEmployees ?? []} />
+              </div>
+            }
+          />
+        </div>
       ) : (
-        <EmployeeTable employees={employees} totalCount={count ?? 0} allEmployees={allEmployees ?? []} />
+        <EmployeeTable 
+          employees={employees} 
+          totalCount={count ?? 0} 
+          allEmployees={allEmployees ?? []}
+          stats={stats}
+        />
       )}
     </div>
   );
 }
+
+

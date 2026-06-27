@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   MagnifyingGlass, 
   Users, 
-  ArrowRight, 
   Funnel,
-  IdentificationCard,
   Briefcase,
-  Buildings,
-  CurrencyCircleDollar,
-  UserCircle,
   CaretDown,
   CaretUp,
-  CaretLeft,
-  CaretRight,
-  Trash
+  SquaresFour,
+  ListBullets,
+  X,
+  UserCheck,
+  Building,
+  MapPin,
+  EnvelopeSimple,
+  PhoneCall,
+  Sparkle
 } from "@phosphor-icons/react";
 import { 
   DropdownMenu,
@@ -61,18 +62,21 @@ function getInitials(name: string): string {
 
 type StatutKey = "actif" | "inactif" | "suspendu";
 
-const statutConfig: Record<StatutKey, { label: string; dot: string }> = {
+const statutConfig: Record<StatutKey, { label: string; badge: string; dot: string }> = {
   actif: {
     label: "Actif",
-    dot: "bg-slate-400",
+    badge: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
+    dot: "bg-emerald-500",
   },
   inactif: {
     label: "Inactif",
-    dot: "bg-slate-300",
+    badge: "bg-slate-100 text-slate-600 border-slate-200",
+    dot: "bg-slate-400",
   },
   suspendu: {
     label: "Suspendu",
-    dot: "bg-slate-300",
+    badge: "bg-amber-50 text-amber-700 border-amber-200/80",
+    dot: "bg-amber-500",
   },
 };
 
@@ -81,7 +85,10 @@ function StatutBadge({ statut }: { statut: string | null }) {
   const cfg = statutConfig[key] ?? statutConfig.inactif;
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-600"
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold tracking-tight shadow-2xs",
+        cfg.badge
+      )}
     >
       <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", cfg.dot)} />
       {cfg.label}
@@ -92,13 +99,22 @@ function StatutBadge({ statut }: { statut: string | null }) {
 interface Props {
   employees: Employee[];
   totalCount: number;
-  allEmployees: { id: string; full_name: string; type_contrat?: string | null }[];
+  allEmployees: { id: string; full_name: string; statut?: string | null; type_contrat?: string | null }[];
+  stats?: {
+    total: number;
+    actifs: number;
+    cdiCount: number;
+    pctFemmes: number;
+    femmes: number;
+  };
 }
 
-export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
+export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
   const search = searchParams.get("q") || "";
   const filterStatut = searchParams.get("statut") || "tous";
@@ -107,6 +123,15 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
   const sortDir = searchParams.get("dir") || "asc";
   const currentPage = Number(searchParams.get("page")) || 1;
   const itemsPerPage = 10;
+
+  const statusCounts = useMemo(() => {
+    const counts = { tous: allEmployees.length, actif: 0, inactif: 0, suspendu: 0 };
+    allEmployees.forEach((e) => {
+      const st = (e.statut ?? "actif") as StatutKey;
+      if (counts[st] !== undefined) counts[st]++;
+    });
+    return counts;
+  }, [allEmployees]);
 
   const contrats = useMemo(() => {
     const types = Array.from(
@@ -151,11 +176,11 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
   };
 
   const SortIcon = ({ column }: { column: string }) => {
-    if (sortColumn !== column) return <CaretDown className="opacity-20 ml-1 inline" size={12} />;
+    if (sortColumn !== column) return <CaretDown className="opacity-20 ml-1 inline text-slate-400" size={12} />;
     return sortDir === "asc" ? (
-      <CaretUp className="opacity-100 ml-1 inline text-slate-900" size={12} weight="bold" />
+      <CaretUp className="opacity-100 ml-1 inline text-[#FF8200]" size={12} weight="bold" />
     ) : (
-      <CaretDown className="opacity-100 ml-1 inline text-slate-900" size={12} weight="bold" />
+      <CaretDown className="opacity-100 ml-1 inline text-[#FF8200]" size={12} weight="bold" />
     );
   };
 
@@ -170,7 +195,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
     }
   };
 
-  if (employees.length === 0 && !search) {
+  if (employees.length === 0 && !search && filterStatut === "tous" && filterContrat === "tous") {
     return (
       <EmptyState
         icon={<Users className="h-14 w-14 text-slate-300" weight="duotone" />}
@@ -182,241 +207,463 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Premium Search & Filters Area */}
-      <div className="p-4 flex flex-col xl:flex-row gap-4 items-center bg-white border border-slate-200 rounded-xl shadow-sm">
-        <div className="relative flex-1 group w-full">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#2563eb] transition-colors">
-            <MagnifyingGlass size={18} weight="bold" />
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
+      {/* Sleek Integrated KPI Strip */}
+      {stats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100 bg-white border-b border-slate-200/80">
+          <div className="p-4 sm:p-5 flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#FF8200]/10 text-[#FF8200] flex items-center justify-center shrink-0">
+              <Users size={20} weight="duotone" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Effectif</p>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-xl font-black text-slate-900 font-mono">{stats.total}</span>
+                <span className="text-[10px] font-semibold text-slate-500">salariés</span>
+              </div>
+            </div>
           </div>
-          <input
-            type="text"
-            placeholder="Rechercher un collaborateur (nom, poste, matricule...)"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full h-11 pl-11 pr-4 rounded-lg bg-white border border-slate-200 font-medium text-sm focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]/20 transition-all outline-none"
-          />
+
+          <div className="p-4 sm:p-5 flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+              <UserCheck size={20} weight="duotone" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Effectif Actif</p>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-xl font-black text-slate-900 font-mono">{stats.actifs}</span>
+                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-mono">
+                  {stats.total > 0 ? Math.round((stats.actifs / stats.total) * 100) : 0}%
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-5 flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-100">
+              <Briefcase size={20} weight="duotone" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Contrats CDI</p>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-xl font-black text-slate-900 font-mono">{stats.cdiCount}</span>
+                <span className="text-[10px] font-semibold text-slate-500">permanents</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-5 flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100">
+              <Sparkle size={20} weight="duotone" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Taux Parité (F)</p>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <span className="text-xl font-black text-slate-900 font-mono">{stats.pctFemmes}%</span>
+                <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-mono">
+                  {stats.femmes} femmes
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Workstation Header Toolbar: Segmented Tabs, View Switcher, Search & Filters */}
+      <div className="p-4 sm:p-5 bg-slate-50/50 border-b border-slate-200/70 space-y-3.5">
+        {/* Top Control Strip */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Segmented Status Tabs */}
+          <div className="flex items-center gap-1.5 bg-slate-200/60 p-1.5 rounded-2xl border border-slate-200/60 overflow-x-auto">
+            {[
+              { id: "tous", label: "Tous les salariés", count: statusCounts.tous },
+              { id: "actif", label: "Actifs", count: statusCounts.actif },
+              { id: "inactif", label: "Inactifs", count: statusCounts.inactif },
+              { id: "suspendu", label: "Suspendus", count: statusCounts.suspendu },
+            ].map((tab) => {
+              const isActive = filterStatut === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleStatutChange(tab.id)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap outline-none cursor-pointer",
+                    isActive
+                      ? "bg-white text-slate-900 shadow-sm border border-slate-200/80"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/40"
+                  )}
+                >
+                  <span>{tab.label}</span>
+                  <span
+                    className={cn(
+                      "px-2 py-0.5 rounded-full text-[10px] font-mono font-black",
+                      isActive ? "bg-[#FF8200] text-white" : "bg-slate-200 text-slate-700"
+                    )}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Display Mode Toggle */}
+          <div className="flex items-center gap-2.5 self-end md:self-auto shrink-0">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">Format d'affichage:</span>
+            <div className="flex items-center bg-slate-200/60 p-1 rounded-2xl border border-slate-200/60">
+              <button
+                onClick={() => setViewMode("table")}
+                className={cn(
+                  "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
+                  viewMode === "table"
+                    ? "bg-white text-[#FF8200] shadow-sm border border-slate-200/80"
+                    : "text-slate-500 hover:text-slate-900"
+                )}
+                title="Vue Tableau Détaillé"
+              >
+                <ListBullets size={18} weight="bold" />
+                <span className="hidden sm:inline">Tableau</span>
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={cn(
+                  "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
+                  viewMode === "grid"
+                    ? "bg-white text-[#FF8200] shadow-sm border border-slate-200/80"
+                    : "text-slate-500 hover:text-slate-900"
+                )}
+                title="Vue Trombinoscope (Cartes)"
+              >
+                <SquaresFour size={18} weight="bold" />
+                <span className="hidden sm:inline">Trombinoscope</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-          <div className="relative group">
-             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#2563eb] z-10">
-               <Funnel size={14} weight="bold" />
-             </div>
-             <select
-              value={filterStatut}
-              onChange={(e) => handleStatutChange(e.target.value)}
-              className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]/20 transition-all min-w-[180px]"
-            >
-              <option value="tous">Tous les statuts</option>
-              <option value="actif">Statut : Actif</option>
-              <option value="inactif">Statut : Inactif</option>
-              <option value="suspendu">Statut : Suspendu</option>
-            </select>
-            <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} weight="bold" />
+        {/* Bottom Filter Strip: Search Input & Contract Select */}
+        <div className="flex flex-col lg:flex-row gap-3 items-center justify-between pt-1">
+          <div className="relative flex-1 w-full group">
+            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#FF8200] transition-colors">
+              <MagnifyingGlass size={18} weight="bold" />
+            </div>
+            <input
+              type="text"
+              placeholder="Rechercher par nom, matricule, poste, département..."
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-full h-11 pl-10 pr-9 rounded-2xl bg-white border border-slate-200/90 font-medium text-xs text-slate-800 placeholder:text-slate-400 focus:border-[#FF8200] focus:ring-4 focus:ring-[#FF8200]/10 transition-all outline-none shadow-xs"
+            />
+            {search && (
+              <button
+                onClick={() => handleSearchChange("")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 rounded-full hover:bg-slate-100"
+              >
+                <X size={14} weight="bold" />
+              </button>
+            )}
           </div>
 
-          {contrats.length > 0 && (
-            <div className="relative group">
-               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#2563eb] z-10">
-                 <Briefcase size={14} weight="bold" />
-               </div>
-               <select
-                value={filterContrat}
-                onChange={(e) => handleContratChange(e.target.value)}
-                className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]/20 transition-all min-w-[180px]"
-              >
-                <option value="tous">Tous les contrats</option>
-                {contrats.map((c) => (
-                  <option key={c} value={c}>Contrat : {c}</option>
-                ))}
-              </select>
-              <CaretDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={12} weight="bold" />
-            </div>
-          )}
+          <div className="flex items-center gap-3 w-full lg:w-auto shrink-0">
+            {contrats.length > 0 && (
+              <div className="relative group w-full sm:w-auto">
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF8200] z-10 pointer-events-none">
+                  <Briefcase size={16} weight="bold" />
+                </div>
+                <select
+                  value={filterContrat}
+                  onChange={(e) => handleContratChange(e.target.value)}
+                  className="h-11 w-full sm:w-auto pl-10 pr-9 rounded-2xl bg-white border border-slate-200/90 font-bold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#FF8200] focus:ring-4 focus:ring-[#FF8200]/10 transition-all min-w-[190px] shadow-xs"
+                >
+                  <option value="tous">Tous les types de contrat</option>
+                  {contrats.map((c) => (
+                    <option key={c} value={c}>Contrat: {c}</option>
+                  ))}
+                </select>
+                <CaretDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} weight="bold" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Main Table Interface */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/50">
-                <th 
-                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 transition-colors"
-                  onClick={() => handleSort("full_name")}
-                >
-                  Collaborateur <SortIcon column="full_name" />
-                </th>
-                <th 
-                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden lg:table-cell cursor-pointer hover:text-slate-800 transition-colors"
-                  onClick={() => handleSort("matricule")}
-                >
-                  Identification <SortIcon column="matricule" />
-                </th>
-                <th 
-                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 hidden md:table-cell cursor-pointer hover:text-slate-800 transition-colors"
-                  onClick={() => handleSort("type_contrat")}
-                >
-                  Contrat & Dept <SortIcon column="type_contrat" />
-                </th>
-                <th 
-                  className="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 hidden xl:table-cell cursor-pointer hover:text-slate-800 transition-colors"
-                  onClick={() => handleSort("salaire_brut")}
-                >
-                  Rémunération <SortIcon column="salaire_brut" />
-                </th>
-                <th 
-                  className="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 cursor-pointer hover:text-slate-800 transition-colors"
-                  onClick={() => handleSort("statut")}
-                >
-                  Statut <SortIcon column="statut" />
-                </th>
-                <th className="px-6 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-slate-500">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              <AnimatePresence mode="popLayout">
-                {employees.map((emp, i) => (
-                  <motion.tr
-                    key={emp.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.4, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] }}
-                    className="group hover:bg-slate-50 transition-colors duration-200"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <div className="w-10 h-10 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-semibold text-xs transition-colors duration-300">
-                             {getInitials(emp.full_name)}
+      {/* Content Region: Table or Trombinoscope Grid */}
+      <div className="flex-1 p-0">
+        <AnimatePresence mode="wait">
+          {viewMode === "table" ? (
+            <motion.div
+              key="table-view"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="overflow-x-auto"
+            >
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 select-none">
+                    <th 
+                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider cursor-pointer hover:text-slate-900 transition-colors"
+                      onClick={() => handleSort("full_name")}
+                    >
+                      Collaborateur <SortIcon column="full_name" />
+                    </th>
+                    <th 
+                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                      onClick={() => handleSort("matricule")}
+                    >
+                      Matricule & Genre <SortIcon column="matricule" />
+                    </th>
+                    <th 
+                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider hidden md:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                      onClick={() => handleSort("type_contrat")}
+                    >
+                      Contrat & Département <SortIcon column="type_contrat" />
+                    </th>
+                    <th 
+                      className="px-6 py-4 text-right text-[11px] font-black uppercase tracking-wider hidden xl:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                      onClick={() => handleSort("salaire_brut")}
+                    >
+                      Rémunération Brut <SortIcon column="salaire_brut" />
+                    </th>
+                    <th 
+                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider cursor-pointer hover:text-slate-900 transition-colors"
+                      onClick={() => handleSort("statut")}
+                    >
+                      Statut <SortIcon column="statut" />
+                    </th>
+                    <th className="px-6 py-4 text-center text-[11px] font-black uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  {employees.map((emp, i) => (
+                    <tr
+                      key={emp.id}
+                      className="group hover:bg-slate-50/80 transition-colors duration-150"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200/90 border border-slate-200/80 flex items-center justify-center text-slate-800 font-black text-xs shadow-2xs group-hover:border-[#FF8200]/40 transition-colors">
+                            {getInitials(emp.full_name)}
                           </div>
-                          <div className={cn(
-                            "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-white",
-                            statutConfig[emp.statut as StatutKey]?.dot || "bg-slate-300"
-                          )} />
+                          <div className="min-w-0">
+                            <Link 
+                              href={`/employes/${emp.id}`}
+                              className="text-sm font-bold text-slate-900 hover:text-[#FF8200] transition-colors line-clamp-1"
+                            >
+                              {emp.full_name}
+                            </Link>
+                            <p className="text-xs text-slate-500 font-medium truncate mt-0.5">{emp.poste || "Poste non renseigné"}</p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
+                      </td>
+
+                      <td className="px-6 py-4 hidden lg:table-cell">
+                        <div className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-lg w-max border border-slate-200/60">
+                          {emp.matricule}
+                        </div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-1">{emp.genre === 'F' ? 'Femme' : emp.genre === 'M' ? 'Homme' : '—'}</div>
+                      </td>
+
+                      <td className="px-6 py-4 hidden md:table-cell">
+                        <div className="flex flex-col gap-1">
+                          <span className="inline-flex items-center px-2.5 py-0.5 bg-amber-50 text-amber-800 rounded-md text-[10px] font-black uppercase tracking-wider border border-amber-200/60 w-max">
+                            {emp.type_contrat || 'N/A'}
+                          </span>
+                          <span className="text-xs text-slate-600 font-medium flex items-center gap-1.5">
+                            <Building size={13} className="text-slate-400 shrink-0" />
+                            {emp.departement || 'Non affecté'}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="px-6 py-4 text-right hidden xl:table-cell">
+                        <div className="text-sm font-black text-slate-900 font-mono tabular-nums">
+                          {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Brut Mensuel</span>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <StatutBadge statut={emp.statut} />
+                      </td>
+
+                      <td className="px-6 py-4 text-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-all outline-none cursor-pointer">
+                              <DotsThreeVertical size={20} weight="bold" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-52 p-2 rounded-2xl border-slate-200 shadow-xl bg-white">
+                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2.5 py-1.5">Options Collaborateur</DropdownMenuLabel>
+                            <DropdownMenuItem asChild>
+                              <Link href={`/employes/${emp.id}`} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 outline-none">
+                                <Eye size={16} weight="duotone" className="text-slate-400" />
+                                <span>Consulter la fiche</span>
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="p-0 focus:bg-transparent">
+                              <EmployeeDialog 
+                                employee={emp} 
+                                trigger={
+                                  <div className="flex items-center gap-2.5 w-full p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 transition-colors outline-none">
+                                    <PencilSimple size={16} weight="duotone" className="text-slate-400" />
+                                    <span>Modifier le profil</span>
+                                  </div>
+                                }
+                              />
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="my-1 bg-slate-100" />
+                            <ConfirmDialog
+                              title="Archiver le collaborateur"
+                              description={`Voulez-vous archiver le dossier de ${emp.full_name} ? Le statut passera en Inactif.`}
+                              confirmLabel="Archiver"
+                              onConfirm={() => handleDelete(emp.id)}
+                              trigger={
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer text-rose-600 focus:text-rose-600 focus:bg-rose-50 font-semibold text-xs outline-none">
+                                  <Archive size={16} weight="duotone" />
+                                  <span>Archiver le profil</span>
+                                </DropdownMenuItem>
+                              }
+                            />
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </motion.div>
+          ) : (
+            /* Trombinoscope Grid View */
+            <motion.div
+              key="grid-view"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 bg-slate-50/30"
+            >
+              {employees.map((emp, i) => (
+                <div
+                  key={emp.id}
+                  className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200/80 flex items-center justify-center text-slate-800 font-black text-sm shadow-2xs group-hover:border-[#FF8200]/40 transition-colors">
+                          {getInitials(emp.full_name)}
+                        </div>
+                        <div>
                           <Link 
                             href={`/employes/${emp.id}`}
-                            className="text-sm font-semibold text-slate-900 tracking-tight leading-none hover:text-[#2563eb] transition-colors"
+                            className="font-black text-sm text-slate-900 hover:text-[#FF8200] transition-colors line-clamp-1"
                           >
                             {emp.full_name}
                           </Link>
-                          <p className="text-xs text-slate-500 font-medium mt-1 truncate">{emp.poste}</p>
+                          <p className="text-xs font-semibold text-slate-500 line-clamp-1 mt-0.5">{emp.poste || "Poste non défini"}</p>
                         </div>
                       </div>
-                    </td>
 
-                    <td className="px-6 py-4 hidden lg:table-cell">
-                      <div className="text-xs font-mono text-slate-600">{emp.matricule}</div>
-                      <div className="text-[10px] uppercase tracking-wider text-slate-400">{emp.genre || 'N/A'}</div>
-                    </td>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="h-8 w-8 inline-flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-800 transition-all outline-none shrink-0 cursor-pointer">
+                            <DotsThreeVertical size={18} weight="bold" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 p-2 rounded-2xl border-slate-200 shadow-xl bg-white">
+                          <DropdownMenuItem asChild>
+                            <Link href={`/employes/${emp.id}`} className="flex items-center gap-2 p-2 rounded-xl font-semibold text-xs text-slate-700 cursor-pointer">
+                              <Eye size={16} />
+                              <span>Voir la fiche</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="p-0">
+                            <EmployeeDialog 
+                              employee={emp} 
+                              trigger={
+                                <div className="flex items-center gap-2 w-full p-2 rounded-xl font-semibold text-xs text-slate-700 cursor-pointer">
+                                  <PencilSimple size={16} />
+                                  <span>Modifier</span>
+                                </div>
+                              }
+                            />
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
 
-                    <td className="px-6 py-4 hidden md:table-cell">
-                      <div className="flex flex-col gap-1">
-                        <div className="inline-flex items-center px-2 py-0.5 bg-slate-100 rounded text-[10px] font-semibold uppercase tracking-wider text-slate-600 w-max">
-                           {emp.type_contrat || '—'}
-                        </div>
-                        <span className="text-xs text-slate-500">{emp.departement || 'Non affecté'}</span>
+                    <div className="space-y-2.5 py-3 border-y border-slate-100 my-3">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-400 font-medium">Matricule:</span>
+                        <span className="font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md text-[11px] border border-slate-200/50">{emp.matricule}</span>
                       </div>
-                    </td>
-
-                    <td className="px-6 py-4 text-right hidden xl:table-cell">
-                      <div className="text-sm font-semibold text-slate-900">
-                         {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-400 font-medium">Département:</span>
+                        <span className="font-bold text-slate-700 truncate max-w-[130px]">{emp.departement || "Non affecté"}</span>
                       </div>
-                      <span className="text-[10px] text-slate-400">Brut Mensuel</span>
-                    </td>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-400 font-medium">Contrat:</span>
+                        <span className="font-black text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-md text-[10px] uppercase border border-amber-200/60">{emp.type_contrat || "—"}</span>
+                      </div>
+                    </div>
+                  </div>
 
-                    <td className="px-6 py-4">
-                      <StatutBadge statut={emp.statut} />
-                    </td>
+                  <div className="flex items-center justify-between pt-2">
+                    <StatutBadge statut={emp.statut} />
+                    <Link
+                      href={`/employes/${emp.id}`}
+                      className="text-xs font-bold text-[#FF8200] hover:underline inline-flex items-center gap-1"
+                    >
+                      Fiche RH &rarr;
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-                    <td className="px-6 py-6 text-center">
-                       <DropdownMenu>
-                         <DropdownMenuTrigger asChild>
-                           <button className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-all outline-none">
-                             <DotsThreeVertical size={20} weight="bold" />
-                           </button>
-                         </DropdownMenuTrigger>
-                         <DropdownMenuContent align="end" className="w-48 p-2 rounded-2xl border-slate-100 shadow-xl">
-                           <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 py-1.5">Actions</DropdownMenuLabel>
-                           <DropdownMenuItem asChild>
-                             <Link href={`/employes/${emp.id}`} className="flex items-center gap-2 p-2 rounded-xl cursor-pointer focus:bg-slate-50 outline-none">
-                               <Eye size={16} weight="duotone" className="text-slate-400" />
-                               <span className="text-xs font-bold text-slate-700">Voir la fiche</span>
-                             </Link>
-                           </DropdownMenuItem>
-                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="p-0 focus:bg-transparent">
-                             <EmployeeDialog 
-                               employee={emp} 
-                               trigger={
-                                 <div className="flex items-center gap-2 w-full p-2 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors outline-none">
-                                   <PencilSimple size={16} weight="duotone" className="text-slate-400" />
-                                   <span className="text-xs font-bold text-slate-700">Modifier</span>
-                                 </div>
-                               }
-                             />
-                           </DropdownMenuItem>
-                           <DropdownMenuSeparator className="my-1 bg-slate-50" />
-                           <ConfirmDialog
-                             title="Archiver l'employé"
-                             description={`Êtes-vous sûr de vouloir archiver ${emp.full_name} ? Son profil sera conservé mais son statut passera à Inactif.`}
-                             confirmLabel="Archiver"
-                             onConfirm={() => handleDelete(emp.id)}
-                             trigger={
-                               <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2 p-2 rounded-xl cursor-pointer text-rose-600 focus:text-rose-600 focus:bg-rose-50 outline-none">
-                                 <Archive size={16} weight="duotone" />
-                                 <span className="text-xs font-bold">Archiver</span>
-                               </DropdownMenuItem>
-                             }
-                           />
-                         </DropdownMenuContent>
-                       </DropdownMenu>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-        </div>
-
-        {employees.length === 0 && search && (
+      {employees.length === 0 && search && (
+        <div className="p-12 text-center">
           <EmptyState
-            className="border-none bg-transparent py-16"
-            icon={<MagnifyingGlass size={48} className="text-slate-200" weight="duotone" />}
-            title="Aucun talent trouvé"
-            description={`Nous n'avons trouvé aucun collaborateur correspondant à "${search}".`}
+            className="border-none bg-transparent"
+            icon={<MagnifyingGlass size={48} className="text-slate-300" weight="duotone" />}
+            title="Aucun collaborateur trouvé"
+            description={`Aucun salarié ne correspond à votre recherche "${search}".`}
             action={
               <button 
                 onClick={() => handleSearchChange("")}
-                className="text-xs font-black uppercase tracking-widest text-slate-900 hover:underline"
+                className="text-xs font-bold text-[#FF8200] hover:underline uppercase tracking-wider cursor-pointer"
               >
-                Effacer la recherche
+                Effacer les filtres
               </button>
             }
           />
-        )}
-
-        <div className="bg-slate-50/50 px-6 py-3 border-t border-slate-200 flex items-center justify-between">
-           <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500 font-medium">
-                {totalCount} collaborateur{totalCount > 1 ? 's' : ''} au total
-              </span>
-           </div>
-           
-           <Pagination 
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-           />
-
-           <p className="text-[10px] text-slate-400 font-medium hidden lg:block">Base RH Côte d'Ivoire v4.0</p>
         </div>
+      )}
+
+      {/* Integrated Workstation Pagination Footer */}
+      <div className="border-t border-slate-200/80 bg-slate-50/50 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-slate-500 font-bold">
+            Affichage de <span className="text-slate-900 font-black font-mono">{employees.length}</span> sur <span className="text-slate-900 font-black font-mono">{totalCount}</span> collaborateurs
+          </span>
+        </div>
+        
+        <Pagination 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+
+        <p className="text-[11px] text-slate-400 font-bold hidden lg:block">RH Manager CI &bull; Système d'Information RH</p>
       </div>
     </div>
   );
 }
+
+
