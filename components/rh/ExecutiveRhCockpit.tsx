@@ -195,27 +195,86 @@ export function ExecutiveRhCockpit({
     });
   }, [chartDeptData, pivotSortColumn]);
 
-  // Handle AI Prompt Simulation
+  // Handle AI Prompt Simulation with multi-question and multi-line structured responses
   const handleRunAiPrompt = (query?: string) => {
     const q = query || aiPromptInput;
     if (!q) return;
     setIsAiLoading(true);
     setAiSimulatedResponse(null);
+
     setTimeout(() => {
       setIsAiLoading(false);
-      if (q.toLowerCase().includes("cnps") || q.toLowerCase().includes("fdfp") || q.toLowerCase().includes("risques")) {
-        setAiSimulatedResponse("⚡ [Odoo AI Studio Audit] : Déclarations CNPS Q1 auditées à 98.4%. 2 dossiers d'apprentissage FDFP restent en attente d'approbation (1,450,000 FCFA). Recommandation : Transmettre l'attestation fiscale avant le 15 du mois.");
-      } else if (q.toLowerCase().includes("cdd") || q.toLowerCase().includes("contrat") || q.toLowerCase().includes("renouvellement") || q.toLowerCase().includes("nom") || q.toLowerCase().includes("expiration")) {
+      const lowerQ = q.toLowerCase();
+      const responses: string[] = [];
+
+      // Check for CDD / Contrats / Noms / Expiration
+      if (lowerQ.includes("cdd") || lowerQ.includes("contrat") || lowerQ.includes("renouvellement") || lowerQ.includes("nom") || lowerQ.includes("expiration")) {
         const contractAlerts = allAlerts?.filter((a) => a.type === "CONTRACT");
-        const namesList = contractAlerts && contractAlerts.length > 0
-          ? contractAlerts.map((a) => `${a.employeeName} (fin le ${new Date(a.date).toLocaleDateString("fr-FR")})`).join(", ")
-          : "Bamba Yao (fin le 30/06/2026), Camara Drogba (fin le 31/07/2026)";
-        setAiSimulatedResponse(`⚡ [Odoo AI Studio Audit] : Audit des contrats terminé. ${cddExpirant || (contractAlerts?.length ?? 2)} contrat(s) CDD sont identifiés. Salariés concernés : ${namesList}. Analyse prédictive : Transformation en CDI recommandée pour les profils à fort impact.`);
-      } else if (q.toLowerCase().includes("masse") || q.toLowerCase().includes("paie") || q.toLowerCase().includes("salariale")) {
-        setAiSimulatedResponse(`⚡ [Odoo AI Studio Audit] : Analyse de la masse salariale mensuelle : Stabilité (+1.2% vs N-1). Les primes de performance représentent 6.5% du total. Aucun écart budgétaire critique détecté.`);
-      } else {
-        setAiSimulatedResponse(`⚡ [Odoo AI Studio Audit] : Synthèse Exécutive RH pour ${dateLabel}. Score de conformité global stabilisé à ${Math.round(complianceScore)}%. ${congesEnAttente.length} demandes de congés nécessitent votre arbitrage préalable.`);
+        let listStr = "";
+        if (contractAlerts && contractAlerts.length > 0) {
+          listStr = contractAlerts.map((a) => `• ${a.employeeName} — Échéance le ${new Date(a.date).toLocaleDateString("fr-FR")} (Contrat ${a.severity === "CRITICAL" ? "Urgent" : "CDD"})`).join("\n");
+        } else if (derniersEmployes && derniersEmployes.length > 0) {
+          const cddEmps = derniersEmployes.filter((e) => e.type_contrat === "CDD");
+          if (cddEmps.length > 0) {
+            listStr = cddEmps.map((e) => `• ${e.full_name} (${e.poste}) — Fin de contrat CDD imminente`).join("\n");
+          }
+        }
+        if (!listStr) {
+          listStr = "• Bamba Yao (Développeur Fullstack) — Échéance le 30/06/2026\n• Camara Drogba (Chef de Projet) — Échéance le 31/07/2026";
+        }
+
+        responses.push(
+          `📄 AUDIT DES CONTRATS CDD & ÉCHÉANCES :\n` +
+          `Nous avons identifié ${cddExpirant || (contractAlerts?.length ?? 2)} contrat(s) CDD arrivant à expiration sous 30 jours :\n\n` +
+          `${listStr}\n\n` +
+          `💡 Recommandation Stratégique :\n` +
+          `1. Organiser les entretiens de fin de contrat d'ici la fin de semaine.\n` +
+          `2. Valider la transformation en CDI pour les profils clés ou procéder au renouvellement formel.`
+        );
       }
+
+      // Check for CNPS / FDFP / Risques / Conformité
+      if (lowerQ.includes("cnps") || lowerQ.includes("fdfp") || lowerQ.includes("risques") || lowerQ.includes("conformité")) {
+        responses.push(
+          `🛡️ AUDIT DE CONFORMITÉ SOCIALE & CNPS :\n` +
+          `• Déclarations CNPS (Q1) : Validées et auditées à 98.4%.\n` +
+          `• Dossiers de formation FDFP : 2 dossiers en attente d'approbation finale (Montant estimé : 1,450,000 FCFA).\n` +
+          `• Action requise : Transmettre l'attestation de régularité fiscale avant le 15 du mois pour éviter toute pénalité.`
+        );
+      }
+
+      // Check for Masse salariale / Paie / Salaires
+      if (lowerQ.includes("masse") || lowerQ.includes("paie") || lowerQ.includes("salariale") || lowerQ.includes("budget")) {
+        responses.push(
+          `📊 SYNTHÈSE DE LA MASSE SALARIALE :\n` +
+          `• Évolution mensuelle : +1.2% par rapport au mois N-1 (conforme aux prévisions).\n` +
+          `• Structure des rémunérations : Les primes et indemnités représentent 6.5% du volume global.\n` +
+          `• Diagnostic : Aucun dépassement de budget ni anomalie détectée sur la paie en cours.`
+        );
+      }
+
+      // Check for Congés / Absences
+      if (lowerQ.includes("congé") || lowerQ.includes("conge") || lowerQ.includes("absence") || lowerQ.includes("arbitrage")) {
+        responses.push(
+          `📅 GESTION DES CONGÉS ET ABSENCES :\n` +
+          `• Demandes en attente d'arbitrage : ${congesEnAttente.length} dossier(s).\n` +
+          `• Impact opérationnel : Faible sur le département IT, modéré sur les Opérations.\n` +
+          `• Action recommandée : Valider les plannings avant le début du mois prochain.`
+        );
+      }
+
+      // If no specific keyword matched or general summary requested
+      if (responses.length === 0) {
+        responses.push(
+          `⚡ SYNTHÈSE EXÉCUTIVE RH — ${dateLabel} :\n\n` +
+          `• Score de conformité global : ${Math.round(complianceScore)}% (Statut : Excellent).\n` +
+          `• Effectif total sous gestion : ${totalActifs} collaborateurs actifs.\n` +
+          `• Alertes prioritaires : ${cddExpirant} CDD à échéance et ${congesEnAttente.length} demande(s) de congés en attente.\n\n` +
+          `N'hésitez pas à poser une question plus spécifique sur les salariés, la masse salariale ou la conformité CNPS.`
+        );
+      }
+
+      setAiSimulatedResponse(responses.join("\n\n───────────────────────────────────────\n\n"));
     }, 600);
   };
 
@@ -782,9 +841,9 @@ export function ExecutiveRhCockpit({
                   </div>
                   <div>
                     <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                      Odoo AI Studio — Assistant RH Stratégique
+                      AI Studio RH — Assistant Stratégique
                     </h3>
-                    <p className="text-xs text-slate-500 font-semibold mt-0.5">Synthèse automatisée et prédictions de gestion sociale</p>
+                    <p className="text-xs text-slate-500 font-semibold mt-0.5">Synthèse automatisée, réponses multi-questions et prédictions RH</p>
                   </div>
                 </div>
 
@@ -814,20 +873,25 @@ export function ExecutiveRhCockpit({
                   </div>
                 </div>
 
-                {/* Input Bar */}
-                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#FF8200] focus-within:ring-2 focus-within:ring-[#FF8200]/20 transition-all">
-                  <input
-                    type="text"
+                {/* Multi-line Input Bar */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#FF8200] focus-within:ring-2 focus-within:ring-[#FF8200]/20 transition-all">
+                  <textarea
+                    rows={3}
                     value={aiPromptInput}
                     onChange={(e) => setAiPromptInput(e.target.value)}
-                    placeholder="Posez une question à l'assistant d'audit RH..."
-                    className="w-full bg-transparent px-3 text-xs font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
-                    onKeyDown={(e) => e.key === "Enter" && handleRunAiPrompt()}
+                    placeholder="Posez vos questions à l'assistant (ex: Noms des CDD expirants et analyse CNPS). Entrée pour envoyer, Shift+Entrée pour un saut de ligne..."
+                    className="w-full bg-transparent px-2 text-xs font-semibold text-slate-900 dark:text-white placeholder-slate-400 outline-none resize-y min-h-[64px]"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleRunAiPrompt();
+                      }
+                    }}
                   />
                   <button
                     onClick={() => handleRunAiPrompt()}
                     disabled={isAiLoading}
-                    className="px-5 py-2.5 rounded-lg bg-[#FF8200] text-white font-black text-xs hover:bg-[#E07400] transition-colors shrink-0 flex items-center gap-1.5 shadow-sm cursor-pointer"
+                    className="px-5 py-3 rounded-lg bg-[#FF8200] text-white font-black text-xs hover:bg-[#E07400] transition-colors shrink-0 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                   >
                     {isAiLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 fill-current" />}
                     <span>Générer</span>
@@ -839,13 +903,15 @@ export function ExecutiveRhCockpit({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-5 rounded-xl bg-[#FF8200]/5 border border-[#FF8200]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-semibold space-y-4"
+                    className="p-6 rounded-xl bg-[#FF8200]/5 border border-[#FF8200]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-medium space-y-4"
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3.5">
                       <Sparkle className="h-5 w-5 text-[#FF8200] shrink-0 mt-0.5" />
-                      <p className="flex-1">{aiSimulatedResponse}</p>
+                      <div className="flex-1 whitespace-pre-wrap font-sans text-xs leading-relaxed space-y-1.5">
+                        {aiSimulatedResponse}
+                      </div>
                     </div>
-                    <div className="pt-2 border-t border-[#FF8200]/10 flex items-center justify-end">
+                    <div className="pt-3 border-t border-[#FF8200]/10 flex items-center justify-end">
                       <button 
                         onClick={() => alert("Action stratégique transmise avec succès dans le système RH !")}
                         className="px-4 py-2 rounded-xl bg-[#FF8200] text-white font-black text-xs hover:bg-[#E07400] transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer"
