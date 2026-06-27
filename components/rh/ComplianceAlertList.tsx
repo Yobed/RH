@@ -72,7 +72,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
                 <div className="min-w-0">
                   <Link 
                     href={`/employes/${alert.id}`} 
-                    className="text-sm font-semibold text-slate-900 truncate block hover:text-[#2563eb] transition-colors"
+                    className="text-sm font-semibold text-slate-900 truncate block hover:text-[#FF8200] transition-colors"
                   >
                     {alert.employeeName}
                   </Link>
@@ -100,7 +100,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
                 )}
                 <Link 
                   href={`/employes/${alert.id}`} 
-                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-[#2563eb] hover:text-white hover:border-[#2563eb] transition-colors duration-150"
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-[#FF8200] hover:text-white hover:border-[#FF8200] transition-colors duration-150"
                 >
                   <CaretRight weight="bold" className="h-3.5 w-3.5" />
                 </Link>
@@ -113,7 +113,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
       <div className="p-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800/80 mt-auto">
         <Link 
           href="/reporting" 
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#2563eb] transition-colors shadow-xs"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#FF8200] transition-colors shadow-xs"
         >
           Accéder au centre de conformité
         </Link>

@@ -66,25 +66,25 @@ export function QuickActions() {
             <div className={cn(
               "relative h-full overflow-hidden rounded-2xl bg-white dark:bg-slate-900 p-4 sm:p-5",
               "border border-slate-200/90 dark:border-slate-800",
-              "shadow-sm hover:shadow-xl hover:shadow-[#1e40af]/10 hover:border-[#2563eb]/50 hover:-translate-y-1",
+              "shadow-sm hover:shadow-xl hover:shadow-[#FF8200]/10 hover:border-[#FF8200]/50 hover:-translate-y-1",
               "transition-all duration-300"
             )}>
               {/* Top hover accent line */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-[#2563eb] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-[#FF8200] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <div className="flex flex-col h-full justify-between gap-4 relative z-10">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 text-[#1e40af] dark:text-[#A87B9F] group-hover:bg-[#2563eb] group-hover:text-white group-hover:scale-110 transition-all duration-300 shadow-2xs">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-slate-100/80 dark:bg-slate-800/80 text-[#FF8200] dark:text-[#FF8200] group-hover:bg-[#FF8200] group-hover:text-white group-hover:scale-110 transition-all duration-300 shadow-2xs">
                   <action.icon weight="duotone" className="w-6 h-6" />
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-between gap-1.5">
-                    <p className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-[#2563eb] transition-colors leading-tight">
+                    <p className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-[#FF8200] transition-colors leading-tight">
                       {action.title}
                     </p>
                     <CaretRight 
                       weight="bold" 
-                      className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-[#2563eb] transition-all shrink-0" 
+                      className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 group-hover:text-[#FF8200] transition-all shrink-0" 
                     />
                   </div>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold truncate">

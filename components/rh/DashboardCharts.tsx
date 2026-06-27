@@ -19,20 +19,20 @@ interface ChartProps {
   genderData: { name: string; value: number }[];
 }
 
-const COLORS = ['#2563eb', '#0F172A', '#475569', '#94A3B8', '#CBD5E1', '#E2E8F0'];
-const GENDER_COLORS = ['#0F172A', '#2563eb'];
+const COLORS = ['#FF8200', '#0F172A', '#475569', '#E07400', '#CBD5E1', '#E2E8F0'];
+const GENDER_COLORS = ['#0F172A', '#FF8200'];
 
 export function DashboardCharts({ deptData, genderData }: ChartProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Répartition par Département */}
-      <div className="group relative overflow-hidden bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-7 shadow-lg shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-[#2563eb]/5 transition-all duration-300">
+      <div className="group relative overflow-hidden bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-7 shadow-lg shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-[#FF8200]/5 transition-all duration-300">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">Effectif par Département</h3>
             <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">Répartition analytique des équipes</p>
           </div>
-          <span className="h-2 w-2 rounded-full bg-[#2563eb]" />
+          <span className="h-2 w-2 rounded-full bg-[#FF8200]" />
         </div>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -60,7 +60,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
       </div>
 
       {/* Répartition par Genre */}
-      <div className="group relative overflow-hidden bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-7 shadow-lg shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-[#2563eb]/5 transition-all duration-300">
+      <div className="group relative overflow-hidden bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-7 shadow-lg shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-[#FF8200]/5 transition-all duration-300">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">Parité & Démographie</h3>
