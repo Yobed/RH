@@ -221,7 +221,7 @@ export function ExecutiveRhCockpit({
       {/* ════════════════════════════════════════════════════════════════ */}
       {/* ODOO HIGH-PRECISION CONTROL PANEL & HEADER                      */}
       {/* ════════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-0 z-40 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs">
+      <header className="sticky top-14 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs">
         
         {/* Top App Identity & Global Controls */}
         <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -771,54 +771,59 @@ export function ExecutiveRhCockpit({
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6 max-w-4xl mx-auto"
             >
-              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 text-white shadow-xl space-y-6">
-                <div className="flex items-center gap-3.5">
-                  <div className="h-12 w-12 rounded-xl bg-gradient-to-tr from-[#FF8200] to-amber-600 flex items-center justify-center shadow-md">
-                    <Cpu className="h-6 w-6 text-white" />
+              <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
+                <div className="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                  <div className="h-12 w-12 rounded-xl bg-[#FF8200]/10 text-[#FF8200] flex items-center justify-center shrink-0 border border-[#FF8200]/20">
+                    <Cpu className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-white flex items-center gap-2">
+                    <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
                       Odoo AI Studio — Assistant RH Stratégique
                     </h3>
-                    <p className="text-xs text-slate-400 font-semibold mt-0.5">Synthèse automatisée et prédictions de gestion sociale</p>
+                    <p className="text-xs text-slate-500 font-semibold mt-0.5">Synthèse automatisée et prédictions de gestion sociale</p>
                   </div>
                 </div>
 
                 {/* Badges shortcuts */}
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Analyse des risques CNPS",
-                    "Renouvellement des CDD",
-                    "Synthèse masse salariale",
-                    "Arbitrage des congés"
-                  ].map((prompt) => (
-                    <button
-                      key={prompt}
-                      onClick={() => {
-                        setAiPromptInput(prompt);
-                        handleRunAiPrompt(prompt);
-                      }}
-                      className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition-all flex items-center gap-1.5"
-                    >
-                      <Sparkle className="h-3.5 w-3.5 text-amber-400 fill-current" /> {prompt}
-                    </button>
-                  ))}
+                <div>
+                  <label className="block text-[11px] font-black uppercase text-slate-400 tracking-wider mb-2.5">
+                    Raccourcis d'analyses prioritaires :
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Analyse des risques CNPS",
+                      "Renouvellement des CDD",
+                      "Synthèse masse salariale",
+                      "Arbitrage des congés"
+                    ].map((prompt) => (
+                      <button
+                        key={prompt}
+                        onClick={() => {
+                          setAiPromptInput(prompt);
+                          handleRunAiPrompt(prompt);
+                        }}
+                        className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-[#FF8200]/10 hover:text-[#FF8200] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Sparkle className="h-3.5 w-3.5 text-[#FF8200]" /> {prompt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Input Bar */}
-                <div className="flex items-center gap-2 bg-slate-800/90 p-2 rounded-xl border border-slate-700">
+                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#FF8200] focus-within:ring-2 focus-within:ring-[#FF8200]/20 transition-all">
                   <input
                     type="text"
                     value={aiPromptInput}
                     onChange={(e) => setAiPromptInput(e.target.value)}
                     placeholder="Posez une question à l'assistant d'audit RH..."
-                    className="w-full bg-transparent px-3 text-xs font-bold text-white placeholder-slate-400 outline-none"
+                    className="w-full bg-transparent px-3 text-xs font-bold text-slate-900 dark:text-white placeholder-slate-400 outline-none"
                     onKeyDown={(e) => e.key === "Enter" && handleRunAiPrompt()}
                   />
                   <button
                     onClick={() => handleRunAiPrompt()}
                     disabled={isAiLoading}
-                    className="px-5 py-2.5 rounded-lg bg-[#FF8200] text-white font-black text-xs hover:bg-[#E07400] transition-colors shrink-0 flex items-center gap-1.5 shadow-sm"
+                    className="px-5 py-2.5 rounded-lg bg-[#FF8200] text-white font-black text-xs hover:bg-[#E07400] transition-colors shrink-0 flex items-center gap-1.5 shadow-sm cursor-pointer"
                   >
                     {isAiLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 fill-current" />}
                     <span>Générer</span>
@@ -830,15 +835,20 @@ export function ExecutiveRhCockpit({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-5 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-200 text-xs leading-relaxed font-semibold space-y-3"
+                    className="p-5 rounded-xl bg-[#FF8200]/5 border border-[#FF8200]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-semibold space-y-4"
                   >
-                    <p>{aiSimulatedResponse}</p>
-                    <button 
-                      onClick={() => alert("Action stratégique transmise avec succès dans le système RH !")}
-                      className="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-black text-xs hover:bg-emerald-400 transition-colors inline-block shadow-xs"
-                    >
-                      ✓ Valider la recommandation
-                    </button>
+                    <div className="flex items-start gap-3">
+                      <Sparkle className="h-5 w-5 text-[#FF8200] shrink-0 mt-0.5" />
+                      <p className="flex-1">{aiSimulatedResponse}</p>
+                    </div>
+                    <div className="pt-2 border-t border-[#FF8200]/10 flex items-center justify-end">
+                      <button 
+                        onClick={() => alert("Action stratégique transmise avec succès dans le système RH !")}
+                        className="px-4 py-2 rounded-xl bg-[#FF8200] text-white font-black text-xs hover:bg-[#E07400] transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer"
+                      >
+                        <Check className="h-4 w-4" /> Valider la recommandation
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </div>

@@ -88,35 +88,23 @@ const NAV_DOMAINS: NavDomain[] = [
     accent: "#FF8200",
     columns: [
       {
-        title: "Équipe",
+        title: "Équipe & Présence",
         items: [
           { href: "/employes", label: "Fiches collaborateurs", desc: "Dossiers des salariés", icon: Users },
           { href: "/employes/organigramme", label: "Organigramme", desc: "Structure hiérarchique", icon: TreeStructure },
           { href: "/contrats", label: "Contrats", desc: "CDI, CDD, avenants", icon: FileText },
-        ],
-      },
-      {
-        title: "Temps & présence",
-        items: [
+          { href: "/pointage", label: "Pointage Biométrique", desc: "Heures & Géolocalisation", icon: Clock },
           { href: "/conges", label: "Absences & Congés", desc: "Demandes et soldes", icon: CalendarBlank },
-          { href: "/pointage", label: "Pointage", desc: "Heures d'arrivée / départ", icon: Clock },
-          { href: "/heures-sup", label: "Heures supplémentaires", desc: "Suivi & majoration", icon: Clock },
-          { href: "/medical", label: "Visites médicales", desc: "Médecine du travail", icon: FirstAid },
         ],
       },
       {
-        title: "Cycle de vie",
+        title: "Parcours & Planning",
         items: [
           { href: "/onboarding", label: "Onboarding", desc: "Intégration d'un arrivant", icon: UserPlus, pulse: true },
           { href: "/offboarding", label: "Offboarding", desc: "Parcours de départ", icon: UserMinus },
-        ],
-      },
-      {
-        title: "Planning",
-        items: [
-          { href: "/planning", label: "Planning & équipes", desc: "Rotations (shifts)", icon: CalendarCheck },
-          { href: "/planning-gantt", label: "Par ressource", desc: "Vue Gantt", icon: ChartBar, pulse: true },
-          { href: "/conges/heatmap", label: "Carte des absences", desc: "Vue annuelle", icon: CalendarBlank },
+          { href: "/planning", label: "Planning & Équipes", desc: "Rotations & Shifts", icon: CalendarCheck },
+          { href: "/heures-sup", label: "Heures supplémentaires", desc: "Suivi & majoration", icon: Clock },
+          { href: "/medical", label: "Visites médicales", desc: "Médecine du travail", icon: FirstAid },
         ],
       },
     ],
@@ -128,7 +116,7 @@ const NAV_DOMAINS: NavDomain[] = [
     accent: "#FF8200",
     columns: [
       {
-        title: "Paie du mois",
+        title: "Gestion Paie",
         items: [
           { href: "/paie", label: "Bulletins de paie", desc: "Édition des bulletins", icon: Money },
           { href: "/paie/generer-lot", label: "Génération en lot", desc: "Tous les bulletins", icon: Stamp },
@@ -137,12 +125,11 @@ const NAV_DOMAINS: NavDomain[] = [
         ],
       },
       {
-        title: "Conformité & analyses",
+        title: "Déclarations & Coûts",
         items: [
           { href: "/paie/fin-de-contrat", label: "Solde de tout compte", desc: "STC en fin de contrat", icon: FileText },
           { href: "/declarations", label: "Déclarations sociales", desc: "CNPS, ITS, FDFP", icon: Stamp },
           { href: "/analyses", label: "Masse salariale", desc: "Coûts & répartition", icon: ChartBar },
-          { href: "/paie/import-sage", label: "Import Sage Paie", desc: "Import des données", icon: UploadSimple },
         ],
       },
     ],
@@ -170,21 +157,19 @@ const NAV_DOMAINS: NavDomain[] = [
     accent: "#FF8200",
     columns: [
       {
-        title: "Indicateurs",
+        title: "Tableaux & Rapports",
         items: [
-          { href: "/analytique", label: "Analytique RH", desc: "Tableaux de bord", icon: ChartPieSlice },
-          { href: "/analytique/focus", label: "Focus stratégique", desc: "Points d'attention", icon: Target },
+          { href: "/analytique", label: "Analytique RH", desc: "Tableaux de bord BI", icon: ChartPieSlice },
           { href: "/reporting", label: "Reporting RH", desc: "Rapports & exports", icon: Presentation },
-          { href: "/calendrier", label: "Calendrier global", desc: "Tous les évènements", icon: CalendarDots },
+          { href: "/calendrier", label: "Calendrier global", desc: "Événements d'entreprise", icon: CalendarDots },
         ],
       },
       {
-        title: "Prévisions",
+        title: "Prévisions & Rétention",
         items: [
           { href: "/analytique/risque-depart", label: "Risque de départ", desc: "Turnover prévisionnel", icon: UserMinus },
           { href: "/analytique/prevision", label: "Prévision effectifs", desc: "Projection N+1", icon: TrendUp },
           { href: "/analytique/cohortes", label: "Cohortes d'embauche", desc: "Par année d'arrivée", icon: UsersThree },
-          { href: "/analytique/retraite", label: "Départs en retraite", desc: "Âge de la retraite", icon: CalendarBlank },
         ],
       },
     ],
@@ -196,17 +181,16 @@ const NAV_DOMAINS: NavDomain[] = [
     accent: "#FF8200",
     columns: [
       {
-        title: "Qualité & risques",
+        title: "Qualité & Juridique",
         items: [
-          { href: "/disciplinaire", label: "Procédures disciplinaires", desc: "Avertissements, sanctions", icon: ShieldWarning },
+          { href: "/disciplinaire", label: "Procédures disciplinaires", desc: "Sanctions & avertissements", icon: ShieldWarning },
           { href: "/contentieux", label: "Contentieux", desc: "Litiges & inspections", icon: Scales },
           { href: "/qhse", label: "QHSE & Accidents", desc: "Sécurité au travail", icon: FirstAid },
-          { href: "/duerp", label: "Risques pro (DUERP)", desc: "Évaluation des risques", icon: ShieldWarning },
-          { href: "/bilan-social", label: "Bilan social annuel", desc: "Synthèse obligatoire", icon: Books },
+          { href: "/duerp", label: "Risques pro (DUERP)", desc: "Évaluation obligatoire", icon: ShieldWarning },
         ],
       },
       {
-        title: "Documents",
+        title: "GED & Documents",
         items: [
           { href: "/documents-rh", label: "Documents RH", desc: "Attestations & modèles", icon: FilePdf },
           { href: "/ged", label: "Documents numérisés (GED)", desc: "Coffre-fort documentaire", icon: Books, pulse: true },
@@ -222,18 +206,17 @@ const NAV_DOMAINS: NavDomain[] = [
     accent: "#FF8200",
     columns: [
       {
-        title: "Assistant IA",
+        title: "Assistant & Calculs",
         items: [
           { href: "/agent-juridique", label: "Agent juridique IA", desc: "Droit du travail CI", icon: Robot },
-          { href: "/calculateur", label: "Simulateur de paie", desc: "Net, brut, coût employeur", icon: Calculator },
+          { href: "/calculateur", label: "Simulateur de paie", desc: "Calculs Net & Brut", icon: Calculator },
         ],
       },
       {
         title: "Communication",
         items: [
-          { href: "/messages", label: "Messagerie interne", desc: "Échanges salariés", icon: ChatCircleText },
-          { href: "/notifications", label: "Notifications", desc: "Alertes de l'app", icon: Bell },
-          { href: "/rappels", label: "Rappels & Échéances", desc: "À venir sous 30 jours", icon: BellRinging },
+          { href: "/messages", label: "Messagerie interne", desc: "Échanges d'équipe", icon: ChatCircleText },
+          { href: "/notifications", label: "Notifications & Alertes", desc: "Rappels & Échéances", icon: Bell },
         ],
       },
     ],
@@ -246,29 +229,18 @@ const NAV_DOMAINS: NavDomain[] = [
     adminOnly: true,
     columns: [
       {
-        title: "Réglages",
+        title: "Configuration",
         items: [
-          { href: "/parametres", label: "Paramètres", desc: "Réglages entreprise", icon: Gear },
-          { href: "/parametres/workflows", label: "Circuits d'approbation", desc: "Qui valide quoi", icon: ChartLineUp },
-          { href: "/parametres/permissions", label: "Rôles & permissions", desc: "Droits d'accès (RBAC)", icon: UsersThree },
-          { href: "/parametres/delegations", label: "Délégations", desc: "Déléguer ses droits", icon: UserMinus },
+          { href: "/parametres", label: "Paramètres généraux", desc: "Configuration entreprise", icon: Gear },
+          { href: "/parametres/workflows", label: "Circuits d'approbation", desc: "Valideurs & règles", icon: ChartLineUp },
+          { href: "/parametres/permissions", label: "Rôles & Permissions", desc: "Gestion des accès", icon: UsersThree },
         ],
       },
       {
-        title: "Sécurité",
+        title: "Sécurité & Intégrations",
         items: [
-          { href: "/parametres/securite", label: "Sécurité & 2FA", desc: "Mot de passe & 2FA", icon: ShieldCheck },
-          { href: "/parametres/securite-events", label: "Événements sécurité", desc: "Connexions sensibles", icon: ShieldWarning },
-          { href: "/parametres/audit", label: "Journal d'audit", desc: "Historique des actions", icon: ShieldWarning },
-        ],
-      },
-      {
-        title: "Intégrations",
-        items: [
-          { href: "/parametres/whatsapp", label: "WhatsApp Business", desc: "Notifications WhatsApp", icon: ChatCircleText },
-          { href: "/parametres/webhooks", label: "Webhooks", desc: "Connexions externes", icon: Plug },
-          { href: "/parametres/api", label: "API & Clés", desc: "Accès intégrations", icon: Key },
-          { href: "/paie/mobile-money", label: "Mobile Money CI", desc: "Salaires Mobile Money", icon: DeviceMobile },
+          { href: "/parametres/securite", label: "Sécurité & Journal d'audit", desc: "2FA & Historique", icon: ShieldCheck },
+          { href: "/parametres/whatsapp", label: "WhatsApp & Integrations", desc: "Notifications & API", icon: Plug },
         ],
       },
     ],
@@ -364,7 +336,7 @@ function DomainItem({
             transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
             className={cn("absolute top-full z-50 pt-2", alignRight ? "right-0" : "left-0")}
           >
-            <div className="rounded-2xl border border-slate-200/80 bg-white/95 p-3 shadow-[0_24px_50px_-12px_rgba(15,23,42,0.25)] backdrop-blur-xl dark:border-slate-800 dark:bg-[oklch(0.17_0.03_255)]/95">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-3.5 shadow-2xl shadow-slate-900/15 dark:border-slate-800 dark:bg-slate-900">
               <div className="flex gap-5">
                 {domain.columns!.map((col) => (
                   <div key={col.title} className="w-[13.5rem]">
@@ -431,7 +403,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.98 }}
             transition={{ duration: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-0 top-full z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_24px_50px_-12px_rgba(15,23,42,0.25)] backdrop-blur-xl dark:border-slate-800 dark:bg-[oklch(0.17_0.03_255)]/95"
+            className="absolute right-0 top-full z-50 mt-2 w-60 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xl shadow-slate-900/15 dark:border-slate-800 dark:bg-slate-900"
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <span
