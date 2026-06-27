@@ -205,8 +205,12 @@ export function ExecutiveRhCockpit({
       setIsAiLoading(false);
       if (q.toLowerCase().includes("cnps") || q.toLowerCase().includes("fdfp") || q.toLowerCase().includes("risques")) {
         setAiSimulatedResponse("⚡ [Odoo AI Studio Audit] : Déclarations CNPS Q1 auditées à 98.4%. 2 dossiers d'apprentissage FDFP restent en attente d'approbation (1,450,000 FCFA). Recommandation : Transmettre l'attestation fiscale avant le 15 du mois.");
-      } else if (q.toLowerCase().includes("cdd") || q.toLowerCase().includes("contrat") || q.toLowerCase().includes("renouvellement")) {
-        setAiSimulatedResponse(`⚡ [Odoo AI Studio Audit] : Audit des contrats terminé. ${cddExpirant} contrats CDD arrivent à échéance sous 30 jours. Analyse prédictive : 2 profils clés dans le département Opérations présentent un taux de performance élevé. Transformation en CDI recommandée.`);
+      } else if (q.toLowerCase().includes("cdd") || q.toLowerCase().includes("contrat") || q.toLowerCase().includes("renouvellement") || q.toLowerCase().includes("nom") || q.toLowerCase().includes("expiration")) {
+        const contractAlerts = allAlerts?.filter((a) => a.type === "CONTRACT");
+        const namesList = contractAlerts && contractAlerts.length > 0
+          ? contractAlerts.map((a) => `${a.employeeName} (fin le ${new Date(a.date).toLocaleDateString("fr-FR")})`).join(", ")
+          : "Bamba Yao (fin le 30/06/2026), Camara Drogba (fin le 31/07/2026)";
+        setAiSimulatedResponse(`⚡ [Odoo AI Studio Audit] : Audit des contrats terminé. ${cddExpirant || (contractAlerts?.length ?? 2)} contrat(s) CDD sont identifiés. Salariés concernés : ${namesList}. Analyse prédictive : Transformation en CDI recommandée pour les profils à fort impact.`);
       } else if (q.toLowerCase().includes("masse") || q.toLowerCase().includes("paie") || q.toLowerCase().includes("salariale")) {
         setAiSimulatedResponse(`⚡ [Odoo AI Studio Audit] : Analyse de la masse salariale mensuelle : Stabilité (+1.2% vs N-1). Les primes de performance représentent 6.5% du total. Aucun écart budgétaire critique détecté.`);
       } else {
