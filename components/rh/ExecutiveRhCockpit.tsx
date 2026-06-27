@@ -8,6 +8,13 @@ import { QuickActions } from "@/components/rh/QuickActions";
 import { DashboardCharts } from "@/components/rh/DashboardCharts";
 import { AiSuggestionsWidget } from "@/components/rh/AiSuggestionsWidget";
 import { ActionCenter, type ActionItem } from "@/components/rh/ActionCenter";
+import { ChronometreWidget } from "@/components/rh/ChronometreWidget";
+import { MesTachesWidget } from "@/components/rh/MesTachesWidget";
+import { MonCalendrierAbsencesWidget } from "@/components/rh/MonCalendrierAbsencesWidget";
+import { TableauAffichageWidget } from "@/components/rh/TableauAffichageWidget";
+import { AnniversairesEvenementsWidget } from "@/components/rh/AnniversairesEvenementsWidget";
+import { HrSuiteModulesWidget } from "@/components/rh/HrSuiteModulesWidget";
+import { RessourcesInteretWidget } from "@/components/rh/RessourcesInteretWidget";
 import {
   UsersIcon as Users,
   WarningIcon as FileWarning,
@@ -394,15 +401,28 @@ export function ExecutiveRhCockpit({
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
+              {/* HR Suite Modules Navigation Bar */}
+              <HrSuiteModulesWidget />
+
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* Left Column (8 cols): Action Center & Charts */}
+                {/* Left Main Stream (8 cols): Priority Actions, Workflow Tasks, Absences & Charts */}
                 <div className="lg:col-span-8 space-y-6">
                   <ActionCenter items={actionItems} />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <MesTachesWidget />
+                    <MonCalendrierAbsencesWidget />
+                  </div>
+
                   <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                  
+                  <TableauAffichageWidget />
                 </div>
 
-                {/* Right Column (4 cols): AI Widget, Compliance & Shortcuts */}
+                {/* Right Executive Control Stream (4 cols): Time/Biometrics, AI Co-Pilot, Events, Compliance & Resources */}
                 <div className="lg:col-span-4 space-y-6">
+                  <ChronometreWidget />
+                  
                   <AiSuggestionsWidget
                     totalActifs={totalActifs}
                     cddExpirant={cddExpirant}
@@ -411,8 +431,14 @@ export function ExecutiveRhCockpit({
                     contentieuxOuverts={contentieuxOuverts}
                     congesEnAttente={congesEnAttente?.length ?? 0}
                   />
+                  
+                  <AnniversairesEvenementsWidget />
+                  
                   <ComplianceAlertList alerts={allAlerts} />
+                  
                   <QuickActions />
+                  
+                  <RessourcesInteretWidget />
                 </div>
               </div>
             </motion.div>

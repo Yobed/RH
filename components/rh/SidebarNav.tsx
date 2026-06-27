@@ -44,6 +44,7 @@ import {
   ShieldCheck,
   UsersThree,
   DeviceMobile,
+  IdentificationBadge,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -82,7 +83,8 @@ const navGroups: NavGroup[] = [
     accent: "#FF8200",
     defaultOpen: false,
     items: [
-      { href: "/employes", label: "Fiches collaborateurs", icon: Users, desc: "Liste et dossiers des salariés" },
+      { href: "/employes", label: "Fiches collaborateurs", icon: Users, exact: true, desc: "Liste et dossiers des salariés" },
+      { href: "/employes/photos", label: "Registre des Photos", icon: IdentificationBadge, desc: "Numérisation & trombinoscope des salariés" },
       { href: "/employes/organigramme", label: "Organigramme", icon: TreeStructure, desc: "Structure hiérarchique de l'entreprise" },
       { href: "/contrats", label: "Contrats", icon: FileText, desc: "CDI, CDD et avenants" },
       { href: "/conges", label: "Absences & Congés", icon: CalendarBlank, desc: "Demandes et soldes de congés" },
