@@ -1,6 +1,6 @@
 "use client";
 
-import { Buildings, Bell, Users, WarningCircle, Briefcase, ChartLineUp, Scales, TrendUp, Clock, ArrowRight } from "@phosphor-icons/react";
+import { Buildings, Bell, Users, WarningCircle, Briefcase, ChartLineUp, Scales, TrendUp, Clock, ArrowRight, Sparkle, CheckCircle } from "@phosphor-icons/react";
 
 export { 
   Buildings as BuildingsIcon, 
@@ -12,5 +12,8 @@ export {
   Scales as ScalesIcon,
   TrendUp as TrendUpIcon,
   Clock as ClockIcon,
-  ArrowRight as ArrowRightIcon
+  ArrowRight as ArrowRightIcon,
+  Sparkle as SparklesIcon,
+  CheckCircle as CheckCircleIcon
 };
+
