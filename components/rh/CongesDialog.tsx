@@ -235,7 +235,7 @@ export function CongesDialog({ employees }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="inline-flex items-center justify-center rounded-2xl bg-[#FF8200] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#FF8200]/20 hover:bg-[#E06D00] transition-all duration-200 gap-2">
+        <Button className="inline-flex items-center justify-center rounded-2xl bg-[#2563eb] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#2563eb]/20 hover:bg-[#1d4ed8] transition-all duration-200 gap-2">
           <PlusIcon className="h-4 w-4" />
           <span>Nouvelle demande</span>
         </Button>
@@ -243,12 +243,12 @@ export function CongesDialog({ employees }: Props) {
 
       <DialogContent className="sm:max-w-xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
         <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] relative">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF8200]" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#2563eb]" />
 
           {/* En-tête fixe */}
           <DialogHeader className="p-8 pb-4 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#FF8200]/10 text-[#FF8200]">
+              <div className="p-3 rounded-2xl bg-[#2563eb]/10 text-[#2563eb]">
                 <PlusIcon className="h-6 w-6" />
               </div>
               <div>
@@ -272,7 +272,7 @@ export function CongesDialog({ employees }: Props) {
                 name="employee_id"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#2563eb] focus:border-[#2563eb] focus:ring-2">
                       <SelectValue placeholder="Sélectionner un employé" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
@@ -298,7 +298,7 @@ export function CongesDialog({ employees }: Props) {
                 name="type"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#2563eb] focus:border-[#2563eb] focus:ring-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
@@ -359,7 +359,7 @@ export function CongesDialog({ employees }: Props) {
                 <Input
                   type="date"
                   {...register("date_debut")}
-                  className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]"
+                  className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#2563eb] focus-visible:border-[#2563eb]"
                   onChange={(e) => {
                     register("date_debut").onChange(e);
                     calcJours(e.target.value, dateFin);
@@ -374,7 +374,7 @@ export function CongesDialog({ employees }: Props) {
                 <Input
                   type="date"
                   {...register("date_fin")}
-                  className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]"
+                  className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#2563eb] focus-visible:border-[#2563eb]"
                   onChange={(e) => {
                     register("date_fin").onChange(e);
                     calcJours(dateDebut, e.target.value);
@@ -390,21 +390,21 @@ export function CongesDialog({ employees }: Props) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label className="text-sm font-semibold text-slate-700">Nombre de jours *</Label>
-                <Input type="number" min="0.5" step="0.5" {...register("nb_jours")} className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]" />
+                <Input type="number" min="0.5" step="0.5" {...register("nb_jours")} className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#2563eb] focus-visible:border-[#2563eb]" />
                 {errors.nb_jours && (
                   <p className="mt-1 text-xs text-red-500 font-medium">{errors.nb_jours.message}</p>
                 )}
               </div>
               <div className="space-y-1.5">
                 <Label className="text-sm font-semibold text-slate-700">Date de reprise</Label>
-                <Input type="date" {...register("date_reprise")} className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]" />
+                <Input type="date" {...register("date_reprise")} className="h-11 rounded-xl border-slate-200 focus-visible:ring-[#2563eb] focus-visible:border-[#2563eb]" />
                 <p className="mt-0.5 text-[10px] text-slate-400 font-medium">Auto-calculée — modifiable</p>
               </div>
             </div>
 
             {/* Fractionné */}
             <label className="flex items-center gap-3 cursor-pointer select-none py-1">
-              <input type="checkbox" {...register("conge_fractionne")} className="h-4 w-4 rounded border-slate-300 accent-[#FF8200] focus:ring-[#FF8200]" />
+              <input type="checkbox" {...register("conge_fractionne")} className="h-4 w-4 rounded border-slate-300 accent-[#2563eb] focus:ring-[#2563eb]" />
               <span className="text-sm font-medium text-slate-700">
                 Congé fractionné
                 <span className="ml-1.5 text-xs text-slate-400 font-normal">(Art. 25 CT-CI)</span>
@@ -419,7 +419,7 @@ export function CongesDialog({ employees }: Props) {
                 name="remplacant_id"
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#FF8200] focus:border-[#FF8200] focus:ring-2">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#2563eb] focus:border-[#2563eb] focus:ring-2">
                       <SelectValue placeholder="— Aucun / À définir —" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
@@ -450,7 +450,7 @@ export function CongesDialog({ employees }: Props) {
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileChange}
-                  className="cursor-pointer file:cursor-pointer file:bg-[#FF8200]/10 file:text-[#FF8200] file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-3 h-12 bg-slate-50/50 border-dashed border-2 border-slate-200 hover:border-[#FF8200]/40 transition-all pt-2 rounded-xl"
+                  className="cursor-pointer file:cursor-pointer file:bg-[#2563eb]/10 file:text-[#2563eb] file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-3 h-12 bg-slate-50/50 border-dashed border-2 border-slate-200 hover:border-[#2563eb]/40 transition-all pt-2 rounded-xl"
                 />
                 {fileError ? (
                   <p className="text-xs text-red-600 font-medium flex items-center gap-1">
@@ -474,7 +474,7 @@ export function CongesDialog({ employees }: Props) {
               <Textarea
                 {...register("commentaire")}
                 placeholder="Motif ou précision..."
-                className="min-h-[80px] resize-none rounded-xl border-slate-200 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200]"
+                className="min-h-[80px] resize-none rounded-xl border-slate-200 focus-visible:ring-[#2563eb] focus-visible:border-[#2563eb]"
               />
             </div>
 
@@ -492,7 +492,7 @@ export function CongesDialog({ employees }: Props) {
                 type="submit" 
                 form="conges-form" 
                 disabled={isSubmitting} 
-                className="h-11 rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-bold px-6 shadow-lg shadow-[#FF8200]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                className="h-11 rounded-2xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold px-6 shadow-lg shadow-[#2563eb]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 {isSubmitting ? "Enregistrement…" : "Enregistrer la demande"}
               </Button>

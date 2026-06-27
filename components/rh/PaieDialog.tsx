@@ -705,7 +705,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
               </div>
 
               {/* NET À PAYER */}
-              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#FF8200] text-base">
+              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#2563eb] text-base">
                 <span>NET À PAYER</span>
                 <span>{fmt(preview.net_to_pay)}</span>
               </div>
@@ -716,7 +716,7 @@ export function PaieDialog({ employees, bulletin, company }: Props) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-[#FF8200] hover:bg-[#E06D00] text-white border-0"
+              className="w-full sm:w-auto bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0"
             >
               {isSubmitting ? (isEdit ? "Enregistrement..." : "Création...") : (isEdit ? "Enregistrer" : "Créer le bulletin")}
             </Button>

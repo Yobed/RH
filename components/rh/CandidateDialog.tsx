@@ -55,7 +55,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const selectClass =
-  "w-full rounded-xl border-slate-200 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300";
+  "w-full rounded-xl border-slate-200 bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563eb] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300";
 
 const labelClass = "text-sm font-semibold text-slate-700 flex items-center gap-2 mb-1.5";
 
@@ -116,18 +116,18 @@ export function CandidateDialog({ postes }: Props) {
           whileTap={{ scale: 0.98 }}
           className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50 transition-all duration-200 gap-2"
         >
-          <UserPlus weight="bold" className="h-4 w-4 text-[#FF8200]" />
+          <UserPlus weight="bold" className="h-4 w-4 text-[#2563eb]" />
           <span>Ajouter un candidat</span>
         </motion.button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
         <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh]">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF8200]" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#2563eb]" />
           
           <DialogHeader className="p-8 pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#FF8200]/10 text-[#FF8200]">
+              <div className="p-3 rounded-2xl bg-[#2563eb]/10 text-[#2563eb]">
                 <IdentificationCard size={28} weight="duotone" />
               </div>
               <div>
@@ -145,7 +145,7 @@ export function CandidateDialog({ postes }: Props) {
             {/* Identité */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Informations Personnelles
               </div>
 
@@ -158,7 +158,7 @@ export function CandidateDialog({ postes }: Props) {
                   <Input 
                     {...register("full_name")} 
                     placeholder="Konan Adjoua" 
-                    className="rounded-xl bg-white border-slate-200 h-11 focus-visible:ring-[#FF8200]"
+                    className="rounded-xl bg-white border-slate-200 h-11 focus-visible:ring-[#2563eb]"
                   />
                   {errors.full_name && (
                     <p className="mt-1 text-xs text-red-500 font-medium flex items-center gap-1">
@@ -177,7 +177,7 @@ export function CandidateDialog({ postes }: Props) {
                       type="email"
                       {...register("email")}
                       placeholder="candidat@email.com"
-                      className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                      className="rounded-xl h-11 focus-visible:ring-[#2563eb]"
                     />
                     {errors.email && (
                       <p className="mt-1 text-xs text-red-500 font-medium flex items-center gap-1">
@@ -193,7 +193,7 @@ export function CandidateDialog({ postes }: Props) {
                     <Input
                       {...register("phone")}
                       placeholder="+225 07 00 00 00 00"
-                      className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                      className="rounded-xl h-11 focus-visible:ring-[#2563eb]"
                     />
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export function CandidateDialog({ postes }: Props) {
             {/* Offre & Documents */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Détails de la Candidature
               </div>
 
@@ -241,7 +241,7 @@ export function CandidateDialog({ postes }: Props) {
                   <Input
                     {...register("cv_url")}
                     placeholder="https://drive.google.com/..."
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]"
                   />
                   {errors.cv_url && (
                     <p className="mt-1 text-xs text-red-500 font-medium flex items-center gap-1">
@@ -255,7 +255,7 @@ export function CandidateDialog({ postes }: Props) {
             {/* Notes RH */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Notes & Observations
               </div>
               <div>
@@ -266,7 +266,7 @@ export function CandidateDialog({ postes }: Props) {
                 <Textarea
                   {...register("notes_rh")}
                   placeholder="Points forts, contexte, premières impressions..."
-                  className="rounded-xl bg-white border-slate-200 min-h-[100px] focus:bg-white focus-visible:ring-[#FF8200] transition-all"
+                  className="rounded-xl bg-white border-slate-200 min-h-[100px] focus:bg-white focus-visible:ring-[#2563eb] transition-all"
                 />
               </div>
             </div>
@@ -275,7 +275,7 @@ export function CandidateDialog({ postes }: Props) {
               <Button
                 type="submit"
                 disabled={isSubmitting || postesOuverts.length === 0}
-                className="w-full h-12 rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-bold shadow-lg shadow-[#FF8200]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full h-12 rounded-2xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold shadow-lg shadow-[#2563eb]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 {isSubmitting ? "Enregistrement..." : "Enregistrer la candidature"}
               </Button>

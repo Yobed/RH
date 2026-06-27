@@ -157,9 +157,9 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="gap-2 border-slate-200 hover:bg-[#FF8200]/10 hover:text-[#FF8200] hover:border-[#FF8200]/30 transition-all duration-300 shadow-sm rounded-xl"
+          className="gap-2 border-slate-200 hover:bg-[#2563eb]/10 hover:text-[#2563eb] hover:border-[#2563eb]/30 transition-all duration-300 shadow-sm rounded-xl"
         >
-          <Stethoscope className="h-4 w-4 text-[#FF8200]" />
+          <Stethoscope className="h-4 w-4 text-[#2563eb]" />
           Déclarer un arrêt
         </Button>
       </DialogTrigger>
@@ -173,11 +173,11 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
           className="flex flex-col min-h-0"
         >
           {/* En-tête fixe */}
-          <div className="bg-[#FF8200]/5 px-6 py-5 border-b border-slate-100 rounded-t-2xl shrink-0">
+          <div className="bg-[#2563eb]/5 px-6 py-5 border-b border-slate-100 rounded-t-2xl shrink-0">
             <DialogHeader>
               <DialogTitle className="text-xl font-bold text-slate-900 flex items-center gap-3">
-                <div className="p-2 bg-[#FF8200]/10 rounded-xl">
-                  <Stethoscope className="h-5 w-5 text-[#FF8200]" />
+                <div className="p-2 bg-[#2563eb]/10 rounded-xl">
+                  <Stethoscope className="h-5 w-5 text-[#2563eb]" />
                 </div>
                 Déclarer un arrêt maladie
               </DialogTitle>
@@ -202,7 +202,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   name="employee_id"
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-11 bg-white border-slate-200 rounded-xl hover:border-[#FF8200]/50 focus:ring-2 focus:ring-[#FF8200] transition-colors">
+                      <SelectTrigger className="h-11 bg-white border-slate-200 rounded-xl hover:border-[#2563eb]/50 focus:ring-2 focus:ring-[#2563eb] transition-colors">
                         <SelectValue placeholder="Choisir un collaborateur..." />
                       </SelectTrigger>
                       {/* bg-white explicite pour éviter la transparence */}
@@ -237,7 +237,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   </Label>
                   <Input
                     type="date"
-                    className="h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-[#FF8200]"
+                    className="h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-[#2563eb]"
                     {...register('date_debut')}
                     onChange={(e) => handleDateChange('date_debut', e.target.value)}
                   />
@@ -252,7 +252,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   </Label>
                   <Input
                     type="date"
-                    className="h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-[#FF8200]"
+                    className="h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-[#2563eb]"
                     {...register('date_fin')}
                     onChange={(e) => handleDateChange('date_fin', e.target.value)}
                   />
@@ -361,7 +361,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       id="est_at"
                       checked={field.value}
                       onCheckedChange={field.onChange}
-                      className="h-5 w-5 rounded-md border-slate-300 data-[state=checked]:bg-[#FF8200] data-[state=checked]:border-[#FF8200]"
+                      className="h-5 w-5 rounded-md border-slate-300 data-[state=checked]:bg-[#2563eb] data-[state=checked]:border-[#2563eb]"
                     />
                   )}
                 />
@@ -393,7 +393,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                   type="file"
                   accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleFileChange}
-                  className="cursor-pointer file:cursor-pointer file:bg-[#FF8200]/10 file:text-[#FF8200] file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-4 h-12 bg-white border-dashed border-2 border-slate-200 hover:border-[#FF8200]/40 transition-all pt-2.5 rounded-xl"
+                  className="cursor-pointer file:cursor-pointer file:bg-[#2563eb]/10 file:text-[#2563eb] file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-4 h-12 bg-white border-dashed border-2 border-slate-200 hover:border-[#2563eb]/40 transition-all pt-2.5 rounded-xl"
                 />
                 {fileError ? (
                   <p className="text-xs text-red-500 flex items-center gap-1 font-medium">
@@ -417,7 +417,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                 <Label className="text-sm font-medium text-slate-700">Observations</Label>
                 <Textarea
                   rows={2}
-                  className="bg-white border-slate-200 focus-visible:ring-[#FF8200] rounded-xl transition-all resize-none"
+                  className="bg-white border-slate-200 focus-visible:ring-[#2563eb] rounded-xl transition-all resize-none"
                   placeholder="Détails supplémentaires sur la nature de l'arrêt..."
                   {...register('commentaire')}
                 />
@@ -439,7 +439,7 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
             <Button
               type="submit"
               form="arret-form"
-              className="bg-[#FF8200] hover:bg-[#E06D00] text-white font-semibold rounded-xl px-8 shadow-md shadow-[#FF8200]/20"
+              className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl px-8 shadow-md shadow-[#2563eb]/20"
               disabled={loading || !!fileError}
             >
               {loading ? (

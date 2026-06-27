@@ -118,7 +118,7 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 const selectClass =
-  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200] focus-visible:border-[#FF8200] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300 h-11";
+  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563eb] focus-visible:border-[#2563eb] disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300 h-11";
 
 const labelClass = "text-sm font-semibold text-slate-700 flex items-center gap-2 mb-1.5";
 
@@ -273,13 +273,13 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
       <DialogTrigger asChild>
         {isEdit ? (
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl hover:bg-slate-100 text-slate-600">
-            <PencilSimple className="h-4 w-4 text-[#FF8200]" />
+            <PencilSimple className="h-4 w-4 text-[#2563eb]" />
           </Button>
         ) : (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center justify-center rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-[#FF8200]/20 transition-all duration-200 gap-2"
+            className="inline-flex items-center justify-center rounded-2xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-[#2563eb]/20 transition-all duration-200 gap-2"
           >
             <Plus weight="bold" className="h-4 w-4" />
             <span>Nouveau contrat</span>
@@ -289,11 +289,11 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
 
       <DialogContent className="sm:max-w-2xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
         <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] relative">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#FF8200]" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#2563eb]" />
           
           <DialogHeader className="p-8 pb-4 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#FF8200]/10 text-[#FF8200]">
+              <div className="p-3 rounded-2xl bg-[#2563eb]/10 text-[#2563eb]">
                 <FileText size={28} weight="duotone" />
               </div>
               <div>
@@ -311,7 +311,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
             {/* ── PARTIES ─────────────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Parties au contrat
               </div>
 
@@ -340,7 +340,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input 
                     {...register("signataire_nom")} 
                     placeholder="NOM Prénom — DG / DRH" 
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                   />
                 </div>
                 <div>
@@ -351,7 +351,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input 
                     type="date" 
                     {...register("date_signature")} 
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                   />
                 </div>
               </div>
@@ -360,7 +360,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
             {/* ── NATURE DU CONTRAT ─────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Nature &amp; Type du contrat
               </div>
 
@@ -410,7 +410,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Textarea
                     {...register("motif_cdd")}
                     placeholder="Ex : Remplacement de M. KONE absent pour maladie / Surcroît temporaire d'activité…"
-                    className="rounded-xl bg-white border-slate-200 min-h-[75px] focus-visible:ring-[#FF8200]"
+                    className="rounded-xl bg-white border-slate-200 min-h-[75px] focus-visible:ring-[#2563eb]"
                   />
                   <FieldError message={errors.motif_cdd?.message} />
                 </div>
@@ -425,7 +425,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input 
                     {...register("convention_collective")} 
                     placeholder="Interprofessionnelle / BTP / Commerce…" 
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                   />
                 </div>
                 <div>
@@ -436,7 +436,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input 
                     type="number" min="1" max="60" step="0.5" 
                     {...register("duree_hebdo")} 
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                   />
                   <p className="mt-1 text-[10px] text-slate-400">Légal CI : 40h/semaine (Décret n°96-204)</p>
                 </div>
@@ -446,7 +446,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
             {/* ── POSTE & LIEU ──────────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Poste &amp; Lieu d&apos;exécution
               </div>
 
@@ -458,7 +458,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                 <Input 
                   {...register("lieu_travail")} 
                   placeholder="Siège social — Abidjan Plateau / Antenne Bouaké…" 
-                  className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                  className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                 />
               </div>
 
@@ -470,7 +470,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                 <Textarea
                   {...register("description_poste")}
                   placeholder="Résumé des responsabilités et missions confiées…"
-                  className="rounded-xl bg-white border-slate-200 min-h-[85px] focus-visible:ring-[#FF8200]"
+                  className="rounded-xl bg-white border-slate-200 min-h-[85px] focus-visible:ring-[#2563eb]"
                 />
               </div>
             </div>
@@ -478,7 +478,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
             {/* ── DURÉE ────────────────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Durée &amp; Rémunération
               </div>
 
@@ -491,7 +491,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input 
                     type="date" 
                     {...register("date_debut")} 
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                   />
                   <FieldError message={errors.date_debut?.message} />
                 </div>
@@ -503,7 +503,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input
                     type="date"
                     {...register("date_fin")}
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]"
                     disabled={typeContrat === "CDI"}
                     min={dateDebut || undefined}
                   />
@@ -520,7 +520,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <Input 
                     type="date" 
                     {...register("date_fin_essai")} 
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]" 
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]" 
                     min={dateDebut || undefined} 
                   />
                   <FieldError message={errors.date_fin_essai?.message} />
@@ -535,7 +535,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                     type="number" min="0" step="1000"
                     {...register("salaire_brut")}
                     placeholder="150000"
-                    className="rounded-xl h-11 focus-visible:ring-[#FF8200]"
+                    className="rounded-xl h-11 focus-visible:ring-[#2563eb]"
                   />
                   <FieldError message={errors.salaire_brut?.message} />
                 </div>
@@ -559,7 +559,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
             {/* ── AVANTAGES & CLAUSES ───────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#FF8200]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb]" />
                 Avantages &amp; Clauses Particulières
               </div>
 
@@ -571,7 +571,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                 <Textarea
                   {...register("avantages_nature")}
                   placeholder="Véhicule de fonction · Logement de fonction · Tickets repas · Téléphone…"
-                  className="rounded-xl bg-white border-slate-200 min-h-[65px] focus-visible:ring-[#FF8200]"
+                  className="rounded-xl bg-white border-slate-200 min-h-[65px] focus-visible:ring-[#2563eb]"
                 />
               </div>
 
@@ -580,7 +580,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <input
                     type="checkbox"
                     {...register("clause_non_concurrence")}
-                    className="h-4 w-4 rounded-md border-slate-300 accent-[#FF8200]"
+                    className="h-4 w-4 rounded-md border-slate-300 accent-[#2563eb]"
                   />
                   <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">
                     Clause de non-concurrence
@@ -591,7 +591,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
                   <input
                     type="checkbox"
                     {...register("clause_confidentialite")}
-                    className="h-4 w-4 rounded-md border-slate-300 accent-[#FF8200]"
+                    className="h-4 w-4 rounded-md border-slate-300 accent-[#2563eb]"
                   />
                   <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900">Clause de confidentialité / NDA</span>
                 </label>
@@ -602,7 +602,7 @@ export function ContractDialog({ employees, defaultEmployeeId, contract }: Props
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-12 rounded-2xl bg-[#FF8200] hover:bg-[#E06D00] text-white font-bold shadow-lg shadow-[#FF8200]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full h-12 rounded-2xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-bold shadow-lg shadow-[#2563eb]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 {isSubmitting
                   ? isEdit ? "Modification..." : "Enregistrement..."

@@ -118,7 +118,7 @@ export function SimulateurMasseSalariale({ masseSalarialeActuelle, effectifActue
       computeScenario("Pessimiste", "#f87171", masseMensuelleBase, effectifActuel, 0, 0, salaireMoyenNouveaux, tauxDepart + 5, tauxCharges),
       computeScenario("Base", "#818cf8", masseMensuelleBase, effectifActuel, tauxAugmentation, nbRecrutements, salaireMoyenNouveaux, tauxDepart, tauxCharges),
       computeScenario("Optimiste", "#34d399", masseMensuelleBase, effectifActuel, tauxAugmentation, nbRecrutements, salaireMoyenNouveaux, tauxDepart, tauxCharges, 2),
-      computeScenario("Expansion", "#fb923c", masseMensuelleBase, effectifActuel, tauxAugmentation, nbRecrutements, salaireMoyenNouveaux, Math.max(0, tauxDepart - 2), tauxCharges, 0, Math.round(nbRecrutements * 1.5)),
+      computeScenario("Expansion", "#3b82f6", masseMensuelleBase, effectifActuel, tauxAugmentation, nbRecrutements, salaireMoyenNouveaux, Math.max(0, tauxDepart - 2), tauxCharges, 0, Math.round(nbRecrutements * 1.5)),
     ];
   }, [masseMensuelleBase, effectifActuel, tauxAugmentation, nbRecrutements, salaireMoyenNouveaux, tauxDepart, tauxCharges]);
 

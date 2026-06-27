@@ -186,7 +186,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
       {/* Premium Search & Filters Area */}
       <div className="p-4 flex flex-col xl:flex-row gap-4 items-center bg-white border border-slate-200 rounded-xl shadow-sm">
         <div className="relative flex-1 group w-full">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#FF8200] transition-colors">
+          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#2563eb] transition-colors">
             <MagnifyingGlass size={18} weight="bold" />
           </div>
           <input
@@ -194,19 +194,19 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
             placeholder="Rechercher un collaborateur (nom, poste, matricule...)"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full h-11 pl-11 pr-4 rounded-lg bg-white border border-slate-200 font-medium text-sm focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all outline-none"
+            className="w-full h-11 pl-11 pr-4 rounded-lg bg-white border border-slate-200 font-medium text-sm focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]/20 transition-all outline-none"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
           <div className="relative group">
-             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF8200] z-10">
+             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#2563eb] z-10">
                <Funnel size={14} weight="bold" />
              </div>
              <select
               value={filterStatut}
               onChange={(e) => handleStatutChange(e.target.value)}
-              className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all min-w-[180px]"
+              className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]/20 transition-all min-w-[180px]"
             >
               <option value="tous">Tous les statuts</option>
               <option value="actif">Statut : Actif</option>
@@ -218,13 +218,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
 
           {contrats.length > 0 && (
             <div className="relative group">
-               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#FF8200] z-10">
+               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#2563eb] z-10">
                  <Briefcase size={14} weight="bold" />
                </div>
                <select
                 value={filterContrat}
                 onChange={(e) => handleContratChange(e.target.value)}
-                className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#FF8200] focus:ring-1 focus:ring-[#FF8200]/20 transition-all min-w-[180px]"
+                className="h-11 pl-10 pr-10 rounded-lg bg-white border border-slate-200 font-semibold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]/20 transition-all min-w-[180px]"
               >
                 <option value="tous">Tous les contrats</option>
                 {contrats.map((c) => (
@@ -301,7 +301,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
                         <div className="min-w-0">
                           <Link 
                             href={`/employes/${emp.id}`}
-                            className="text-sm font-semibold text-slate-900 tracking-tight leading-none hover:text-[#FF8200] transition-colors"
+                            className="text-sm font-semibold text-slate-900 tracking-tight leading-none hover:text-[#2563eb] transition-colors"
                           >
                             {emp.full_name}
                           </Link>

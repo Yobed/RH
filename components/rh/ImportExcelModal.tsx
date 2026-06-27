@@ -239,7 +239,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
               <a
                 href="/api/import/employees/template"
                 download
-                className="flex items-center gap-3 rounded-xl border border-dashed border-[#FF8200]/30 bg-[#FF8200]/5 px-4 py-3 text-sm text-[#FF8200] hover:bg-[#FF8200]/10 transition-colors"
+                className="flex items-center gap-3 rounded-xl border border-dashed border-[#2563eb]/30 bg-[#2563eb]/5 px-4 py-3 text-sm text-[#2563eb] hover:bg-[#2563eb]/10 transition-colors"
               >
                 <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -258,7 +258,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
                 className={cn(
                   "cursor-pointer rounded-xl border-2 border-dashed px-4 py-8 text-center transition-colors",
                   dragging
-                    ? "border-[#FF8200] bg-amber-50/40 dark:bg-amber-900/10"
+                    ? "border-[#2563eb] bg-amber-50/40 dark:bg-amber-900/10"
                     : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                 )}
               >
@@ -271,7 +271,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
                 />
                 {parsing ? (
                   <div className="flex flex-col items-center gap-2">
-                    <span className="h-6 w-6 rounded-full border-2 border-slate-400 border-t-[#FF8200] animate-spin" />
+                    <span className="h-6 w-6 rounded-full border-2 border-slate-400 border-t-[#2563eb] animate-spin" />
                     <p className="text-sm text-slate-500">Analyse du fichier…</p>
                   </div>
                 ) : (
@@ -281,7 +281,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
                     </svg>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
                       Glissez votre fichier ici ou{" "}
-                      <span className="text-[#FF8200] font-semibold">cliquez pour sélectionner</span>
+                      <span className="text-[#2563eb] font-semibold">cliquez pour sélectionner</span>
                     </p>
                     <p className="text-xs text-slate-400 mt-1">.xlsx, .xls, .csv</p>
                   </div>
@@ -398,7 +398,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
                     "flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all",
                     validRows.length === 0
                       ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
-                      : "bg-[#FF8200] text-white hover:bg-[#E06D00] shadow-sm"
+                      : "bg-[#2563eb] text-white hover:bg-[#1d4ed8] shadow-sm"
                   )}
                 >
                   Confirmer l&apos;import ({validRows.length} ligne{validRows.length > 1 ? "s" : ""})
@@ -410,7 +410,7 @@ export function ImportExcelModal({ onSuccess }: Props) {
           {/* IMPORTING STATE */}
           {state === "importing" && (
             <div className="p-12 flex flex-col items-center gap-4">
-              <span className="h-10 w-10 rounded-full border-4 border-slate-200 border-t-[#FF8200] animate-spin" />
+              <span className="h-10 w-10 rounded-full border-4 border-slate-200 border-t-[#2563eb] animate-spin" />
               <p className="text-sm text-slate-500 font-medium">Import en cours…</p>
             </div>
           )}

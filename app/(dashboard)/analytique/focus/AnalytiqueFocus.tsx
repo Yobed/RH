@@ -381,7 +381,7 @@ function AxeTalent({ dataset, refDate }: { dataset: ReturnType<typeof applyFilte
                 <YAxis dataKey="range" type="category" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} width={50} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v, name) => [`${Math.abs(Number(v))} pers.`, String(name)]} />
                 <Bar dataKey="Hommes" stackId="x" fill="#475569" radius={[0, 0, 0, 3]} />
-                <Bar dataKey="Femmes" stackId="x" fill="#f97316" radius={[0, 3, 3, 0]} />
+                <Bar dataKey="Femmes" stackId="x" fill="#2563eb" radius={[0, 3, 3, 0]} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="square" iconSize={10} />
               </BarChart>
             </ResponsiveContainer>

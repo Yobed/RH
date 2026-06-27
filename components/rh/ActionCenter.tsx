@@ -111,38 +111,43 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
   // État positif : rien à traiter
   if (actionable.length === 0) {
     return (
-      <div className="flex items-center gap-3.5 rounded-2xl border border-emerald-200/60 bg-emerald-50/40 px-5 py-4 dark:border-emerald-900/40 dark:bg-emerald-950/20">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400">
-          <CheckCircle2 className="h-5 w-5 shrink-0" />
+      <div className="flex items-center gap-4 rounded-3xl border border-emerald-200 bg-emerald-50/50 p-5 dark:border-emerald-900/50 dark:bg-emerald-950/30 shadow-sm">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-md shadow-emerald-500/20">
+          <CheckCircle2 className="h-6 w-6 shrink-0" />
         </div>
-        <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-300">
-          Tout est à jour — aucune action urgente en attente.
-        </p>
+        <div>
+          <h4 className="text-sm font-black text-emerald-950 dark:text-emerald-200">Centre d'Action Dégagé</h4>
+          <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
+            Tout est parfaitement à jour — aucune action urgente en attente.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-xl shadow-slate-100/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none transition-all">
-      {/* En-tête */}
-      <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 dark:border-slate-800/80 bg-gradient-to-r from-slate-50/80 to-white dark:from-slate-800/40 dark:to-slate-900">
-        <div className="flex items-center gap-3">
-          <div className="flex h-2.5 w-2.5 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF8200] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#FF8200]"></span>
+    <div className="overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-xl shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none transition-all duration-300">
+      {/* En-tête Odoo Style */}
+      <div className="relative flex items-center justify-between border-b border-slate-100 px-6 py-4.5 dark:border-slate-800 bg-gradient-to-r from-slate-50 via-white to-amber-50/20 dark:from-slate-800/60 dark:to-slate-900">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1e40af] to-[#2563eb]" />
+        
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-3 w-3 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2563eb] opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#2563eb]" />
           </div>
-          <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">À traiter en priorité</h2>
-          <span className="rounded-full bg-[#FF8200]/10 border border-[#FF8200]/20 px-2.5 py-0.5 text-xs font-extrabold text-[#FF8200]">
-            {total}
+          <h2 className="text-base font-black text-slate-900 dark:text-white tracking-tight">À Traiter en Priorité</h2>
+          <span className="rounded-full bg-[#2563eb]/10 border border-[#2563eb]/30 px-3 py-0.5 text-xs font-black text-[#2563eb]">
+            {total} dossier{total > 1 ? "s" : ""}
           </span>
         </div>
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-          Actions RH requises
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+          Flux Odoo Workflows
         </span>
       </div>
 
       {/* Liste */}
-      <ul className="divide-y divide-slate-100 dark:divide-slate-800/60">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800/80">
         {actionable.map((item) => {
           const cfg = CONFIG[item.type];
           const Icon = cfg.icon;
@@ -150,28 +155,28 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
             <li key={item.type}>
               <Link
                 href={cfg.href}
-                className="group flex items-center justify-between gap-4 px-6 py-4 outline-none transition-all hover:bg-slate-50/80 focus-visible:bg-slate-50 dark:hover:bg-slate-800/40 dark:focus-visible:bg-slate-800/40"
+                className="group flex items-center justify-between gap-4 px-6 py-4.5 outline-none transition-all hover:bg-slate-50/90 focus-visible:bg-slate-50 dark:hover:bg-slate-800/50 dark:focus-visible:bg-slate-800/50"
               >
                 <div className="flex items-center gap-4 min-w-0 flex-1">
                   <span
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-xs ${TINT[cfg.priority]}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform group-hover:scale-105 ${TINT[cfg.priority]}`}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-5.5 w-5.5" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#FF8200] transition-colors">
+                    <div className="flex items-center gap-2.5">
+                      <span className="truncate text-sm font-black text-slate-900 dark:text-slate-100 group-hover:text-[#2563eb] transition-colors">
                         {cfg.label(item.count)}
                       </span>
-                      <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md ${BADGE_TINT[cfg.priority]}`}>
+                      <span className={`text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full ${BADGE_TINT[cfg.priority]}`}>
                         {cfg.priority}
                       </span>
                     </div>
                   </div>
                 </div>
-                <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#FF8200] hover:bg-[#E06D00] px-4 py-2 text-xs font-bold text-white transition-all shadow-md shadow-[#FF8200]/20 group-hover:scale-[1.03] active:scale-[0.98]">
+                <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] px-4.5 py-2 text-xs font-black text-white transition-all shadow-md shadow-[#2563eb]/20 group-hover:scale-105 active:scale-95">
                   {cfg.cta}
-                  <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
             </li>
