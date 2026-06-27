@@ -63,6 +63,13 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontSize: {
+        xs: ["0.8125rem", { lineHeight: "1.15" }], // ~13px
+        sm: ["0.90625rem", { lineHeight: "1.3" }], // ~14.5px
+        base: ["1.03125rem", { lineHeight: "1.5" }], // ~16.5px
+        lg: ["1.1875rem", { lineHeight: "1.5" }], // ~19px
+        xl: ["1.3125rem", { lineHeight: "1.5" }], // ~21px
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

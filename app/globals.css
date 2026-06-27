@@ -9,7 +9,7 @@
     /* ── Ivoire Prestige — Light Mode ──
        Tokens en CANAUX OKLCH bruts (L C H) : le tailwind.config les enveloppe
        en `oklch(var(--x) / <alpha-value>)` pour supporter bg-primary/50, etc. */
-    --background: 0.984 0.003 247;
+    --background: 1 0 0;
     --foreground: 0.09 0.028 252;
 
     --card: 1 0 0;
@@ -125,17 +125,24 @@
     font-family: var(--font-sans);
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3, h4, h5, h6,
+  .h1, .h2, .h3, .h4, .h5, .h6 {
     font-family: var(--font-sans);
     font-weight: 600; /* Entre 500 et 700 */
     line-height: 1;
     letter-spacing: -0.025em;
+    color: #FF8200 !important;
+  }
+
+  th, thead th {
+    color: #FF8200 !important;
   }
 
   p {
     font-family: var(--font-sans);
     font-weight: 400;
     line-height: 1.5;
+    font-size: 0.95rem; /* ~15.2px */
   }
 
   /* Scrollbar premium */
@@ -166,7 +173,10 @@
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-background text-foreground; }
+  body {
+    @apply bg-background text-foreground;
+    font-size: 0.96875rem; /* ~15.5px */
+  }
 }
 
 /* ── Grain texture overlay ───────────────────────────────────────────────── */
@@ -181,12 +191,9 @@ body::after {
   background-size: 180px 180px;
 }
 
-/* ── Ambient gradient mesh (light mode) ─────────────────────────────────── */
 body:not(.dark) {
-  background-image:
-    radial-gradient(ellipse at 20% 0%, oklch(0.88 0.06 252 / 0.25) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 10%, oklch(0.92 0.06 73 / 0.18) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 100%, oklch(0.90 0.04 252 / 0.15) 0%, transparent 60%);
+  background-color: #FFFFFF !important;
+  background-image: none !important;
 }
 
 /* ── Animated gradient mesh (dark mode) ─────────────────────────────────── */

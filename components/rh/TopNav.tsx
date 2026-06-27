@@ -504,7 +504,7 @@ export function TopNav({
     <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl dark:border-slate-800/80 dark:bg-[oklch(0.15_0.028_255)]/85 print:hidden">
       <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-1 px-3 sm:px-4">
         {/* Mobile : hamburger */}
-        <MobileSidebar companyName={companyName} />
+        <MobileSidebar companyName={companyName} role={role} />
 
         {/* Logo */}
         <Link href="/rh" className="flex shrink-0 items-center gap-2.5">
