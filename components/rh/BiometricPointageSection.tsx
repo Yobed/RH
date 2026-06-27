@@ -164,12 +164,10 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
     fetchRealLogs();
   }, [fetchRealLogs]);
 
-  const handlePointageSuccess = async (typeStr: string, timestampStr: string) => {
-    const empObj = employees?.find(e => e.id === selectedEmployeeForScan);
-    const empName = empObj ? empObj.full_name : "Wilfried KOUASSI";
-    const empRole = empObj ? (empObj.poste || "Collaborateur RH") : "Directeur des Ressources Humaines";
+  const handlePointageSuccess = async (typeStr: string, timestampStr: string, gpsLocationStr?: string) => {
     const typeKey = (typeStr as "arrivee" | "pause" | "reprise" | "depart") || "arrivee";
     const matchScore = Number((99.5 + Math.random() * 0.4).toFixed(1));
+    const location = gpsLocationStr || "GPS: 5.3364° N, 4.0267° W (Siège HQ)";
 
     try {
       const res = await fetch("/api/pointage", {
@@ -179,7 +177,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
           employee_id: selectedEmployeeForScan || undefined,
           type: typeKey,
           match_score: matchScore,
-          location: "Siège HQ - Borne 01",
+          location: location,
           verification_method: "IA 3D Faciale v4"
         })
       });
@@ -188,7 +186,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
         const result = await res.json();
         const realLog = parseTimeEntryToLog(result);
         setLogs(prev => [realLog, ...prev.filter(l => l.id !== realLog.id)]);
-        toast.success(`Pointage biométrique réel (${typeStr.toUpperCase()}) certifié par hachage SHA-256 !`);
+        toast.success(`Pointage biométrique certifié à ${timestampStr} ! [${location}]`);
       } else {
         const errJson = await res.json().catch(() => ({}));
         toast.error(errJson.error || "Erreur d'enregistrement du pointage");
