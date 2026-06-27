@@ -520,7 +520,7 @@ export default async function RhPage() {
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 bg-slate-900 text-[#FF8200] dark:bg-slate-800"
+                            className="h-8 w-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 bg-amber-500/10 text-[#E06D00] dark:bg-amber-400/10 dark:text-[#F58220]"
                           >
                             {emp.full_name?.charAt(0)}
                           </div>
@@ -601,7 +601,7 @@ function PenaltyRow({
 function SectionDivider({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-2.5 pt-2 pb-1">
-      <div className="h-2 w-2 rounded-full bg-[#FF8200]" />
+      <div className="h-2 w-2 rounded-full bg-[#E06D00] dark:bg-[#F58220]" />
       <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 whitespace-nowrap">
         {label}
       </h2>

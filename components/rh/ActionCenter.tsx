@@ -153,11 +153,11 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                 </span>
                 <span className="flex items-center gap-2 min-w-0 flex-1">
                   <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT[cfg.priority]}`} aria-hidden />
-                  <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#FF8200] dark:group-hover:text-[#FF8200] transition-colors">
+                  <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#E06D00] dark:group-hover:text-[#F58220] transition-colors">
                     {cfg.label(item.count)}
                   </span>
                 </span>
-                <span className="flex shrink-0 items-center gap-1 rounded-lg bg-[#FF8200] px-3 py-1.5 text-xs font-bold text-white transition-all hover:bg-[#e07200] shadow-xs">
+                <span className="flex shrink-0 items-center gap-1 rounded-lg bg-[#E06D00] dark:bg-[#F58220] px-3 py-1.5 text-xs font-bold text-white transition-all hover:opacity-90 shadow-xs">
                   {cfg.cta}
                   <ArrowRight className="h-3 w-3" />
                 </span>
