@@ -121,22 +121,22 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_2px_16px_-4px_rgba(15,23,42,0.06)] dark:border-slate-700 dark:bg-[oklch(0.17_0.03_255)]">
+    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       {/* En-tête */}
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-slate-700/60">
+      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-800/30">
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-bold text-slate-900 dark:text-white">À traiter</h2>
-          <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 dark:bg-rose-500/15 dark:text-rose-300">
+          <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 dark:bg-rose-950/50 dark:text-rose-300">
             {total}
           </span>
         </div>
-        <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
           Par priorité
         </span>
       </div>
 
       {/* Liste */}
-      <ul className="divide-y divide-slate-100 dark:divide-slate-700/60">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800/60">
         {actionable.map((item) => {
           const cfg = CONFIG[item.type];
           const Icon = cfg.icon;
@@ -144,7 +144,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
             <li key={item.type}>
               <Link
                 href={cfg.href}
-                className="group flex items-center gap-3 px-5 py-3 outline-none transition-colors hover:bg-slate-50 focus-visible:bg-slate-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+                className="group flex items-center gap-3 px-5 py-3 outline-none transition-colors hover:bg-slate-50/80 focus-visible:bg-slate-50 dark:hover:bg-slate-800/40 dark:focus-visible:bg-slate-800/40"
               >
                 <span
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${TINT[cfg.priority]}`}
@@ -153,11 +153,11 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                 </span>
                 <span className="flex items-center gap-2 min-w-0 flex-1">
                   <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${DOT[cfg.priority]}`} aria-hidden />
-                  <span className="truncate text-sm font-medium text-slate-800 dark:text-slate-200">
+                  <span className="truncate text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-[#FF8200] dark:group-hover:text-[#FF8200] transition-colors">
                     {cfg.label(item.count)}
                   </span>
                 </span>
-                <span className="flex shrink-0 items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white transition-colors group-hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:group-hover:bg-slate-200">
+                <span className="flex shrink-0 items-center gap-1 rounded-lg bg-[#FF8200] px-3 py-1.5 text-xs font-bold text-white transition-all hover:bg-[#e07200] shadow-xs">
                   {cfg.cta}
                   <ArrowRight className="h-3 w-3" />
                 </span>

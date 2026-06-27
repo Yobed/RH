@@ -16,27 +16,27 @@ interface KpiCardProps {
 
 const variantConfig = {
   default: {
-    border: "border-slate-200 dark:border-slate-800",
-    dot: "bg-[#FF8200]",
-    value: "text-slate-900 dark:text-slate-100",
-    iconWrap: "bg-orange-50 text-[#FF8200] dark:bg-orange-950/40 dark:text-[#FF8200]",
+    border: "border-slate-200/90 dark:border-slate-800/80 hover:border-amber-500/40 dark:hover:border-amber-500/40",
+    dot: "bg-[#E06D00] dark:bg-[#F58220]",
+    value: "text-slate-900 dark:text-slate-50",
+    iconWrap: "bg-amber-500/10 text-[#E06D00] dark:bg-amber-500/15 dark:text-[#F58220]",
   },
   warning: {
-    border: "border-amber-200 dark:border-amber-900/50",
+    border: "border-amber-200 dark:border-amber-900/50 hover:border-amber-400 dark:hover:border-amber-700",
     dot: "bg-amber-500",
-    value: "text-amber-900 dark:text-amber-200",
+    value: "text-amber-950 dark:text-amber-200",
     iconWrap: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
   },
   danger: {
-    border: "border-red-200 dark:border-red-900/50",
-    dot: "bg-red-500",
-    value: "text-red-900 dark:text-red-200",
-    iconWrap: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+    border: "border-red-200 dark:border-red-900/50 hover:border-red-400 dark:hover:border-red-700",
+    dot: "bg-rose-500",
+    value: "text-rose-950 dark:text-rose-200",
+    iconWrap: "bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400",
   },
   success: {
-    border: "border-emerald-200 dark:border-emerald-900/50",
+    border: "border-emerald-200 dark:border-emerald-900/50 hover:border-emerald-400 dark:hover:border-emerald-700",
     dot: "bg-emerald-500",
-    value: "text-emerald-900 dark:text-emerald-200",
+    value: "text-emerald-950 dark:text-emerald-200",
     iconWrap: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
   },
 };
@@ -47,7 +47,7 @@ function AnimatedNumber({ value, className }: { value: number; className?: strin
   useEffect(() => {
     const controls = animate(0, value, {
       duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.16, 1, 0.3, 1],
       onUpdate: (v) => {
         if (ref.current) ref.current.textContent = Math.round(v).toString();
       },
@@ -74,35 +74,35 @@ export function KpiCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: index * 0.05 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: index * 0.05 }}
       className={cn(
-        "group relative overflow-hidden rounded-xl bg-white dark:bg-slate-900",
+        "group relative overflow-hidden rounded-xl bg-white dark:bg-slate-900/90",
         "border",
         cfg.border,
-        "shadow-sm hover:shadow-md transition-all duration-200",
-        featured ? "p-6" : "p-4 sm:p-5"
+        "shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.06)] transition-all duration-250",
+        featured ? "p-6 sm:p-7" : "p-4 sm:p-5"
       )}
     >
-      <div className="relative">
-        {/* Label & Icon Header */}
-        <div className="flex items-center justify-between mb-3">
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2 min-w-0">
-            <div className={cn("h-2 w-2 rounded-full shrink-0", cfg.dot)} />
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 truncate">
+            <div className={cn("h-2 w-2 rounded-full shrink-0 animate-pulse", cfg.dot)} />
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 truncate">
               {label}
             </p>
           </div>
-          <div className={cn("rounded-lg p-2 shrink-0 transition-transform group-hover:scale-105", cfg.iconWrap)}>
+          <div className={cn("rounded-lg p-2 shrink-0 transition-transform duration-200 group-hover:scale-110", cfg.iconWrap)}>
             <Icon weight="duotone" className={featured ? "h-5 w-5" : "h-4 w-4"} />
           </div>
         </div>
 
-        {/* Metric Value */}
+        {/* Value */}
         <div className="flex flex-col gap-1">
           {isNumber ? (
             <span
               className={cn(
-                "font-bold tracking-tight tabular-nums leading-none",
+                "font-extrabold tracking-tight tabular-nums leading-none",
                 featured ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl",
                 cfg.value
               )}
@@ -112,7 +112,7 @@ export function KpiCard({
           ) : (
             <span
               className={cn(
-                "font-bold tracking-tight tabular-nums leading-none",
+                "font-extrabold tracking-tight tabular-nums leading-none",
                 featured ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl",
                 cfg.value
               )}
@@ -121,7 +121,7 @@ export function KpiCard({
             </span>
           )}
           {description && (
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-normal mt-1">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-normal mt-1.5">
               {description}
             </span>
           )}
@@ -130,3 +130,4 @@ export function KpiCard({
     </motion.div>
   );
 }
+

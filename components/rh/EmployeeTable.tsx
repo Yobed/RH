@@ -197,9 +197,9 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
   return (
     <div className="space-y-8">
       {/* Premium Search & Filters Area */}
-      <div className="bg-white/70 backdrop-blur-2xl border border-slate-100 p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col xl:flex-row gap-4 items-center">
+      <div className="pro-card p-6 flex flex-col xl:flex-row gap-4 items-center">
         <div className="relative flex-1 group w-full">
-          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-slate-900 transition-colors">
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#E06D00] transition-colors">
             <MagnifyingGlass size={20} weight="bold" />
           </div>
           <input
@@ -207,19 +207,19 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
             placeholder="Rechercher un talent (nom, poste, matricule...)"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full h-14 pl-14 pr-6 rounded-2xl bg-slate-50/50 border-none font-bold text-sm focus:ring-2 focus:ring-slate-900/5 transition-all outline-none"
+            className="w-full h-14 pl-14 pr-6 rounded-2xl bg-slate-50/50 border border-transparent font-bold text-sm focus:bg-white focus:border-[#E06D00]/30 focus:ring-4 focus:ring-[#E06D00]/10 transition-all outline-none"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
           <div className="relative group">
-             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 z-10">
+             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#E06D00] z-10">
                <Funnel size={16} weight="bold" />
              </div>
              <select
               value={filterStatut}
               onChange={(e) => handleStatutChange(e.target.value)}
-              className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border-none font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-slate-900/5 min-w-[200px]"
+              className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border border-transparent font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:bg-white focus:border-[#E06D00]/30 focus:ring-4 focus:ring-[#E06D00]/10 transition-all min-w-[200px]"
             >
               <option value="tous">Tous les statuts</option>
               <option value="actif">Statut : Actif</option>
@@ -231,13 +231,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
 
           {contrats.length > 0 && (
             <div className="relative group">
-               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#E06D00] z-10">
                  <Briefcase size={16} weight="bold" />
                </div>
                <select
                 value={filterContrat}
                 onChange={(e) => handleContratChange(e.target.value)}
-                className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border-none font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:ring-2 focus:ring-slate-900/5 min-w-[200px]"
+                className="h-14 pl-11 pr-10 rounded-2xl bg-slate-50 border border-transparent font-black text-[10px] uppercase tracking-widest appearance-none outline-none cursor-pointer focus:bg-white focus:border-[#E06D00]/30 focus:ring-4 focus:ring-[#E06D00]/10 transition-all min-w-[200px]"
               >
                 <option value="tous">Tous les contrats</option>
                 {contrats.map((c) => (
@@ -303,7 +303,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
                         <div className="relative">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-[3px] border-white shadow-lg flex items-center justify-center text-white font-black text-xs group-hover:rotate-[6deg] transition-transform duration-500">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-[3px] border-white shadow-lg flex items-center justify-center text-white font-black text-xs group-hover:bg-[#E06D00] group-hover:rotate-[6deg] transition-all duration-500">
                              {getInitials(emp.full_name)}
                           </div>
                           <div className={cn(
@@ -314,10 +314,10 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
                         <div className="min-w-0">
                           <Link 
                             href={`/employes/${emp.id}`}
-                            className="text-sm font-black text-slate-900 tracking-tight leading-none hover:text-primary transition-colors flex items-center gap-1.5"
+                            className="text-sm font-black text-slate-900 tracking-tight leading-none hover:text-[#E06D00] transition-colors flex items-center gap-1.5"
                           >
                             {emp.full_name}
-                            <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                            <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-[#E06D00]" />
                           </Link>
                           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1 truncate">{emp.poste}</p>
                         </div>
@@ -354,7 +354,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees }: Props) {
                       <div className="flex flex-col items-end gap-1">
                         <div className="flex items-center gap-2 text-slate-900 font-black text-sm tracking-tight">
                            {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
-                           <CurrencyCircleDollar size={16} className="text-emerald-500" />
+                           <CurrencyCircleDollar size={16} className="text-[#E06D00]" />
                         </div>
                         <span className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">Salaire Brut Mensuel</span>
                       </div>

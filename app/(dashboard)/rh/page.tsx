@@ -446,9 +446,9 @@ export default async function RhPage() {
         {/* ── ACTIVITÉ & COLLABORATEURS ── */}
         <div className="grid gap-4 lg:grid-cols-3 pb-8">
           {/* Timeline documents */}
-          <div className="rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.06)] p-6 glow-hover">
+          <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5">
             <h2
-              className="text-base font-bold text-slate-900 dark:text-white mb-5"
+              className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 mb-4"
               style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
             >
               Documents récents
@@ -459,15 +459,15 @@ export default async function RhPage() {
                   {i < (recentActivities.length - 1) && (
                     <div className="absolute left-[13px] top-7 bottom-0 w-px bg-slate-100 dark:bg-slate-700" />
                   )}
-                  <div className="h-7 w-7 rounded-full border border-slate-100 dark:border-slate-600 bg-white dark:bg-[oklch(0.20_0.032_248)] flex items-center justify-center shrink-0 z-10">
-                    <div className="h-2 w-2 rounded-full bg-emerald-400" />
+                  <div className="h-7 w-7 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center justify-center shrink-0 z-10">
+                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{act.name}</p>
-                    <p className="text-[10px] text-slate-600 dark:text-slate-600 mt-0.5">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                       {(act.employees as { full_name?: string })?.full_name}
                     </p>
-                    <p className="text-[9px] text-slate-300 dark:text-slate-600 mt-1 font-mono">
+                    <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
                       {new Date(act.created_at).toLocaleDateString("fr-CI", {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -480,17 +480,17 @@ export default async function RhPage() {
           </div>
 
           {/* Table collaborateurs */}
-          <div className="lg:col-span-2 rounded-2xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-[oklch(0.155_0.030_248)] shadow-[0_2px_16px_-4px_rgba(0,0,0,0.06)] p-6 overflow-hidden glow-hover">
-            <div className="flex items-center justify-between mb-5">
+          <div className="lg:col-span-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5 overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
               <h2
-                className="text-base font-bold text-slate-900 dark:text-white"
+                className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100"
                 style={{ fontFamily: "var(--font-display, var(--font-sans))" }}
               >
                 Collaborateurs récents
               </h2>
               <Link
                 href="/employes"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Voir tout <ArrowRight className="h-3 w-3" />
               </Link>
@@ -499,17 +499,17 @@ export default async function RhPage() {
             <div className="overflow-x-auto -mx-2 px-2">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
-                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                       Collaborateur
                     </th>
-                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 hidden sm:table-cell">
+                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 hidden sm:table-cell">
                       Poste
                     </th>
-                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 hidden sm:table-cell">
+                    <th className="py-2.5 px-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 hidden sm:table-cell">
                       Contrat
                     </th>
-                    <th className="py-2.5 px-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                    <th className="py-2.5 px-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                       Statut
                     </th>
                   </tr>

@@ -42,7 +42,7 @@ function AnimatedBar({ value, delay = 0 }: { value: number; delay?: number }) {
   return (
     <div className="relative h-1.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
       <motion.div
-        className="absolute inset-y-0 left-0 rounded-full bg-[#FF8200]"
+        className="absolute inset-y-0 left-0 rounded-full bg-[#E06D00]"
         initial={{ width: 0 }}
         animate={{ width: `${value}%` }}
         transition={{ duration: 1.2, delay, ease: [0.22, 1, 0.36, 1] }}
@@ -72,14 +72,14 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
           </motion.p>
 
           <motion.div variants={fadeUp} className="space-y-1">
-            <p className="text-sm font-semibold text-[#FF8200]">
+            <p className="text-sm font-bold tracking-wide text-[#E06D00] dark:text-[#F58220]">
               {greeting}
             </p>
             <h1
-              className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-white"
+              className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white"
             >
               Tableau de bord{" "}
-              <span className="text-[#FF8200]">
+              <span className="text-[#E06D00] dark:text-[#F58220]">
                 RH
               </span>
             </h1>
@@ -109,13 +109,13 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 px-3 py-1.5 shadow-sm"
+                className="flex items-center gap-2 rounded-lg border border-slate-200/90 bg-white dark:border-slate-800/80 dark:bg-slate-900/90 px-3.5 py-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
               >
-                <span className={`h-2 w-2 rounded-full shrink-0 ${stat.color}`} />
+                <span className={`h-2 w-2 rounded-full shrink-0 ${stat.color} animate-pulse`} />
                 <span className={`text-xs font-bold tabular-nums ${stat.textColor}`}>
                   {stat.value}
                 </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">{stat.label}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">{stat.label}</span>
               </div>
             ))}
           </motion.div>
@@ -124,9 +124,9 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
         {/* Right — compliance card */}
         <motion.div
           variants={scaleIn}
-          className="shrink-0 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-sm min-w-[220px]"
+          className="shrink-0 rounded-xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] min-w-[220px]"
         >
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-3 text-center">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 text-center">
             Score conformité
           </p>
 
@@ -143,7 +143,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               <motion.circle
                 cx="40" cy="40" r="34"
                 fill="none"
-                stroke="#FF8200"
+                stroke="#E06D00"
                 strokeWidth="6"
                 strokeLinecap="round"
                 strokeDasharray={`${2 * Math.PI * 34}`}
@@ -155,7 +155,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-xl font-bold text-slate-900 dark:text-white tabular-nums">
+              <span className="text-xl font-extrabold text-slate-900 dark:text-white tabular-nums">
                 {complianceScore}
               </span>
               <span className="text-[9px] text-slate-400 uppercase font-medium">/ 100</span>
@@ -163,7 +163,7 @@ export function DashboardHeroClient({ totalActifs, complianceScore, congesEnAtte
           </div>
 
           <AnimatedBar value={complianceScore} delay={0.4} />
-          <p className="mt-2 text-xs font-semibold text-center text-slate-600 dark:text-slate-300">
+          <p className="mt-2.5 text-xs font-bold text-center text-slate-700 dark:text-slate-300">
             {complianceScore >= 85
               ? "Excellent"
               : complianceScore >= 70
