@@ -99,7 +99,15 @@ function StatutBadge({ statut }: { statut: string | null }) {
 interface Props {
   employees: Employee[];
   totalCount: number;
-  allEmployees: { id: string; full_name: string; statut?: string | null; type_contrat?: string | null }[];
+  allEmployees: { 
+    id: string; 
+    full_name: string; 
+    statut?: string | null; 
+    type_contrat?: string | null;
+    departement?: string | null;
+    genre?: string | null;
+    poste?: string | null;
+  }[];
   stats?: {
     total: number;
     actifs: number;
@@ -114,7 +122,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+  const [viewMode, setViewMode] = useState<"table" | "grid" | "analytics">("table");
 
   const search = searchParams.get("q") || "";
   const filterStatut = searchParams.get("statut") || "tous";
@@ -138,6 +146,31 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
       new Set(allEmployees.map((e) => e.type_contrat).filter(Boolean))
     ) as string[];
     return types.sort();
+  }, [allEmployees]);
+
+  const departements = useMemo(() => {
+    const depts = Array.from(
+      new Set(allEmployees.map((e) => e.departement).filter(Boolean))
+    ) as string[];
+    return depts.sort();
+  }, [allEmployees]);
+
+  const departmentCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allEmployees.forEach((e) => {
+      const d = e.departement || "Non affecté";
+      counts[d] = (counts[d] || 0) + 1;
+    });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  }, [allEmployees]);
+
+  const contratCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allEmployees.forEach((e) => {
+      const c = e.type_contrat || "Autre";
+      counts[c] = (counts[c] || 0) + 1;
+    });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [allEmployees]);
 
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
@@ -307,35 +340,48 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             })}
           </div>
 
-          {/* Display Mode Toggle */}
+          {/* Display Mode Toggle (3 Modes for Ultimate User Journey) */}
           <div className="flex items-center gap-2.5 self-end md:self-auto shrink-0">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">Format d'affichage:</span>
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">Vue Workstation:</span>
             <div className="flex items-center bg-slate-200/60 p-1 rounded-2xl border border-slate-200/60">
               <button
                 onClick={() => setViewMode("table")}
                 className={cn(
-                  "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
+                  "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
                   viewMode === "table"
                     ? "bg-white text-[#FF8200] shadow-sm border border-slate-200/80"
                     : "text-slate-500 hover:text-slate-900"
                 )}
                 title="Vue Tableau Détaillé"
               >
-                <ListBullets size={18} weight="bold" />
+                <ListBullets size={16} weight="bold" />
                 <span className="hidden sm:inline">Tableau</span>
               </button>
               <button
                 onClick={() => setViewMode("grid")}
                 className={cn(
-                  "flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
+                  "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
                   viewMode === "grid"
                     ? "bg-white text-[#FF8200] shadow-sm border border-slate-200/80"
                     : "text-slate-500 hover:text-slate-900"
                 )}
-                title="Vue Trombinoscope (Cartes)"
+                title="Vue Trombinoscope (Cartes RH)"
               >
-                <SquaresFour size={18} weight="bold" />
+                <SquaresFour size={16} weight="bold" />
                 <span className="hidden sm:inline">Trombinoscope</span>
+              </button>
+              <button
+                onClick={() => setViewMode("analytics")}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
+                  viewMode === "analytics"
+                    ? "bg-white text-[#FF8200] shadow-sm border border-slate-200/80"
+                    : "text-slate-500 hover:text-slate-900"
+                )}
+                title="Vue Cockpit Synthétique & Répartition"
+              >
+                <Sparkle size={16} weight="bold" />
+                <span className="hidden sm:inline">Cockpit BI</span>
               </button>
             </div>
           </div>
@@ -385,9 +431,52 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             )}
           </div>
         </div>
+
+        {/* Quick Department Filter Pills (Zero-Click User Journey) */}
+        {departements.length > 0 && (
+          <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 no-scrollbar">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+              <Building size={12} weight="bold" /> Départements:
+            </span>
+            <button
+              onClick={() => handleSearchChange("")}
+              className={cn(
+                "px-3 py-1 rounded-xl text-[11px] font-bold transition-all shrink-0 cursor-pointer border",
+                !search || !departements.some(d => search.toLowerCase() === d.toLowerCase())
+                  ? "bg-slate-900 text-white border-slate-900 shadow-2xs"
+                  : "bg-white text-slate-600 border-slate-200/80 hover:bg-slate-100"
+              )}
+            >
+              Tous
+            </button>
+            {departements.map((dept) => {
+              const isSelected = search.toLowerCase() === dept.toLowerCase();
+              return (
+                <button
+                  key={dept}
+                  onClick={() => handleSearchChange(isSelected ? "" : dept)}
+                  className={cn(
+                    "px-3 py-1 rounded-xl text-[11px] font-bold transition-all shrink-0 cursor-pointer border flex items-center gap-1.5",
+                    isSelected
+                      ? "bg-[#FF8200] text-white border-[#FF8200] shadow-2xs"
+                      : "bg-white text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
+                  )}
+                >
+                  <span>{dept}</span>
+                  <span className={cn(
+                    "px-1.5 py-0.2 rounded-full text-[9px] font-mono",
+                    isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+                  )}>
+                    {allEmployees.filter(e => e.departement === dept).length}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Content Region: Table or Trombinoscope Grid */}
+      {/* Content Region: Table, Trombinoscope Grid, or Cockpit BI */}
       <div className="flex-1 p-0">
         <AnimatePresence mode="wait">
           {viewMode === "table" ? (
@@ -436,7 +525,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
-                  {employees.map((emp, i) => (
+                  {employees.map((emp) => (
                     <tr
                       key={emp.id}
                       className="group hover:bg-slate-50/80 transition-colors duration-150"
@@ -535,7 +624,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 </tbody>
               </table>
             </motion.div>
-          ) : (
+          ) : viewMode === "grid" ? (
             /* Trombinoscope Grid View */
             <motion.div
               key="grid-view"
@@ -545,7 +634,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
               transition={{ duration: 0.15 }}
               className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 bg-slate-50/30"
             >
-              {employees.map((emp, i) => (
+              {employees.map((emp) => (
                 <div
                   key={emp.id}
                   className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group"
@@ -623,6 +712,96 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 </div>
               ))}
             </motion.div>
+          ) : (
+            /* Cockpit BI Analytics View */
+            <motion.div
+              key="analytics-view"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="p-6 sm:p-8 bg-slate-50/40 space-y-8"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Department Distribution */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-[#FF8200]/10 text-[#FF8200] flex items-center justify-center">
+                        <Building size={18} weight="bold" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black text-slate-900">Répartition par Département</h3>
+                        <p className="text-[11px] text-slate-500 font-medium">Distribution globale de l'effectif</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 font-mono">{departmentCounts.length} pôle(s)</span>
+                  </div>
+
+                  <div className="space-y-3 pt-1">
+                    {departmentCounts.map(([dept, count]) => {
+                      const pct = Math.round((count / allEmployees.length) * 100);
+                      return (
+                        <div key={dept} className="space-y-1">
+                          <div className="flex justify-between text-xs font-bold">
+                            <span className="text-slate-700 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-[#FF8200]"></span>
+                              {dept}
+                            </span>
+                            <span className="text-slate-900 font-mono">{count} <span className="text-slate-400 font-normal">({pct}%)</span></span>
+                          </div>
+                          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-[#FF8200] to-amber-500 rounded-full transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Contract Types Distribution */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+                        <Briefcase size={18} weight="bold" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black text-slate-900">Structures Contractuelles</h3>
+                        <p className="text-[11px] text-slate-500 font-medium">Répartition CDI, CDD et autres</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 font-mono">{contratCounts.length} type(s)</span>
+                  </div>
+
+                  <div className="space-y-3 pt-1">
+                    {contratCounts.map(([contrat, count]) => {
+                      const pct = Math.round((count / allEmployees.length) * 100);
+                      return (
+                        <div key={contrat} className="space-y-1">
+                          <div className="flex justify-between text-xs font-bold">
+                            <span className="text-slate-700 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                              Contrat {contrat}
+                            </span>
+                            <span className="text-slate-900 font-mono">{count} <span className="text-slate-400 font-normal">({pct}%)</span></span>
+                          </div>
+                          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-amber-500 to-orange-400 rounded-full transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
@@ -665,5 +844,3 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
     </div>
   );
 }
-
-

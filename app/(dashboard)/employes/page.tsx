@@ -57,7 +57,7 @@ export default async function EmployesPage({
   // Lightweight fetch for dialogs (to list managers, etc.)
   const { data: allEmployees } = await supabase
     .from("employees")
-    .select("id, full_name, statut, type_contrat")
+    .select("id, full_name, statut, type_contrat, departement, genre, poste")
     .order("full_name", { ascending: true });
 
   // KPIs
