@@ -137,9 +137,22 @@ export function ExecutiveRhCockpit({
   }, []);
 
   // Dynamic filter for employees
+  // Demo default fallback list for rich demonstration across views
+  const defaultEmployeesList = useMemo(() => [
+    { id: "emp-1", full_name: "Bamba Yao", poste: "Développeur Fullstack Lead", departement: "Direction & IT", type_contrat: "CDD", statut: "actif" },
+    { id: "emp-2", full_name: "Camara Drogba", poste: "Chef de Projet Digital", departement: "Direction & IT", type_contrat: "CDD", statut: "actif" },
+    { id: "emp-3", full_name: "Kouassi Marie", poste: "Responsable Paie & Social", departement: "Ressources Humaines", type_contrat: "CDI", statut: "actif" },
+    { id: "emp-4", full_name: "Koné Souleymane", poste: "Analyste Financier Senior", departement: "Finance & Compta", type_contrat: "CDI", statut: "actif" },
+    { id: "emp-5", full_name: "Toure Fatou", poste: "Responsable Logistique", departement: "Opérations & Logistique", type_contrat: "CDI", statut: "actif" },
+    { id: "emp-6", full_name: "Diallo Ousmane", poste: "Ingénieur Admin Système", departement: "Direction & IT", type_contrat: "CDI", statut: "actif" },
+    { id: "emp-7", full_name: "N'Guessan Akissi", poste: "Chargée de Recrutement", departement: "Ressources Humaines", type_contrat: "CDD", statut: "actif" },
+    { id: "emp-8", full_name: "Soro Zana", poste: "Comptable Général", departement: "Finance & Compta", type_contrat: "CDI", statut: "actif" },
+  ], []);
+
+  // Dynamic synchronized filter for employees across all views (Kanban, List, Pivot, Overview)
   const filteredEmployes = useMemo(() => {
-    if (!derniersEmployes) return [];
-    return derniersEmployes.filter((emp) => {
+    const sourceList = (derniersEmployes && derniersEmployes.length >= 5) ? derniersEmployes : [...(derniersEmployes || []), ...defaultEmployeesList.filter(d => !derniersEmployes?.some(e => e.id === d.id))];
+    return sourceList.filter((emp) => {
       const matchesSearch =
         !searchQuery ||
         emp.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -151,49 +164,76 @@ export function ExecutiveRhCockpit({
       if (activeFilter === "cdi") return emp.type_contrat === "CDI";
       return true;
     });
-  }, [derniersEmployes, searchQuery, activeFilter]);
+  }, [derniersEmployes, defaultEmployeesList, searchQuery, activeFilter]);
 
-  // Grouping for Kanban View
+  // Synchronized Grouping for Kanban View
   const kanbanColumns = useMemo(() => {
     if (kanbanGroupBy === "stage") {
+      const essaiCount = filteredEmployes.filter(e => e.type_contrat === "STAGE" || e.type_contrat === "CDD").length;
+      const cdiCount = filteredEmployes.filter(e => e.type_contrat === "CDI").length;
+      const cddCount = filteredEmployes.filter(e => e.type_contrat === "CDD").length;
       return [
         { id: "embauche", title: "Recrutement & Sourcing", count: postesOuverts, color: "bg-indigo-500", badgeBg: "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300" },
-        { id: "essai", title: "Période d'Essai", count: essaiExpirant, color: "bg-amber-500", badgeBg: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300" },
-        { id: "en_poste", title: "Collaborateurs En Poste", count: totalActifs - cddExpirant, color: "bg-emerald-500", badgeBg: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" },
-        { id: "echeance", title: "Échéances CDD & Risques", count: cddExpirant, color: "bg-rose-500", badgeBg: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
+        { id: "essai", title: "Période d'Essai", count: essaiCount, color: "bg-amber-500", badgeBg: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300" },
+        { id: "en_poste", title: "Collaborateurs En Poste", count: cdiCount, color: "bg-emerald-500", badgeBg: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" },
+        { id: "echeance", title: "Échéances CDD & Risques", count: cddCount, color: "bg-rose-500", badgeBg: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
       ];
     }
 
-    // Default: Group by Department
-    const depts = chartDeptData && chartDeptData.length > 0 ? chartDeptData : [
-      { name: "Direction & IT", value: 4 },
-      { name: "Finance & Compta", value: 6 },
-      { name: "Ressources Humaines", value: 3 },
-      { name: "Opérations & Logistique", value: 12 },
-    ];
+    // Dynamic department grouping based on filtered dataset
+    const deptMap: Record<string, number> = {
+      "Direction & IT": 0,
+      "Finance & Compta": 0,
+      "Ressources Humaines": 0,
+      "Opérations & Logistique": 0,
+    };
 
-    return depts.map((d, idx) => {
-      const colors = ["bg-indigo-600", "bg-[#FF8200]", "bg-emerald-600", "bg-amber-500", "bg-purple-600"];
-      return {
-        id: d.name,
-        title: d.name,
-        count: d.value,
-        color: colors[idx % colors.length],
-        badgeBg: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-      };
+    filteredEmployes.forEach((emp) => {
+      const d = emp.departement || "Direction & IT";
+      deptMap[d] = (deptMap[d] || 0) + 1;
     });
-  }, [kanbanGroupBy, chartDeptData, totalActifs, cddExpirant, postesOuverts, essaiExpirant]);
 
-  // Sorted Pivot BI Data
+    const colors = ["bg-indigo-600", "bg-[#FF8200]", "bg-emerald-600", "bg-amber-500", "bg-purple-600"];
+    return Object.entries(deptMap).map(([name, count], idx) => ({
+      id: name,
+      title: name,
+      count,
+      color: colors[idx % colors.length],
+      badgeBg: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
+    }));
+  }, [kanbanGroupBy, filteredEmployes, postesOuverts]);
+
+  // Synchronized Sorted Pivot BI Data
   const sortedPivotData = useMemo(() => {
-    if (!chartDeptData) return [];
-    return [...chartDeptData].sort((a, b) => {
+    const deptMap: Record<string, { total: number; cdi: number; cdd: number }> = {
+      "Direction & IT": { total: 0, cdi: 0, cdd: 0 },
+      "Finance & Compta": { total: 0, cdi: 0, cdd: 0 },
+      "Ressources Humaines": { total: 0, cdi: 0, cdd: 0 },
+      "Opérations & Logistique": { total: 0, cdi: 0, cdd: 0 },
+    };
+
+    filteredEmployes.forEach((emp) => {
+      const d = emp.departement || "Direction & IT";
+      if (!deptMap[d]) deptMap[d] = { total: 0, cdi: 0, cdd: 0 };
+      deptMap[d].total += 1;
+      if (emp.type_contrat === "CDD") deptMap[d].cdd += 1;
+      else deptMap[d].cdi += 1;
+    });
+
+    const list = Object.entries(deptMap).map(([name, data]) => ({
+      name,
+      value: data.total,
+      cdi: data.cdi,
+      cdd: data.cdd
+    }));
+
+    return list.sort((a, b) => {
       if (pivotSortColumn === "name") return a.name.localeCompare(b.name);
-      if (pivotSortColumn === "cdi") return (b.value * 0.8) - (a.value * 0.8);
-      if (pivotSortColumn === "cdd") return (b.value * 0.2) - (a.value * 0.2);
+      if (pivotSortColumn === "cdi") return b.cdi - a.cdi;
+      if (pivotSortColumn === "cdd") return b.cdd - a.cdd;
       return b.value - a.value;
     });
-  }, [chartDeptData, pivotSortColumn]);
+  }, [filteredEmployes, pivotSortColumn]);
 
   // Handle AI Prompt Simulation with multi-question and multi-line structured responses
   const handleRunAiPrompt = (query?: string) => {
@@ -211,21 +251,20 @@ export function ExecutiveRhCockpit({
       if (lowerQ.includes("cdd") || lowerQ.includes("contrat") || lowerQ.includes("renouvellement") || lowerQ.includes("nom") || lowerQ.includes("expiration")) {
         const contractAlerts = allAlerts?.filter((a) => a.type === "CONTRACT");
         let listStr = "";
-        if (contractAlerts && contractAlerts.length > 0) {
+        
+        // Dynamically extract CDD employees from the synchronized filtered dataset
+        const synchronizedCddList = filteredEmployes.filter((e) => e.type_contrat === "CDD");
+        if (synchronizedCddList.length > 0) {
+          listStr = synchronizedCddList.map((e) => `• ${e.full_name} (${e.poste}) — Fin de contrat CDD imminente (${e.departement || "Général"})`).join("\n");
+        } else if (contractAlerts && contractAlerts.length > 0) {
           listStr = contractAlerts.map((a) => `• ${a.employeeName} — Échéance le ${new Date(a.date).toLocaleDateString("fr-FR")} (Contrat ${a.severity === "CRITICAL" ? "Urgent" : "CDD"})`).join("\n");
-        } else if (derniersEmployes && derniersEmployes.length > 0) {
-          const cddEmps = derniersEmployes.filter((e) => e.type_contrat === "CDD");
-          if (cddEmps.length > 0) {
-            listStr = cddEmps.map((e) => `• ${e.full_name} (${e.poste}) — Fin de contrat CDD imminente`).join("\n");
-          }
-        }
-        if (!listStr) {
+        } else {
           listStr = "• Bamba Yao (Développeur Fullstack) — Échéance le 30/06/2026\n• Camara Drogba (Chef de Projet) — Échéance le 31/07/2026";
         }
 
         responses.push(
-          `📄 AUDIT DES CONTRATS CDD & ÉCHÉANCES :\n` +
-          `Nous avons identifié ${cddExpirant || (contractAlerts?.length ?? 2)} contrat(s) CDD arrivant à expiration sous 30 jours :\n\n` +
+          `📄 AUDIT DES CONTRATS CDD & ÉCHÉANCES SYNCHRONISÉ :\n` +
+          `Nous avons identifié ${synchronizedCddList.length || cddExpirant || 2} contrat(s) CDD actifs et sous surveillance :\n\n` +
           `${listStr}\n\n` +
           `💡 Recommandation Stratégique :\n` +
           `1. Organiser les entretiens de fin de contrat d'ici la fin de semaine.\n` +
@@ -268,8 +307,8 @@ export function ExecutiveRhCockpit({
         responses.push(
           `⚡ SYNTHÈSE EXÉCUTIVE RH — ${dateLabel} :\n\n` +
           `• Score de conformité global : ${Math.round(complianceScore)}% (Statut : Excellent).\n` +
-          `• Effectif total sous gestion : ${totalActifs} collaborateurs actifs.\n` +
-          `• Alertes prioritaires : ${cddExpirant} CDD à échéance et ${congesEnAttente.length} demande(s) de congés en attente.\n\n` +
+          `• Effectif total sous gestion : ${filteredEmployes.length} collaborateurs filtrés / synchronisés.\n` +
+          `• Alertes prioritaires : ${filteredEmployes.filter(e => e.type_contrat === "CDD").length} CDD sous surveillance et ${congesEnAttente.length} demande(s) de congés en attente.\n\n` +
           `N'hésitez pas à poser une question plus spécifique sur les salariés, la masse salariale ou la conformité CNPS.`
         );
       }
@@ -284,62 +323,61 @@ export function ExecutiveRhCockpit({
       {/* ════════════════════════════════════════════════════════════════ */}
       {/* ODOO HIGH-PRECISION CONTROL PANEL & HEADER                      */}
       {/* ════════════════════════════════════════════════════════════════ */}
-      <header className="sticky top-14 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs">
+      {/* ODOO HIGH-PRECISION CONTROL PANEL & HEADER                      */}
+      {/* ════════════════════════════════════════════════════════════════ */}
+      <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs transition-all">
         
         {/* Top App Identity & Global Controls */}
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-2 flex flex-col md:flex-row md:items-center justify-between gap-2.5">
           
           {/* Brand Identity */}
-          <div className="flex items-center justify-between md:justify-start gap-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#FF8200] flex items-center justify-center text-white shadow-md shadow-[#FF8200]/20 font-black text-lg">
+          <div className="flex items-center justify-between md:justify-start gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="h-8 w-8 rounded-lg bg-[#FF8200] flex items-center justify-center text-white shadow-xs font-black text-sm shrink-0">
                 RH
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-base font-black tracking-tight text-slate-900 dark:text-white uppercase">
-                    Ressources Humaines <span className="text-slate-400 font-normal">/ Executive Cockpit</span>
+                  <h1 className="text-sm font-black tracking-tight text-slate-900 dark:text-white uppercase">
+                    RH <span className="text-slate-400 font-normal">/ Cockpit</span>
                   </h1>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold border border-emerald-500/20">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" /> Synchronisé
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold border border-emerald-500/20">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" /> Synchro
                   </span>
                 </div>
-                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                  {dateLabel} • Console d'Arbitrage et d'Intelligence Stratégique
-                </p>
               </div>
             </div>
 
             {/* Mobile quick action */}
             <Link
               href="/employes"
-              className="md:hidden p-2 rounded-lg bg-[#FF8200] text-white shadow-sm"
+              className="md:hidden p-1.5 rounded-lg bg-[#FF8200] text-white shadow-xs"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-4 w-4" />
             </Link>
           </div>
 
           {/* Odoo-Style Central Search & Action Buttons */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-2.5 w-full md:w-auto">
             
             {/* Odoo Control Panel Search Bar */}
-            <div className="relative flex-1 md:w-96 flex items-center bg-slate-100 dark:bg-slate-800 focus-within:bg-white dark:focus-within:bg-slate-900 text-slate-900 dark:text-white rounded-xl px-3.5 py-2 border border-slate-200 dark:border-slate-700 transition-all shadow-2xs">
-              <Search className="h-4 w-4 shrink-0 text-slate-400 mr-2" />
+            <div className="relative flex-1 md:w-80 flex items-center bg-slate-100 dark:bg-slate-800 focus-within:bg-white dark:focus-within:bg-slate-900 text-slate-900 dark:text-white rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-700 transition-all shadow-2xs h-8">
+              <Search className="h-3.5 w-3.5 shrink-0 text-slate-400 mr-2" />
               <input
                 type="text"
-                placeholder="Rechercher salarié, poste, département... (Ctrl+K)"
+                placeholder="Rechercher salarié, poste... (Ctrl+K)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent text-xs font-bold outline-none placeholder-slate-400"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery("")} className="text-slate-400 hover:text-slate-600 mr-1">
-                  <X className="h-3.5 w-3.5" />
+                  <X className="h-3 w-3" />
                 </button>
               )}
               <button
                 onClick={() => setIsCommandPaletteOpen(true)}
-                className="px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[10px] font-black text-slate-600 dark:text-slate-300 shrink-0"
+                className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[9px] font-black text-slate-600 dark:text-slate-300 shrink-0"
               >
                 ⌘K
               </button>
@@ -348,69 +386,86 @@ export function ExecutiveRhCockpit({
             {/* Main Primary CTA Button */}
             <Link
               href="/employes"
-              className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#FF8200] hover:bg-[#E07400] text-white text-xs font-black transition-all shadow-sm active:scale-95 shrink-0"
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FF8200] hover:bg-[#E07400] text-white text-xs font-black transition-all shadow-2xs active:scale-95 shrink-0 h-8"
             >
-              <UserPlus className="h-4 w-4 stroke-[2.5]" />
+              <UserPlus className="h-3.5 w-3.5 stroke-[2.5]" />
               <span>Nouveau Salarié</span>
             </Link>
           </div>
         </div>
 
         {/* ── ODOO CONTROL SUB-BAR (VIEW SWITCHER & SMART FILTERS) ── */}
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-2 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-2 border-t border-slate-200/80 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-900/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
           
-          {/* Quick Filter Chips (Odoo Style) */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1 mr-1">
-              <Filter className="h-3.5 w-3.5 text-[#FF8200]" /> Filtres :
-            </span>
-            {[
-              { id: "all", label: "Tous les salariés" },
-              { id: "cdi", label: "CDI Uniquement" },
-              { id: "cdd", label: "CDD & Échéances" },
-            ].map((f) => (
-              <button
-                key={f.id}
-                onClick={() => setActiveFilter(f.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-black transition-all ${
-                  activeFilter === f.id
-                    ? "bg-[#FF8200]/15 text-[#FF8200] border border-[#FF8200]/30"
-                    : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-100"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+          {/* Group 1: Quick Filter Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider shrink-0">
+              <Filter className="h-3 w-3 text-[#FF8200]" />
+              <span>Filtres</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {[
+                { id: "all", label: "Tous les salariés" },
+                { id: "cdi", label: "CDI Uniquement" },
+                { id: "cdd", label: "CDD & Échéances" },
+              ].map((f) => {
+                const isActive = activeFilter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    onClick={() => setActiveFilter(f.id)}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-black transition-all flex items-center gap-1.5 ${
+                      isActive
+                        ? "bg-[#FF8200] text-white shadow-sm shadow-[#FF8200]/30 ring-2 ring-[#FF8200]/20"
+                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700 hover:bg-slate-50 hover:border-slate-300"
+                    }`}
+                  >
+                    {isActive && <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />}
+                    <span>{f.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Odoo View Mode Switcher Buttons */}
-          <div className="flex items-center gap-1 bg-slate-200/70 dark:bg-slate-800 p-1 rounded-xl shrink-0 self-end sm:self-auto">
-            {[
-              { id: "overview", label: "Aperçu", icon: BarChart3 },
-              { id: "kanban", label: "Kanban", icon: Grid },
-              { id: "list", label: "Liste", icon: ListIcon },
-              { id: "pivot", label: "Pivot BI", icon: Table },
-              { id: "ai_copilot", label: "IA Studio", icon: SparklesLucide, special: true },
-            ].map((tab) => {
-              const IconComp = tab.icon;
-              const isActive = viewMode === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setViewMode(tab.id as any)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
-                    isActive
-                      ? tab.special
-                        ? "bg-amber-600 text-white shadow-xs"
-                        : "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                  }`}
-                >
-                  <IconComp className={`h-3.5 w-3.5 ${isActive && !tab.special ? "text-[#FF8200]" : isActive && tab.special ? "text-amber-300" : ""}`} />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </button>
-              );
-            })}
+          <div className="hidden sm:block h-4 w-[1px] bg-slate-300 dark:bg-slate-700 mx-1" />
+
+          {/* Group 2: Odoo View Mode Switcher Buttons */}
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+            <div className="hidden lg:flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-800 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <span>Vues</span>
+            </div>
+            <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl shadow-inner">
+              {[
+                { id: "overview", label: "Aperçu", icon: BarChart3 },
+                { id: "kanban", label: "Kanban", icon: Grid },
+                { id: "list", label: "Liste", icon: ListIcon },
+                { id: "pivot", label: "Pivot BI", icon: Table },
+                { id: "ai_copilot", label: "IA Studio", icon: SparklesLucide, special: true },
+              ].map((tab) => {
+                const IconComp = tab.icon;
+                const isActive = viewMode === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setViewMode(tab.id as any)}
+                    className={`px-3 py-1.5 rounded-lg text-[11px] font-black transition-all flex items-center gap-1.5 relative ${
+                      isActive
+                        ? tab.special
+                          ? "bg-amber-600 text-white shadow-md shadow-amber-600/30 ring-1 ring-amber-400"
+                          : "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md shadow-slate-200/50 dark:shadow-none ring-1 ring-slate-200 dark:ring-slate-700"
+                        : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40"
+                    }`}
+                  >
+                    <IconComp className={`h-3.5 w-3.5 ${isActive && !tab.special ? "text-[#FF8200]" : isActive && tab.special ? "text-amber-300" : ""}`} />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    {isActive && (
+                      <span className={`h-1.5 w-1.5 rounded-full ${tab.special ? "bg-amber-200" : "bg-[#FF8200]"} animate-pulse ml-0.5`} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>
@@ -418,29 +473,69 @@ export function ExecutiveRhCockpit({
       {/* ════════════════════════════════════════════════════════════════ */}
       {/* ODOO SMART BUTTONS KPI HEADER                                    */}
       {/* ════════════════════════════════════════════════════════════════ */}
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 pt-6 pb-2">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 pt-4 pb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
-            { label: "Effectif Actif", val: totalActifs, sub: "Salariés sous contrat", icon: Users, color: "text-slate-900 dark:text-white", border: "border-slate-200 dark:border-slate-800", onClick: () => setViewMode("list") },
-            { label: "Congés en Attente", val: congesEnAttente?.length ?? 0, sub: "Arbitrages requis", icon: CalendarCheck2, color: "text-amber-600", border: "border-amber-200 dark:border-amber-900/40", onClick: () => setViewMode("overview") },
-            { label: "CDD à Échéance", val: cddExpirant, sub: "Sous 30 jours", icon: AlertTriangle, color: "text-rose-600", border: "border-rose-200 dark:border-rose-900/40", onClick: () => { setViewMode("kanban"); setKanbanGroupBy("stage"); } },
-            { label: "Postes Ouverts", val: postesOuverts, sub: "Recrutement actif", icon: UserCheck2, color: "text-amber-600", border: "border-amber-200 dark:border-amber-900/40", onClick: () => setViewMode("kanban") },
-            { label: "Conformité RH", val: `${Math.round(complianceScore)}%`, sub: "Audit CNPS & Légal", icon: ShieldCheck, color: "text-emerald-600", border: "border-emerald-200 dark:border-emerald-900/40", onClick: () => setViewMode("pivot") },
+            { 
+              label: "Effectif Filtré", 
+              val: filteredEmployes.length, 
+              sub: activeFilter !== "all" || searchQuery ? "Filtre actif" : "Total sous gestion", 
+              icon: Users, 
+              color: "text-slate-900 dark:text-white", 
+              border: "border-slate-200 dark:border-slate-800", 
+              onClick: () => { setViewMode("list"); setActiveFilter("all"); setSearchQuery(""); } 
+            },
+            { 
+              label: "Congés en Attente", 
+              val: congesEnAttente?.length ?? 0, 
+              sub: "Arbitrages requis", 
+              icon: CalendarCheck2, 
+              color: "text-amber-600", 
+              border: "border-amber-200 dark:border-amber-900/40", 
+              onClick: () => setViewMode("overview") 
+            },
+            { 
+              label: "CDD à Échéance", 
+              val: filteredEmployes.filter(e => e.type_contrat === "CDD").length || cddExpirant, 
+              sub: activeFilter === "cdd" ? "Filtre CDD actif" : "Sous surveillance", 
+              icon: AlertTriangle, 
+              color: "text-rose-600", 
+              border: "border-rose-200 dark:border-rose-900/40", 
+              onClick: () => { setViewMode("kanban"); setKanbanGroupBy("stage"); setActiveFilter("cdd"); } 
+            },
+            { 
+              label: "Postes Ouverts", 
+              val: postesOuverts, 
+              sub: "Recrutement actif", 
+              icon: UserCheck2, 
+              color: "text-amber-600", 
+              border: "border-amber-200 dark:border-amber-900/40", 
+              onClick: () => { setViewMode("kanban"); setKanbanGroupBy("department"); } 
+            },
+            { 
+              label: "Conformité RH", 
+              val: `${Math.round(complianceScore)}%`, 
+              sub: "Audit CNPS & Légal", 
+              icon: ShieldCheck, 
+              color: "text-emerald-600", 
+              border: "border-emerald-200 dark:border-emerald-900/40", 
+              onClick: () => setViewMode("pivot") 
+            },
           ].map((item, idx) => {
             const IconComponent = item.icon;
             return (
               <button
                 key={idx}
                 onClick={item.onClick}
-                className={`bg-white dark:bg-slate-900 p-4 rounded-xl border ${item.border} shadow-2xs hover:shadow-md hover:border-[#FF8200]/50 transition-all text-left flex items-center justify-between group cursor-pointer`}
+                className={`bg-white dark:bg-slate-900 p-3.5 rounded-xl border ${item.border} shadow-2xs hover:shadow-md hover:border-[#FF8200]/50 transition-all text-left flex items-center justify-between group cursor-pointer`}
               >
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">{item.label}</span>
-                  <span className={`text-xl font-black ${item.color} tracking-tight block mt-0.5`}>{item.val}</span>
+                  <span className={`text-lg font-black ${item.color} tracking-tight block mt-0.5`}>{item.val}</span>
                   <span className="text-[10px] font-bold text-slate-500 block mt-0.5">{item.sub}</span>
                 </div>
-                <div className="h-9 w-9 rounded-lg bg-slate-50 dark:bg-slate-800 group-hover:bg-[#FF8200]/10 flex items-center justify-center text-slate-400 group-hover:text-[#FF8200] transition-colors shrink-0">
-                  <IconComponent className="h-5 w-5" />
+                <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 group-hover:bg-[#FF8200]/10 flex items-center justify-center text-slate-400 group-hover:text-[#FF8200] transition-colors shrink-0">
+                  <IconComponent className="h-4 w-4" />
                 </div>
               </button>
             );

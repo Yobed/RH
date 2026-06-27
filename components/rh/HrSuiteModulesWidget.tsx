@@ -25,16 +25,16 @@ interface HrModule {
 
 export function HrSuiteModulesWidget() {
   const modules: HrModule[] = [
-    { title: "Recrutement ATS", href: "/recrutement", icon: UserPlus, desc: "Sourcing & gestion des candidats" },
-    { title: "Portail employé", href: "/portail", icon: Users, desc: "Espace self-service collaborateurs" },
-    { title: "Suivi du temps & pointage", href: "/pointage", icon: Clock, desc: "Heures, présence & feuille de temps" },
-    { title: "Évaluations de performance", href: "/evaluations", icon: Award, desc: "Entretiens annuels & objectifs KPI" },
-    { title: "Enquêtes QVT", href: "/bienvenue", icon: HeartHandshake, desc: "Qualité de vie au travail & climat" },
-    { title: "Préparation de la paie", href: "/paie", icon: DollarSign, desc: "Calculs ITS/CNPS & bulletins" },
-    { title: "Signature numérique", href: "/contrats", icon: FileSignature, desc: "Validation légale des contrats" },
-    { title: "HR Analytics BI", href: "/analytique", icon: PieChart, desc: "Tableaux de bord & masse salariale" },
-    { title: "Notes de frais", href: "/calculateur", icon: Receipt, desc: "Remboursements & dépenses" },
-    { title: "Canal de signalement", href: "/contentieux", icon: ShieldAlert, desc: "Conformité & alerte éthique" },
+    { title: "Recrutement ATS", href: "/recrutement", icon: UserPlus, desc: "Sourcing candidats, CVthèque & offres" },
+    { title: "Portail employé", href: "/portail", icon: Users, desc: "Espace self-service & demandes RH" },
+    { title: "Suivi du temps & pointage", href: "/pointage", icon: Clock, desc: "Calcul heures, présences & anomalies" },
+    { title: "Évaluations de performance", href: "/evaluations", icon: Award, desc: "Entretiens annuels & suivi des KPIs" },
+    { title: "Enquêtes QVT", href: "/bienvenue", icon: HeartHandshake, desc: "Climat social, baromètre & feedback" },
+    { title: "Préparation de la paie", href: "/paie", icon: DollarSign, desc: "Simulations, contrôle & export Sage/X3/CNPS" },
+    { title: "Signature numérique", href: "/contrats", icon: FileSignature, desc: "Validation légale & paraphage contrats" },
+    { title: "HR Analytics BI", href: "/analytique", icon: PieChart, desc: "Masse salariale, effectifs & simulations" },
+    { title: "Notes de frais", href: "/calculateur", icon: Receipt, desc: "Validation débours & justificatifs" },
+    { title: "Canal de signalement", href: "/contentieux", icon: ShieldAlert, desc: "Conformité CNPS, légale & éthique" },
   ];
 
   return (
