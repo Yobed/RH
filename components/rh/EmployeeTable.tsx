@@ -340,9 +340,17 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             })}
           </div>
 
-          {/* Display Mode Toggle (3 Modes for Ultimate User Journey) */}
-          <div className="flex items-center gap-2.5 self-end md:self-auto shrink-0">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">Vue Workstation:</span>
+          {/* Display Mode Toggle & Primary Action (Zero Friction) */}
+          <div className="flex flex-wrap items-center gap-2.5 self-end md:self-auto shrink-0">
+            <EmployeeDialog 
+              employees={employees}
+              trigger={
+                <button className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#FF8200] hover:bg-[#E07400] text-white text-xs font-black transition-all shadow-md shadow-[#FF8200]/20 hover:scale-105 active:scale-95 cursor-pointer outline-none">
+                  <UserCheck size={16} weight="bold" />
+                  <span>+ Nouveau Collaborateur</span>
+                </button>
+              }
+            />
             <div className="flex items-center bg-slate-200/60 p-1 rounded-2xl border border-slate-200/60">
               <button
                 onClick={() => setViewMode("table")}
@@ -578,46 +586,56 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                       </td>
 
                       <td className="px-6 py-4 text-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-all outline-none cursor-pointer">
-                              <DotsThreeVertical size={20} weight="bold" />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-52 p-2 rounded-2xl border-slate-200 shadow-xl bg-white">
-                            <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2.5 py-1.5">Options Collaborateur</DropdownMenuLabel>
-                            <DropdownMenuItem asChild>
-                              <Link href={`/employes/${emp.id}`} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 outline-none">
-                                <Eye size={16} weight="duotone" className="text-slate-400" />
-                                <span>Consulter la fiche</span>
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="p-0 focus:bg-transparent">
-                              <EmployeeDialog 
-                                employee={emp} 
+                        <div className="flex items-center justify-center gap-1.5">
+                          <Link
+                            href={`/employes/${emp.id}`}
+                            className="h-9 px-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-[#FF8200] text-slate-700 hover:text-white text-xs font-bold transition-all outline-none"
+                            title="Consulter la fiche RH"
+                          >
+                            <Eye size={15} weight="bold" />
+                            <span className="hidden sm:inline">Consulter</span>
+                          </Link>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-all outline-none cursor-pointer">
+                                <DotsThreeVertical size={20} weight="bold" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-52 p-2 rounded-2xl border-slate-200 shadow-xl bg-white">
+                              <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2.5 py-1.5">Options Collaborateur</DropdownMenuLabel>
+                              <DropdownMenuItem asChild>
+                                <Link href={`/employes/${emp.id}`} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 outline-none">
+                                  <Eye size={16} weight="duotone" className="text-slate-400" />
+                                  <span>Consulter la fiche</span>
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="p-0 focus:bg-transparent">
+                                <EmployeeDialog 
+                                  employee={emp} 
+                                  trigger={
+                                    <div className="flex items-center gap-2.5 w-full p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 transition-colors outline-none">
+                                      <PencilSimple size={16} weight="duotone" className="text-slate-400" />
+                                      <span>Modifier le profil</span>
+                                    </div>
+                                  }
+                                />
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="my-1 bg-slate-100" />
+                              <ConfirmDialog
+                                title="Archiver le collaborateur"
+                                description={`Voulez-vous archiver le dossier de ${emp.full_name} ? Le statut passera en Inactif.`}
+                                confirmLabel="Archiver"
+                                onConfirm={() => handleDelete(emp.id)}
                                 trigger={
-                                  <div className="flex items-center gap-2.5 w-full p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 transition-colors outline-none">
-                                    <PencilSimple size={16} weight="duotone" className="text-slate-400" />
-                                    <span>Modifier le profil</span>
-                                  </div>
+                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer text-rose-600 focus:text-rose-600 focus:bg-rose-50 font-semibold text-xs outline-none">
+                                    <Archive size={16} weight="duotone" />
+                                    <span>Archiver le profil</span>
+                                  </DropdownMenuItem>
                                 }
                               />
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="my-1 bg-slate-100" />
-                            <ConfirmDialog
-                              title="Archiver le collaborateur"
-                              description={`Voulez-vous archiver le dossier de ${emp.full_name} ? Le statut passera en Inactif.`}
-                              confirmLabel="Archiver"
-                              onConfirm={() => handleDelete(emp.id)}
-                              trigger={
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer text-rose-600 focus:text-rose-600 focus:bg-rose-50 font-semibold text-xs outline-none">
-                                  <Archive size={16} weight="duotone" />
-                                  <span>Archiver le profil</span>
-                                </DropdownMenuItem>
-                              }
-                            />
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </td>
                     </tr>
                   ))}
