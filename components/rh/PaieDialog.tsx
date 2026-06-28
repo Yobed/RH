@@ -738,7 +738,7 @@ export function PaieDialog({
               </div>
 
               {/* NET À PAYER */}
-              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#2563eb] text-base">
+              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#0d9488] text-base">
                 <span>NET À PAYER</span>
                 <span>{fmt(preview.net_to_pay)}</span>
               </div>
@@ -749,7 +749,7 @@ export function PaieDialog({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0"
+              className="w-full sm:w-auto bg-[#0d9488] hover:bg-[#0f766e] text-white border-0"
             >
               {isSubmitting ? (isEdit ? "Enregistrement..." : "Création...") : (isEdit ? "Enregistrer" : "Créer le bulletin")}
             </Button>

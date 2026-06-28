@@ -48,9 +48,9 @@ export function ParcoursGuidesWidget() {
       desc: "Valider les heures supp., calculer le livre de paie et exporter vers Sage/X3.",
       icon: Calculator,
       badge: "Mensuel",
-      badgeColor: "bg-[#FF8200]/10 text-[#FF8200] border-[#FF8200]/30",
+      badgeColor: "bg-[#0d9488]/10 text-[#0d9488] border-[#0d9488]/30",
       cta: "Lancer la paie",
-      accent: "from-[#FF8200]/20 via-[#FF8200]/5 to-transparent",
+      accent: "from-[#0d9488]/20 via-[#0d9488]/5 to-transparent",
     },
     {
       id: "conges",
@@ -71,7 +71,7 @@ export function ParcoursGuidesWidget() {
         {/* En-tête de section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-[#FF8200] text-white flex items-center justify-center shadow-lg shadow-[#FF8200]/25 shrink-0">
+            <div className="h-10 w-10 rounded-2xl bg-[#0d9488] text-white flex items-center justify-center shadow-lg shadow-[#0d9488]/25 shrink-0">
               <Play className="h-5 w-5 fill-white stroke-none ml-0.5" />
             </div>
             <div>
@@ -91,9 +91,9 @@ export function ParcoursGuidesWidget() {
 
           <div className="flex items-center gap-2 self-start sm:self-auto text-[11px] font-bold text-slate-400">
             <span>Détecter</span>
-            <ChevronRight className="h-3 w-3 text-[#FF8200]" />
+            <ChevronRight className="h-3 w-3 text-[#0d9488]" />
             <span className="text-slate-900 dark:text-white">Agir</span>
-            <ChevronRight className="h-3 w-3 text-[#FF8200]" />
+            <ChevronRight className="h-3 w-3 text-[#0d9488]" />
             <span>Tracer</span>
           </div>
         </div>
@@ -106,14 +106,14 @@ export function ParcoursGuidesWidget() {
               <div
                 key={item.id}
                 onClick={() => setActiveModal(item.id as any)}
-                className="group relative rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-4 hover:bg-white dark:hover:bg-slate-800 hover:border-[#FF8200]/60 hover:shadow-xl hover:shadow-[#FF8200]/5 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                className="group relative rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-4 hover:bg-white dark:hover:bg-slate-800 hover:border-[#0d9488]/60 hover:shadow-xl hover:shadow-[#0d9488]/5 transition-all duration-300 cursor-pointer flex flex-col justify-between"
               >
                 {/* Background accent glow on hover */}
                 <div className={`absolute top-0 right-0 left-0 h-20 bg-gradient-to-b ${item.accent} opacity-0 group-hover:opacity-100 rounded-t-2xl transition-opacity duration-300 pointer-events-none`} />
 
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 group-hover:border-[#FF8200]/50 group-hover:bg-[#FF8200] group-hover:text-white flex items-center justify-center text-slate-700 dark:text-slate-200 transition-colors shadow-2xs">
+                    <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 group-hover:border-[#0d9488]/50 group-hover:bg-[#0d9488] group-hover:text-white flex items-center justify-center text-slate-700 dark:text-slate-200 transition-colors shadow-2xs">
                       <IconComp className="h-5 w-5 stroke-[2]" />
                     </div>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${item.badgeColor}`}>
@@ -121,7 +121,7 @@ export function ParcoursGuidesWidget() {
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#FF8200] transition-colors">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#0d9488] transition-colors">
                     {item.title}
                   </h4>
                   <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
@@ -132,7 +132,7 @@ export function ParcoursGuidesWidget() {
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs font-bold text-[#FF8200] group-hover:translate-x-0.5 transition-transform">
+                <div className="mt-4 pt-3 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs font-bold text-[#0d9488] group-hover:translate-x-0.5 transition-transform">
                   <span>{item.cta}</span>
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </div>

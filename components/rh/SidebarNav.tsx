@@ -69,7 +69,7 @@ interface NavGroup {
 const navGroups: NavGroup[] = [
   {
     label: "Vue d'ensemble",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: true,
     items: [
       { href: "/bienvenue", label: "Bienvenue", icon: HandWaving, exact: true, desc: "Prise en main de l'application" },
@@ -80,7 +80,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Collaborateurs",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/employes", label: "Fiches collaborateurs", icon: Users, exact: true, desc: "Liste et dossiers des salariés" },
@@ -97,7 +97,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Planning",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/planning", label: "Planning & équipes", icon: CalendarCheck, desc: "Plannings et rotations d'équipes (shifts)" },
@@ -107,7 +107,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Paie & Conformité",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/paie", label: "Bulletins de paie", icon: Money, exact: true, desc: "Édition des bulletins de salaire" },
@@ -122,7 +122,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Analytique & Prévisions",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/analytique", label: "Analytique RH", icon: ChartPieSlice, exact: true, desc: "Tableaux de bord et indicateurs RH" },
@@ -135,7 +135,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Documents",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/documents-rh", label: "Documents RH", icon: FilePdf, desc: "Attestations, certificats et modèles" },
@@ -145,7 +145,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Développement RH",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/recrutement", label: "Recrutement", icon: UserPlus, desc: "Offres d'emploi et candidatures" },
@@ -155,7 +155,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Qualité & Risques",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/disciplinaire", label: "Procédures disciplinaires", icon: ShieldWarning, desc: "Avertissements, mises à pied et sanctions" },
@@ -167,7 +167,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Reporting & Comms",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/reporting", label: "Reporting RH", icon: Presentation, desc: "Rapports et exports pour la direction" },
@@ -177,7 +177,7 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Outils & IA",
-    accent: "#FF8200",
+    accent: "#0d9488",
     defaultOpen: false,
     items: [
       { href: "/agent-juridique", label: "Agent juridique IA", icon: Robot, desc: "Assistant IA sur le droit du travail ivoirien" },

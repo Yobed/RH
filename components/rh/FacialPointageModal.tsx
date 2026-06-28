@@ -262,7 +262,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                           : "bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-800 hover:bg-slate-100"
                       }`}
                     >
-                      <IconComp className={`h-4 w-4 mb-1 ${selected ? "text-[#FF8200]" : "text-slate-400"}`} />
+                      <IconComp className={`h-4 w-4 mb-1 ${selected ? "text-[#0d9488]" : "text-slate-400"}`} />
                       <span className="text-[11px]">{opt.label}</span>
                     </button>
                   );
@@ -371,7 +371,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
             {/* Metadata Footer (GPS, Network, Exact Clock) */}
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                <MapPin className="h-3.5 w-3.5 text-[#FF8200]" />
+                <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
                 <span className="font-semibold">{gpsLocation}</span>
               </div>
               <div className="flex items-center gap-2 font-medium">
@@ -394,7 +394,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                 className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md ${
                   scanning
                     ? "bg-slate-400 text-white cursor-not-allowed"
-                    : "bg-gradient-to-r from-[#FF8200] to-amber-500 hover:from-amber-600 hover:to-[#FF8200] text-white shadow-amber-500/20"
+                    : "bg-gradient-to-r from-[#0d9488] to-amber-500 hover:from-amber-600 hover:to-[#0d9488] text-white shadow-amber-500/20"
                 }`}
               >
                 {scanning ? (

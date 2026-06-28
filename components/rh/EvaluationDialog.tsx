@@ -146,14 +146,14 @@ export function EvaluationDialog({ employees }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-11 px-5 rounded-xl font-semibold bg-[#2563eb] hover:bg-[#1d4ed8] text-white shadow-md shadow-[#2563eb]/20 transition-all gap-2 group">
+        <Button className="h-11 px-5 rounded-xl font-semibold bg-[#0d9488] hover:bg-[#0f766e] text-white shadow-md shadow-[#0d9488]/20 transition-all gap-2 group">
           <PlusIcon className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
           Nouvelle évaluation
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-xl p-0 bg-white border border-slate-200 shadow-2xl rounded-2xl flex flex-col max-h-[90vh]">
-        <div className="bg-[#2563eb]/5 px-6 py-5 border-b border-slate-100 rounded-t-2xl shrink-0">
+        <div className="bg-[#0d9488]/5 px-6 py-5 border-b border-slate-100 rounded-t-2xl shrink-0">
            <DialogHeader>
              <DialogTitle className="text-xl font-bold text-slate-900">Règlement de Performance</DialogTitle>
              <p className="text-xs text-slate-500 font-medium mt-1">Initialiser un nouveau cycle d'audit de performance</p>
@@ -165,14 +165,14 @@ export function EvaluationDialog({ employees }: Props) {
             {/* Employé & période */}
             <section className="space-y-4">
               <div className="flex items-center gap-3">
-                 <div className="h-0.5 w-6 bg-[#2563eb] rounded-full" />
+                 <div className="h-0.5 w-6 bg-[#0d9488] rounded-full" />
                  <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Collaborateur & Cycle</p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="col-span-full">
                   <label className="text-xs font-medium text-slate-700 ml-1">Employé à auditer</label>
-                  <select {...register("employee_id")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#2563eb] focus:outline-none transition-all">
+                  <select {...register("employee_id")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#0d9488] focus:outline-none transition-all">
                     <option value="">— Sélectionner —</option>
                     {employees.map((e) => (
                       <option key={e.id} value={e.id}>
@@ -190,7 +190,7 @@ export function EvaluationDialog({ employees }: Props) {
 
                 <div>
                   <label className="text-xs font-medium text-slate-700 ml-1">Type de revue</label>
-                  <select {...register("type")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#2563eb] focus:outline-none transition-all">
+                  <select {...register("type")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#0d9488] focus:outline-none transition-all">
                     <option value="ANNUELLE">Annuelle</option>
                     <option value="SEMESTRIELLE">Semestrielle</option>
                     <option value="TRIMESTRIELLE">Trimestrielle</option>
@@ -202,7 +202,7 @@ export function EvaluationDialog({ employees }: Props) {
 
                 <div>
                   <label className="text-xs font-medium text-slate-700 ml-1">Date d'échéance</label>
-                  <Input type="date" {...register("date_prevue")} className="mt-1.5 h-10 rounded-xl bg-white border-slate-200 font-medium focus-visible:ring-[#2563eb]" />
+                  <Input type="date" {...register("date_prevue")} className="mt-1.5 h-10 rounded-xl bg-white border-slate-200 font-medium focus-visible:ring-[#0d9488]" />
                 </div>
               </div>
 
@@ -211,7 +211,7 @@ export function EvaluationDialog({ employees }: Props) {
                 <Input
                   {...register("titre")}
                   placeholder="Ex: Évaluation Annuelle 2026"
-                  className="mt-1.5 h-10 rounded-xl bg-white border-slate-200 font-medium focus-visible:ring-[#2563eb]"
+                  className="mt-1.5 h-10 rounded-xl bg-white border-slate-200 font-medium focus-visible:ring-[#0d9488]"
                 />
                 {errors.titre && (
                   <p className="mt-1.5 text-xs font-medium text-red-500">{errors.titre.message}</p>
@@ -223,7 +223,7 @@ export function EvaluationDialog({ employees }: Props) {
             <section className="space-y-4 pt-4 border-t border-slate-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                   <div className="h-0.5 w-6 bg-[#2563eb] rounded-full" />
+                   <div className="h-0.5 w-6 bg-[#0d9488] rounded-full" />
                    <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Score de Performance</p>
                 </div>
                 {preview !== null && (
@@ -251,13 +251,13 @@ export function EvaluationDialog({ employees }: Props) {
             {/* Évaluateur */}
             <section className="space-y-4 pt-4 border-t border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="h-0.5 w-6 bg-[#2563eb] rounded-full" />
+                <div className="h-0.5 w-6 bg-[#0d9488] rounded-full" />
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Évaluateur & Commentaires</p>
               </div>
 
               <div>
                 <label className="text-xs font-medium text-slate-700 ml-1">Évaluateur responsable</label>
-                <select {...register("evaluateur_id")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#2563eb] focus:outline-none transition-all">
+                <select {...register("evaluateur_id")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#0d9488] focus:outline-none transition-all">
                   <option value="">— À désigner —</option>
                   {employees.map((e) => (
                     <option key={e.id} value={e.id}>{e.full_name} ({e.poste})</option>
@@ -270,7 +270,7 @@ export function EvaluationDialog({ employees }: Props) {
                 <Textarea
                   {...register("commentaires_evaluateur")}
                   placeholder="Appréciation générale, points forts, axes d'amélioration..."
-                  className="mt-1.5 rounded-xl bg-white border-slate-200 focus-visible:ring-[#2563eb] min-h-[80px]"
+                  className="mt-1.5 rounded-xl bg-white border-slate-200 focus-visible:ring-[#0d9488] min-h-[80px]"
                 />
               </div>
 
@@ -279,7 +279,7 @@ export function EvaluationDialog({ employees }: Props) {
                 <Textarea
                   {...register("commentaires_employe")}
                   placeholder="Bilan personnel, difficultés rencontrées, attentes..."
-                  className="mt-1.5 rounded-xl bg-white border-slate-200 focus-visible:ring-[#2563eb] min-h-[80px]"
+                  className="mt-1.5 rounded-xl bg-white border-slate-200 focus-visible:ring-[#0d9488] min-h-[80px]"
                 />
               </div>
 
@@ -288,7 +288,7 @@ export function EvaluationDialog({ employees }: Props) {
                 <Textarea
                   {...register("objectifs_futurs")}
                   placeholder="Objectifs pour la prochaine période, formations, promotions envisagées..."
-                  className="mt-1.5 rounded-xl bg-white border-slate-200 focus-visible:ring-[#2563eb] min-h-[80px]"
+                  className="mt-1.5 rounded-xl bg-white border-slate-200 focus-visible:ring-[#0d9488] min-h-[80px]"
                 />
               </div>
             </section>
@@ -296,7 +296,7 @@ export function EvaluationDialog({ employees }: Props) {
             {/* Statut */}
             <div className="pt-4 border-t border-slate-100">
               <label className="text-xs font-medium text-slate-700 ml-1">Flux initial</label>
-              <select {...register("statut")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#2563eb] focus:outline-none transition-all">
+              <select {...register("statut")} className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-[#0d9488] focus:outline-none transition-all">
                 <option value="PLANIFIEE">À planifier</option>
                 <option value="EN_COURS">Démarrer immédiatement</option>
                 <option value="TERMINEE">Classer comme terminé</option>
@@ -307,7 +307,7 @@ export function EvaluationDialog({ employees }: Props) {
                <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-xl text-slate-700 font-medium h-11 px-6">
                  Annuler
                </Button>
-               <Button type="submit" disabled={isSubmitting} className="rounded-xl font-semibold bg-[#2563eb] hover:bg-[#1d4ed8] text-white h-11 px-8 shadow-md shadow-[#2563eb]/20">
+               <Button type="submit" disabled={isSubmitting} className="rounded-xl font-semibold bg-[#0d9488] hover:bg-[#0f766e] text-white h-11 px-8 shadow-md shadow-[#0d9488]/20">
                 {isSubmitting ? "Initialisation..." : "Valider le cycle"}
               </Button>
             </DialogFooter>

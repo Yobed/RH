@@ -59,7 +59,7 @@ export function QuickActions() {
       {/* En-tête du widget */}
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-orange-500/10 dark:bg-orange-500/20 text-[#FF8200] flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-orange-500/10 dark:bg-orange-500/20 text-[#0d9488] flex items-center justify-center">
             <Lightning weight="fill" className="h-4 w-4" />
           </div>
           <div>
@@ -89,15 +89,15 @@ export function QuickActions() {
               <div className={cn(
                 "relative h-full overflow-hidden rounded-xl bg-slate-50/70 dark:bg-slate-800/40 p-3",
                 "border border-slate-200/80 dark:border-slate-700/60",
-                "hover:bg-white dark:hover:bg-slate-800 hover:border-[#FF8200]/50 hover:shadow-md hover:shadow-orange-500/5 hover:-translate-y-0.5",
+                "hover:bg-white dark:hover:bg-slate-800 hover:border-[#0d9488]/50 hover:shadow-md hover:shadow-orange-500/5 hover:-translate-y-0.5",
                 "transition-all duration-200 flex items-center gap-3"
               )}>
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-white dark:bg-slate-700 text-[#FF8200] border border-slate-200/60 dark:border-slate-600 group-hover:bg-[#FF8200] group-hover:text-white group-hover:border-[#FF8200] transition-all duration-200 shadow-2xs">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-white dark:bg-slate-700 text-[#0d9488] border border-slate-200/60 dark:border-slate-600 group-hover:bg-[#0d9488] group-hover:text-white group-hover:border-[#0d9488] transition-all duration-200 shadow-2xs">
                   <action.icon weight="duotone" className="w-4.5 h-4.5" />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-[#FF8200] transition-colors truncate">
+                  <p className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-[#0d9488] transition-colors truncate">
                     {action.title}
                   </p>
                   <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold truncate mt-0.5">
@@ -107,7 +107,7 @@ export function QuickActions() {
 
                 <CaretRight 
                   weight="bold" 
-                  className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#FF8200] group-hover:translate-x-1 transition-all shrink-0" 
+                  className="w-3.5 h-3.5 text-slate-300 group-hover:text-[#0d9488] group-hover:translate-x-1 transition-all shrink-0" 
                 />
               </div>
             </Link>

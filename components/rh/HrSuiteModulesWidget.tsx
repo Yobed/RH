@@ -42,7 +42,7 @@ export function HrSuiteModulesWidget() {
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-5">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-[#FF8200]/10 flex items-center justify-center text-[#FF8200] border border-[#FF8200]/20 shadow-xs">
+          <div className="h-10 w-10 rounded-2xl bg-[#0d9488]/10 flex items-center justify-center text-[#0d9488] border border-[#0d9488]/20 shadow-xs">
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
@@ -63,25 +63,25 @@ export function HrSuiteModulesWidget() {
             <Link
               key={idx}
               href={mod.href}
-              className="group p-3.5 rounded-2xl bg-slate-50/70 hover:bg-white border border-slate-200/60 hover:border-[#FF8200]/40 hover:shadow-lg hover:shadow-[#FF8200]/5 transition-all duration-200 flex items-center gap-3 dark:bg-slate-800/40 dark:hover:bg-slate-800 dark:border-slate-700/60"
+              className="group p-3.5 rounded-2xl bg-slate-50/70 hover:bg-white border border-slate-200/60 hover:border-[#0d9488]/40 hover:shadow-lg hover:shadow-[#0d9488]/5 transition-all duration-200 flex items-center gap-3 dark:bg-slate-800/40 dark:hover:bg-slate-800 dark:border-slate-700/60"
             >
-              <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 group-hover:bg-[#FF8200] group-hover:text-white flex items-center justify-center shrink-0 transition-colors border border-slate-200 dark:border-slate-700 group-hover:border-[#FF8200] shadow-xs">
+              <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 group-hover:bg-[#0d9488] group-hover:text-white flex items-center justify-center shrink-0 transition-colors border border-slate-200 dark:border-slate-700 group-hover:border-[#0d9488] shadow-xs">
                 <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#FF8200] truncate transition-colors">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#0d9488] truncate transition-colors">
                   {mod.title}
                 </h4>
                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 truncate mt-0.5">{mod.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-[#FF8200] group-hover:translate-x-0.5 transition-all shrink-0" />
+              <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-[#0d9488] group-hover:translate-x-0.5 transition-all shrink-0" />
             </Link>
           );
         })}
       </div>
 
       <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-right">
-        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-[#FF8200] dark:hover:text-[#FF8200] cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-[#0d9488] dark:hover:text-[#0d9488] cursor-pointer inline-flex items-center gap-1.5 transition-colors">
           ... et plus encore dans votre portail d'entreprise ➔
         </span>
       </div>

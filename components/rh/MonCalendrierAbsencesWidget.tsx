@@ -84,7 +84,7 @@ export function MonCalendrierAbsencesWidget() {
                 key={d}
                 className={`h-6 w-full rounded-md flex items-center justify-center transition-all ${
                   isToday
-                    ? "bg-[#FF8200] text-white font-bold shadow-xs"
+                    ? "bg-[#0d9488] text-white font-bold shadow-xs"
                     : isSelected
                     ? "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold border border-amber-300/50"
                     : "hover:bg-slate-200/60 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"

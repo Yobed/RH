@@ -86,7 +86,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-[#FF8200] to-amber-500 text-white shadow-sm">
+            <div className="p-2 rounded-xl bg-gradient-to-tr from-[#0d9488] to-amber-500 text-white shadow-sm">
               <Camera className="w-5 h-5" />
             </div>
             <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
@@ -109,7 +109,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
             }`}
           >
-            <Sparkles className={`w-3.5 h-3.5 ${activeTab === "biometric" ? "text-[#FF8200]" : "text-slate-400"}`} />
+            <Sparkles className={`w-3.5 h-3.5 ${activeTab === "biometric" ? "text-[#0d9488]" : "text-slate-400"}`} />
             <span>Borne & Registre Biométrique</span>
           </button>
 
@@ -197,7 +197,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                       {days.map(d => (
                         <th
                           key={d.toISOString()}
-                          className={`border-b border-slate-200 dark:border-slate-700 px-2 py-3 text-center text-[10px] font-bold uppercase tracking-widest min-w-[80px] ${isToday(d) ? "bg-amber-50 text-[#FF8200] dark:bg-amber-950/40" : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"}`}
+                          className={`border-b border-slate-200 dark:border-slate-700 px-2 py-3 text-center text-[10px] font-bold uppercase tracking-widest min-w-[80px] ${isToday(d) ? "bg-amber-50 text-[#0d9488] dark:bg-amber-950/40" : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"}`}
                         >
                           <div>{format(d, "EEE", { locale: fr })}</div>
                           <div className="text-base font-bold normal-case">{format(d, "d", { locale: fr })}</div>

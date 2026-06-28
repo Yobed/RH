@@ -80,12 +80,12 @@ interface NavDomain {
 }
 
 const NAV_DOMAINS: NavDomain[] = [
-  { id: "dashboard", label: "Tableau de bord", icon: SquaresFour, accent: "#FF8200", href: "/rh" },
+  { id: "dashboard", label: "Tableau de bord", icon: SquaresFour, accent: "#0d9488", href: "/rh" },
   {
     id: "people",
     label: "Collaborateurs",
     icon: Users,
-    accent: "#FF8200",
+    accent: "#0d9488",
     columns: [
       {
         title: "Équipe & Présence",
@@ -113,7 +113,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "paie",
     label: "Paie",
     icon: Money,
-    accent: "#FF8200",
+    accent: "#0d9488",
     columns: [
       {
         title: "Gestion Paie",
@@ -138,7 +138,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "talents",
     label: "Talents",
     icon: Student,
-    accent: "#FF8200",
+    accent: "#0d9488",
     columns: [
       {
         title: "Développement RH",
@@ -154,7 +154,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "analytique",
     label: "Analytique",
     icon: ChartPieSlice,
-    accent: "#FF8200",
+    accent: "#0d9488",
     columns: [
       {
         title: "Tableaux & Rapports",
@@ -178,7 +178,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "conformite",
     label: "Conformité",
     icon: ShieldCheck,
-    accent: "#FF8200",
+    accent: "#0d9488",
     columns: [
       {
         title: "Qualité & Juridique",
@@ -203,7 +203,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "outils",
     label: "Outils",
     icon: Robot,
-    accent: "#FF8200",
+    accent: "#0d9488",
     columns: [
       {
         title: "Assistant & Calculs",
@@ -225,7 +225,7 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "admin",
     label: "Administration",
     icon: Gear,
-    accent: "#FF8200",
+    accent: "#0d9488",
     adminOnly: true,
     columns: [
       {
@@ -270,7 +270,7 @@ function LeafLink({ leaf, accent, onNavigate }: { leaf: NavLeaf; accent: string;
       style={{ "--ac": accent } as React.CSSProperties}
       className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 outline-none transition-colors hover:bg-slate-100/80 focus-visible:ring-2 focus-visible:ring-amber-500/60 dark:hover:bg-white/5"
     >
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover/leaf:bg-[#FF8200]/10 group-hover/leaf:text-[#FF8200]">
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover/leaf:bg-[#0d9488]/10 group-hover/leaf:text-[#0d9488]">
         <Icon weight="duotone" className="h-4 w-4" />
       </span>
       <span className="min-w-0">
@@ -306,9 +306,9 @@ function DomainItem({
   const hasMenu = !!domain.columns;
 
   const triggerCls = cn(
-    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#FF8200]/60",
+    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]/60",
     active || open
-      ? "bg-[#FF8200]/10 text-[#FF8200] font-semibold"
+      ? "bg-[#0d9488]/10 text-[#0d9488] font-semibold"
       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
   );
 
@@ -389,7 +389,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#FF8200]/50 bg-gradient-to-br from-[#FF8200] to-[#E07400]"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#0d9488]/50 bg-gradient-to-br from-[#0d9488] to-[#0f766e]"
         aria-label="Menu utilisateur"
         aria-expanded={open}
       >
@@ -407,7 +407,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#FF8200] to-[#E07400]"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#0d9488] to-[#0f766e]"
               >
                 {initials}
               </span>
@@ -478,7 +478,7 @@ export function TopNav({
 
         {/* Logo */}
         <Link href="/rh" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#FF8200] to-[#E07400] text-white shadow-sm transition-transform hover:scale-105">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white shadow-sm transition-transform hover:scale-105">
             <Buildings weight="fill" className="h-4 w-4" />
           </span>
           <span className="hidden flex-col leading-none xl:flex">

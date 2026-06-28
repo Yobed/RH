@@ -232,7 +232,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
       {/* Top Hero Banner & Kiosk Controller */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-slate-800">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-[#FF8200]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-[#0d9488]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="max-w-xl space-y-2">
@@ -253,7 +253,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               <select
                 value={selectedEmployeeForScan}
                 onChange={(e) => setSelectedEmployeeForScan(e.target.value)}
-                className="bg-slate-900 text-xs font-semibold text-slate-200 px-3 py-3 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FF8200]"
+                className="bg-slate-900 text-xs font-semibold text-slate-200 px-3 py-3 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
               >
                 <option value="">-- Mode Libre / Wilfried KOUASSI --</option>
                 {employees.map(emp => (
@@ -266,7 +266,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#FF8200] to-amber-500 hover:from-amber-600 hover:to-[#FF8200] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-95"
+              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#0d9488] to-amber-500 hover:from-amber-600 hover:to-[#0d9488] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-95"
             >
               <Camera className="h-4 w-4" />
               <span>Ouvrir la Borne de Scan Faciale</span>
@@ -280,7 +280,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
         <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-[10px] font-extrabold uppercase tracking-wider">Pointages Enregistrés</span>
-            <Clock className="h-4 w-4 text-[#FF8200]" />
+            <Clock className="h-4 w-4 text-[#0d9488]" />
           </div>
           <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.total}
@@ -329,7 +329,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
         {/* Toolbar & Filters */}
         <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/20">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-[#FF8200] flex items-center justify-center">
+            <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-[#0d9488] flex items-center justify-center">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
@@ -349,7 +349,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                 placeholder="Rechercher salarié, matricule..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-2 text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl w-48 sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#FF8200]"
+                className="pl-9 pr-3 py-2 text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl w-48 sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
               />
             </div>
 
@@ -357,7 +357,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#FF8200]"
+              className="px-3 py-2 text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
             >
               <option value="all">Tous les Types</option>
               <option value="arrivee">Arrivées Matin</option>
@@ -423,7 +423,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                       {/* Collaborateur */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-[#FF8200] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-[#0d9488] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                             {log.employeeName.charAt(0)}
                           </div>
                           <div>

@@ -79,7 +79,7 @@ const ArretBadge = ({ estAt, estJustifie }: { estAt?: boolean; estJustifie?: boo
   if (estAt) {
     return (
       <span className="inline-flex items-center rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
-        <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-[#2563eb] mr-1.5" />
+        <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-[#0d9488] mr-1.5" />
         Accident Travail
       </span>
     );

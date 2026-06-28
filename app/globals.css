@@ -6,9 +6,10 @@
 
 @layer base {
   :root {
-    /* ── Executive RH Manager CI — Ultra-Pro Design System ──
-       Primary Brand: Deep Warm Amber / Ochre Gold (oklch(0.55 0.20 263))
-       Background: Crisp Pure Slate-Alabaster
+    /* ── RH Manager CI — Design System (Swiss / Pro net) ──
+       Marque : Teal (oklch(0.60 0.11 188)) — confiance, conformité.
+       Émeraude réservée aux états « succès / validé ».
+       Fond : alabastre slate clair. Titres : Plus Jakarta Sans.
     */
     --background: 0.985 0.005 240;
     --foreground: 0.16 0.03 260;
@@ -18,7 +19,7 @@
     --popover: 1 0 0;
     --popover-foreground: 0.16 0.03 260;
 
-    --primary: 0.55 0.20 263;
+    --primary: 0.60 0.11 188;
     --primary-foreground: 1 0 0;
 
     --secondary: 0.96 0.008 240;
@@ -27,7 +28,7 @@
     --muted: 0.965 0.006 240;
     --muted-foreground: 0.45 0.02 260;
 
-    --accent: 0.55 0.20 263;
+    --accent: 0.60 0.11 188;
     --accent-foreground: 1 0 0;
 
     --destructive: 0.58 0.22 27;
@@ -35,10 +36,10 @@
 
     --border: 0.91 0.008 240;
     --input: 0.91 0.008 240;
-    --ring: 0.55 0.20 263;
+    --ring: 0.60 0.11 188;
     --radius: 0.75rem;
 
-    --chart-1: oklch(0.55 0.20 263);
+    --chart-1: oklch(0.60 0.11 188);
     --chart-2: oklch(0.35 0.04 260);
     --chart-3: oklch(0.55 0.14 160);
     --chart-4: oklch(0.65 0.16 27);
@@ -46,15 +47,15 @@
 
     --sidebar: oklch(0.12 0.03 260);
     --sidebar-foreground: oklch(0.92 0.01 260);
-    --sidebar-primary: oklch(0.55 0.20 263);
+    --sidebar-primary: oklch(0.60 0.11 188);
     --sidebar-primary-foreground: oklch(1 0 0);
     --sidebar-accent: oklch(0.18 0.03 260);
     --sidebar-accent-foreground: oklch(1 0 0);
     --sidebar-border: oklch(0.20 0.025 260);
-    --sidebar-ring: oklch(0.55 0.20 263);
+    --sidebar-ring: oklch(0.60 0.11 188);
 
-    --font-heading: var(--font-sans);
-    --font-display: var(--font-sans);
+    --font-heading: var(--font-jakarta, var(--font-sans));
+    --font-display: var(--font-jakarta, var(--font-sans));
   }
 
   .dark {
@@ -66,7 +67,7 @@
     --popover: 0.15 0.03 260;
     --popover-foreground: 0.96 0.008 260;
 
-    --primary: 0.65 0.20 263;
+    --primary: 0.70 0.12 186;
     --primary-foreground: 0.10 0.03 260;
 
     --secondary: 0.19 0.03 260;
@@ -75,7 +76,7 @@
     --muted: 0.19 0.03 260;
     --muted-foreground: 0.65 0.015 260;
 
-    --accent: 0.65 0.20 263;
+    --accent: 0.70 0.12 186;
     --accent-foreground: 0.10 0.03 260;
 
     --destructive: 0.65 0.22 27;
@@ -83,9 +84,9 @@
 
     --border: 0.21 0.025 260;
     --input: 0.21 0.025 260;
-    --ring: 0.65 0.20 263;
+    --ring: 0.70 0.12 186;
 
-    --chart-1: oklch(0.65 0.20 263);
+    --chart-1: oklch(0.70 0.12 186);
     --chart-2: oklch(0.55 0.14 160);
     --chart-3: oklch(0.65 0.16 27);
     --chart-4: oklch(0.50 0.12 300);
@@ -93,12 +94,12 @@
 
     --sidebar: oklch(0.09 0.025 260);
     --sidebar-foreground: oklch(0.88 0.01 260);
-    --sidebar-primary: oklch(0.65 0.20 263);
+    --sidebar-primary: oklch(0.70 0.12 186);
     --sidebar-primary-foreground: oklch(0.10 0.03 260);
     --sidebar-accent: oklch(0.15 0.03 260);
     --sidebar-accent-foreground: oklch(1 0 0);
     --sidebar-border: oklch(0.17 0.025 260);
-    --sidebar-ring: oklch(0.65 0.20 263);
+    --sidebar-ring: oklch(0.70 0.12 186);
   }
 
   * {
@@ -120,25 +121,25 @@
   }
 
   .font-display {
-    font-family: var(--font-sans);
+    font-family: var(--font-display);
   }
 
   h1, h2, h3, h4, h5, h6,
   .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: var(--font-sans);
-    font-weight: 600;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     color: inherit;
   }
 
   .text-brand-orange,
   .h-orange {
-    color: #2563eb !important;
+    color: #0d9488 !important;
   }
   .dark .text-brand-orange,
   .dark .h-orange {
-    color: #2563eb !important;
+    color: #2dd4bf !important;
   }
 
   th, thead th {
@@ -161,9 +162,9 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: oklch(0.82 0.008 240); border-radius: 99px; }
-  ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+  ::-webkit-scrollbar-thumb:hover { background: #0d9488; }
   .dark ::-webkit-scrollbar-thumb { background: oklch(0.25 0.025 260); }
-  .dark ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+  .dark ::-webkit-scrollbar-thumb:hover { background: #2dd4bf; }
 
   a, button { transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1); }
 }

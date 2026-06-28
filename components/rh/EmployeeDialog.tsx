@@ -42,7 +42,7 @@ const FAMILLE_LABELS: Record<SalaryGridRow["famille"], string> = {
 };
 
 const selectClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563eb] disabled:cursor-not-allowed disabled:opacity-50";
+  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:cursor-not-allowed disabled:opacity-50";
 
 const schema = z
   .object({
@@ -366,7 +366,7 @@ export function EmployeeDialog({
             employee ? (
               <Button variant="ghost" size="sm" aria-label="Modifier" />
             ) : (
-              <Button className="bg-[#FF8200] hover:bg-[#E07400] text-white border-0" />
+              <Button className="bg-[#0d9488] hover:bg-[#0f766e] text-white border-0" />
             )
           }
         >
@@ -786,7 +786,7 @@ export function EmployeeDialog({
                 <input
                   type="checkbox"
                   {...register("consent_donnees_personnelles")}
-                  className="h-4 w-4 mt-0.5 rounded border-slate-300 accent-[#2563eb] text-[#2563eb] focus:ring-[#2563eb]"
+                  className="h-4 w-4 mt-0.5 rounded border-slate-300 accent-[#0d9488] text-[#0d9488] focus:ring-[#0d9488]"
                 />
                 <span className="text-xs text-slate-700 leading-relaxed">
                   Le salarié consent au traitement de ses données personnelles
@@ -821,7 +821,7 @@ export function EmployeeDialog({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0"
+              className="w-full sm:w-auto bg-[#0d9488] hover:bg-[#0f766e] text-white border-0"
             >
               {isSubmitting
                 ? "Enregistrement..."

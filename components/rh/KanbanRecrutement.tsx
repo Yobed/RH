@@ -38,7 +38,7 @@ const COLUMNS: Column[] = [
   { key: "nouveau",   label: "Nouveaux",   bg: "bg-slate-50/70 dark:bg-slate-900/40",     headerBorder: "border-blue-300 dark:border-blue-500/30",     badge: "bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300", accentColor: "bg-blue-500" },
   { key: "en_cours",  label: "En qualification",  bg: "bg-slate-50/70 dark:bg-slate-900/40", headerBorder: "border-purple-300 dark:border-purple-500/30", badge: "bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300", accentColor: "bg-purple-500" },
   { key: "shortlist", label: "Shortlist", bg: "bg-slate-50/70 dark:bg-slate-900/40", headerBorder: "border-indigo-300 dark:border-indigo-500/30", badge: "bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-300", accentColor: "bg-indigo-500" },
-  { key: "entretien", label: "Entretiens", bg: "bg-slate-50/70 dark:bg-slate-900/40",   headerBorder: "border-amber-300 dark:border-amber-500/30",   badge: "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300", accentColor: "bg-[#2563eb]" },
+  { key: "entretien", label: "Entretiens", bg: "bg-slate-50/70 dark:bg-slate-900/40",   headerBorder: "border-amber-300 dark:border-amber-500/30",   badge: "bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300", accentColor: "bg-[#0d9488]" },
   { key: "offre",     label: "Offre émise",     bg: "bg-slate-50/70 dark:bg-slate-900/40",headerBorder: "border-emerald-300 dark:border-emerald-500/30",badge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300", accentColor: "bg-emerald-500" },
   { key: "embauche",  label: "Embauchés",  bg: "bg-slate-50/70 dark:bg-slate-900/40",    headerBorder: "border-green-300 dark:border-green-500/30",   badge: "bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300", accentColor: "bg-green-600" },
   { key: "refus",     label: "Non retenus",    bg: "bg-slate-50/70 dark:bg-slate-900/40",      headerBorder: "border-rose-300 dark:border-rose-500/30",     badge: "bg-rose-100 text-rose-800 dark:bg-rose-500/20 dark:text-rose-300", accentColor: "bg-rose-500" },
@@ -77,15 +77,15 @@ function CandidateCard({ candidate, onDragStart }: CandidateCardProps) {
     <div
       draggable
       onDragStart={(e) => onDragStart(e, candidate.id)}
-      className="group cursor-grab active:cursor-grabbing rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl hover:border-[#2563eb]/40 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-[#2563eb]/40 p-4 transition-all duration-250 select-none hover:-translate-y-1 relative overflow-hidden"
+      className="group cursor-grab active:cursor-grabbing rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-xl hover:border-[#0d9488]/40 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-[#0d9488]/40 p-4 transition-all duration-250 select-none hover:-translate-y-1 relative overflow-hidden"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300 group-hover:bg-[#2563eb] group-hover:text-white transition-colors">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-xs text-slate-700 dark:bg-slate-800 dark:text-slate-300 group-hover:bg-[#0d9488] group-hover:text-white transition-colors">
             {getInitials(candidate.full_name)}
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-sm text-slate-900 dark:text-white leading-tight truncate group-hover:text-[#2563eb] transition-colors">{candidate.full_name}</p>
+            <p className="font-bold text-sm text-slate-900 dark:text-white leading-tight truncate group-hover:text-[#0d9488] transition-colors">{candidate.full_name}</p>
             <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 truncate flex items-center gap-1">
               <Briefcase className="h-3 w-3 shrink-0" />
               {candidate.poste_souhaite || "Poste non défini"}
@@ -140,7 +140,7 @@ function KanbanColumn({ column, candidates, onDragStart, onDrop }: KanbanColumnP
     <div
       className={`flex flex-col min-w-[280px] w-[280px] rounded-3xl border transition-all duration-200 ${
         isDragOver
-          ? "border-[#2563eb] bg-[#2563eb]/5 ring-2 ring-[#2563eb]/20 scale-[1.01]"
+          ? "border-[#0d9488] bg-[#0d9488]/5 ring-2 ring-[#0d9488]/20 scale-[1.01]"
           : `border-slate-200/80 dark:border-slate-800 ${column.bg}`
       }`}
       onDragOver={handleDragOver}
