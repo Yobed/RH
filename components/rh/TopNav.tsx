@@ -50,6 +50,7 @@ import {
   DeviceMobile,
   BellRinging,
   UserCircle,
+  Question,
 } from "@phosphor-icons/react";
 import { CommandPaletteButton } from "./CommandPalette";
 import { ThemeToggle } from "./ThemeToggle";
@@ -213,10 +214,11 @@ const NAV_DOMAINS: NavDomain[] = [
         ],
       },
       {
-        title: "Communication",
+        title: "Communication & Aide",
         items: [
           { href: "/messages", label: "Messagerie interne", desc: "Échanges d'équipe", icon: ChatCircleText },
           { href: "/notifications", label: "Notifications & Alertes", desc: "Rappels & Échéances", icon: Bell },
+          { href: "/aide", label: "Guide & Aide", desc: "Documentation des modules", icon: Question },
         ],
       },
     ],

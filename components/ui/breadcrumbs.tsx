@@ -40,6 +40,7 @@ const ROUTE_LABELS: Record<string, string> = {
   onboarding: "Onboarding",
   print: "Impression",
   attestations: "Mes Attestations",
+  aide: "Guide & Aide",
 };
 
 function isUUID(s: string): boolean {
