@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Lato, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/rh/ThemeProvider";
 
-// Corps & UI : Inter (lisibilité maximale sur les tableaux denses).
-const inter = Inter({
+// Police principale : Lato — la police signature d'Odoo (corps + titres).
+const lato = Lato({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-// Titres & display : Plus Jakarta Sans (caractère, identité — direction Swiss/pro).
-const jakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "700", "900"],
   display: "swap",
 });
 
@@ -36,10 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="fr"
-      className={`${inter.variable} ${jakarta.variable} ${jetbrainsMono.variable}`}
+      className={`${lato.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className={inter.className}>
+      <body className={lato.className}>
         <ThemeProvider>
           {children}
           <Toaster richColors position="top-right" />

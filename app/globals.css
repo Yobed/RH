@@ -54,8 +54,8 @@
     --sidebar-border: oklch(0.20 0.025 260);
     --sidebar-ring: oklch(0.60 0.11 188);
 
-    --font-heading: var(--font-jakarta, var(--font-sans));
-    --font-display: var(--font-jakarta, var(--font-sans));
+    --font-heading: var(--font-sans);
+    --font-display: var(--font-sans);
   }
 
   .dark {

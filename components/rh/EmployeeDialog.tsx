@@ -401,7 +401,7 @@ export function EmployeeDialog({
 
           {/* ── IDENTITÉ ─────────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Identité
             </p>
 
@@ -511,7 +511,7 @@ export function EmployeeDialog({
 
           {/* ── PIÈCE D'IDENTITÉ & CNPS ──────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Pièce d&apos;identité & Sécurité sociale
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -532,7 +532,7 @@ export function EmployeeDialog({
 
           {/* ── COORDONNÉES ──────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Coordonnées
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -587,7 +587,7 @@ export function EmployeeDialog({
 
           {/* ── POSTE & CONTRAT ──────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Poste & Contrat
             </p>
 
@@ -733,7 +733,7 @@ export function EmployeeDialog({
 
           {/* ── PRIMES & INDEMNITÉS ──────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Primes & Indemnités habituelles
               <span className="ml-2 font-normal normal-case text-slate-400/70">
                 (reprises automatiquement à chaque bulletin)
@@ -811,7 +811,7 @@ export function EmployeeDialog({
           {/* ── MOTIF MODIFICATION (édition uniquement) ──────────── */}
           {employee && (
             <section className="space-y-2">
-              <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
+              <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
                 Motif de modification
               </p>
               <div>
