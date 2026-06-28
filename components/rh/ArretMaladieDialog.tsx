@@ -271,18 +271,18 @@ export function ArretMaladieDialog({ employees }: ArretMaladieDialogProps) {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="bg-blue-50/70 border border-blue-200 rounded-xl p-4 flex items-start gap-3"
+                      className="bg-teal-50/70 border border-teal-200 rounded-xl p-4 flex items-start gap-3"
                     >
-                      <div className="p-2 bg-blue-100/80 rounded-lg shrink-0">
-                        <Stethoscope className="h-4 w-4 text-blue-600" />
+                      <div className="p-2 bg-teal-100/80 rounded-lg shrink-0">
+                        <Stethoscope className="h-4 w-4 text-teal-600" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-blue-900">Accident de Travail (AT)</h4>
-                        <p className="text-xs text-blue-700 mt-0.5">
+                        <h4 className="text-sm font-semibold text-teal-900">Accident de Travail (AT)</h4>
+                        <p className="text-xs text-teal-700 mt-0.5">
                           En cas d&apos;accident professionnel, le maintien de salaire est de <span className="font-bold">100%</span> (sous réserve de déclaration à la CNPS). 
                           L&apos;impact sur les conges est neutralisé pendant 12 mois.
                         </p>
-                        <p className="text-[10px] text-blue-600 italic mt-1 font-medium">
+                        <p className="text-[10px] text-teal-600 italic mt-1 font-medium">
                           N&apos;oubliez pas de joindre la déclaration d&apos;AT CNPS.
                         </p>
                       </div>

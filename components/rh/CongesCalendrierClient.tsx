@@ -39,13 +39,13 @@ interface Props {
 // ---------------------------------------------------------------------------
 
 const TYPE_COLORS: Record<string, string> = {
-  annuel:       "bg-blue-100 text-blue-800 border-blue-200",
+  annuel:       "bg-teal-100 text-teal-800 border-teal-200",
   maladie:      "bg-orange-100 text-orange-800 border-orange-200",
   maternite:    "bg-pink-100 text-pink-800 border-pink-200",
   paternite:    "bg-sky-100 text-sky-800 border-sky-200",
   arret_maladie:"bg-red-100 text-red-800 border-red-200",
   sans_solde:   "bg-gray-100 text-gray-800 border-gray-200",
-  exceptionnel: "bg-purple-100 text-purple-800 border-purple-200",
+  exceptionnel: "bg-slate-100 text-slate-800 border-slate-200",
 };
 
 const TYPE_LABELS: Record<string, string> = {

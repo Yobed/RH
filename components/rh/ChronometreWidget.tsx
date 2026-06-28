@@ -37,7 +37,7 @@ export function ChronometreWidget() {
       {/* Widget Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+          <div className="h-8 w-8 rounded-lg bg-teal-50 dark:bg-teal-950/50 flex items-center justify-center text-teal-600 dark:text-teal-400">
             <Clock className="h-4 w-4" />
           </div>
           <div>
@@ -75,7 +75,7 @@ export function ChronometreWidget() {
           className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shadow-xs ${
             isRunning
               ? "bg-amber-500 hover:bg-amber-600 text-white"
-              : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-blue-600 dark:hover:bg-blue-700"
+              : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-teal-600 dark:hover:bg-teal-700"
           }`}
         >
           {isRunning ? (
@@ -93,7 +93,7 @@ export function ChronometreWidget() {
 
         <button
           onClick={() => setShowFacialModal(true)}
-          className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 dark:text-indigo-300 text-xs font-bold border border-indigo-200/60 dark:border-indigo-800/60 transition-all cursor-pointer shadow-xs"
+          className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:hover:bg-teal-900 dark:text-teal-300 text-xs font-bold border border-teal-200/60 dark:border-teal-800/60 transition-all cursor-pointer shadow-xs"
         >
           <Camera className="h-3.5 w-3.5" />
           <span>Pointage Facial</span>

@@ -6,8 +6,8 @@ import Link from "next/link";
 export function RessourcesInteretWidget() {
   const resources = [
     { title: "Protocole Sanitaire & Sécurité", category: "Conformité", icon: ShieldAlert, color: "text-rose-600 bg-rose-50" },
-    { title: "Barème d'imposition ITS & CNPS", category: "Paie 2026", icon: TrendingUp, color: "text-blue-600 bg-blue-50" },
-    { title: "Guide de personnalisation de la signature", category: "Charte HR", icon: Bookmark, color: "text-purple-600 bg-purple-50" },
+    { title: "Barème d'imposition ITS & CNPS", category: "Paie 2026", icon: TrendingUp, color: "text-teal-600 bg-teal-50" },
+    { title: "Guide de personnalisation de la signature", category: "Charte HR", icon: Bookmark, color: "text-slate-600 bg-slate-50" },
   ];
 
   return (
@@ -35,13 +35,13 @@ export function RessourcesInteretWidget() {
                   <Icon className="h-3.5 w-3.5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 truncate transition-colors">
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-teal-600 truncate transition-colors">
                     {res.title}
                   </p>
                   <span className="text-[10px] text-slate-400 font-medium">{res.category}</span>
                 </div>
               </div>
-              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-indigo-600 transition-colors shrink-0" />
+              <ExternalLink className="h-3.5 w-3.5 text-slate-400 group-hover:text-teal-600 transition-colors shrink-0" />
             </Link>
           );
         })}

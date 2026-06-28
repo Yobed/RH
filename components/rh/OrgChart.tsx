@@ -65,10 +65,10 @@ const DEPT_BADGE_STYLES: Record<string, string> = {
   "Ressources Humaines": "bg-orange-50 dark:bg-orange-950/40 text-[#0d9488] border-orange-200/60 dark:border-orange-900/40",
   "Finance": "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40",
   "Comptabilité": "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40",
-  "Commercial": "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-900/40",
-  "Ventes": "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-900/40",
+  "Commercial": "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-200/60 dark:border-teal-900/40",
+  "Ventes": "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-200/60 dark:border-teal-900/40",
   "Exploitation": "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
-  "Logistique": "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-900/40",
+  "Logistique": "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-200/60 dark:border-teal-900/40",
 };
 
 function avatarGradient(id: string) {
@@ -281,7 +281,7 @@ function EditEmployeeModal({
       <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
+            <div className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400">
               <Edit3 className="h-4 w-4" />
             </div>
             Modifier le Collaborateur
@@ -571,7 +571,7 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
             </button>
             <button
               onClick={() => setShowEditModal(true)}
-              className="p-1 rounded-lg hover:bg-slate-700 text-blue-300 transition-colors"
+              className="p-1 rounded-lg hover:bg-slate-700 text-teal-300 transition-colors"
               title="Modifier"
             >
               <Edit3 size={13} />
@@ -774,7 +774,7 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
         </div>
 
         <div className="flex items-center gap-3 p-2">
-          <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200/50 dark:border-blue-900/50">
+          <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 border border-teal-200/50 dark:border-teal-900/50">
             <UserCheck size={18} />
           </div>
           <div>
@@ -794,7 +794,7 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
         </div>
 
         <div className="flex items-center gap-3 p-2">
-          <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/50 dark:border-indigo-900/50">
+          <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 border border-teal-200/50 dark:border-teal-900/50">
             <Layers size={18} />
           </div>
           <div>

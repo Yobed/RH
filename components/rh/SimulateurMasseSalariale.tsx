@@ -93,7 +93,7 @@ function Slider({ label, value, min, max, step, unit, onChange }: SliderProps) {
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-indigo-500"
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-teal-500"
       />
       <div className="flex justify-between text-[10px] text-slate-400">
         <span>{unit === "FCFA" ? fcfa(min) : `${min}${unit}`}</span>

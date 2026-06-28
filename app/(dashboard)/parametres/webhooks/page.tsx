@@ -119,7 +119,7 @@ export default function WebhooksPage() {
                 onClick={() => toggleEvent(ev)}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                   form.events.includes(ev)
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-teal-600 text-white"
                     : "bg-muted text-muted-foreground hover:bg-muted/70"
                 }`}
               >
@@ -131,7 +131,7 @@ export default function WebhooksPage() {
         <button
           onClick={create}
           disabled={creating}
-          className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 disabled:opacity-60 transition-colors"
         >
           <Plus className="h-4 w-4" />
           {creating ? "Création…" : "Créer le webhook"}
@@ -156,7 +156,7 @@ export default function WebhooksPage() {
               </div>
               <div className="flex flex-wrap gap-1">
                 {wh.events.map((ev) => (
-                  <span key={ev} className="bg-indigo-500/15 text-indigo-400 text-[10px] px-1.5 py-0.5 rounded-full">{ev}</span>
+                  <span key={ev} className="bg-teal-500/15 text-teal-400 text-[10px] px-1.5 py-0.5 rounded-full">{ev}</span>
                 ))}
               </div>
               {wh.secret && (

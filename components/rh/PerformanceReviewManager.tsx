@@ -316,7 +316,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                               {getTypeLabel(ev.type)}
                             </Badge>
                             {ev.statut.toUpperCase() === 'EN_COURS' && (
-                              <div className="flex items-center gap-1 bg-blue-500 rounded-full px-2 py-0.5">
+                              <div className="flex items-center gap-1 bg-teal-500 rounded-full px-2 py-0.5">
                                  <span className="h-1.5 w-1.5 bg-white rounded-full animate-ping" />
                                  <span className="text-[8px] font-bold uppercase text-white">Actif</span>
                               </div>
@@ -460,7 +460,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                                 <Button 
                                   variant="ghost" 
                                   size="icon" 
-                                  className="h-10 w-10 rounded-2xl hover:bg-indigo-50 text-indigo-600 hover:scale-110 transition-all border border-transparent hover:border-indigo-100"
+                                  className="h-10 w-10 rounded-2xl hover:bg-teal-50 text-teal-600 hover:scale-110 transition-all border border-transparent hover:border-teal-100"
                                   onClick={() => {
                                     setSelectedEvaluation(ev);
                                     setIsSynthesisModalOpen(true);

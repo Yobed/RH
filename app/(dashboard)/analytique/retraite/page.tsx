@@ -82,7 +82,7 @@ export default async function PlanningRetraitePage({ searchParams }: SearchProps
         <Stat label="Total projetés" value={projections.length} icon={<UserMinus className="h-4 w-4 text-slate-500" />} />
         <Stat label="< 1 an" value={imminentes} icon={<Warning weight="fill" className="h-4 w-4 text-rose-500" />} color="text-rose-600" />
         <Stat label="1 – 2 ans" value={proches} icon={<CalendarBlank className="h-4 w-4 text-amber-500" />} color="text-amber-600" />
-        <Stat label="2 – 5 ans" value={moyennes} icon={<CalendarBlank className="h-4 w-4 text-blue-500" />} color="text-blue-600" />
+        <Stat label="2 – 5 ans" value={moyennes} icon={<CalendarBlank className="h-4 w-4 text-teal-500" />} color="text-teal-600" />
       </div>
 
       {/* Liste */}

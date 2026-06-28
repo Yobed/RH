@@ -34,8 +34,8 @@ const typeConfig: Record<
     ),
   },
   contrat: {
-    bg: "bg-blue-500 dark:bg-blue-600",
-    ring: "ring-blue-200 dark:ring-blue-900",
+    bg: "bg-teal-500 dark:bg-teal-600",
+    ring: "ring-teal-200 dark:ring-teal-900",
     label: "Contrat",
     icon: (
       <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -64,8 +64,8 @@ const typeConfig: Record<
     ),
   },
   evaluation: {
-    bg: "bg-purple-500 dark:bg-purple-600",
-    ring: "ring-purple-200 dark:ring-purple-900",
+    bg: "bg-slate-500 dark:bg-slate-600",
+    ring: "ring-slate-200 dark:ring-slate-900",
     label: "Évaluation",
     icon: (
       <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

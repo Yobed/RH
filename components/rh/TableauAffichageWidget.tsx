@@ -206,7 +206,7 @@ export function TableauAffichageWidget() {
       {/* Widget Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-purple-50 dark:bg-purple-950/50 flex items-center justify-center text-purple-600 dark:text-purple-400">
+          <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-950/50 flex items-center justify-center text-slate-600 dark:text-slate-400">
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
@@ -218,7 +218,7 @@ export function TableauAffichageWidget() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsCreatingPost(true)}
-            className="text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 active:scale-95 px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all shadow-xs"
+            className="text-xs font-bold text-white bg-slate-600 hover:bg-slate-700 active:scale-95 px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all shadow-xs"
             title="Publier une annonce"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -227,7 +227,7 @@ export function TableauAffichageWidget() {
 
           <button 
             onClick={() => setIsViewAllOpen(!isViewAllOpen)}
-            className="text-xs font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 flex items-center gap-1 hover:underline px-2 py-1.5 rounded-lg"
+            className="text-xs font-bold text-slate-600 hover:text-slate-700 dark:text-slate-400 flex items-center gap-1 hover:underline px-2 py-1.5 rounded-lg"
           >
             <span>{isViewAllOpen ? "Fermer" : "Voir tout"}</span>
             <ArrowRight className={`h-3.5 w-3.5 transition-transform ${isViewAllOpen ? "rotate-90" : ""}`} />
@@ -239,26 +239,26 @@ export function TableauAffichageWidget() {
       {!isCreatingPost && (
         <div 
           onClick={() => setIsCreatingPost(true)}
-          className="mb-4 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 flex items-center gap-3 cursor-pointer hover:border-purple-300 dark:hover:border-purple-600 transition-all group"
+          className="mb-4 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 flex items-center gap-3 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-all group"
         >
           <img
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80"
             alt="Vous"
-            className="h-7 w-7 rounded-full object-cover ring-2 ring-purple-100"
+            className="h-7 w-7 rounded-full object-cover ring-2 ring-slate-100"
           />
           <span className="text-xs text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 font-medium flex-1">
             Partager une annonce ou une nouveauté à l'équipe...
           </span>
-          <ImageIcon className="h-4 w-4 text-slate-400 group-hover:text-purple-600 transition-colors" />
+          <ImageIcon className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
         </div>
       )}
 
       {/* Modal / Expanded Form to Create Post */}
       {isCreatingPost && (
-        <form onSubmit={handleCreatePost} className="mb-4 p-4 rounded-xl bg-purple-50/50 dark:bg-slate-800/80 border border-purple-200 dark:border-purple-900/50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <form onSubmit={handleCreatePost} className="mb-4 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-900/50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-xs font-bold text-purple-900 dark:text-purple-300 flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+            <h4 className="text-xs font-bold text-slate-900 dark:text-slate-300 flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-slate-600" />
               Nouvelle annonce interne
             </h4>
             <button 
@@ -277,7 +277,7 @@ export function TableauAffichageWidget() {
               value={postTitle}
               onChange={(e) => setPostTitle(e.target.value)}
               required
-              className="w-full text-xs font-semibold px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+              className="w-full text-xs font-semibold px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-slate-500"
             />
 
             <textarea
@@ -286,7 +286,7 @@ export function TableauAffichageWidget() {
               onChange={(e) => setPostContent(e.target.value)}
               required
               rows={3}
-              className="w-full text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500 resize-none"
+              className="w-full text-xs px-3 py-2 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-slate-500 resize-none"
             />
 
             <input
@@ -294,7 +294,7 @@ export function TableauAffichageWidget() {
               placeholder="URL d'une image d'illustration (optionnel)"
               value={postImage}
               onChange={(e) => setPostImage(e.target.value)}
-              className="w-full text-[11px] px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+              className="w-full text-[11px] px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-slate-500"
             />
 
             <div className="flex justify-end gap-2 pt-1">
@@ -307,7 +307,7 @@ export function TableauAffichageWidget() {
               </button>
               <button
                 type="submit"
-                className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 flex items-center gap-1.5 shadow-xs transition-all"
+                className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-slate-600 hover:bg-slate-700 flex items-center gap-1.5 shadow-xs transition-all"
               >
                 <Send className="h-3 w-3" />
                 Publier
@@ -325,7 +325,7 @@ export function TableauAffichageWidget() {
           return (
             <div
               key={post.id}
-              className="group p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 transition-all hover:border-purple-200 relative"
+              className="group p-4 rounded-xl bg-slate-50/60 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 transition-all hover:border-slate-200 relative"
             >
               {/* Author info & Delete post button */}
               <div className="flex items-center justify-between mb-2.5">
@@ -372,7 +372,7 @@ export function TableauAffichageWidget() {
                     onClick={() => handleReact(post.id, "likes")}
                     className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all active:scale-95 ${
                       post.userReactions?.likes
-                        ? "bg-blue-50 text-blue-700 border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800"
+                        ? "bg-teal-50 text-teal-700 border-teal-300 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800"
                         : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200/60 hover:bg-slate-100"
                     }`}
                   >
@@ -409,7 +409,7 @@ export function TableauAffichageWidget() {
                   onClick={() => handleToggleComments(post.id)}
                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                     isCommentsOpen
-                      ? "text-purple-600 bg-purple-50 dark:bg-purple-950/50"
+                      ? "text-slate-600 bg-slate-50 dark:bg-slate-950/50"
                       : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
                   }`}
                 >
@@ -465,11 +465,11 @@ export function TableauAffichageWidget() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") handleAddComment(post.id);
                       }}
-                      className="flex-1 text-xs px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-1 focus:ring-purple-500"
+                      className="flex-1 text-xs px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-hidden focus:ring-1 focus:ring-slate-500"
                     />
                     <button
                       onClick={() => handleAddComment(post.id)}
-                      className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 active:scale-95 text-white text-xs font-bold flex items-center justify-center transition-all shadow-xs"
+                      className="px-3 py-1.5 rounded-lg bg-slate-600 hover:bg-slate-700 active:scale-95 text-white text-xs font-bold flex items-center justify-center transition-all shadow-xs"
                     >
                       <Send className="h-3 w-3" />
                     </button>

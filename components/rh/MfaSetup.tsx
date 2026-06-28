@@ -116,7 +116,7 @@ export function MfaSetup() {
   if (mfaState === "loading") {
     return (
       <div className="flex items-center justify-center py-8">
-        <span className="h-5 w-5 rounded-full border-2 border-indigo-400 border-t-transparent animate-spin" />
+        <span className="h-5 w-5 rounded-full border-2 border-teal-400 border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -162,7 +162,7 @@ export function MfaSetup() {
       {mfaState === "inactive" && (
         <button
           onClick={handleEnroll}
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 text-sm font-semibold transition-colors"
+          className="flex items-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white px-4 py-2.5 text-sm font-semibold transition-colors"
         >
           <Lock weight="bold" className="h-4 w-4" />
           Activer la double authentification
@@ -174,7 +174,7 @@ export function MfaSetup() {
         <div className="space-y-4">
           <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-4 space-y-3">
             <div className="flex items-start gap-3">
-              <QrCode weight="duotone" className="h-5 w-5 shrink-0 text-indigo-500 mt-0.5" />
+              <QrCode weight="duotone" className="h-5 w-5 shrink-0 text-teal-500 mt-0.5" />
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                   Étape 1 — Scannez le QR code
@@ -218,12 +218,12 @@ export function MfaSetup() {
               placeholder="000000"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              className="block w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-center text-2xl font-mono tracking-widest text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300 dark:focus:ring-indigo-600"
+              className="block w-full rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-2.5 text-center text-2xl font-mono tracking-widest text-slate-900 dark:text-slate-100 outline-none focus:ring-2 focus:ring-teal-300 dark:focus:ring-teal-600"
             />
             <button
               onClick={handleVerify}
               disabled={code.length !== 6}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-4 py-2.5 text-sm font-semibold transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white px-4 py-2.5 text-sm font-semibold transition-colors"
             >
               <CheckCircle weight="bold" className="h-4 w-4" />
               Vérifier et activer

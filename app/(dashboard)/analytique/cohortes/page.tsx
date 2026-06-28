@@ -105,8 +105,8 @@ export default async function CohortesPage() {
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
-            <Users className="h-5 w-5 text-indigo-600" />
+          <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center shrink-0">
+            <Users className="h-5 w-5 text-teal-600" />
           </div>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Total embauches</p>

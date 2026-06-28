@@ -54,7 +54,7 @@ export function MesTachesWidget() {
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+          <div className="h-8 w-8 rounded-lg bg-teal-50 dark:bg-teal-950/50 flex items-center justify-center text-teal-600 dark:text-teal-400">
             <CheckCircle2 className="h-4 w-4" />
           </div>
           <div>
@@ -64,7 +64,7 @@ export function MesTachesWidget() {
         </div>
         <Link
           href="/rappels"
-          className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-1 hover:underline"
+          className="text-xs font-bold text-teal-600 hover:text-teal-700 dark:text-teal-400 flex items-center gap-1 hover:underline"
         >
           <span>Aller aux tâches</span>
           <ArrowRight className="h-3.5 w-3.5" />

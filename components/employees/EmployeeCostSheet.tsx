@@ -45,7 +45,7 @@ function LigneRow({
       ? "text-red-600"
       : type === "charge_patronale"
       ? "text-orange-600"
-      : "text-purple-700 font-bold";
+      : "text-slate-700 font-bold";
 
   const prefix =
     type === "retenue_salarie" ? "−" : type === "charge_patronale" ? "+" : "";
@@ -258,8 +258,8 @@ export function EmployeeCostSheet({
       </div>
 
       {/* Synthèse coût total */}
-      <div className="rounded-lg border-2 border-purple-200 bg-purple-50 p-4">
-        <h4 className="text-sm font-semibold text-purple-800 mb-3">
+      <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-4">
+        <h4 className="text-sm font-semibold text-slate-800 mb-3">
           Synthèse — Coût réel employeur
         </h4>
         <div className="space-y-1.5 text-sm">
@@ -271,11 +271,11 @@ export function EmployeeCostSheet({
             <span>+ Charges patronales</span>
             <span className="font-medium">+ {fmt(chargesPatronales.total)}</span>
           </div>
-          <div className="flex justify-between pt-2 border-t border-purple-200">
-            <span className="font-bold text-purple-800 text-base">
+          <div className="flex justify-between pt-2 border-t border-slate-200">
+            <span className="font-bold text-slate-800 text-base">
               Coût total employeur
             </span>
-            <span className="font-bold text-purple-800 text-base">
+            <span className="font-bold text-slate-800 text-base">
               {fmt(coutTotalEmployeur)}
             </span>
           </div>

@@ -61,7 +61,7 @@ export default async function DossierEmployePage({ params }: PageProps) {
     <div className="p-6 md:p-8 space-y-6">
       {/* Fil d'Ariane */}
       <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-        <Link href="/ged" className="flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-medium">
+        <Link href="/ged" className="flex items-center gap-1.5 hover:text-teal-600 transition-colors font-medium">
           <FolderOpen className="h-4 w-4" />
           GED
         </Link>
@@ -71,11 +71,11 @@ export default async function DossierEmployePage({ params }: PageProps) {
 
       {/* En-tête employé */}
       <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-indigo-500 to-blue-500" />
+        <div className="h-2 bg-gradient-to-r from-teal-500 to-teal-500" />
         <div className="p-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-4">
             {/* Avatar */}
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0">
               {(() => {
                 const names = employee.full_name.trim().split(/\s+/);
                 return names.length >= 2
@@ -95,7 +95,7 @@ export default async function DossierEmployePage({ params }: PageProps) {
                   {employee.matricule}
                 </span>
                 {employee.type_contrat && (
-                  <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-semibold text-blue-600">
+                  <span className="inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-[10px] font-semibold text-teal-600">
                     {employee.type_contrat}
                   </span>
                 )}

@@ -104,8 +104,8 @@ export function BrandingForm({
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6 dark:border-slate-700 dark:bg-slate-900">
       {/* En-tête section */}
       <div className="flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 border border-indigo-100 dark:bg-indigo-900/30 dark:border-indigo-800">
-          <svg className="h-5 w-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 border border-teal-100 dark:bg-teal-900/30 dark:border-teal-800">
+          <svg className="h-5 w-5 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
@@ -141,7 +141,7 @@ export function BrandingForm({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+                  className="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
                 >
                   {previewLogo ? "Changer le logo" : "Choisir un logo"}
                 </button>
@@ -173,7 +173,7 @@ export function BrandingForm({
                 type="text"
                 value={primary}
                 onChange={(e) => setPrimary(e.target.value)}
-                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                 maxLength={7}
                 pattern="#[0-9a-fA-F]{6}"
               />
@@ -196,7 +196,7 @@ export function BrandingForm({
                 type="text"
                 value={secondary}
                 onChange={(e) => setSecondary(e.target.value)}
-                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                 maxLength={7}
                 pattern="#[0-9a-fA-F]{6}"
               />
@@ -256,7 +256,7 @@ export function BrandingForm({
           type="button"
           onClick={handleSave}
           disabled={isPending}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-indigo-600 dark:hover:bg-indigo-500"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-teal-600 dark:hover:bg-teal-500"
         >
           {isPending ? (
             <>

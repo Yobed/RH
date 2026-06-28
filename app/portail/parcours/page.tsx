@@ -103,8 +103,8 @@ export default async function PortailParcoursPage() {
       {/* KPIs événements */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Stat label="Promotions" value={counts.promotion ?? 0} icon={<Trophy className="h-4 w-4 text-emerald-600" />} />
-        <Stat label="Formations" value={counts.formation ?? 0} icon={<GraduationCap className="h-4 w-4 text-purple-600" />} />
-        <Stat label="Mutations" value={counts.mutation ?? 0} icon={<MapPin className="h-4 w-4 text-blue-600" />} />
+        <Stat label="Formations" value={counts.formation ?? 0} icon={<GraduationCap className="h-4 w-4 text-slate-600" />} />
+        <Stat label="Mutations" value={counts.mutation ?? 0} icon={<MapPin className="h-4 w-4 text-teal-600" />} />
         <Stat label="Total événements" value={allEvents.length} icon={<Briefcase className="h-4 w-4 text-slate-600" />} />
       </div>
 

@@ -42,9 +42,9 @@ export function CareerTimeline({ events }: { events: CareerEvent[] }) {
       case "promotion":
         return "text-emerald-600 bg-emerald-100 border-emerald-200";
       case "mutation":
-        return "text-blue-600 bg-blue-100 border-blue-200";
+        return "text-teal-600 bg-teal-100 border-teal-200";
       case "formation":
-        return "text-purple-600 bg-purple-100 border-purple-200";
+        return "text-slate-600 bg-slate-100 border-slate-200";
       case "avenant":
         return "text-amber-600 bg-amber-100 border-amber-200";
       default:

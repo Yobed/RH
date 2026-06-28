@@ -138,14 +138,14 @@ export function WorkflowConfig({
               </button>
             </div>
 
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-[10px] font-bold text-indigo-600 dark:text-indigo-400">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-100 dark:bg-teal-900/40 text-[10px] font-bold text-teal-600 dark:text-teal-400">
               {index + 1}
             </span>
 
             <select
               value={niveau.role}
               onChange={(e) => updateNiveau(niveau.id, "role", e.target.value as NiveauRole)}
-              className="flex-1 min-w-0 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1 text-[12.5px] text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300"
+              className="flex-1 min-w-0 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1 text-[12.5px] text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-teal-300"
             >
               {(Object.keys(ROLE_LABELS) as NiveauRole[]).map((r) => (
                 <option key={r} value={r}>{ROLE_LABELS[r]}</option>
@@ -155,7 +155,7 @@ export function WorkflowConfig({
             <select
               value={niveau.delai_heures}
               onChange={(e) => updateNiveau(niveau.id, "delai_heures", Number(e.target.value) as DelaiOption)}
-              className="w-28 shrink-0 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1 text-[12.5px] text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-indigo-300"
+              className="w-28 shrink-0 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-2.5 py-1 text-[12.5px] text-slate-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-teal-300"
             >
               {DELAI_OPTIONS.map((h) => (
                 <option key={h} value={h}>{h}h de délai</option>
@@ -177,7 +177,7 @@ export function WorkflowConfig({
       {niveaux.length < 3 && (
         <button
           onClick={addNiveau}
-          className="flex items-center gap-1.5 text-[12.5px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium transition-colors"
+          className="flex items-center gap-1.5 text-[12.5px] text-teal-600 dark:text-teal-400 hover:text-teal-700 font-medium transition-colors"
         >
           <Plus weight="bold" className="h-3.5 w-3.5" />
           Ajouter un niveau
@@ -193,8 +193,8 @@ export function WorkflowConfig({
           role="switch"
           aria-checked={escaladeAuto}
           onClick={() => setEscaladeAuto((v) => !v)}
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 ${
-            escaladeAuto ? "bg-indigo-500" : "bg-slate-200 dark:bg-slate-600"
+          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-300 ${
+            escaladeAuto ? "bg-teal-500" : "bg-slate-200 dark:bg-slate-600"
           }`}
         >
           <span
@@ -214,7 +214,7 @@ export function WorkflowConfig({
             ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
             : status === "error"
             ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"
-            : "bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-60"
+            : "bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-60"
         }`}
       >
         {status === "saving" && (

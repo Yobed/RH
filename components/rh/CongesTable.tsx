@@ -300,7 +300,7 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
                         href={c.justificatif_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[10px] font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                        className="inline-flex items-center gap-1 text-[10px] font-medium text-teal-600 hover:text-teal-800 hover:underline"
                         title="Voir le justificatif"
                       >
                         <Paperclip className="h-3 w-3" />

@@ -286,14 +286,14 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
           </div>
 
           <div className="p-4 sm:p-5 flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100">
+            <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 border border-slate-100">
               <Sparkle size={20} weight="duotone" />
             </div>
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Taux Parité (F)</p>
               <div className="flex items-baseline gap-2 mt-0.5">
                 <span className="text-xl font-bold text-slate-900 font-mono">{stats.pctFemmes}%</span>
-                <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-mono">
+                <span className="text-[10px] font-semibold text-slate-700 bg-slate-50 px-1.5 py-0.5 rounded font-mono">
                   {stats.femmes} femmes
                 </span>
               </div>

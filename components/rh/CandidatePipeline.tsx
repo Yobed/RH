@@ -9,7 +9,7 @@ const STATUTS = [
   { id: "nouveau", label: "Nouveau", color: "bg-slate-400", bg: "bg-slate-50", text: "text-slate-600" },
   { id: "en_cours", label: "En cours", color: "bg-amber-400", bg: "bg-amber-50", text: "text-amber-700" },
   { id: "shortlist", label: "Shortlist", color: "bg-sky-500", bg: "bg-sky-50", text: "text-sky-700" },
-  { id: "entretien", label: "Entretien", color: "bg-violet-500", bg: "bg-violet-50", text: "text-violet-700" },
+  { id: "entretien", label: "Entretien", color: "bg-slate-500", bg: "bg-slate-50", text: "text-slate-700" },
   { id: "offre", label: "Offre", color: "bg-emerald-500", bg: "bg-emerald-50", text: "text-emerald-700" },
   { id: "embauche", label: "Embauché", color: "bg-green-500", bg: "bg-green-50", text: "text-green-700" },
   { id: "refus", label: "Refusé", color: "bg-red-400", bg: "bg-red-50", text: "text-red-700" },
@@ -55,7 +55,7 @@ export function CandidatePipeline({ candidates }: Props) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className="group relative rounded-xl bg-white p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] border border-slate-100 hover:shadow-[0_8px_16px_-4px_rgba(0,0,0,0.08)] hover:border-indigo-100 transition-all cursor-default"
+                  className="group relative rounded-xl bg-white p-4 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] border border-slate-100 hover:shadow-[0_8px_16px_-4px_rgba(0,0,0,0.08)] hover:border-teal-100 transition-all cursor-default"
                 >
                   {/* Score IA Badge */}
                   {c.score_ia != null && (
@@ -70,8 +70,8 @@ export function CandidatePipeline({ candidates }: Props) {
                   )}
 
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
-                      <User size={16} weight="bold" className="text-indigo-600" />
+                    <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center shrink-0">
+                      <User size={16} weight="bold" className="text-teal-600" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-sm font-bold text-slate-800 truncate leading-tight">{c.full_name}</h4>

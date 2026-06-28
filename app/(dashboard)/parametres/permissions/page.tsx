@@ -122,7 +122,7 @@ export default function PermissionsPage() {
             onClick={() => setActiveRole(role)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               activeRole === role
-                ? "bg-indigo-600 text-white"
+                ? "bg-teal-600 text-white"
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
             }`}
           >
@@ -154,7 +154,7 @@ export default function PermissionsPage() {
                       type="checkbox"
                       checked={matrix[activeRole][mod][perm]}
                       onChange={() => toggle(mod, perm)}
-                      className="h-4 w-4 rounded accent-indigo-600 cursor-pointer"
+                      className="h-4 w-4 rounded accent-teal-600 cursor-pointer"
                     />
                   </td>
                 ))}
@@ -168,7 +168,7 @@ export default function PermissionsPage() {
         <button
           onClick={save}
           disabled={saving}
-          className="px-5 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+          className="px-5 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 disabled:opacity-60 transition-colors"
         >
           {saving ? "Sauvegarde…" : "Sauvegarder les permissions"}
         </button>

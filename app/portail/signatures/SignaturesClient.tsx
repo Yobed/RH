@@ -233,7 +233,7 @@ export function SignaturesClient({ requests: initial }: Props) {
                     href={selected.document_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:underline mt-2"
+                    className="inline-flex items-center gap-1 text-xs text-teal-600 dark:text-teal-400 hover:underline mt-2"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Consulter le document

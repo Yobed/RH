@@ -153,7 +153,7 @@ export function ExecutiveRhCockpit({
       const cdiCount = filteredEmployes.filter(e => e.type_contrat === "CDI").length;
       const cddCount = filteredEmployes.filter(e => e.type_contrat === "CDD").length;
       return [
-        { id: "embauche", title: "Recrutement & Sourcing", count: postesOuverts, color: "bg-indigo-500", badgeBg: "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300" },
+        { id: "embauche", title: "Recrutement & Sourcing", count: postesOuverts, color: "bg-teal-500", badgeBg: "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300" },
         { id: "essai", title: "Période d'Essai", count: essaiCount, color: "bg-amber-500", badgeBg: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300" },
         { id: "en_poste", title: "Collaborateurs En Poste", count: cdiCount, color: "bg-emerald-500", badgeBg: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" },
         { id: "echeance", title: "Échéances CDD & Risques", count: cddCount, color: "bg-rose-500", badgeBg: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
@@ -173,7 +173,7 @@ export function ExecutiveRhCockpit({
       deptMap[d] = (deptMap[d] || 0) + 1;
     });
 
-    const colors = ["bg-indigo-600", "bg-[#0d9488]", "bg-emerald-600", "bg-amber-500", "bg-purple-600"];
+    const colors = ["bg-teal-600", "bg-[#0d9488]", "bg-emerald-600", "bg-amber-500", "bg-slate-600"];
     return Object.entries(deptMap).map(([name, count], idx) => ({
       id: name,
       title: name,

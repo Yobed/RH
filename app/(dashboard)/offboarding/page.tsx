@@ -199,7 +199,7 @@ export default async function OffboardingPage() {
                         </div>
                         <ProgressBar pct={r.progress.pct} />
                         {nextItem && (
-                          <p className="mt-1 truncate text-[11px] font-medium text-blue-600 dark:text-blue-400">
+                          <p className="mt-1 truncate text-[11px] font-medium text-teal-600 dark:text-teal-400">
                             → {nextItem.title}
                           </p>
                         )}

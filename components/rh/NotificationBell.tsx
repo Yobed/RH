@@ -24,7 +24,7 @@ const typeIcon: Record<string, React.ElementType> = {
 const typeColor: Record<string, string> = {
   alerte_contrat: "text-amber-600",
   contentieux: "text-red-500",
-  evaluation: "text-blue-500",
+  evaluation: "text-teal-500",
   info: "text-muted-foreground",
 };
 

@@ -135,7 +135,7 @@ export function DocumentVersionsDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
-          className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          className="p-1.5 rounded-lg text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition-colors"
           title="Historique des versions"
         >
           <History className="h-3.5 w-3.5" />
@@ -144,23 +144,23 @@ export function DocumentVersionsDialog({
       <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <History className="h-4 w-4 text-indigo-600" />
+            <History className="h-4 w-4 text-teal-600" />
             Historique des versions
           </DialogTitle>
           <p className="text-xs text-slate-500 mt-1">{documentName}</p>
         </DialogHeader>
 
         {/* Zone d'upload nouvelle version */}
-        <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4 space-y-3">
+        <div className="rounded-2xl border border-teal-100 bg-teal-50/40 p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-bold uppercase tracking-widest text-indigo-700">
+            <p className="text-xs font-bold uppercase tracking-widest text-teal-700">
               Ajouter la version {currentVersion}
             </p>
           </div>
 
           <div
             onClick={() => fileRef.current?.click()}
-            className="cursor-pointer rounded-xl border-2 border-dashed border-indigo-200 bg-white p-4 text-center hover:border-indigo-400 transition-colors"
+            className="cursor-pointer rounded-xl border-2 border-dashed border-teal-200 bg-white p-4 text-center hover:border-teal-400 transition-colors"
           >
             {file ? (
               <p className="text-sm font-semibold text-slate-700">{file.name}</p>
@@ -183,13 +183,13 @@ export function DocumentVersionsDialog({
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Commentaire (ex: corrigé, signé, mis à jour conformité)"
-            className="bg-white border-indigo-100 text-sm"
+            className="bg-white border-teal-100 text-sm"
           />
 
           <Button
             onClick={handleUploadVersion}
             disabled={uploading || !file}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-9 text-sm font-semibold"
+            className="w-full bg-teal-600 hover:bg-teal-700 text-white h-9 text-sm font-semibold"
           >
             {uploading ? (
               <>
@@ -245,7 +245,7 @@ export function DocumentVersionsDialog({
                   href={documentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-white transition-colors"
+                  className="p-2 rounded-lg text-slate-500 hover:text-teal-600 hover:bg-white transition-colors"
                   title="Télécharger"
                 >
                   <Download className="h-4 w-4" />
@@ -292,7 +292,7 @@ export function DocumentVersionsDialog({
                       href={v.file_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors shrink-0"
+                      className="p-2 rounded-lg text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition-colors shrink-0"
                       title="Télécharger cette version"
                     >
                       <Download className="h-4 w-4" />

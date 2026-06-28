@@ -53,9 +53,9 @@ export function ProcessStepper({
                 href={step.href}
                 aria-current={status === "current" ? "step" : undefined}
                 className={cn(
-                  "group flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-[13px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-blue-400",
+                  "group flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-[13px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-teal-400",
                   status === "current" &&
-                    "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300",
+                    "bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300",
                   status === "done" &&
                     "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-white/5",
                   status === "upcoming" &&
@@ -65,7 +65,7 @@ export function ProcessStepper({
                 <span
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold",
-                    status === "current" && "bg-blue-600 text-white",
+                    status === "current" && "bg-teal-600 text-white",
                     status === "done" && "bg-emerald-500 text-white",
                     status === "upcoming" &&
                       "border border-slate-300 text-slate-400 dark:border-slate-600"

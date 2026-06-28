@@ -144,7 +144,7 @@ export default async function CongesPage() {
       </div>
 
       {/* Rappel légal */}
-      <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-800">
+      <div className="rounded-2xl border border-teal-100 bg-teal-50/60 p-4 text-sm text-teal-800">
         <p className="font-semibold mb-1">Droits légaux — Code du Travail ivoirien</p>
         <div className="flex flex-wrap gap-4 text-xs">
           <span>Annuel : <strong>26,4 jours/an base</strong> (2,2j × 12 mois)</span>

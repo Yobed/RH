@@ -52,10 +52,10 @@ const FAMILLES_OBLIGATOIRES: ReadonlyArray<Famille> = [
 ];
 
 const FAMILLE_COLORS: Record<Famille, { bg: string; text: string; activeBg: string; activeText: string }> = {
-  Contrat:               { bg: "bg-blue-50",   text: "text-blue-600",   activeBg: "bg-blue-600",   activeText: "text-white" },
-  Avenant:               { bg: "bg-indigo-50", text: "text-indigo-600", activeBg: "bg-indigo-600", activeText: "text-white" },
+  Contrat:               { bg: "bg-teal-50",   text: "text-teal-600",   activeBg: "bg-teal-600",   activeText: "text-white" },
+  Avenant:               { bg: "bg-teal-50", text: "text-teal-600", activeBg: "bg-teal-600", activeText: "text-white" },
   "Certificat de travail":{ bg: "bg-emerald-50",text: "text-emerald-600",activeBg: "bg-emerald-600",activeText: "text-white" },
-  Diplômes:              { bg: "bg-purple-50", text: "text-purple-600", activeBg: "bg-purple-600", activeText: "text-white" },
+  Diplômes:              { bg: "bg-slate-50", text: "text-slate-600", activeBg: "bg-slate-600", activeText: "text-white" },
   "CNI / Passeport":     { bg: "bg-pink-50",   text: "text-pink-600",   activeBg: "bg-pink-600",   activeText: "text-white" },
   "Extrait de naissance":{ bg: "bg-rose-50",   text: "text-rose-600",   activeBg: "bg-rose-600",   activeText: "text-white" },
   "Casier judiciaire":   { bg: "bg-slate-100", text: "text-slate-600",  activeBg: "bg-slate-700",  activeText: "text-white" },
@@ -102,11 +102,11 @@ interface Props {
 function fileIcon(fileType: string | null) {
   if (!fileType) return <File className="h-5 w-5 text-slate-400" />;
   if (fileType.includes("pdf")) return <FileText className="h-5 w-5 text-rose-500" />;
-  if (fileType.includes("word") || fileType.includes("doc")) return <FileText className="h-5 w-5 text-blue-500" />;
+  if (fileType.includes("word") || fileType.includes("doc")) return <FileText className="h-5 w-5 text-teal-500" />;
   if (fileType.includes("sheet") || fileType.includes("xls") || fileType.includes("csv"))
     return <FileSpreadsheet className="h-5 w-5 text-green-500" />;
   if (fileType.includes("image") || fileType.includes("png") || fileType.includes("jpg"))
-    return <Image className="h-5 w-5 text-violet-500" />;
+    return <Image className="h-5 w-5 text-slate-500" />;
   return <File className="h-5 w-5 text-slate-400" />;
 }
 
@@ -189,7 +189,7 @@ function UploadButton({
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center hover:border-indigo-400 hover:bg-slate-50 transition-all group"
+            className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center hover:border-teal-400 hover:bg-slate-50 transition-all group"
           >
             {file ? (
               <div className="flex items-center justify-center gap-2 text-sm">
@@ -199,7 +199,7 @@ function UploadButton({
               </div>
             ) : (
               <div>
-                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
                   <Upload className="h-5 w-5" />
                 </div>
                 <p className="text-sm font-medium text-slate-800">Cliquez ou glissez un fichier</p>
@@ -218,7 +218,7 @@ function UploadButton({
         </div>
         <DialogFooter className="sm:justify-end gap-2 pt-2">
           <Button variant="ghost" onClick={() => setOpen(false)} disabled={uploading}>Annuler</Button>
-          <Button onClick={handleUpload} disabled={uploading || !file || !name.trim()} className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[120px]">
+          <Button onClick={handleUpload} disabled={uploading || !file || !name.trim()} className="bg-teal-600 hover:bg-teal-700 text-white min-w-[120px]">
             {uploading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Transfert...</> : "Archiver"}
           </Button>
         </DialogFooter>
@@ -395,7 +395,7 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
                             href={doc.file_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block h-14 w-14 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 hover:ring-2 hover:ring-indigo-300 transition-all"
+                            className="block h-14 w-14 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 hover:ring-2 hover:ring-teal-300 transition-all"
                             title="Ouvrir en grand"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -445,7 +445,7 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
                       {doc.ai_analyzed_at && (
                         <span
                           title={`Analysé par IA le ${new Date(doc.ai_analyzed_at).toLocaleDateString("fr-CI")}`}
-                          className="hidden sm:inline-flex items-center gap-1 rounded-full bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 shrink-0"
+                          className="hidden sm:inline-flex items-center gap-1 rounded-full bg-gradient-to-br from-slate-50 to-teal-50 border border-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-700 shrink-0"
                         >
                           <Sparkles className="h-3 w-3" /> IA
                         </span>
@@ -455,7 +455,7 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
                       <div className="flex items-center gap-1 shrink-0">
                         <button
                           onClick={() => setAnalyzerDoc(doc)}
-                          className="inline-flex items-center gap-1 rounded-md bg-gradient-to-br from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 px-2 py-1 text-[11px] font-semibold text-white shadow-sm transition-colors"
+                          className="inline-flex items-center gap-1 rounded-md bg-gradient-to-br from-slate-600 to-teal-600 hover:from-slate-700 hover:to-teal-700 px-2 py-1 text-[11px] font-semibold text-white shadow-sm transition-colors"
                           title="Ouvrir l'aperçu et l'analyse IA"
                         >
                           <Eye className="h-3 w-3" /> Aperçu
@@ -465,7 +465,7 @@ export function DossierEmployeView({ employee, documents, companyId }: Props) {
                             href={doc.file_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition-colors"
                             title="Télécharger"
                           >
                             <Download className="h-3.5 w-3.5" />

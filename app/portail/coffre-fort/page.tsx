@@ -96,7 +96,7 @@ export default async function CoffreFortPage() {
       {/* En-tête */}
       <header className="pb-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-teal-500 to-slate-600 flex items-center justify-center shrink-0 shadow-sm">
             <ShieldCheck className="h-5 w-5 text-white" />
           </div>
           <div>
@@ -112,9 +112,9 @@ export default async function CoffreFortPage() {
       </header>
 
       {/* Bandeau confiance */}
-      <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/60 to-violet-50/40 p-5">
+      <div className="rounded-2xl border border-teal-100 bg-gradient-to-br from-teal-50/60 to-slate-50/40 p-5">
         <div className="flex items-center gap-3">
-          <Lock className="h-5 w-5 text-indigo-600 shrink-0" />
+          <Lock className="h-5 w-5 text-teal-600 shrink-0" />
           <div className="text-xs text-slate-600 leading-relaxed">
             <p className="font-semibold text-slate-700">Espace personnel et sécurisé</p>
             <p className="mt-0.5">
@@ -128,8 +128,8 @@ export default async function CoffreFortPage() {
       {/* Statistiques */}
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center shrink-0">
-            <Archive className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+          <div className="h-9 w-9 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center shrink-0">
+            <Archive className="h-4 w-4 text-teal-600 dark:text-teal-400" />
           </div>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Documents</p>
@@ -187,11 +187,11 @@ export default async function CoffreFortPage() {
                         rel="noopener noreferrer"
                         className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                       >
-                        <div className="shrink-0 h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-colors">
-                          <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                        <div className="shrink-0 h-9 w-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30 transition-colors">
+                          <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">
                             {doc.name}
                           </p>
                           <div className="flex items-center gap-2 mt-0.5">
@@ -206,7 +206,7 @@ export default async function CoffreFortPage() {
                             )}
                           </div>
                         </div>
-                        <Download className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors shrink-0" />
+                        <Download className="h-4 w-4 text-slate-400 dark:text-slate-500 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors shrink-0" />
                       </a>
                     </li>
                   ))}

@@ -23,9 +23,9 @@ interface Props {
 const CATEGORY_COLORS: Record<OffboardingCategory, { dot: string; bg: string; text: string }> = {
   biens:         { dot: "bg-amber-500",   bg: "bg-amber-50",   text: "text-amber-700" },
   acces:         { dot: "bg-rose-500",    bg: "bg-rose-50",    text: "text-rose-700" },
-  administratif: { dot: "bg-blue-500",    bg: "bg-blue-50",    text: "text-blue-700" },
+  administratif: { dot: "bg-teal-500",    bg: "bg-teal-50",    text: "text-teal-700" },
   paie:          { dot: "bg-emerald-500", bg: "bg-emerald-50", text: "text-emerald-700" },
-  humain:        { dot: "bg-violet-500",  bg: "bg-violet-50",  text: "text-violet-700" },
+  humain:        { dot: "bg-slate-500",  bg: "bg-slate-50",  text: "text-slate-700" },
 };
 
 const ALL_CATEGORIES: OffboardingCategory[] = ["biens", "acces", "administratif", "paie", "humain"];

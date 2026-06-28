@@ -50,7 +50,7 @@ const graviteConfig = {
 
 const statutCnpsConfig = {
   non_declare: { label: "Non déclaré", color: "bg-red-50 text-red-600" },
-  declare: { label: "Déclaré", color: "bg-blue-50 text-blue-600" },
+  declare: { label: "Déclaré", color: "bg-teal-50 text-teal-600" },
   indemnise: { label: "Indemnisé", color: "bg-emerald-50 text-emerald-600" },
   clos: { label: "Clos", color: "bg-slate-100 text-slate-600" },
 };

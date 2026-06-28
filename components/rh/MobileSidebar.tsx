@@ -65,7 +65,7 @@ export function MobileSidebar({ companyName, role }: MobileSidebarProps) {
           style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.08)" }}
         >
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs shadow-sm">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600 text-white font-bold text-xs shadow-sm">
               RH
             </span>
             <p className="text-sm font-bold text-white tracking-tight truncate max-w-[170px]">
@@ -109,7 +109,7 @@ export function MobileSidebar({ companyName, role }: MobileSidebarProps) {
       {/* Bouton Hamburger */}
       <button
         onClick={() => setOpen(true)}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-400 active:scale-95 transition-all shadow-sm lg:hidden"
+        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-teal-600 hover:border-teal-300 dark:hover:text-teal-400 active:scale-95 transition-all shadow-sm lg:hidden"
         aria-label="Ouvrir le menu de navigation"
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

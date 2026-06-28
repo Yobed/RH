@@ -58,7 +58,7 @@ const ACTIVITY_ICONS: Record<ActivityEntry["type"], React.ComponentType<{ classN
 };
 
 const ACTIVITY_COLORS: Record<ActivityEntry["type"], string> = {
-  document: "bg-indigo-50 text-indigo-600",
+  document: "bg-teal-50 text-teal-600",
   conge: "bg-amber-50 text-amber-600",
   sanction: "bg-rose-50 text-rose-600",
   formation: "bg-teal-50 text-teal-600",
@@ -154,7 +154,7 @@ export function EmployeeChatter({ employeeId, employeeName }: Props) {
                 : "Note interne RH (non visible par le salarié)…"
             }
             rows={3}
-            className={`w-full resize-none rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all ${
+            className={`w-full resize-none rounded-lg border bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all ${
               tab === "note" ? "border-amber-200" : "border-slate-200"
             }`}
           />
@@ -165,7 +165,7 @@ export function EmployeeChatter({ employeeId, employeeName }: Props) {
             <button
               onClick={() => postNote(tab)}
               disabled={posting || !composer.trim()}
-              className="inline-flex items-center gap-1.5 rounded-md bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 text-[12px] font-semibold text-white shadow-sm transition-all"
+              className="inline-flex items-center gap-1.5 rounded-md bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 text-[12px] font-semibold text-white shadow-sm transition-all"
             >
               {posting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PaperPlaneTilt className="h-3.5 w-3.5" weight="fill" />}
               {tab === "note" ? "Ajouter la note" : "Envoyer"}
@@ -198,13 +198,13 @@ function TabButton({
     <button
       onClick={onClick}
       className={`relative flex items-center gap-1.5 px-3 py-2 text-[12px] font-semibold transition-colors ${
-        active ? "text-indigo-700" : "text-slate-500 hover:text-slate-800"
+        active ? "text-teal-700" : "text-slate-500 hover:text-slate-800"
       }`}
     >
       <Icon className="h-3.5 w-3.5" weight={active ? "fill" : undefined} />
       {label}
       {active && (
-        <span className="absolute -bottom-px left-2 right-2 h-0.5 rounded-full bg-indigo-600" />
+        <span className="absolute -bottom-px left-2 right-2 h-0.5 rounded-full bg-teal-600" />
       )}
     </button>
   );
@@ -235,7 +235,7 @@ function NotesList({ loading, items }: { loading: boolean; items: NoteEntry[] })
             className={`h-9 w-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
               n.kind === "note"
                 ? "bg-gradient-to-br from-amber-400 to-orange-500 text-white"
-                : "bg-gradient-to-br from-indigo-500 to-violet-600 text-white"
+                : "bg-gradient-to-br from-teal-500 to-slate-600 text-white"
             }`}
           >
             {initials(n.author_name)}

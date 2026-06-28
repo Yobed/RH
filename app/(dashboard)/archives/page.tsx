@@ -9,9 +9,9 @@ import Link from "next/link";
 export const metadata = { title: "Archives — RH Manager CI" };
 
 const familleColors: Record<string, string> = {
-  Contrat: "bg-blue-100 text-blue-700",
-  Avenant: "bg-indigo-100 text-indigo-700",
-  Diplômes: "bg-purple-100 text-purple-700",
+  Contrat: "bg-teal-100 text-teal-700",
+  Avenant: "bg-teal-100 text-teal-700",
+  Diplômes: "bg-slate-100 text-slate-700",
   "CNI / Passeport": "bg-pink-100 text-pink-700",
   "Extrait de naissance": "bg-rose-100 text-rose-700",
   "Casier judiciaire": "bg-slate-100 text-slate-600",
@@ -39,8 +39,8 @@ interface PageProps {
 function fileExtColor(fileType: string | null): string {
   if (!fileType) return "bg-slate-100 text-slate-600";
   if (fileType.includes("pdf")) return "bg-rose-50 text-rose-600";
-  if (fileType.includes("word") || fileType.includes("doc")) return "bg-blue-50 text-blue-600";
-  if (fileType.includes("image") || fileType.includes("png") || fileType.includes("jpg")) return "bg-violet-50 text-violet-600";
+  if (fileType.includes("word") || fileType.includes("doc")) return "bg-teal-50 text-teal-600";
+  if (fileType.includes("image") || fileType.includes("png") || fileType.includes("jpg")) return "bg-slate-50 text-slate-600";
   if (fileType.includes("sheet") || fileType.includes("xls") || fileType.includes("csv")) return "bg-emerald-50 text-emerald-600";
   return "bg-slate-50 text-slate-600";
 }

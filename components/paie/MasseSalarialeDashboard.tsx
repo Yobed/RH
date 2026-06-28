@@ -73,10 +73,10 @@ function StatCard({ label, value, sublabel, colorTheme, icon, delay = 0 }: StatC
       accent: "bg-amber-500"
     },
     violet: {
-      flat: "bg-violet-50 text-violet-600 border-violet-100",
-      gradient: "from-violet-500/10 via-violet-500/5 to-transparent",
-      icon: "bg-violet-500 text-white shadow-violet-200",
-      accent: "bg-violet-500"
+      flat: "bg-slate-50 text-slate-600 border-slate-100",
+      gradient: "from-slate-500/10 via-slate-500/5 to-transparent",
+      icon: "bg-slate-500 text-white shadow-slate-200",
+      accent: "bg-slate-500"
     },
     slate: {
       flat: "bg-slate-50 text-slate-600 border-slate-100",
@@ -91,10 +91,10 @@ function StatCard({ label, value, sublabel, colorTheme, icon, delay = 0 }: StatC
       accent: "bg-sky-500"
     },
     blue: {
-      flat: "bg-blue-50 text-blue-600 border-blue-100",
-      gradient: "from-blue-500/10 via-blue-500/5 to-transparent",
-      icon: "bg-blue-500 text-white shadow-blue-200",
-      accent: "bg-blue-500"
+      flat: "bg-teal-50 text-teal-600 border-teal-100",
+      gradient: "from-teal-500/10 via-teal-500/5 to-transparent",
+      icon: "bg-teal-500 text-white shadow-teal-200",
+      accent: "bg-teal-500"
     },
   };
 
@@ -234,12 +234,12 @@ export function MasseSalarialeDashboard({
            }}
            className="group relative overflow-hidden rounded-[2.5rem] bg-slate-900 p-8 text-white flex flex-col justify-between shadow-2xl transition-all duration-500 hover:scale-[1.02]"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <div className="absolute inset-0 bg-gradient-to-br from-teal-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
           
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-6">
               <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
-                <CurrencyCircleDollar size={20} weight="duotone" className="text-indigo-400" />
+                <CurrencyCircleDollar size={20} weight="duotone" className="text-teal-400" />
               </div>
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
                 Coût moyen / salarié
@@ -251,7 +251,7 @@ export function MasseSalarialeDashboard({
                 {nbBulletins > 0 ? fmt(Math.round(coutTotalEmployeur / nbBulletins)) : "—"}
               </h3>
               <p className="text-xs text-slate-500 mt-3 font-bold flex items-center gap-2">
-                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
+                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse" />
                 Index de performance budgétaire 2026
               </p>
             </div>
@@ -351,7 +351,7 @@ export function MasseSalarialeDashboard({
           className="lg:col-span-2 rounded-[3rem] bg-slate-900 text-white p-10 shadow-2xl relative overflow-hidden group"
         >
           <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_20%,#312e81,transparent)] opacity-40 mix-blend-overlay pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-teal-600/20 rounded-full blur-[100px] pointer-events-none" />
           
           <div className="flex items-center justify-between mb-12 relative z-10">
             <div className="flex items-center gap-4">
@@ -373,8 +373,8 @@ export function MasseSalarialeDashboard({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
             {[
-              { label: "Retraite patronale (7,7%)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).retraite, 0), icon: <ShieldCheck weight="duotone" className="text-blue-400" />, bg: "bg-blue-400/10" },
-              { label: "Prestations familiales (5%)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).familiales, 0), icon: <User weight="duotone" className="text-purple-400" />, bg: "bg-purple-400/10" },
+              { label: "Retraite patronale (7,7%)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).retraite, 0), icon: <ShieldCheck weight="duotone" className="text-teal-400" />, bg: "bg-teal-400/10" },
+              { label: "Prestations familiales (5%)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).familiales, 0), icon: <User weight="duotone" className="text-slate-400" />, bg: "bg-slate-400/10" },
               { label: "Accidents maternité (0,75%)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).maternite, 0), icon: <ChartBar weight="duotone" className="text-emerald-400" />, bg: "bg-emerald-400/10" },
               { label: "AT / MP (Suivant risques)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).at_mp, 0), icon: <HardHat weight="duotone" className="text-rose-400" />, bg: "bg-rose-400/10" },
               { label: "Taxe FDFP (1%)", val: bulletins.reduce((s, b) => s + calculerChargesPatronales(Number(b.salaire_brut), tauxAtMp).fdfp, 0), icon: <Briefcase weight="duotone" className="text-cyan-400" />, bg: "bg-cyan-400/10" },
@@ -419,7 +419,7 @@ export function MasseSalarialeDashboard({
             <p className="text-sm text-slate-500 font-bold ml-5 uppercase tracking-widest opacity-60">Listing détaillé de la période</p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-slate-100/80 rounded-2xl border border-slate-200/50 backdrop-blur-sm group transition-all hover:bg-slate-900 hover:text-white">
-             <User size={16} weight="duotone" className="group-hover:text-indigo-400 transition-colors" />
+             <User size={16} weight="duotone" className="group-hover:text-teal-400 transition-colors" />
              <span className="text-xs font-bold uppercase tracking-widest tabular-nums">
                {nbBulletins} Effectifs totaux
              </span>
@@ -486,7 +486,7 @@ export function MasseSalarialeDashboard({
                           </div>
                         </td>
                         <td className="px-6 py-7 text-right">
-                          <span className="font-bold text-slate-900 text-lg tracking-tight tabular-nums group-hover:text-indigo-600 transition-colors">
+                          <span className="font-bold text-slate-900 text-lg tracking-tight tabular-nums group-hover:text-teal-600 transition-colors">
                             {fmt(coutTotal)}
                           </span>
                         </td>
@@ -505,7 +505,7 @@ export function MasseSalarialeDashboard({
               </tbody>
               <tfoot className="relative border-t-2 border-slate-900 group-hover/table:translate-y-1 transition-transform duration-500">
                 <tr className="bg-slate-900 text-white relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-teal-600/10 via-transparent to-transparent pointer-events-none" />
                   
                   <td className="px-10 py-10 rounded-bl-[3rem] relative z-10">
                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400 mb-1">Résumé Global</p>
@@ -519,10 +519,10 @@ export function MasseSalarialeDashboard({
                   </td>
                   <td className="px-6 py-10 text-right relative z-10">
                     <div className="flex flex-col items-end">
-                      <span className="font-bold text-3xl tracking-tighter text-white tabular-nums drop-shadow-lg drop-shadow-indigo-500/20">
+                      <span className="font-bold text-3xl tracking-tighter text-white tabular-nums drop-shadow-lg drop-shadow-teal-500/20">
                         {fmt(coutTotalEmployeur)}
                       </span>
-                      <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mt-1">Coût Total Entreprise</span>
+                      <span className="text-[10px] font-bold text-teal-400 uppercase tracking-widest mt-1">Coût Total Entreprise</span>
                     </div>
                   </td>
                   <td className="px-10 py-10 text-right rounded-br-[3rem] relative z-10 hidden md:table-cell">

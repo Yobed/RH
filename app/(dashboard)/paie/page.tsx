@@ -128,7 +128,7 @@ export default async function PaiePage({
       )}
 
       {/* Rappel légal */}
-      <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm text-blue-800">
+      <div className="rounded-2xl border border-teal-100 bg-teal-50/60 p-4 text-sm text-teal-800">
         <p className="font-semibold mb-2">Calcul automatique — Références légales 2026</p>
         <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-xs sm:grid-cols-2 md:grid-cols-3">
           <span>CNPS retraite salarié : <strong>6,3%</strong> (plafond 3 375 000 FCFA/mois)</span>

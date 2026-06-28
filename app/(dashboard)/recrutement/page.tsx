@@ -22,7 +22,7 @@ const statutConfig: Record<string, { label: string; dot: string; text: string; b
   nouveau:   { label: "Nouveau",   dot: "bg-slate-400",   text: "text-slate-600",  bg: "bg-slate-50"   },
   en_cours:  { label: "En cours",  dot: "bg-amber-400",   text: "text-amber-700",  bg: "bg-amber-50"   },
   shortlist: { label: "Shortlist", dot: "bg-sky-500",     text: "text-sky-700",    bg: "bg-sky-50"     },
-  entretien: { label: "Entretien", dot: "bg-violet-500",  text: "text-violet-700", bg: "bg-violet-50"  },
+  entretien: { label: "Entretien", dot: "bg-slate-500",  text: "text-slate-700", bg: "bg-slate-50"  },
   offre:     { label: "Offre",     dot: "bg-emerald-500", text: "text-emerald-700",bg: "bg-emerald-50" },
   embauche:  { label: "Embauché",  dot: "bg-green-500",   text: "text-green-700",  bg: "bg-green-50"   },
   refus:     { label: "Refus",     dot: "bg-red-400",     text: "text-red-700",    bg: "bg-red-50"     },
@@ -233,7 +233,7 @@ export default async function RecrutementPage() {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <button className="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
+                              <button className="text-slate-400 hover:text-teal-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
                                 <Info size={18} weight="bold" />
                               </button>
                             </td>

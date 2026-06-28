@@ -607,7 +607,7 @@ export function EmployeeDialog({
               <div>
                 <label className="text-sm font-medium">
                   Catégorie professionnelle
-                  <span className="ml-1 text-[10px] text-blue-600 font-normal">
+                  <span className="ml-1 text-[10px] text-teal-600 font-normal">
                     (auto-remplit le salaire de base)
                   </span>
                 </label>
@@ -738,7 +738,7 @@ export function EmployeeDialog({
               <div>
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">03</span> Prime d&apos;ancienneté
-                  <span className="ml-1 text-[10px] text-blue-500 font-normal">(auto — 1%/an)</span>
+                  <span className="ml-1 text-[10px] text-teal-500 font-normal">(auto — 1%/an)</span>
                 </label>
                 <Input disabled value="Calculée automatiquement" className="mt-1 bg-muted text-muted-foreground text-xs" />
               </div>

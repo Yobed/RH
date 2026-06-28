@@ -105,7 +105,7 @@ export function CalculateurConventions() {
             ))}
             <div className="flex justify-between px-5 py-4 text-sm font-bold">
               <span className="text-foreground">Total brut mensuel</span>
-              <span className="text-indigo-400 text-base">{fmt(coutTotal)}</span>
+              <span className="text-teal-400 text-base">{fmt(coutTotal)}</span>
             </div>
           </div>
 

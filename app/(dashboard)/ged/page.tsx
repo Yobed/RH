@@ -62,8 +62,8 @@ export default async function GedPage({ searchParams }: PageProps) {
       {/* Statistiques */}
       <div className="grid grid-cols-3 gap-4">
         <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
-            <Users className="h-5 w-5 text-indigo-600" />
+          <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center shrink-0">
+            <Users className="h-5 w-5 text-teal-600" />
           </div>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Employés</p>
@@ -141,7 +141,7 @@ export default async function GedPage({ searchParams }: PageProps) {
               <Link
                 key={emp.id}
                 href={`/ged/${emp.id}`}
-                className="group relative flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_24px_-4px_rgba(99,102,241,0.15)] hover:border-indigo-200 transition-all duration-200"
+                className="group relative flex flex-col gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_24px_-4px_rgba(99,102,241,0.15)] hover:border-teal-200 transition-all duration-200"
               >
                 {/* Indicateur complétude */}
                 <div
@@ -151,11 +151,11 @@ export default async function GedPage({ searchParams }: PageProps) {
 
                 {/* Avatar + identité */}
                 <div className="flex items-start gap-3">
-                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
+                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0">
                     {initials}
                   </div>
                   <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="font-semibold text-slate-800 text-sm truncate leading-tight group-hover:text-indigo-700 transition-colors">
+                    <p className="font-semibold text-slate-800 text-sm truncate leading-tight group-hover:text-teal-700 transition-colors">
                       {emp.full_name}
                     </p>
                     <p className="text-[11px] text-slate-500 mt-0.5 truncate">{emp.poste}</p>
@@ -172,7 +172,7 @@ export default async function GedPage({ searchParams }: PageProps) {
                     {stats.total} doc{stats.total !== 1 ? "s" : ""}
                   </span>
                   {hasContrat && (
-                    <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-600">
+                    <span className="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-semibold text-teal-600">
                       Contrat ✓
                     </span>
                   )}
@@ -193,7 +193,7 @@ export default async function GedPage({ searchParams }: PageProps) {
                       </span>
                     )}
                   </div>
-                  <span className="text-[11px] font-semibold text-indigo-500 group-hover:text-indigo-700 flex items-center gap-1 transition-colors">
+                  <span className="text-[11px] font-semibold text-teal-500 group-hover:text-teal-700 flex items-center gap-1 transition-colors">
                     Dossier
                     <svg
                       className="h-3.5 w-3.5 translate-x-0 group-hover:translate-x-0.5 transition-transform"

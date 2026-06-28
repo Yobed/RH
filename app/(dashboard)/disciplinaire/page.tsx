@@ -19,7 +19,7 @@ const typeConfig: Record<string, { text: string; bg: string }> = {
   mise_a_pied:                { text: "text-orange-700", bg: "bg-orange-50" },
   licenciement:               { text: "text-red-700",    bg: "bg-red-50"    },
   demande_d_explication:      { text: "text-sky-700",    bg: "bg-sky-50"    },
-  blâme:                      { text: "text-purple-700", bg: "bg-purple-50" },
+  blâme:                      { text: "text-slate-700", bg: "bg-slate-50" },
 };
 
 function getStatutCfg(statut: string) {

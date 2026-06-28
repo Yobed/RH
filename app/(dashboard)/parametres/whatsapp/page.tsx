@@ -73,7 +73,7 @@ export default function WhatsAppPage() {
               href="https://wasenderapi.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-500 hover:underline"
+              className="text-teal-500 hover:underline"
             >
               Wasender API
             </a>{" "}
@@ -91,7 +91,7 @@ export default function WhatsAppPage() {
               type="checkbox"
               checked={config.enabled}
               onChange={(e) => setConfig((c) => ({ ...c, enabled: e.target.checked }))}
-              className="w-4 h-4 accent-indigo-600"
+              className="w-4 h-4 accent-teal-600"
             />
           </label>
         </div>
@@ -111,7 +111,7 @@ export default function WhatsAppPage() {
             />
             <p className="text-xs text-muted-foreground/70 mt-1">
               Obtenez votre clé sur{" "}
-              <a href="https://app.wasenderapi.com/settings" target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:underline">
+              <a href="https://app.wasenderapi.com/settings" target="_blank" rel="noopener noreferrer" className="text-teal-500 hover:underline">
                 app.wasenderapi.com/settings
               </a>
             </p>
@@ -135,7 +135,7 @@ export default function WhatsAppPage() {
           <button
             onClick={save}
             disabled={saving}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+            className="px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 disabled:opacity-60 transition-colors"
           >
             {saving ? "Sauvegarde…" : "Sauvegarder"}
           </button>

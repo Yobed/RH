@@ -112,7 +112,7 @@ export default function DelegationsPage() {
                           : f.modules.filter((m) => m !== mod),
                       }))
                     }
-                    className="accent-indigo-600"
+                    className="accent-teal-600"
                   />
                   {mod}
                 </label>
@@ -140,7 +140,7 @@ export default function DelegationsPage() {
         </div>
         <button
           onClick={create}
-          className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Créer la délégation
@@ -156,7 +156,7 @@ export default function DelegationsPage() {
             <div key={d.id} className="rounded-xl border border-border bg-card p-4 flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">
-                  Délégué à : <span className="text-indigo-400">{d.delegataire?.full_name ?? "—"}</span>
+                  Délégué à : <span className="text-teal-400">{d.delegataire?.full_name ?? "—"}</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Du {d.date_debut} au {d.date_fin} · Modules : {d.modules.join(", ")}

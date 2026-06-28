@@ -62,7 +62,7 @@ export function ScoreCvButton({ candidateId, hasScore }: Props) {
         "h-8 px-3 gap-2 rounded-full transition-all duration-300",
         hasScore 
           ? "text-slate-500 hover:text-slate-900 hover:bg-slate-100" 
-          : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 ring-1 ring-indigo-200/50"
+          : "bg-teal-50 text-teal-700 hover:bg-teal-100 ring-1 ring-teal-200/50"
       )}
     >
       {loading ? (

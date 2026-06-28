@@ -213,11 +213,11 @@ export function CommandPalette() {
                       key={cmd.id}
                       value={cmd.id}
                       onSelect={() => navigate(cmd.href)}
-                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 cursor-pointer outline-none aria-selected:bg-indigo-50 dark:aria-selected:bg-indigo-900/20 aria-selected:text-indigo-700 dark:aria-selected:text-indigo-300 transition-colors"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 dark:text-slate-300 cursor-pointer outline-none aria-selected:bg-teal-50 dark:aria-selected:bg-teal-900/20 aria-selected:text-teal-700 dark:aria-selected:text-teal-300 transition-colors"
                     >
                       <Icon
                         weight="duotone"
-                        className="h-4 w-4 shrink-0 text-slate-400 aria-selected:text-indigo-500"
+                        className="h-4 w-4 shrink-0 text-slate-400 aria-selected:text-teal-500"
                       />
                       <span className="flex-1 font-medium">{cmd.label}</span>
                       <span className="text-[10px] text-slate-400 dark:text-slate-500 hidden sm:block">
@@ -268,7 +268,7 @@ export function CommandPaletteButton() {
         });
         window.dispatchEvent(event);
       }}
-      className="hidden sm:flex items-center gap-2.5 h-9 sm:w-60 md:w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-sm text-slate-400 dark:text-slate-500 hover:border-blue-300 hover:text-slate-600 dark:hover:border-blue-700 dark:hover:text-slate-300 transition-colors"
+      className="hidden sm:flex items-center gap-2.5 h-9 sm:w-60 md:w-80 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 text-sm text-slate-400 dark:text-slate-500 hover:border-teal-300 hover:text-slate-600 dark:hover:border-teal-700 dark:hover:text-slate-300 transition-colors"
       title="Rechercher une page ou un module (Ctrl+K)"
     >
       <MagnifyingGlass className="h-4 w-4 shrink-0" weight="bold" />

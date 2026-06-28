@@ -45,7 +45,7 @@ export function GedSearchEmployes({ initialQ }: Props) {
         value={value}
         onChange={handleChange}
         placeholder="Rechercher un employé..."
-        className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-9 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
+        className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-9 text-sm text-slate-800 placeholder:text-slate-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 transition-all"
       />
       {value && (
         <button

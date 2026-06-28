@@ -61,7 +61,7 @@ const SEVERITY_COLORS: Record<Severity, { bg: string; text: string; border: stri
   critique: { bg: "bg-red-50",    text: "text-red-700",    border: "border-red-200",    dot: "bg-red-500" },
   eleve:    { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", dot: "bg-orange-500" },
   moyen:    { bg: "bg-amber-50",  text: "text-amber-700",  border: "border-amber-200",  dot: "bg-amber-500" },
-  info:     { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-200",   dot: "bg-blue-500" },
+  info:     { bg: "bg-teal-50",   text: "text-teal-700",   border: "border-teal-200",   dot: "bg-teal-500" },
 };
 
 const SEVERITY_LABELS: Record<Severity, string> = {
@@ -251,7 +251,7 @@ export default async function AnomaliesPaiePage({ searchParams }: PageProps) {
             type="month"
             name="periode"
             defaultValue={periode}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
           />
           <button
             type="submit"
@@ -357,7 +357,7 @@ export default async function AnomaliesPaiePage({ searchParams }: PageProps) {
                           <div className="flex items-center gap-2 flex-wrap">
                             <Link
                               href={`/employes/${a.employeeId}`}
-                              className="font-semibold text-slate-800 hover:text-indigo-600 transition-colors"
+                              className="font-semibold text-slate-800 hover:text-teal-600 transition-colors"
                             >
                               {a.fullName}
                             </Link>

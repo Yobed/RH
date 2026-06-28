@@ -109,7 +109,7 @@ export function DocumentAnalyzerDialog({ doc, onClose }: Props) {
         {/* Barre supérieure style Odoo */}
         <header className="flex items-center justify-between gap-3 px-5 py-3 border-b border-slate-200 bg-slate-50/60 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="h-7 w-7 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
+            <div className="h-7 w-7 rounded-lg bg-teal-600 flex items-center justify-center shrink-0">
               <FileText className="h-4 w-4 text-white" />
             </div>
             <div className="min-w-0">
@@ -127,7 +127,7 @@ export function DocumentAnalyzerDialog({ doc, onClose }: Props) {
               onClick={runAnalysis}
               disabled={analyzing}
               size="sm"
-              className="gap-1.5 bg-gradient-to-br from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-sm"
+              className="gap-1.5 bg-gradient-to-br from-slate-600 to-teal-600 hover:from-slate-700 hover:to-teal-700 text-white shadow-sm"
             >
               {analyzing ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -166,9 +166,9 @@ export function DocumentAnalyzerDialog({ doc, onClose }: Props) {
           <section className="w-full lg:w-[46%] overflow-y-auto border-r border-slate-200 bg-white">
             <div className="p-5 space-y-5">
               {/* Bandeau IA */}
-              <div className="rounded-xl border border-violet-100 bg-gradient-to-br from-violet-50 to-indigo-50 p-4">
+              <div className="rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-teal-50 p-4">
                 <div className="flex items-start gap-3">
-                  <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-slate-600 to-teal-600 flex items-center justify-center shrink-0 shadow-sm">
                     <Bot className="h-4.5 w-4.5 text-white" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -227,7 +227,7 @@ export function DocumentAnalyzerDialog({ doc, onClose }: Props) {
                     Champs détectés
                   </p>
                   {extracted?.type_document && (
-                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-bold text-indigo-700 uppercase tracking-wide">
+                    <span className="inline-flex items-center rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-700 uppercase tracking-wide">
                       {extracted.type_document}
                     </span>
                   )}
@@ -332,7 +332,7 @@ export function DocumentAnalyzerDialog({ doc, onClose }: Props) {
                   href={doc.file_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700"
                 >
                   <Download className="h-3.5 w-3.5" /> Télécharger
                 </a>

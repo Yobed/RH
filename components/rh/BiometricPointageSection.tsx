@@ -222,21 +222,21 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
   const typeConfig = {
     arrivee: { label: "Arrivée Matin", icon: Sun, badgeClass: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800" },
-    pause: { label: "Pause Déjeuner", icon: Coffee, badgeClass: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800" },
+    pause: { label: "Pause Déjeuner", icon: Coffee, badgeClass: "bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800" },
     reprise: { label: "Reprise Travail", icon: Briefcase, badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800" },
-    depart: { label: "Départ Soir", icon: Moon, badgeClass: "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800" }
+    depart: { label: "Départ Soir", icon: Moon, badgeClass: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-950/40 dark:text-slate-300 dark:border-slate-800" }
   };
 
   return (
     <div className="space-y-6">
       {/* Top Hero Banner & Kiosk Controller */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-slate-800">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-slate-800">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-[#0d9488]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="max-w-xl space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-bold border border-indigo-400/30">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-bold border border-teal-400/30">
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Borne Biométrique Active • Station #01 HQ Abidjan
             </div>
@@ -304,7 +304,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
         <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-[10px] font-extrabold uppercase tracking-wider">Arrivées Valides</span>
-            <UserCheck className="h-4 w-4 text-indigo-500" />
+            <UserCheck className="h-4 w-4 text-teal-500" />
           </div>
           <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.arrivees}
@@ -423,7 +423,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                       {/* Collaborateur */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-indigo-500 to-[#0d9488] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-teal-500 to-[#0d9488] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                             {log.employeeName.charAt(0)}
                           </div>
                           <div>
@@ -484,7 +484,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                       <td className="py-3.5 px-4 whitespace-nowrap text-right">
                         <button
                           onClick={() => setSelectedLog(log)}
-                          className="px-2.5 py-1 rounded-lg text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors inline-flex items-center gap-1"
+                          className="px-2.5 py-1 rounded-lg text-xs font-semibold text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/50 transition-colors inline-flex items-center gap-1"
                         >
                           <Eye className="h-3.5 w-3.5" />
                           <span>Inspecter</span>
@@ -544,7 +544,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                   <span className="text-slate-500 font-medium">Méthode Cryptographique</span>
-                  <span className="font-mono text-indigo-600 dark:text-indigo-400">SHA-256 + IA 3D Mesh</span>
+                  <span className="font-mono text-teal-600 dark:text-teal-400">SHA-256 + IA 3D Mesh</span>
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                   <span className="text-slate-500 font-medium">Horodatage Infalsifiable</span>

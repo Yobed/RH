@@ -52,7 +52,7 @@ export function EvaluationStatusButton({ id, statut }: Props) {
         onClick={() => updateStatut("EN_COURS")}
         disabled={loading}
         title="Démarrer l'évaluation"
-        className="flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-1 text-xs text-blue-700 hover:bg-blue-100 transition-colors disabled:opacity-50 mx-auto"
+        className="flex items-center gap-1 rounded-md bg-teal-50 border border-teal-200 px-2 py-1 text-xs text-teal-700 hover:bg-teal-100 transition-colors disabled:opacity-50 mx-auto"
       >
         <Play className="h-3 w-3" />
         Démarrer

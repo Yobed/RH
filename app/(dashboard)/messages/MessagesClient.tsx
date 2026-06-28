@@ -156,7 +156,7 @@ export function MessagesClient({ currentUserId }: { currentUserId: string }) {
                 className={cn(
                   "w-full text-left px-4 py-3 hover:bg-slate-50/80 transition-colors",
                   selected?.id === msg.id && "bg-slate-50",
-                  !msg.lu && box === "inbox" && "bg-blue-50/40"
+                  !msg.lu && box === "inbox" && "bg-teal-50/40"
                 )}
               >
                 <div className="flex items-start gap-3">

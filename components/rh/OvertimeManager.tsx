@@ -48,7 +48,7 @@ const HEURES_MENSUELLES = 173.33;
 const CATEGORIES: Record<string, { label: string; factor: number; tone: string }> = {
   "15%":  { label: "15 %",  factor: 1.15, tone: "bg-sky-50 text-sky-700 border-sky-200" },
   "50%":  { label: "50 %",  factor: 1.50, tone: "bg-amber-50 text-amber-700 border-amber-200" },
-  "75%":  { label: "75 %",  factor: 1.75, tone: "bg-violet-50 text-violet-700 border-violet-200" },
+  "75%":  { label: "75 %",  factor: 1.75, tone: "bg-slate-50 text-slate-700 border-slate-200" },
   "100%": { label: "100 %", factor: 2.00, tone: "bg-rose-50 text-rose-700 border-rose-200" },
 };
 

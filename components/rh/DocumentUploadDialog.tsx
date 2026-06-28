@@ -155,11 +155,11 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
             onClick={() => fileRef.current?.click()}
-            className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center hover:border-indigo-400 hover:bg-slate-50 transition-all group"
+            className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center hover:border-teal-400 hover:bg-slate-50 transition-all group"
           >
             {file ? (
               <div className="flex items-center justify-center gap-2 text-sm">
-                <FileText className="h-5 w-5 text-indigo-600" />
+                <FileText className="h-5 w-5 text-teal-600" />
                 <span className="font-semibold text-slate-800">{file.name}</span>
                 <button
                   type="button"
@@ -175,7 +175,7 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
               </div>
             ) : (
               <div>
-                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
                   <Upload className="h-5 w-5" />
                 </div>
                 <p className="text-sm font-medium text-slate-800">
@@ -235,7 +235,7 @@ export function DocumentUploadDialog({ employeeId, companyId }: Props) {
           <Button
             onClick={handleUpload}
             disabled={uploading || !file || !name.trim()}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white min-w-[120px]"
+            className="bg-teal-600 hover:bg-teal-700 text-white min-w-[120px]"
           >
             {uploading ? (
               <>

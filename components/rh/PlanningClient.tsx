@@ -230,7 +230,7 @@ export function PlanningClient({ employees, shifts, assignments, weekStart }: Pr
                   {days.map(d => (
                     <th
                       key={d.toISOString()}
-                      className={`border-b border-slate-200 px-2 py-3 text-center text-[10px] font-semibold uppercase tracking-widest min-w-[110px] ${isToday(d) ? "bg-blue-50 text-blue-700" : "bg-slate-50 text-slate-600"}`}
+                      className={`border-b border-slate-200 px-2 py-3 text-center text-[10px] font-semibold uppercase tracking-widest min-w-[110px] ${isToday(d) ? "bg-teal-50 text-teal-700" : "bg-slate-50 text-slate-600"}`}
                     >
                       <div>{format(d, "EEE", { locale: fr })}</div>
                       <div className="text-base font-bold normal-case tracking-normal">{format(d, "d", { locale: fr })}</div>
@@ -251,7 +251,7 @@ export function PlanningClient({ employees, shifts, assignments, weekStart }: Pr
                       const a = assignmentMap.get(`${emp.id}_${dateStr}`);
                       const shift = a ? shiftMap.get(a.shift_id) : null;
                       return (
-                        <td key={dateStr} className={`px-2 py-1.5 text-center border-r border-slate-50 ${isToday(d) ? "bg-blue-50/30" : ""}`}>
+                        <td key={dateStr} className={`px-2 py-1.5 text-center border-r border-slate-50 ${isToday(d) ? "bg-teal-50/30" : ""}`}>
                           {shift ? (
                             <button
                               onClick={() => setPicker({ empId: emp.id, date: dateStr })}
@@ -458,7 +458,7 @@ function ShiftManagerDialog({ shifts, onClose }: { shifts: Shift[]; onClose: () 
                   value={name}
                   onChange={e => setName(e.target.value)}
                   placeholder="ex: Matin"
-                  className="w-full h-9 px-3 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-300"
+                  className="w-full h-9 px-3 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-300"
                 />
               </div>
               <div>
@@ -468,7 +468,7 @@ function ShiftManagerDialog({ shifts, onClose }: { shifts: Shift[]; onClose: () 
                   onChange={e => setCode(e.target.value)}
                   placeholder="M"
                   maxLength={10}
-                  className="w-full h-9 px-3 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-300"
+                  className="w-full h-9 px-3 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-300"
                 />
               </div>
             </div>

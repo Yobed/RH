@@ -833,7 +833,7 @@ function BulletinRow({
       <td className="py-3 pr-4">
         <p className="text-sm font-medium text-slate-800">{label}</p>
       </td>
-      <td className="py-3 px-2 text-xs text-indigo-600 font-medium whitespace-nowrap">{ref_legale}</td>
+      <td className="py-3 px-2 text-xs text-teal-600 font-medium whitespace-nowrap">{ref_legale}</td>
       <td className="py-3 px-2 text-center text-xs text-slate-500 whitespace-nowrap">{calcul}</td>
       <td className="py-3 px-2 text-center">
         <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
