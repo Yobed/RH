@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Plus, Trash, Copy } from "@phosphor-icons/react";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 interface Webhook {
   id: string;
@@ -79,13 +80,11 @@ export default function WebhooksPage() {
   if (loading) return <div className="px-8 py-6 text-sm text-muted-foreground">Chargement…</div>;
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Webhooks</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Recevez des notifications en temps réel dans vos systèmes externes lors d'événements RH.
-        </p>
-      </div>
+    <PageShell width="narrow">
+      <PageHeader
+        title="Webhooks"
+        description="Recevez des notifications en temps réel dans vos systèmes externes lors d'événements RH."
+      />
 
       {/* Création */}
       <div className="rounded-xl border border-border bg-card p-5 space-y-4">
@@ -176,6 +175,6 @@ export default function WebhooksPage() {
           ))
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -29,7 +29,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
       <div className="group relative overflow-hidden bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-7 shadow-lg shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-[#FF8200]/5 transition-all duration-300">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">Effectif par Département</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-400">Effectif par Département</h3>
             <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">Répartition analytique des équipes</p>
           </div>
           <span className="h-2 w-2 rounded-full bg-[#FF8200]" />
@@ -63,7 +63,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
       <div className="group relative overflow-hidden bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-7 shadow-lg shadow-slate-200/40 dark:shadow-none hover:shadow-2xl hover:shadow-[#FF8200]/5 transition-all duration-300">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-400">Parité & Démographie</h3>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-400">Parité & Démographie</h3>
             <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">Ratio Homme / Femme</p>
           </div>
           <span className="h-2 w-2 rounded-full bg-slate-900 dark:bg-white" />

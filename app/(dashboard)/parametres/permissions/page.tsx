@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 const MODULES = ["employes", "paie", "conges", "recrutement", "formations", "documents", "analytique", "parametres"] as const;
 const PERMISSIONS = ["lire", "ecrire", "supprimer", "approuver"] as const;
@@ -107,13 +108,11 @@ export default function PermissionsPage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Permissions RBAC</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Configurez les droits d'accès par rôle et module. Les rôles admin et responsable_rh ont accès total par défaut.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Permissions RBAC"
+        description="Configurez les droits d'accès par rôle et module. Les rôles admin et responsable_rh ont accès total par défaut."
+      />
 
       {/* Sélecteur de rôle */}
       <div className="flex gap-2 flex-wrap">
@@ -174,6 +173,6 @@ export default function PermissionsPage() {
           {saving ? "Sauvegarde…" : "Sauvegarder les permissions"}
         </button>
       </div>
-    </div>
+    </PageShell>
   );
 }

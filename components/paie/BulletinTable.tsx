@@ -200,7 +200,7 @@ export function BulletinTable({ bulletins, employees, company, totalCount }: { b
       
       {totalPages > 1 && (
         <div className="bg-slate-50/50 px-6 py-4 border-t border-slate-50 flex items-center justify-between">
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:block">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
             {totalCount} bulletin{totalCount > 1 ? 's' : ''} indexé{totalCount > 1 ? 's' : ''}
           </div>
           

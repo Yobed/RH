@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { DocumentsRhClient } from "./DocumentsRhClient";
@@ -34,11 +35,11 @@ export default async function DocumentsRhPage() {
   });
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <DocumentsRhClient
         employees={employees ?? []}
         history={flattenedHistory}
       />
-    </div>
+    </PageShell>
   );
 }

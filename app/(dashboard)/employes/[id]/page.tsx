@@ -562,7 +562,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   Solde annuel {anneeEnCours} <span className="text-slate-400 font-normal ml-2"> (2,2 j/mois)</span>
                 </p>
                 <div className="py-2">
-                  <span className={`text-5xl font-black font-mono tabular-nums ${soldeCalc > 5 ? "text-emerald-600" : "text-amber-600"}`}>
+                  <span className={`text-5xl font-bold font-mono tabular-nums ${soldeCalc > 5 ? "text-emerald-600" : "text-amber-600"}`}>
                     {soldeCalc.toFixed(1)}
                   </span>
                   <span className="text-sm font-bold text-slate-600 ml-1">jours</span>

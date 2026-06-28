@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: "Anomalies de paie — RH Manager CI" };
 
 import { createServerClient } from "@/lib/supabase/server";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import Link from "next/link";
 import {
   AlertTriangle, TrendingUp, TrendingDown,
@@ -236,22 +236,12 @@ export default async function AnomaliesPaiePage({ searchParams }: PageProps) {
   const tauxAnomalie = totalControle ? Math.round((anomalies.length / totalControle) * 100) : 0;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      {/* En-tête */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-rose-600 flex items-center justify-center">
-            <AlertTriangle className="h-4 w-4 text-white" />
-          </div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Détection d'anomalies de paie</h1>
-            <PageHelp text="Repère automatiquement les écarts et erreurs de paie (salaires hors barème, cotisations incohérentes, doublons) avant de valider les bulletins." />
-          </div>
-        </div>
-        <p className="text-sm text-slate-500 ml-10">
-          Analyse automatique du bulletin {periode} par rapport aux 3 mois précédents — variations, retenues, manquants.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Détection d'anomalies de paie"
+        description={`Analyse automatique du bulletin ${periode} par rapport aux 3 mois précédents — variations, retenues, manquants.`}
+        help="Repère automatiquement les écarts et erreurs de paie (salaires hors barème, cotisations incohérentes, doublons) avant de valider les bulletins."
+      />
 
       {/* Sélecteur de période + KPIs */}
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -423,6 +413,6 @@ export default async function AnomaliesPaiePage({ searchParams }: PageProps) {
           <li>Référence calculée sur les 3 bulletins précédents. Pas d'analyse si historique &lt; 1 bulletin.</li>
         </ul>
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { PointageAdminClient } from "@/components/rh/PointageAdminClient";
 import { startOfWeek, addDays, format, parseISO, isValid } from "date-fns";
@@ -32,12 +33,12 @@ export default async function PointagePage({ searchParams }: Props) {
   ]);
 
   return (
-    <div className="p-6">
+    <PageShell>
       <PointageAdminClient
         employees={employees ?? []}
         entries={entries ?? []}
         weekStart={fromStr}
       />
-    </div>
+    </PageShell>
   );
 }

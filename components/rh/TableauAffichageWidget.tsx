@@ -351,7 +351,7 @@ export function TableauAffichageWidget() {
               </div>
 
               {/* Post Title & Content */}
-              <h5 className="text-xs font-black text-slate-800 dark:text-slate-200 mb-1">{post.title}</h5>
+              <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-1">{post.title}</h5>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3 whitespace-pre-line">{post.content}</p>
 
               {/* Attached Image */}

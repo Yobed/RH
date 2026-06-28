@@ -223,12 +223,12 @@ export function GuidedWorkflowWorkspace({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#FF8200]/10 text-[#FF8200] text-[10px] font-black uppercase tracking-wider border border-[#FF8200]/20">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#FF8200]/10 text-[#FF8200] text-[10px] font-bold uppercase tracking-wider border border-[#FF8200]/20">
                     Workflow Guidé RH
                   </span>
                   <span className="text-xs font-bold text-slate-400">· Standard Détecter → Agir → Tracer</span>
                 </div>
-                <DialogTitle className="text-lg font-black text-slate-900 dark:text-white tracking-tight mt-0.5">
+                <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white tracking-tight mt-0.5">
                   {meta.title}
                 </DialogTitle>
                 <DialogDescription className="text-xs font-bold text-slate-500 dark:text-slate-400">
@@ -253,7 +253,7 @@ export function GuidedWorkflowWorkspace({
                     onClick={() => isPassed && setCurrentStep(step.num as any)}
                     className={`flex items-center gap-3 cursor-pointer transition-all ${isPassed ? "hover:opacity-80" : ""}`}
                   >
-                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-black transition-all ${
+                    <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all ${
                       isActive 
                         ? "bg-[#FF8200] text-white shadow-lg shadow-[#FF8200]/30 ring-4 ring-[#FF8200]/20 scale-105" 
                         : isPassed 
@@ -263,7 +263,7 @@ export function GuidedWorkflowWorkspace({
                       {isPassed ? <Check className="h-5 w-5 stroke-[3]" /> : step.num}
                     </div>
                     <div className="hidden sm:block">
-                      <p className={`text-xs font-black leading-none ${isActive ? "text-[#FF8200]" : isPassed ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
+                      <p className={`text-xs font-bold leading-none ${isActive ? "text-[#FF8200]" : isPassed ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
                         {step.label}
                       </p>
                       <p className="text-[10px] font-bold text-slate-400 mt-1">{step.desc}</p>
@@ -292,7 +292,7 @@ export function GuidedWorkflowWorkspace({
                     <div className="flex items-center gap-3">
                       <ShieldCheck className="h-6 w-6 text-emerald-600 shrink-0" />
                       <div>
-                        <h4 className="text-sm font-black text-emerald-950 dark:text-emerald-200">
+                        <h4 className="text-sm font-bold text-emerald-950 dark:text-emerald-200">
                           Vérification Pré-Embauche & Completiude
                         </h4>
                         <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
@@ -304,7 +304,7 @@ export function GuidedWorkflowWorkspace({
                       variant="outline" 
                       size="sm"
                       onClick={() => setChecklist({ cni: true, cnps: true, rib: true, diplome: true, visiteMedicale: true })}
-                      className="text-xs font-black text-emerald-700 border-emerald-300 hover:bg-emerald-100"
+                      className="text-xs font-bold text-emerald-700 border-emerald-300 hover:bg-emerald-100"
                     >
                       Tout valider
                     </Button>
@@ -339,13 +339,13 @@ export function GuidedWorkflowWorkspace({
                 <div className="space-y-4 text-center py-4">
                   <div className="max-w-md mx-auto bg-slate-50 dark:bg-slate-800/60 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
                     <UserPlus className="h-10 w-10 text-[#FF8200] mx-auto mb-3" />
-                    <h4 className="text-base font-black text-slate-900 dark:text-white">Formulaire d'Immatriculation</h4>
+                    <h4 className="text-base font-bold text-slate-900 dark:text-white">Formulaire d'Immatriculation</h4>
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1 mb-4 leading-relaxed">
                       Saisissez l'identité, le poste, la grille salariale et le type de contrat du nouveau collaborateur.
                     </p>
                     <Button 
                       onClick={() => setChildDialogOpen(true)}
-                      className="bg-[#FF8200] hover:bg-[#E07400] text-white font-black text-xs px-6 py-2.5 rounded-xl shadow-md shadow-[#FF8200]/20 w-full"
+                      className="bg-[#FF8200] hover:bg-[#E07400] text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-md shadow-[#FF8200]/20 w-full"
                     >
                       Ouvrir le Formulaire Salarié Complet
                     </Button>
@@ -368,7 +368,7 @@ export function GuidedWorkflowWorkspace({
                 <div className="space-y-4">
                   <div className="bg-slate-900 text-white p-5 rounded-2xl space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <span className="text-xs font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1.5">
+                      <span className="text-xs font-bold uppercase text-emerald-400 tracking-wider flex items-center gap-1.5">
                         <CheckCircle2 className="h-4 w-4" /> Traçabilité RH Garanties
                       </span>
                       <span className="text-[10px] font-bold text-slate-400">Journal d'Audit en Direct</span>
@@ -385,7 +385,7 @@ export function GuidedWorkflowWorkspace({
                     <div className="flex items-center gap-3">
                       <FileText className="h-6 w-6 text-[#FF8200]" />
                       <div>
-                        <p className="text-xs font-black text-slate-900 dark:text-white">Contrat de Travail & Fiche D'accueil</p>
+                        <p className="text-xs font-bold text-slate-900 dark:text-white">Contrat de Travail & Fiche D'accueil</p>
                         <p className="text-[11px] font-bold text-slate-500">Prêt à l'impression et à la signature électronique.</p>
                       </div>
                     </div>
@@ -393,7 +393,7 @@ export function GuidedWorkflowWorkspace({
                       variant="outline" 
                       size="sm"
                       onClick={() => toast.success("Téléchargement du Pack d'Embauche PDF commencé...")}
-                      className="text-xs font-black border-slate-300 flex items-center gap-2"
+                      className="text-xs font-bold border-slate-300 flex items-center gap-2"
                     >
                       <Download className="h-4 w-4" /> Générer Pack PDF
                     </Button>
@@ -414,7 +414,7 @@ export function GuidedWorkflowWorkspace({
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />
                       <div>
-                        <h4 className="text-xs font-black text-rose-950 dark:text-rose-200">
+                        <h4 className="text-xs font-bold text-rose-950 dark:text-rose-200">
                           {expiringCdds.length} Contrat(s) CDD sous surveillance (&lt; 30 jours)
                         </h4>
                         <p className="text-[11px] font-bold text-rose-700 dark:text-rose-400">
@@ -428,11 +428,11 @@ export function GuidedWorkflowWorkspace({
                     {expiringCdds.map((emp) => (
                       <div key={emp.id} className="p-4 bg-white dark:bg-slate-800/40 flex items-center justify-between gap-4">
                         <div>
-                          <p className="text-sm font-black text-slate-900 dark:text-white">{emp.full_name}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{emp.full_name}</p>
                           <p className="text-xs font-bold text-slate-500">{emp.poste} · {emp.departement}</p>
                         </div>
                         <div className="text-right">
-                          <span className="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 text-xs font-black border border-rose-500/20 inline-block">
+                          <span className="px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-600 text-xs font-bold border border-rose-500/20 inline-block">
                             Terme : {emp.date_fin_contrat || "Sous 30j"}
                           </span>
                         </div>
@@ -451,7 +451,7 @@ export function GuidedWorkflowWorkspace({
                       return (
                         <div key={emp.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div>
-                            <p className="text-sm font-black text-slate-900 dark:text-white">{emp.full_name}</p>
+                            <p className="text-sm font-bold text-slate-900 dark:text-white">{emp.full_name}</p>
                             <p className="text-xs font-bold text-slate-400">{emp.poste}</p>
                           </div>
                           <div className="flex items-center gap-2 flex-wrap">
@@ -463,7 +463,7 @@ export function GuidedWorkflowWorkspace({
                               <button
                                 key={btn.id}
                                 onClick={() => setCddDecisions({ ...cddDecisions, [emp.id]: btn.id as any })}
-                                className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                                   decision === btn.id
                                     ? "bg-[#FF8200] text-white shadow-md shadow-[#FF8200]/20"
                                     : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
@@ -483,14 +483,14 @@ export function GuidedWorkflowWorkspace({
               {currentStep === 3 && (
                 <div className="space-y-4">
                   <div className="bg-slate-900 text-white p-5 rounded-2xl space-y-2">
-                    <p className="text-xs font-black uppercase text-emerald-400 tracking-wider">✓ Traçabilité & Mise à jour RH</p>
+                    <p className="text-xs font-bold uppercase text-emerald-400 tracking-wider">✓ Traçabilité & Mise à jour RH</p>
                     {auditLogs.map((log, idx) => (
                       <p key={idx} className="text-xs font-mono text-slate-300">{log}</p>
                     ))}
                   </div>
                   <Button 
                     onClick={() => toast.success("Avenants et notifications générés !")}
-                    className="w-full bg-[#FF8200] text-white font-black text-xs py-3 rounded-xl"
+                    className="w-full bg-[#FF8200] text-white font-bold text-xs py-3 rounded-xl"
                   >
                     Générer les Avenants & Mettre à jour les Dossiers
                   </Button>
@@ -509,23 +509,23 @@ export function GuidedWorkflowWorkspace({
                   <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-900/40 flex items-center gap-3">
                     <Calculator className="h-6 w-6 text-amber-600 shrink-0" />
                     <div>
-                      <h4 className="text-xs font-black text-amber-950 dark:text-amber-200">Contrôle des Variables Mensuelles</h4>
+                      <h4 className="text-xs font-bold text-amber-950 dark:text-amber-200">Contrôle des Variables Mensuelles</h4>
                       <p className="text-[11px] font-bold text-amber-700 dark:text-amber-400">Heures supplémentaires et absences à valider avant calcul du Livre de Paie.</p>
                     </div>
                   </div>
                   <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/40 space-y-2">
-                    <p className="text-xs font-black text-slate-800 dark:text-slate-200">Résumé des Prétraitements :</p>
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Résumé des Prétraitements :</p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-center text-xs">
                       <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <span className="block font-black text-slate-900 dark:text-white">{employees.length || 24}</span>
+                        <span className="block font-bold text-slate-900 dark:text-white">{employees.length || 24}</span>
                         <span className="text-[10px] text-slate-400">Bulletins à Générer</span>
                       </div>
                       <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <span className="block font-black text-[#FF8200]">20h</span>
+                        <span className="block font-bold text-[#FF8200]">20h</span>
                         <span className="text-[10px] text-slate-400">Heures Supp. à Valider</span>
                       </div>
                       <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <span className="block font-black text-emerald-600">100%</span>
+                        <span className="block font-bold text-emerald-600">100%</span>
                         <span className="text-[10px] text-slate-400">Conformité Barème</span>
                       </div>
                     </div>
@@ -539,7 +539,7 @@ export function GuidedWorkflowWorkspace({
                   {overtimeItems.map((ot) => (
                     <div key={ot.id} className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/60 flex items-center justify-between">
                       <div>
-                        <p className="text-xs font-black text-slate-900 dark:text-white">{ot.employee_name}</p>
+                        <p className="text-xs font-bold text-slate-900 dark:text-white">{ot.employee_name}</p>
                         <p className="text-[11px] text-slate-400">{ot.hours}h à {ot.rate} · {ot.departement}</p>
                       </div>
                       <Button
@@ -548,7 +548,7 @@ export function GuidedWorkflowWorkspace({
                           setOvertimeApproved({ ...overtimeApproved, [ot.id]: !overtimeApproved[ot.id] });
                           toast.success("Heures validées pour la paie !");
                         }}
-                        className={`text-xs font-black ${overtimeApproved[ot.id] ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
+                        className={`text-xs font-bold ${overtimeApproved[ot.id] ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"}`}
                       >
                         {overtimeApproved[ot.id] ? "✓ Validé" : "Approuver"}
                       </Button>
@@ -566,14 +566,14 @@ export function GuidedWorkflowWorkspace({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Button 
                       onClick={() => toast.success("Génération du Livre de Paie PDF...")}
-                      className="bg-[#FF8200] text-white font-black text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
+                      className="bg-[#FF8200] text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
                     >
                       <FileSpreadsheet className="h-4 w-4" /> Livre de Paie PDF
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => toast.success("Export Sage / X3 généré (CSV)")}
-                      className="border-slate-300 font-black text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
+                      className="border-slate-300 font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
                     >
                       <Download className="h-4 w-4" /> Export Comptable Sage
                     </Button>
@@ -593,7 +593,7 @@ export function GuidedWorkflowWorkspace({
                   <div className="p-3.5 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-900/40 flex items-center gap-3">
                     <CalendarCheck2 className="h-6 w-6 text-amber-600 shrink-0" />
                     <div>
-                      <h4 className="text-xs font-black text-amber-950 dark:text-amber-200">Arbitrage des Demandes d'Absence</h4>
+                      <h4 className="text-xs font-bold text-amber-950 dark:text-amber-200">Arbitrage des Demandes d'Absence</h4>
                       <p className="text-[11px] font-bold text-amber-700 dark:text-amber-400">{pendingConges.length} demande(s) en attente de validation.</p>
                     </div>
                   </div>
@@ -601,10 +601,10 @@ export function GuidedWorkflowWorkspace({
                     {pendingConges.map((c) => (
                       <div key={c.id} className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/40 flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-black text-slate-900 dark:text-white">{c.employee_name}</p>
+                          <p className="text-xs font-bold text-slate-900 dark:text-white">{c.employee_name}</p>
                           <p className="text-[11px] text-slate-500">{c.type_conge} ({c.jours} jours) · Du {c.date_debut} au {c.date_fin}</p>
                         </div>
-                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 text-[10px] font-black uppercase">En attente</span>
+                        <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase">En attente</span>
                       </div>
                     ))}
                   </div>
@@ -619,7 +619,7 @@ export function GuidedWorkflowWorkspace({
                     return (
                       <div key={c.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/60 flex items-center justify-between gap-4">
                         <div>
-                          <p className="text-sm font-black text-slate-900 dark:text-white">{c.employee_name}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{c.employee_name}</p>
                           <p className="text-xs font-bold text-slate-400">{c.type_conge} · {c.jours}j</p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -628,7 +628,7 @@ export function GuidedWorkflowWorkspace({
                               setCongesStatus({ ...congesStatus, [c.id]: "approved" });
                               toast.success(`Congé de ${c.employee_name} validé en 1-clic !`);
                             }}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition-all ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
                               st === "approved" ? "bg-emerald-600 text-white" : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
                             }`}
                           >
@@ -639,7 +639,7 @@ export function GuidedWorkflowWorkspace({
                               setCongesStatus({ ...congesStatus, [c.id]: "rejected" });
                               toast.error(`Congé de ${c.employee_name} refusé.`);
                             }}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition-all ${
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 transition-all ${
                               st === "rejected" ? "bg-rose-600 text-white" : "bg-rose-50 text-rose-700 hover:bg-rose-100"
                             }`}
                           >
@@ -660,7 +660,7 @@ export function GuidedWorkflowWorkspace({
                   </div>
                   <Button 
                     onClick={handleFinalize}
-                    className="w-full bg-[#FF8200] text-white font-black text-xs py-3 rounded-xl"
+                    className="w-full bg-[#FF8200] text-white font-bold text-xs py-3 rounded-xl"
                   >
                     Finaliser & Synchroniser avec le Planning Global
                   </Button>
@@ -677,7 +677,7 @@ export function GuidedWorkflowWorkspace({
             variant="ghost"
             disabled={currentStep === 1}
             onClick={() => setCurrentStep((prev) => (prev - 1) as any)}
-            className="text-xs font-black text-slate-600 dark:text-slate-300"
+            className="text-xs font-bold text-slate-600 dark:text-slate-300"
           >
             Étape Précédente
           </Button>
@@ -685,7 +685,7 @@ export function GuidedWorkflowWorkspace({
           {currentStep < 3 ? (
             <Button
               onClick={handleNextStep}
-              className="bg-[#FF8200] hover:bg-[#E07400] text-white font-black text-xs px-6 py-2 rounded-xl shadow-md shadow-[#FF8200]/20 flex items-center gap-2"
+              className="bg-[#FF8200] hover:bg-[#E07400] text-white font-bold text-xs px-6 py-2 rounded-xl shadow-md shadow-[#FF8200]/20 flex items-center gap-2"
             >
               <span>Passer à : {currentStep === 1 ? "Agir" : "Tracer"}</span>
               <ArrowRight className="h-4 w-4" />
@@ -693,7 +693,7 @@ export function GuidedWorkflowWorkspace({
           ) : (
             <Button
               onClick={handleFinalize}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-6 py-2 rounded-xl shadow-md shadow-emerald-600/20 flex items-center gap-2"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-6 py-2 rounded-xl shadow-md shadow-emerald-600/20 flex items-center gap-2"
             >
               <span>Terminer le Parcours Guidé</span>
               <CheckCircle2 className="h-4 w-4" />

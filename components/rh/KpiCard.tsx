@@ -95,7 +95,7 @@ export function KpiCard({
       <div className="relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[11px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 truncate">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 truncate">
             {label}
           </span>
           <div

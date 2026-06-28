@@ -104,9 +104,9 @@ const TINT: Record<Priority, string> = {
 };
 
 const CATEGORY_BADGE: Record<Category, string> = {
-  Urgence: "bg-rose-600 text-white shadow-xs font-black",
-  Opérationnel: "bg-amber-600 text-white shadow-xs font-black",
-  Analyse: "bg-sky-600 text-white shadow-xs font-black",
+  Urgence: "bg-rose-600 text-white shadow-xs font-bold",
+  Opérationnel: "bg-amber-600 text-white shadow-xs font-bold",
+  Analyse: "bg-sky-600 text-white shadow-xs font-bold",
 };
 
 export function ActionCenter({ items }: { items: ActionItem[] }) {
@@ -124,7 +124,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
           <CheckCircle2 className="h-6 w-6 shrink-0" />
         </div>
         <div>
-          <h4 className="text-sm font-black text-emerald-950 dark:text-emerald-200">Centre d'Action Dégagé</h4>
+          <h4 className="text-sm font-bold text-emerald-950 dark:text-emerald-200">Centre d'Action Dégagé</h4>
           <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">
             Tout est parfaitement à jour — aucune action urgente en attente.
           </p>
@@ -144,10 +144,10 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                 Flux RH Intelligents — Décisions Prioritaires
               </h2>
-              <span className="rounded-full bg-[#FF8200] text-white px-2.5 py-0.5 text-xs font-black shadow-xs">
+              <span className="rounded-full bg-[#FF8200] text-white px-2.5 py-0.5 text-xs font-bold shadow-xs">
                 {total} à traiter
               </span>
             </div>
@@ -157,7 +157,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
           </div>
         </div>
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 bg-white/80 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 bg-white/80 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
             ⚡ Hub Ultra-Décisionnel
           </span>
         </div>
@@ -180,14 +180,14 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                   <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform group-hover:scale-105 relative ${TINT[cfg.priority]}`}>
                     <Icon className="h-5.5 w-5.5 stroke-[2.25]" />
                     {isTop3 && (
-                      <span className="absolute -top-1.5 -left-1.5 h-5 w-5 rounded-full bg-[#FF8200] text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs">
+                      <span className="absolute -top-1.5 -left-1.5 h-5 w-5 rounded-full bg-[#FF8200] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs">
                         #{index + 1}
                       </span>
                     )}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="truncate text-sm font-black text-slate-900 dark:text-slate-100 group-hover:text-[#FF8200] transition-colors">
+                      <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#FF8200] transition-colors">
                         {cfg.label(item.count)}
                       </span>
                       <span className={`text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-md ${CATEGORY_BADGE[cfg.category]}`}>
@@ -196,7 +196,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                     </div>
                   </div>
                 </div>
-                <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#FF8200] hover:bg-[#E07400] px-4.5 py-2 text-xs font-black text-white transition-all shadow-md shadow-[#FF8200]/20 group-hover:scale-105 active:scale-95">
+                <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#FF8200] hover:bg-[#E07400] px-4.5 py-2 text-xs font-bold text-white transition-all shadow-md shadow-[#FF8200]/20 group-hover:scale-105 active:scale-95">
                   {cfg.cta}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </span>

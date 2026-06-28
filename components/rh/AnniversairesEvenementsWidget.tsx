@@ -69,8 +69,8 @@ export function AnniversairesEvenementsWidget() {
           {events.map((e, idx) => (
             <div key={idx} className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
               <div className="h-10 w-10 rounded-lg bg-amber-500 text-white flex flex-col items-center justify-center shrink-0 leading-none">
-                <span className="text-[9px] font-black uppercase tracking-wider opacity-90">{e.month}</span>
-                <span className="text-sm font-black mt-0.5">{e.day}</span>
+                <span className="text-[9px] font-bold uppercase tracking-wider opacity-90">{e.month}</span>
+                <span className="text-sm font-bold mt-0.5">{e.day}</span>
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{e.title}</p>

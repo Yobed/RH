@@ -120,14 +120,14 @@ function StatCard({ label, value, sublabel, colorTheme, icon, delay = 0 }: StatC
             {icon}
           </div>
           <div className="flex flex-col items-end">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-slate-500 transition-colors">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 group-hover:text-slate-500 transition-colors">
               {label}
             </span>
           </div>
         </div>
 
         <div className="space-y-1">
-          <h3 className="text-3xl font-black tracking-tight text-slate-900 group-hover:scale-[1.02] origin-left transition-transform duration-500 tabular-nums">
+          <h3 className="text-3xl font-bold tracking-tight text-slate-900 group-hover:scale-[1.02] origin-left transition-transform duration-500 tabular-nums">
             {fmt(value)}
           </h3>
           <div className="flex items-center gap-2">
@@ -241,13 +241,13 @@ export function MasseSalarialeDashboard({
               <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md">
                 <CurrencyCircleDollar size={20} weight="duotone" className="text-indigo-400" />
               </div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
                 Coût moyen / salarié
               </p>
             </div>
             
             <div className="mt-2">
-              <h3 className="text-4xl font-black tracking-tight tabular-nums group-hover:translate-x-1 transition-transform duration-500">
+              <h3 className="text-4xl font-bold tracking-tight tabular-nums group-hover:translate-x-1 transition-transform duration-500">
                 {nbBulletins > 0 ? fmt(Math.round(coutTotalEmployeur / nbBulletins)) : "—"}
               </h3>
               <p className="text-xs text-slate-500 mt-3 font-bold flex items-center gap-2">
@@ -280,7 +280,7 @@ export function MasseSalarialeDashboard({
               <TrendUp size={20} weight="duotone" className="text-slate-900" />
             </div>
             <div>
-               <h3 className="text-lg font-black text-slate-900 tracking-tight">Structure budgétaire</h3>
+               <h3 className="text-lg font-bold text-slate-900 tracking-tight">Structure budgétaire</h3>
                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Ventilation des flux</p>
             </div>
           </div>
@@ -325,8 +325,8 @@ export function MasseSalarialeDashboard({
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none transition-transform group-hover:scale-110 duration-500">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Flux</p>
-                <p className="text-3xl font-black text-slate-900 leading-none mt-1.5">100<span className="text-sm">%</span></p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Flux</p>
+                <p className="text-3xl font-bold text-slate-900 leading-none mt-1.5">100<span className="text-sm">%</span></p>
             </div>
           </div>
 
@@ -335,9 +335,9 @@ export function MasseSalarialeDashboard({
               <div key={item.name} className="flex items-center justify-between p-4 rounded-[1.5rem] bg-slate-50/50 border border-slate-100/50 transition-all duration-300 hover:bg-slate-100/80 hover:translate-x-1">
                 <div className="flex items-center gap-3">
                   <div className="h-4 w-4 rounded-full shadow-lg" style={{ backgroundColor: item.color, boxShadow: `0 4px 12px ${item.color}40` }} />
-                  <span className="text-xs font-black text-slate-700 tracking-tight">{item.name}</span>
+                  <span className="text-xs font-bold text-slate-700 tracking-tight">{item.name}</span>
                 </div>
-                <span className="text-xs font-black text-slate-900 tabular-nums">{fmt(item.value)}</span>
+                <span className="text-xs font-bold text-slate-900 tabular-nums">{fmt(item.value)}</span>
               </div>
             ))}
           </div>
@@ -359,14 +359,14 @@ export function MasseSalarialeDashboard({
                 <Bank size={28} weight="duotone" className="text-amber-400" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl font-black tracking-tight">Analyse des charges patronales</h3>
+                <h3 className="text-xl font-bold tracking-tight">Analyse des charges patronales</h3>
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
                   <span className="w-2 h-2 bg-emerald-500 rounded-full" />
                   Conformité CNPS Côte d'Ivoire 2026
                 </p>
               </div>
             </div>
-            <div className="hidden sm:flex px-5 py-2.5 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 backdrop-blur-md">
+            <div className="hidden sm:flex px-5 py-2.5 bg-white/5 rounded-2xl border border-white/10 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 backdrop-blur-md">
                Période {periode}
             </div>
           </div>
@@ -392,10 +392,10 @@ export function MasseSalarialeDashboard({
                     {charge.icon}
                   </div>
                 </div>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1.5 transition-colors group-hover/item:text-slate-400">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-1.5 transition-colors group-hover/item:text-slate-400">
                   {charge.label}
                 </span>
-                <span className="text-2xl font-black tracking-tighter tabular-nums text-white group-hover/item:scale-105 origin-left transition-transform duration-500">
+                <span className="text-2xl font-bold tracking-tighter tabular-nums text-white group-hover/item:scale-105 origin-left transition-transform duration-500">
                   {fmt(charge.val)}
                 </span>
               </motion.div>
@@ -414,13 +414,13 @@ export function MasseSalarialeDashboard({
           <div className="space-y-2">
             <div className="flex items-center gap-3">
                <div className="w-2 h-7 bg-slate-900 rounded-full" />
-               <h3 className="text-2xl font-black text-slate-900 tracking-tight font-heading">Coûts par Collaborateur</h3>
+               <h3 className="text-2xl font-bold text-slate-900 tracking-tight font-heading">Coûts par Collaborateur</h3>
             </div>
             <p className="text-sm text-slate-500 font-bold ml-5 uppercase tracking-widest opacity-60">Listing détaillé de la période</p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-slate-100/80 rounded-2xl border border-slate-200/50 backdrop-blur-sm group transition-all hover:bg-slate-900 hover:text-white">
              <User size={16} weight="duotone" className="group-hover:text-indigo-400 transition-colors" />
-             <span className="text-xs font-black uppercase tracking-widest tabular-nums">
+             <span className="text-xs font-bold uppercase tracking-widest tabular-nums">
                {nbBulletins} Effectifs totaux
              </span>
           </div>
@@ -433,11 +433,11 @@ export function MasseSalarialeDashboard({
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100 text-slate-400">
-                  <th className="px-10 py-7 text-left font-black uppercase tracking-[0.2em] text-[10px]">Collaborateur</th>
-                  <th className="px-6 py-7 text-right font-black uppercase tracking-[0.2em] text-[10px] hidden md:table-cell">Brut de Base</th>
-                  <th className="px-6 py-7 text-right font-black uppercase tracking-[0.2em] text-[10px] hidden lg:table-cell">Patronale (+%)</th>
-                  <th className="px-6 py-7 text-right font-black uppercase tracking-[0.2em] text-[10px]">Coût Entreprise</th>
-                  <th className="px-10 py-7 text-right font-black uppercase tracking-[0.2em] text-[10px] hidden md:table-cell">Net Salarié</th>
+                  <th className="px-10 py-7 text-left font-bold uppercase tracking-[0.2em] text-[10px]">Collaborateur</th>
+                  <th className="px-6 py-7 text-right font-bold uppercase tracking-[0.2em] text-[10px] hidden md:table-cell">Brut de Base</th>
+                  <th className="px-6 py-7 text-right font-bold uppercase tracking-[0.2em] text-[10px] hidden lg:table-cell">Patronale (+%)</th>
+                  <th className="px-6 py-7 text-right font-bold uppercase tracking-[0.2em] text-[10px]">Coût Entreprise</th>
+                  <th className="px-10 py-7 text-right font-bold uppercase tracking-[0.2em] text-[10px] hidden md:table-cell">Net Salarié</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -462,9 +462,9 @@ export function MasseSalarialeDashboard({
                               <div className="absolute -inset-1 bg-slate-900/5 rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
                             </div>
                             <div className="space-y-1">
-                              <p className="font-black text-slate-900 text-base tracking-tight">{b.employees?.full_name ?? "Collaborateur Externe"}</p>
+                              <p className="font-bold text-slate-900 text-base tracking-tight">{b.employees?.full_name ?? "Collaborateur Externe"}</p>
                               <div className="flex items-center gap-2">
-                                <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                                <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
                                   {b.employees?.matricule ?? "N/A"}
                                 </span>
                                 <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
@@ -479,20 +479,20 @@ export function MasseSalarialeDashboard({
                         </td>
                         <td className="px-6 py-7 text-right hidden lg:table-cell tabular-nums">
                           <div className="flex flex-col items-end gap-1">
-                             <span className="px-3 py-1 bg-amber-50 rounded-full text-[10px] font-black text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
+                             <span className="px-3 py-1 bg-amber-50 rounded-full text-[10px] font-bold text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
                                 + {fmt(charges.total)}
                              </span>
-                             <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Incidence Digitale</span>
+                             <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">Incidence Digitale</span>
                           </div>
                         </td>
                         <td className="px-6 py-7 text-right">
-                          <span className="font-black text-slate-900 text-lg tracking-tight tabular-nums group-hover:text-indigo-600 transition-colors">
+                          <span className="font-bold text-slate-900 text-lg tracking-tight tabular-nums group-hover:text-indigo-600 transition-colors">
                             {fmt(coutTotal)}
                           </span>
                         </td>
                         <td className="px-10 py-7 text-right hidden md:table-cell">
                           <div className="flex flex-col items-end">
-                            <span className="font-black text-emerald-600/80 text-lg tabular-nums transition-all group-hover:text-emerald-600 group-hover:scale-105 origin-right">
+                            <span className="font-bold text-emerald-600/80 text-lg tabular-nums transition-all group-hover:text-emerald-600 group-hover:scale-105 origin-right">
                               {fmt(Number(b.salaire_net))}
                             </span>
                             <div className="w-12 h-1 bg-emerald-500/10 rounded-full mt-1 group-hover:w-20 group-hover:bg-emerald-500/20 transition-all duration-700" />
@@ -508,29 +508,29 @@ export function MasseSalarialeDashboard({
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/10 via-transparent to-transparent pointer-events-none" />
                   
                   <td className="px-10 py-10 rounded-bl-[3rem] relative z-10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">Résumé Global</p>
-                    <p className="font-black text-xl tracking-tight">Consommation Période</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400 mb-1">Résumé Global</p>
+                    <p className="font-bold text-xl tracking-tight">Consommation Période</p>
                   </td>
-                  <td className="px-6 py-10 text-right font-black text-slate-500 hidden md:table-cell text-xl tabular-nums relative z-10">
+                  <td className="px-6 py-10 text-right font-bold text-slate-500 hidden md:table-cell text-xl tabular-nums relative z-10">
                     {fmt(totalBrut)}
                   </td>
-                  <td className="px-6 py-10 text-right font-black text-amber-500 hidden lg:table-cell text-xl tabular-nums relative z-10">
+                  <td className="px-6 py-10 text-right font-bold text-amber-500 hidden lg:table-cell text-xl tabular-nums relative z-10">
                      {fmt(totalChargesPatronales)}
                   </td>
                   <td className="px-6 py-10 text-right relative z-10">
                     <div className="flex flex-col items-end">
-                      <span className="font-black text-3xl tracking-tighter text-white tabular-nums drop-shadow-lg drop-shadow-indigo-500/20">
+                      <span className="font-bold text-3xl tracking-tighter text-white tabular-nums drop-shadow-lg drop-shadow-indigo-500/20">
                         {fmt(coutTotalEmployeur)}
                       </span>
-                      <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-1">Coût Total Entreprise</span>
+                      <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mt-1">Coût Total Entreprise</span>
                     </div>
                   </td>
                   <td className="px-10 py-10 text-right rounded-br-[3rem] relative z-10 hidden md:table-cell">
                     <div className="flex flex-col items-end">
-                      <span className="font-black text-3xl tracking-tighter text-emerald-400 tabular-nums">
+                      <span className="font-bold text-3xl tracking-tighter text-emerald-400 tabular-nums">
                         {fmt(totalNet)}
                       </span>
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Net Versé Salariés</span>
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Net Versé Salariés</span>
                     </div>
                   </td>
                 </tr>

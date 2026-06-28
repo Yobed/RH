@@ -1,3 +1,4 @@
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { CalcEnversForm } from "@/components/rh/CalcEnversForm";
 import { CalcSursalaireForm } from "@/components/rh/CalcSursalaireForm";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
@@ -65,19 +66,16 @@ export default async function CalculateurPage() {
   const employeeList = stcEmployees ?? [];
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* En-tête */}
-      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Calcul & Simulation paie</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Simulez, vérifiez et calculez — tous les outils conformes au Code du Travail ivoirien 2025
-          </p>
-        </div>
-        <span className="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest border border-slate-200 text-slate-600 bg-white">
-          CT-CI 2025
-        </span>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Calcul & Simulation paie"
+        description="Simulez, vérifiez et calculez — tous les outils conformes au Code du Travail ivoirien 2025"
+        actions={
+          <span className="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest border border-slate-200 text-slate-600 bg-white">
+            CT-CI 2025
+          </span>
+        }
+      />
 
       <Tabs defaultValue="net-vers-brut" className="w-full">
         {/* Barre d'onglets */}
@@ -122,6 +120,6 @@ export default async function CalculateurPage() {
           </TabsContent>
         ))}
       </Tabs>
-    </div>
+    </PageShell>
   );
 }

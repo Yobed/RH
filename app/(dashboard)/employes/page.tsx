@@ -3,7 +3,7 @@ import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { EmployeeTable } from "@/components/rh/EmployeeTable";
 import { ImportExcelModal } from "@/components/rh/ImportExcelModal";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { 
   Users, 
   Download, 
@@ -80,38 +80,29 @@ export default async function EmployesPage({
   };
 
   return (
-    <div className="p-6 md:p-8 space-y-6 bg-slate-50/50 min-h-screen">
-      {/* 1. Sleek Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200/80">
-              <IdentificationBadge size={14} weight="bold" className="text-[#FF8200]" />
-              Effectif RH
-            </span>
-            <PageHelp text="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié." />
-          </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            Gestion des Collaborateurs
-          </h1>
-        </div>
+    <PageShell>
+      <PageHeader
+        eyebrow="Effectif RH"
+        eyebrowIcon={<IdentificationBadge size={14} weight="bold" className="text-[#FF8200]" />}
+        title="Gestion des Collaborateurs"
+        help="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié."
+        actions={
+          <>
+            <a
+              href="/api/employees/export?statut=actif"
+              download
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-2xs active:scale-[0.98]"
+            >
+              <Download size={16} className="text-slate-500" weight="bold" />
+              <span>Exporter</span>
+            </a>
+            <ImportExcelModal />
+            <EmployeeDialog employees={allEmployees ?? []} />
+          </>
+        }
+      />
 
-        {/* Primary Action Cluster */}
-        <div className="flex items-center gap-2.5">
-          <a
-            href="/api/employees/export?statut=actif"
-            download
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-2xs active:scale-[0.98]"
-          >
-            <Download size={16} className="text-slate-500" weight="bold" />
-            <span>Exporter</span>
-          </a>
-          <ImportExcelModal />
-          <EmployeeDialog employees={allEmployees ?? []} />
-        </div>
-      </div>
-
-      {/* 2. Unified Master Workstation Shell */}
+      {/* Unified Master Workstation Shell */}
       {!employees || employees.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-12 shadow-2xs">
           <EmptyState
@@ -134,7 +125,7 @@ export default async function EmployesPage({
           stats={stats}
         />
       )}
-    </div>
+    </PageShell>
   );
 }
 

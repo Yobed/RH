@@ -155,7 +155,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Effectif</p>
-              <h3 className="text-2xl font-black text-slate-900 mt-1">{stats.total}</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mt-1">{stats.total}</h3>
               <p className="text-xs text-slate-500 mt-1">Salariés enregistrés</p>
             </div>
             <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
@@ -168,7 +168,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Photos Numérisées</p>
-              <h3 className="text-2xl font-black text-emerald-700 mt-1">{stats.avecPhoto}</h3>
+              <h3 className="text-2xl font-bold text-emerald-700 mt-1">{stats.avecPhoto}</h3>
               <p className="text-xs text-emerald-600/80 mt-1 font-medium">{stats.pct}% de conformité</p>
             </div>
             <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
@@ -184,7 +184,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-amber-600">Photos Manquantes</p>
-              <h3 className="text-2xl font-black text-amber-700 mt-1">{stats.sansPhoto}</h3>
+              <h3 className="text-2xl font-bold text-amber-700 mt-1">{stats.sansPhoto}</h3>
               <p className="text-xs text-amber-600/80 mt-1 font-medium">À régulariser</p>
             </div>
             <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
@@ -200,7 +200,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-[#FF8200]">Biométrie Prête</p>
-              <h3 className="text-2xl font-black text-slate-900 mt-1">{stats.avecPhoto} / {stats.total}</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mt-1">{stats.avecPhoto} / {stats.total}</h3>
               <p className="text-xs text-slate-500 mt-1">Éligibles au pointage faciale</p>
             </div>
             <div className="h-12 w-12 rounded-xl bg-orange-50 flex items-center justify-center text-[#FF8200] group-hover:scale-110 transition-transform border border-[#FF8200]/20">
@@ -369,7 +369,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
                           {emp.photo_url ? (
                             <img src={emp.photo_url} alt={emp.full_name} className="h-full w-full object-cover" />
                           ) : (
-                            <span className="text-xs font-black text-amber-700">
+                            <span className="text-xs font-bold text-amber-700">
                               {emp.full_name
                                 .split(" ")
                                 .map((w) => w[0])
@@ -489,7 +489,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
 
               {/* Info */}
               <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-wider">{emp.matricule}</span>
-              <h4 className="text-sm font-black text-slate-900 mt-0.5 line-clamp-1">{emp.full_name}</h4>
+              <h4 className="text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{emp.full_name}</h4>
               <p className="text-xs font-semibold text-[#FF8200] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
               <p className="text-[11px] text-slate-500 mt-0.5">{emp.departement || "Département N/A"}</p>
 
@@ -541,7 +541,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
                   <Camera size={16} weight="bold" />
                   Numérisation d'Identité
                 </div>
-                <h3 className="text-xl font-black text-slate-900 mt-1">
+                <h3 className="text-xl font-bold text-slate-900 mt-1">
                   Photo de {activeUploadEmp.full_name}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5 font-mono">
@@ -593,7 +593,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
                 <img src={lightboxUrl.url} alt={lightboxUrl.name} className="max-h-full max-w-full object-contain" />
               </div>
               <div className="mt-3 text-center">
-                <h4 className="text-base font-black text-slate-900">{lightboxUrl.name}</h4>
+                <h4 className="text-base font-bold text-slate-900">{lightboxUrl.name}</h4>
                 <p className="text-xs text-slate-500 mt-0.5">Fiche photo numérisée — Haute définition</p>
               </div>
             </motion.div>

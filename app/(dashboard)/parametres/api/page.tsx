@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Copy, ArrowCounterClockwise } from "@phosphor-icons/react";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export default function ApiPage() {
   const [apiKey, setApiKey] = useState<string | null>(null);
@@ -48,13 +49,11 @@ export default function ApiPage() {
     : null;
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 max-w-2xl">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">API publique REST</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Accédez à vos données RH via l'API REST. Authentifiez-vous avec votre clé API.
-        </p>
-      </div>
+    <PageShell width="narrow">
+      <PageHeader
+        title="API publique REST"
+        description="Accédez à vos données RH via l'API REST. Authentifiez-vous avec votre clé API."
+      />
 
       {/* Clé API */}
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
@@ -107,6 +106,6 @@ export default function ApiPage() {
           Header requis : <code className="bg-muted px-1 rounded">x-api-key: votre-clé</code>
         </p>
       </div>
-    </div>
+    </PageShell>
   );
 }

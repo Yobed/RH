@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
 import { ArchivesControls } from "@/components/rh/ArchivesControls";
 import { DocumentDeleteButton } from "@/components/rh/DocumentDeleteButton";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import Link from "next/link";
 
 export const metadata = { title: "Archives — RH Manager CI" };
@@ -96,17 +97,12 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
   const familles = Object.keys(familleColors);
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      {/* En-tête */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Archives</h1>
-          <p className="text-sm text-slate-600 mt-0.5">
-            Vue globale de tous les documents — recherche, filtrage et téléchargement.
-          </p>
-        </div>
-        <DocumentUploadDialog companyId={profile.company_id} />
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Archives"
+        description="Vue globale de tous les documents — recherche, filtrage et téléchargement."
+        actions={<DocumentUploadDialog companyId={profile.company_id} />}
+      />
 
       {/* Statistiques rapides */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
@@ -272,6 +268,6 @@ export default async function ArchivesPage({ searchParams }: PageProps) {
           </div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

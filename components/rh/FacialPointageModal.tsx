@@ -223,7 +223,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                 <Camera className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-1.5 flex-wrap">
+                <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5 flex-wrap">
                   Pointage Faciale Biométrique
                   <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                     IA 3D v4
@@ -326,7 +326,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                     <div className="h-16 w-16 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/40 mb-2 animate-bounce">
                       <CheckCircle2 className="h-10 w-10" />
                     </div>
-                    <h4 className="text-base font-black tracking-tight">Pointage Validé avec Succès !</h4>
+                    <h4 className="text-base font-bold tracking-tight">Pointage Validé avec Succès !</h4>
                     <p className="text-xs text-emerald-200 font-medium mt-1">
                       {matchedUser?.name} ({matchedUser?.id})
                     </p>
@@ -391,7 +391,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
               <button
                 onClick={handleStartFacialScan}
                 disabled={scanning}
-                className={`w-full py-3.5 px-4 rounded-xl font-black text-sm transition-all flex items-center justify-center gap-2 shadow-md ${
+                className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md ${
                   scanning
                     ? "bg-slate-400 text-white cursor-not-allowed"
                     : "bg-gradient-to-r from-[#FF8200] to-amber-500 hover:from-amber-600 hover:to-[#FF8200] text-white shadow-amber-500/20"

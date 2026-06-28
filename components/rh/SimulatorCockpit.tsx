@@ -135,7 +135,7 @@ function Kpi({ label, value, color }: { label: string; value: number; color: key
       <p className={cn("text-[10px] font-semibold uppercase tracking-wider mb-1.5", cfg.label)}>
         {label}
       </p>
-      <p className={cn("text-base font-black tabular-nums leading-none", cfg.value)}>
+      <p className={cn("text-base font-bold tabular-nums leading-none", cfg.value)}>
         {fcfa(value)}
       </p>
     </div>
@@ -243,7 +243,7 @@ function ComparaisonSalarie({ employees }: { employees: EmpRow[] }) {
                     <p className={cn("text-[10px] font-semibold uppercase tracking-wider mb-1.5", cfg.label)}>
                       {label}
                     </p>
-                    <p className={cn("text-base font-black tabular-nums leading-none", cfg.value)}>
+                    <p className={cn("text-base font-bold tabular-nums leading-none", cfg.value)}>
                       {fcfa(b)}
                     </p>
                     <p className={cn(

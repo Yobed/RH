@@ -343,7 +343,7 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
 
       {totalPages > 1 && (
         <div className="bg-slate-50/50 px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:block">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
             {serverPaginated ? totalCount : conges.length} congé{serverPaginated ? (totalCount > 1 ? 's' : '') : (conges.length > 1 ? 's' : '')}
           </div>
           

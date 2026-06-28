@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { ArrowLeft, FileText, ExternalLink } from "lucide-react";
 import { createServerClient } from "@/lib/supabase/server";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { SoldeToutCompteForm } from "@/components/rh/SoldeToutCompteForm";
 import { safeFormatDate } from "@/lib/paie-ci";
 
@@ -48,23 +48,13 @@ export default async function FinDeContratPage({
     .filter(d => d.name?.includes("Solde de Tout Compte"));
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
-      {/* ── Header ──────────────────────────────────────────────────── */}
-      <header className="pb-4 border-b border-slate-200">
-        <Link href="/paie" className="text-xs text-slate-500 hover:text-slate-900 inline-flex items-center gap-1.5">
-          <ArrowLeft className="h-3 w-3" /> Retour à la paie
-        </Link>
-        <div className="mt-1.5 sm:mt-2 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3">
-          <div>
-            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 font-medium">Module Paie · Art. 25.1</p>
-            <div className="flex items-center gap-2 mt-1">
-              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900">Fin de contrat</h1>
-              <PageHelp text="Le calcul du solde de tout compte (STC) en fin de contrat : congés non pris, indemnités de préavis et de licenciement selon le Code du Travail ivoirien." />
-            </div>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-1.5 leading-snug max-w-2xl">
-              Calcul, simulation et archivage du solde de tout compte selon le Code du travail ivoirien.
-            </p>
-          </div>
+    <PageShell>
+      <PageHeader
+        eyebrow="Module Paie · Art. 25.1"
+        title="Fin de contrat"
+        description="Calcul, simulation et archivage du solde de tout compte selon le Code du travail ivoirien."
+        help="Le calcul du solde de tout compte (STC) en fin de contrat : congés non pris, indemnités de préavis et de licenciement selon le Code du Travail ivoirien."
+        actions={
           <Link
             href="/offboarding"
             className="self-start rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 inline-flex items-center gap-1.5 transition-colors"
@@ -72,8 +62,8 @@ export default async function FinDeContratPage({
             Checklist de restitution
             <ExternalLink className="h-3 w-3" />
           </Link>
-        </div>
-      </header>
+        }
+      />
 
       {/* ── Calculateur ─────────────────────────────────────────────── */}
       <SoldeToutCompteForm
@@ -133,6 +123,6 @@ export default async function FinDeContratPage({
           </ul>
         )}
       </section>
-    </div>
+    </PageShell>
   );
 }

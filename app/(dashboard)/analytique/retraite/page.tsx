@@ -8,6 +8,7 @@ import {
   type RetraiteUrgence,
 } from "@/lib/retraite-ci";
 import { CalendarBlank, UserMinus, Warning, Cake, UserPlus, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Planning retraite — RH Manager CI" };
@@ -47,19 +48,16 @@ export default async function PlanningRetraitePage({ searchParams }: SearchProps
   const years = Array.from(byYear.keys()).sort();
 
   return (
-    <div className="p-6 space-y-6 max-w-6xl mx-auto">
-      <header className="pb-5 border-b border-slate-100">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <Cake className="h-6 w-6 text-amber-500" weight="duotone" />
-              Planning retraite & remplacement
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Projection des départs à la retraite à <strong>{AGE_LEGAL_RETRAITE} ans</strong> (Art. 28 CNPS CI)
-              · Plan de recrutement de remplacement
-            </p>
-          </div>
+    <PageShell>
+      <PageHeader
+        title="Planning retraite & remplacement"
+        description={
+          <>
+            Projection des départs à la retraite à <strong>{AGE_LEGAL_RETRAITE} ans</strong> (Art. 28 CNPS CI)
+            · Plan de recrutement de remplacement
+          </>
+        }
+        actions={
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-slate-500 mr-1.5">Horizon :</span>
             {[1, 2, 5, 10].map((h) => (
@@ -76,8 +74,8 @@ export default async function PlanningRetraitePage({ searchParams }: SearchProps
               </Link>
             ))}
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -196,7 +194,7 @@ export default async function PlanningRetraitePage({ searchParams }: SearchProps
           </div>
         </section>
       )}
-    </div>
+    </PageShell>
   );
 }
 

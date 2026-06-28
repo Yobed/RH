@@ -4,7 +4,7 @@ import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { ArretMaladieDialog } from "@/components/rh/ArretMaladieDialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { CalendarDays } from "lucide-react";
 
 export const metadata = { title: "Conges — RH Manager CI" };
@@ -104,21 +104,18 @@ export default async function CongesPage() {
   const joursTotal = approuvesCeMois.reduce((s, c) => s + Number(c.nb_jours), 0);
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gestion des Congés</h1>
-            <PageHelp text="Demandes, validations et soldes de congés. Le salarié acquiert des jours chaque mois travaillé (~2,2 jours ouvrables/mois, soit environ 26 jours/an — Code du Travail ivoirien)." />
-          </div>
-          <p className="text-sm text-slate-600 mt-0.5">Droit : 2,2 jours/mois (Légal)</p>
-        </div>
-        <div className="flex gap-2">
-          <ArretMaladieDialog employees={employeesForArret} />
-          <CongesDialog employees={employees ?? []} />
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Gestion des Congés"
+        description="Droit : 2,2 jours/mois (Légal)"
+        help="Demandes, validations et soldes de congés. Le salarié acquiert des jours chaque mois travaillé (~2,2 jours ouvrables/mois, soit environ 26 jours/an — Code du Travail ivoirien)."
+        actions={
+          <>
+            <ArretMaladieDialog employees={employeesForArret} />
+            <CongesDialog employees={employees ?? []} />
+          </>
+        }
+      />
 
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-4">
@@ -367,6 +364,6 @@ export default async function CongesPage() {
           />
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

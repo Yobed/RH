@@ -53,7 +53,7 @@ export function ChronometreWidget() {
 
       {/* Main Digital Clock Display */}
       <div className="my-5 text-center bg-slate-50 dark:bg-slate-800/40 py-4 rounded-xl border border-slate-100 dark:border-slate-800">
-        <div className="text-3xl font-black font-mono tracking-wider text-slate-900 dark:text-white">
+        <div className="text-3xl font-bold font-mono tracking-wider text-slate-900 dark:text-white">
           {formatTime(seconds)}
         </div>
         <div className="flex items-center justify-center gap-1 text-xs text-slate-500 font-medium mt-1">

@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ReportingClient } from "./ReportingClient";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -96,14 +97,12 @@ export default async function ReportingPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Reporting RH</h1>
-        <p className="text-sm text-slate-600 mt-1">
-          Analytics masse salariale · KPIs RH · Export CSV multi-onglets
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Reporting RH"
+        description="Analytics masse salariale · KPIs RH · Export CSV multi-onglets"
+      />
       <ReportingClient masseSalariale={masseSalariale} kpis={kpis} />
-    </div>
+    </PageShell>
   );
 }

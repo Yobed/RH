@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { SageReconciliationClient } from "@/components/paie/SageReconciliationClient";
 
@@ -89,12 +90,12 @@ export default async function ImportSagePage() {
   }));
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
+    <PageShell>
       <SageReconciliationClient
         sageRows={sageRows}
         employees={employees}
         initialMappings={mappings}
       />
-    </div>
+    </PageShell>
   );
 }

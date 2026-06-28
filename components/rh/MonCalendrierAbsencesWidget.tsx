@@ -34,21 +34,21 @@ export function MonCalendrierAbsencesWidget() {
       {/* Leave Balance Counter Cards */}
       <div className="grid grid-cols-2 gap-2 mb-4">
         <div className="p-3 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs font-black">
+          <div className="h-7 w-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">
             🌴
           </div>
           <div>
-            <span className="text-base font-black text-emerald-800 dark:text-emerald-300 leading-none block">12j</span>
+            <span className="text-base font-bold text-emerald-800 dark:text-emerald-300 leading-none block">12j</span>
             <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 block mt-0.5">Disponibles</span>
           </div>
         </div>
 
         <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 flex items-center gap-2.5">
-          <div className="h-7 w-7 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs font-black">
+          <div className="h-7 w-7 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs font-bold">
             ⏳
           </div>
           <div>
-            <span className="text-base font-black text-amber-800 dark:text-amber-300 leading-none block">3j</span>
+            <span className="text-base font-bold text-amber-800 dark:text-amber-300 leading-none block">3j</span>
             <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 block mt-0.5">En attente</span>
           </div>
         </div>
@@ -67,7 +67,7 @@ export function MonCalendrierAbsencesWidget() {
         </div>
 
         {/* Days Header */}
-        <div className="grid grid-cols-7 text-center text-[10px] font-black text-slate-400 uppercase mb-2">
+        <div className="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 uppercase mb-2">
           <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
         </div>
 
@@ -84,7 +84,7 @@ export function MonCalendrierAbsencesWidget() {
                 key={d}
                 className={`h-6 w-full rounded-md flex items-center justify-center transition-all ${
                   isToday
-                    ? "bg-[#FF8200] text-white font-black shadow-xs"
+                    ? "bg-[#FF8200] text-white font-bold shadow-xs"
                     : isSelected
                     ? "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold border border-amber-300/50"
                     : "hover:bg-slate-200/60 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300"

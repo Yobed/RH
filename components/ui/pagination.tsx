@@ -70,7 +70,7 @@ export function Pagination({
               key={`page-${page}`}
               onClick={() => onPageChange(page as number)}
               className={cn(
-                "w-9 h-9 rounded-xl text-xs font-black transition-all border",
+                "w-9 h-9 rounded-xl text-xs font-bold transition-all border",
                 isCurrent
                   ? "bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/20"
                   : "bg-white dark:bg-slate-900 text-slate-500 border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-900 dark:hover:text-slate-100"

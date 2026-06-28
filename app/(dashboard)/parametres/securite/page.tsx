@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { MfaSetup } from "@/components/rh/MfaSetup";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Sécurité — RH Manager CI" };
 
@@ -8,13 +9,11 @@ export default async function SecuritePage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 max-w-2xl space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Sécurité du compte</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Configurez la double authentification et gérez la sécurité de votre compte.
-        </p>
-      </div>
+    <PageShell width="narrow">
+      <PageHeader
+        title="Sécurité du compte"
+        description="Configurez la double authentification et gérez la sécurité de votre compte."
+      />
 
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <div>
@@ -35,6 +34,6 @@ export default async function SecuritePage() {
           Pour déconnecter toutes les autres sessions, utilisez "Déconnexion globale" depuis le menu utilisateur.
         </p>
       </div>
-    </div>
+    </PageShell>
   );
 }

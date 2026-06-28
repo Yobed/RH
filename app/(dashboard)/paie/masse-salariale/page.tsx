@@ -93,7 +93,7 @@ export default function MasseSalarialePage() {
                   <Layout size={24} weight="duotone" className="text-white" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-4xl font-black text-slate-900 tracking-tight">Masse Salariale</h1>
+                  <h1 className="text-4xl font-bold text-slate-900 tracking-tight">Masse Salariale</h1>
                   <PageHelp text="L'analyse du coût total de votre personnel : répartition par département, évolution dans le temps et projection de la masse salariale." />
                 </div>
               </div>
@@ -126,7 +126,7 @@ export default function MasseSalarialePage() {
                </div>
                <button
                 type="submit"
-                className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-2xl text-xs font-black hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-95"
+                className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-2xl text-xs font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-95"
               >
                 <Funnel size={14} weight="bold" />
                 FILTRER
@@ -148,7 +148,7 @@ export default function MasseSalarialePage() {
                 <Scales size={24} weight="duotone" className="text-amber-400" />
               </div>
               <div>
-                <h4 className="text-sm font-black text-white uppercase tracking-widest">Rappel Légal</h4>
+                <h4 className="text-sm font-bold text-white uppercase tracking-widest">Rappel Légal</h4>
                 <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tight">Barèmes CNPS CI 2026</p>
               </div>
             </div>
@@ -162,9 +162,9 @@ export default function MasseSalarialePage() {
                 { label: "FDFP / CMU", value: "1%", sub: "1600 FCFA/Sal." },
               ].map((item, idx) => (
                 <div key={idx} className="space-y-1">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.label}</p>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-lg font-black text-slate-900">{item.value}</span>
+                    <span className="text-lg font-bold text-slate-900">{item.value}</span>
                     <span className="text-[10px] font-bold text-slate-400">{item.sub}</span>
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default function MasseSalarialePage() {
                   <div className="absolute top-0 left-0 w-16 h-16 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
                 </div>
                 <div className="text-center">
-                   <p className="text-sm font-black text-slate-900 uppercase tracking-widest">Calcul des indicateurs</p>
+                   <p className="text-sm font-bold text-slate-900 uppercase tracking-widest">Calcul des indicateurs</p>
                    <p className="text-xs text-slate-400 font-bold mt-2 uppercase tracking-tight">Veuillez patienter...</p>
                 </div>
               </motion.div>
@@ -207,12 +207,12 @@ export default function MasseSalarialePage() {
                 <div className="w-20 h-20 bg-slate-50 rounded-[2rem] flex items-center justify-center mx-auto mb-8">
                    <Clock size={40} weight="duotone" className="text-slate-300" />
                 </div>
-                <h3 className="text-xl font-black text-slate-900">Aucun bulletin identifié</h3>
+                <h3 className="text-xl font-bold text-slate-900">Aucun bulletin identifié</h3>
                 <p className="mt-3 text-sm text-slate-500 font-medium max-w-xs mx-auto">
                   Nous n'avons trouvé aucun bulletin de paie généré pour la période <span className="text-slate-900 font-bold">{periode}</span>.
                 </p>
                 <div className="mt-10 flex gap-4 justify-center">
-                  <Link href="/paie" className="px-8 py-3 bg-slate-900 text-white rounded-2xl text-xs font-black shadow-lg shadow-slate-900/10 hover:translate-y-[-2px] transition-all">
+                  <Link href="/paie" className="px-8 py-3 bg-slate-900 text-white rounded-2xl text-xs font-bold shadow-lg shadow-slate-900/10 hover:translate-y-[-2px] transition-all">
                      GÉNÉRER DES BULLETINS
                   </Link>
                 </div>

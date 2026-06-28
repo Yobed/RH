@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { GedSearchEmployes } from "@/components/rh/ged/GedSearchEmployes";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { FolderOpen, FileText, Users } from "lucide-react";
 
 interface PageProps {
@@ -52,19 +53,11 @@ export default async function GedPage({ searchParams }: PageProps) {
   const dossiersOuverts = Object.keys(statsMap).length;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      {/* En-tête */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-            <FolderOpen className="h-4 w-4 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">GED</h1>
-        </div>
-        <p className="text-sm text-slate-500 ml-10">
-          Dossiers numériques par employé — classement par famille documentaire.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="GED"
+        description="Dossiers numériques par employé — classement par famille documentaire."
+      />
 
       {/* Statistiques */}
       <div className="grid grid-cols-3 gap-4">
@@ -218,6 +211,6 @@ export default async function GedPage({ searchParams }: PageProps) {
           })}
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import {
   offboardingProgress,
   offboardingOverdueItems,
@@ -104,28 +104,21 @@ export default async function OffboardingPage() {
   const notStarted = rows.filter((r) => !r.hasChecklist).length;
 
   return (
-    <div className="p-6 space-y-6 max-w-6xl mx-auto">
-      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <UserMinus className="h-6 w-6 text-rose-500" weight="duotone" />
-              Offboarding collaborateurs
-            </h1>
-            <PageHelp text="Le parcours de départ d'un salarié : restitution des biens et accès, formalités de sortie et solde de tout compte (STC). Cadré par le Code du Travail ivoirien (art. 16-11)." />
-          </div>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Restitution des biens, accès, formalités de sortie — Art. 16-11 CT-CI
-          </p>
-        </div>
-        <Link
-          href="/paie/fin-de-contrat"
-          className="rounded-lg bg-slate-900 text-white px-3.5 py-2 text-sm font-semibold hover:bg-slate-800 transition-colors inline-flex items-center gap-1.5"
-        >
-          Préparer un Solde de Tout Compte
-          <ArrowRight className="h-3.5 w-3.5" weight="bold" />
-        </Link>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Offboarding collaborateurs"
+        description="Restitution des biens, accès, formalités de sortie — Art. 16-11 CT-CI"
+        help="Le parcours de départ d'un salarié : restitution des biens et accès, formalités de sortie et solde de tout compte (STC). Cadré par le Code du Travail ivoirien (art. 16-11)."
+        actions={
+          <Link
+            href="/paie/fin-de-contrat"
+            className="rounded-lg bg-slate-900 text-white px-3.5 py-2 text-sm font-semibold hover:bg-slate-800 transition-colors inline-flex items-center gap-1.5"
+          >
+            Préparer un Solde de Tout Compte
+            <ArrowRight className="h-3.5 w-3.5" weight="bold" />
+          </Link>
+        }
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -231,7 +224,7 @@ export default async function OffboardingPage() {
           </table>
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }
 

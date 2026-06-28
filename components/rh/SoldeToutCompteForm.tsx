@@ -513,7 +513,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
               <p className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-semibold mb-1">
                 République de Côte d&apos;Ivoire — Code du Travail
               </p>
-              <h2 className="text-lg font-black tracking-tight">BULLETIN DE SOLDE DE TOUT COMPTE</h2>
+              <h2 className="text-lg font-bold tracking-tight">BULLETIN DE SOLDE DE TOUT COMPTE</h2>
               <p className="text-xs text-slate-400 mt-1">
                 {MOTIFS_RUPTURE.find(m => m.value === motifRupture)?.label || "Motif non renseigné"}
                 {" — "}
@@ -620,7 +620,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                 <p className="text-sm font-bold text-slate-900 uppercase tracking-wide">Total brut STC</p>
                 <p className="text-[10px] text-slate-500 mt-0.5">Avant retenues sociales et fiscales</p>
               </div>
-              <p className="text-xl font-black text-slate-900 tabular-nums">{fmt(resultat.total_brut_stc)}</p>
+              <p className="text-xl font-bold text-slate-900 tabular-nums">{fmt(resultat.total_brut_stc)}</p>
             </div>
           </div>
 
@@ -694,7 +694,7 @@ export function SoldeToutCompteForm({ employees, company, defaultEmployeeId }: P
                 <p className="text-xs font-bold uppercase tracking-widest text-emerald-700">NET STC À PAYER</p>
                 <p className="text-[10px] text-emerald-600 mt-0.5">Après retenues CNPS, CMU et ITS</p>
               </div>
-              <p className="text-3xl font-black text-emerald-800 tabular-nums">{fmt(netStc)}</p>
+              <p className="text-3xl font-bold text-emerald-800 tabular-nums">{fmt(netStc)}</p>
             </div>
           </div>
 

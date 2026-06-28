@@ -2,6 +2,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { DisciplinaryDialog } from "@/components/rh/DisciplinaryDialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import Link from "next/link";
 
 export const metadata = { title: "Disciplinaire — RH Manager CI" };
@@ -53,17 +54,12 @@ export default async function DisciplinairePage() {
   const clotures = total - ouverts;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Procédures Disciplinaires</h1>
-          <p className="text-sm text-slate-600">
-            Suivi des demandes d'explication, avertissements, mises à pied et licenciements.
-          </p>
-        </div>
-        <DisciplinaryDialog employees={employees ?? []} />
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Procédures Disciplinaires"
+        description="Suivi des demandes d'explication, avertissements, mises à pied et licenciements."
+        actions={<DisciplinaryDialog employees={employees ?? []} />}
+      />
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -150,6 +146,6 @@ export default async function DisciplinairePage() {
           </div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

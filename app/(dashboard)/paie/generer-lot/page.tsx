@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { GenererLotClient } from "./GenererLotClient";
@@ -10,8 +11,8 @@ export default async function GenererLotPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <GenererLotClient />
-    </div>
+    </PageShell>
   );
 }

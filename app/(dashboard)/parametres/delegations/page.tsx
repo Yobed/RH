@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Plus, Trash } from "@phosphor-icons/react";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 interface Delegation {
   id: string;
@@ -72,13 +73,11 @@ export default function DelegationsPage() {
   if (loading) return <div className="px-8 py-6 text-muted-foreground text-sm">Chargement…</div>;
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Délégations temporaires</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Déléguez temporairement vos droits de validation à un remplaçant pendant votre absence.
-        </p>
-      </div>
+    <PageShell width="narrow">
+      <PageHeader
+        title="Délégations temporaires"
+        description="Déléguez temporairement vos droits de validation à un remplaçant pendant votre absence."
+      />
 
       {/* Formulaire création */}
       <div className="rounded-xl border border-border bg-card p-5 space-y-4">
@@ -174,6 +173,6 @@ export default function DelegationsPage() {
           ))
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

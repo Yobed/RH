@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { BordereauClient } from "./BordereauClient";
@@ -30,8 +31,8 @@ export default async function BordereauPage() {
   const periods = Array.from(new Set((bulletinsPeriods ?? []).map((b) => b.periode))).sort().reverse();
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <BordereauClient periods={periods} bordereaux={bordereaux ?? []} />
-    </div>
+    </PageShell>
   );
 }

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { progressOf, overdueItems, type OnboardingItem } from "@/lib/onboarding-template";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { CheckCircle, Clock, Warning, ArrowRight, UserPlus } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = "force-dynamic";
@@ -66,22 +66,12 @@ export default async function OnboardingPage() {
   const notStarted = rows.filter((r) => r.items.length === 0).length;
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
-      {/* En-tête */}
-      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <UserPlus className="h-6 w-6 text-indigo-500" weight="duotone" />
-              Onboarding collaborateurs
-            </h1>
-            <PageHelp text="Le parcours d'intégration d'un nouveau salarié : suivez chaque étape (contrat, documents, déclarations, équipement). Une intégration cadrée sécurise la conformité dès l'embauche." />
-          </div>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Suivi des étapes d'intégration — conformité CT-CI
-          </p>
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Onboarding collaborateurs"
+        description="Suivi des étapes d'intégration — conformité CT-CI"
+        help="Le parcours d'intégration d'un nouveau salarié : suivez chaque étape (contrat, documents, déclarations, équipement). Une intégration cadrée sécurise la conformité dès l'embauche."
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -183,6 +173,6 @@ export default async function OnboardingPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

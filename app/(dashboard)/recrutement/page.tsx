@@ -4,6 +4,7 @@ import { ScoreCvButton } from "@/components/rh/ScoreCvButton";
 import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
 import { CandidateDialog } from "@/components/rh/CandidateDialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { CandidateStatusSelect } from "@/components/rh/CandidateStatusSelect";
 import { CandidatePipeline } from "@/components/rh/CandidatePipeline";
 import { RecrutementViewToggle } from "@/components/rh/RecrutementViewToggle";
@@ -51,18 +52,17 @@ export default async function RecrutementPage() {
     : null;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Recrutement</h1>
-          <p className="text-sm text-slate-600">Offres d'emploi et candidatures avec scoring IA</p>
-        </div>
-        <div className="flex gap-2">
-          <CandidateDialog postes={postes ?? []} />
-          <JobPostingDialog />
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Recrutement"
+        description="Offres d'emploi et candidatures avec scoring IA"
+        actions={
+          <>
+            <CandidateDialog postes={postes ?? []} />
+            <JobPostingDialog />
+          </>
+        }
+      />
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -163,7 +163,7 @@ export default async function RecrutementPage() {
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-bold text-slate-900 leading-tight">{p.titre}</p>
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-tighter ${
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter ${
                             p.statut === "ouvert"
                               ? "bg-emerald-50 text-emerald-700"
                               : "bg-slate-100 text-slate-600"
@@ -248,6 +248,6 @@ export default async function RecrutementPage() {
           </Tabs>
         }
       />
-    </div>
+    </PageShell>
   );
 }

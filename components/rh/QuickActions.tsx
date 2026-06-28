@@ -63,7 +63,7 @@ export function QuickActions() {
             <Lightning weight="fill" className="h-4 w-4" />
           </div>
           <div>
-            <h3 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-wider">
+            <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
               Actions Rapides RH
             </h3>
             <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">

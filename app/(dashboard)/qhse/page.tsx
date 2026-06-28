@@ -1,5 +1,6 @@
 ﻿import { createServerClient } from "@/lib/supabase/server";
 import { QhseClient } from "./QhseClient";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -65,18 +66,16 @@ export default async function QhsePage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">QHSE</h1>
-        <p className="text-sm text-slate-600 mt-1">
-          Registre accidents du travail · Visites médicales · Indicateurs sinistralité
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="QHSE"
+        description="Registre accidents du travail · Visites médicales · Indicateurs sinistralité"
+      />
       <QhseClient
         accidents={accidents as unknown as Parameters<typeof QhseClient>[0]["accidents"]}
         visites={visites as unknown as Parameters<typeof QhseClient>[0]["visites"]}
         indicateurs={indicateurs}
       />
-    </div>
+    </PageShell>
   );
 }

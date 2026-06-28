@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { applyFilters, computeEffectif, computeAgePyramid, computePayroll, computeTurnover, computeAbsenteeism, computeSafety, computePerformance } from "@/lib/analytics-rh";
@@ -141,7 +142,7 @@ export default async function BilanSocialPage({
   const yearsOptions = Array.from(new Set([annee, new Date().getFullYear(), new Date().getFullYear() - 1])).sort((a, b) => b - a);
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <BilanSocialClient
         annee={annee}
         yearsOptions={yearsOptions}
@@ -173,6 +174,6 @@ export default async function BilanSocialPage({
           recrutes: (candidates ?? []).filter((c) => c.statut === "recrute").length,
         }}
       />
-    </div>
+    </PageShell>
   );
 }

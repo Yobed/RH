@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { PlanningClient } from "@/components/rh/PlanningClient";
 import { startOfWeek, addDays, format, parseISO, isValid } from "date-fns";
@@ -34,13 +35,13 @@ export default async function PlanningPage({ searchParams }: Props) {
   ]);
 
   return (
-    <div className="p-6">
+    <PageShell>
       <PlanningClient
         employees={employees ?? []}
         shifts={shifts ?? []}
         assignments={assignments ?? []}
         weekStart={fromStr}
       />
-    </div>
+    </PageShell>
   );
 }

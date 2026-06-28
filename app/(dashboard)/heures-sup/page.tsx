@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { OvertimeManager } from "@/components/rh/OvertimeManager";
@@ -34,7 +35,7 @@ export default async function HeuresSupPage() {
   ]);
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <Suspense fallback={
         <div className="rounded-lg border border-slate-200 bg-white p-12 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
@@ -49,6 +50,6 @@ export default async function HeuresSupPage() {
           companyId={profile.company_id}
         />
       </Suspense>
-    </div>
+    </PageShell>
   );
 }

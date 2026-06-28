@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { LegalCaseDialog } from "@/components/rh/LegalCaseDialog";
 import { CloseLegalCaseButton } from "@/components/rh/CloseLegalCaseButton";
 import { EmptyState } from "@/components/ui/empty-state";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Contentieux — RH Manager CI" };
 
@@ -32,17 +33,12 @@ export default async function ContentieuxPage() {
   const fermes = cases?.filter((c) => c.statut !== "ouvert") ?? [];
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contentieux</h1>
-          <p className="text-sm text-slate-600 mt-0.5 font-medium">Gestion des litiges — Droit du Travail ivoirien (Loi 2015-532)</p>
-        </div>
-        <div className="shrink-0">
-          <LegalCaseDialog employees={employees ?? []} />
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Contentieux"
+        description="Gestion des litiges — Droit du Travail ivoirien (Loi 2015-532)"
+        actions={<LegalCaseDialog employees={employees ?? []} />}
+      />
 
       {/* Rappels légaux */}
       <div className="grid gap-3 sm:grid-cols-3">
@@ -161,6 +157,6 @@ export default async function ContentieuxPage() {
           </div>
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

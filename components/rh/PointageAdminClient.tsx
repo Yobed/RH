@@ -89,7 +89,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
             <div className="p-2 rounded-xl bg-gradient-to-tr from-[#FF8200] to-amber-500 text-white shadow-sm">
               <Camera className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl font-black font-heading text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
               Gestion & Pointage Biométrique
             </h1>
             <PageHelp text="Module de pointage biométrique par reconnaissance faciale 3D et suivi synthétique des heures de travail." />
@@ -103,7 +103,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
         <div className="flex items-center bg-slate-100 dark:bg-slate-800/60 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 self-start">
           <button
             onClick={() => setActiveTab("biometric")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === "biometric"
                 ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
@@ -115,7 +115,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
 
           <button
             onClick={() => setActiveTab("weekly")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === "weekly"
                 ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
@@ -200,7 +200,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                           className={`border-b border-slate-200 dark:border-slate-700 px-2 py-3 text-center text-[10px] font-bold uppercase tracking-widest min-w-[80px] ${isToday(d) ? "bg-amber-50 text-[#FF8200] dark:bg-amber-950/40" : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"}`}
                         >
                           <div>{format(d, "EEE", { locale: fr })}</div>
-                          <div className="text-base font-black normal-case">{format(d, "d", { locale: fr })}</div>
+                          <div className="text-base font-bold normal-case">{format(d, "d", { locale: fr })}</div>
                         </th>
                       ))}
                       <th className="border-b border-l border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-3 text-center text-[10px] font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest">
@@ -229,7 +229,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                               </td>
                             );
                           })}
-                          <td className={`px-3 py-2 text-center border-l border-slate-100 dark:border-slate-800 font-mono tabular-nums text-xs ${total > 0 ? "font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/30" : "text-slate-300 dark:text-slate-600"}`}>
+                          <td className={`px-3 py-2 text-center border-l border-slate-100 dark:border-slate-800 font-mono tabular-nums text-xs ${total > 0 ? "font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/30" : "text-slate-300 dark:text-slate-600"}`}>
                             {formatHM(total)}
                           </td>
                         </tr>
@@ -260,7 +260,7 @@ function Kpi({
         <p className="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold">{label}</p>
         <Icon className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />
       </div>
-      <p className={`text-xl font-black mt-1 tabular-nums ${color}`}>{value}</p>
+      <p className={`text-xl font-bold mt-1 tabular-nums ${color}`}>{value}</p>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { computeFdfpCredit, computeTrainingEffort } from "@/lib/fdfp";
@@ -70,7 +71,7 @@ export default async function FormationPage() {
   const tauxEffort = computeTrainingEffort(totalCout, masseSalariale);
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <FormationClient
         actions={trainingActions}
         employees={employees ?? []}
@@ -86,6 +87,6 @@ export default async function FormationPage() {
           year: currentYear,
         }}
       />
-    </div>
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { DuerpClient } from "./DuerpClient";
@@ -20,8 +21,8 @@ export default async function DuerpPage() {
     .order("criticite", { ascending: false });
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <DuerpClient initial={risks ?? []} />
-    </div>
+    </PageShell>
   );
 }

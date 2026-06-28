@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ShieldWarning, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Événements de sécurité — RH Manager CI" };
 
@@ -32,21 +33,19 @@ export default async function SecurityEventsPage() {
   const highRisk = (events ?? []).filter((e) => ["high", "critical"].includes(e.risk_level) && !e.acquitte);
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Événements de sécurité</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Journal des événements de connexion, accès et modifications sensibles.
-          </p>
-        </div>
-        {highRisk.length > 0 && (
-          <div className="flex items-center gap-2 bg-rose-500/10 text-rose-400 px-3 py-2 rounded-lg text-sm font-medium">
-            <ShieldWarning className="h-4 w-4" weight="bold" />
-            {highRisk.length} alerte{highRisk.length > 1 ? "s" : ""} critique{highRisk.length > 1 ? "s" : ""}
-          </div>
-        )}
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Événements de sécurité"
+        description="Journal des événements de connexion, accès et modifications sensibles."
+        actions={
+          highRisk.length > 0 ? (
+            <div className="flex items-center gap-2 bg-rose-500/10 text-rose-400 px-3 py-2 rounded-lg text-sm font-medium">
+              <ShieldWarning className="h-4 w-4" weight="bold" />
+              {highRisk.length} alerte{highRisk.length > 1 ? "s" : ""} critique{highRisk.length > 1 ? "s" : ""}
+            </div>
+          ) : undefined
+        }
+      />
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
         <table className="w-full text-sm">
@@ -99,6 +98,6 @@ export default async function SecurityEventsPage() {
           </tbody>
         </table>
       </div>
-    </div>
+    </PageShell>
   );
 }

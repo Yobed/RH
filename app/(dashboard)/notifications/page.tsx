@@ -2,6 +2,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { NotificationSyncButton } from "@/components/rh/NotificationSyncButton";
 import { NotificationMarkAllRead } from "@/components/rh/NotificationMarkAllRead";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Notifications — RH Manager CI" };
 
@@ -75,12 +76,11 @@ export default async function NotificationsPage() {
   const total = notifications?.length ?? 0;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      {/* En-tête */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Notifications</h1>
-          <p className="text-sm text-slate-600 mt-0.5">
+    <PageShell>
+      <PageHeader
+        title="Notifications"
+        description={
+          <>
             {unread > 0 ? (
               <span>
                 <span className="font-semibold text-[oklch(0.78_0.13_73)]">{unread} non lue{unread > 1 ? "s" : ""}</span>
@@ -88,13 +88,15 @@ export default async function NotificationsPage() {
               </span>
             ) : null}
             {total} au total
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <NotificationMarkAllRead unreadCount={unread} />
-          <NotificationSyncButton />
-        </div>
-      </div>
+          </>
+        }
+        actions={
+          <>
+            <NotificationMarkAllRead unreadCount={unread} />
+            <NotificationSyncButton />
+          </>
+        }
+      />
 
       {/* Empty state */}
       {!notifications || notifications.length === 0 ? (
@@ -161,6 +163,6 @@ export default async function NotificationsPage() {
           })}
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

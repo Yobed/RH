@@ -46,11 +46,11 @@ export function HrSuiteModulesWidget() {
             <Sparkles className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-base font-black tracking-tight text-slate-900 dark:text-white">Modules de la Suite RH</h3>
+            <h3 className="text-base font-bold tracking-tight text-slate-900 dark:text-white">Modules de la Suite RH</h3>
             <p className="text-xs text-slate-500 font-bold dark:text-slate-400">Accès rapide aux applications métier</p>
           </div>
         </div>
-        <span className="text-[11px] font-black px-3 py-1 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+        <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
           Suite Complète 2026
         </span>
       </div>
@@ -69,7 +69,7 @@ export function HrSuiteModulesWidget() {
                 <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-xs font-black text-slate-900 dark:text-white group-hover:text-[#FF8200] truncate transition-colors">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#FF8200] truncate transition-colors">
                   {mod.title}
                 </h4>
                 <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 truncate mt-0.5">{mod.desc}</p>
@@ -81,7 +81,7 @@ export function HrSuiteModulesWidget() {
       </div>
 
       <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-right">
-        <span className="text-xs font-black text-slate-500 dark:text-slate-400 hover:text-[#FF8200] dark:hover:text-[#FF8200] cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-[#FF8200] dark:hover:text-[#FF8200] cursor-pointer inline-flex items-center gap-1.5 transition-colors">
           ... et plus encore dans votre portail d'entreprise ➔
         </span>
       </div>

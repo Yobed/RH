@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { MedicalExamDialog } from "@/components/rh/MedicalExamDialog";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLocal } from "@/lib/utils";
 
@@ -34,20 +34,13 @@ export default async function MedicalPage() {
   const inaptes = exams?.filter((e) => e.resultat !== "APTE").length ?? 0;
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Santé & Sécurité au Travail</h1>
-            <PageHelp text="Suivi des visites médicales du travail (embauche, périodiques, reprise). Organiser ces visites est une obligation de l'employeur (Code du Travail ivoirien)." />
-          </div>
-          <p className="text-sm text-slate-600 mt-0.5 font-medium">Suivi des visites médicales, aptitudes et recommandations de la médecine du travail</p>
-        </div>
-        <div className="shrink-0">
-          <MedicalExamDialog employees={employees ?? []} />
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Santé & Sécurité au Travail"
+        description="Suivi des visites médicales, aptitudes et recommandations de la médecine du travail"
+        help="Suivi des visites médicales du travail (embauche, périodiques, reprise). Organiser ces visites est une obligation de l'employeur (Code du Travail ivoirien)."
+        actions={<MedicalExamDialog employees={employees ?? []} />}
+      />
 
       {/* KPI row */}
       <div className="grid grid-cols-3 gap-3">
@@ -119,6 +112,6 @@ export default async function MedicalPage() {
           </table>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

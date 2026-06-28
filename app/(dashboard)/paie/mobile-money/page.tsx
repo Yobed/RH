@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Mobile Money CI — RH Manager CI" };
 
@@ -34,13 +35,11 @@ export default async function MobileMoneyPage() {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Mobile Money CI</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Historique des virements salaires via Orange Money, Wave et MTN MoMo.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Mobile Money CI"
+        description="Historique des virements salaires via Orange Money, Wave et MTN MoMo."
+      />
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -112,6 +111,6 @@ export default async function MobileMoneyPage() {
           </tbody>
         </table>
       </div>
-    </div>
+    </PageShell>
   );
 }

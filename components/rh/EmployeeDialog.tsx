@@ -366,7 +366,7 @@ export function EmployeeDialog({
             employee ? (
               <Button variant="ghost" size="sm" aria-label="Modifier" />
             ) : (
-              <Button className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white border-0" />
+              <Button className="bg-[#FF8200] hover:bg-[#E07400] text-white border-0" />
             )
           }
         >

@@ -251,7 +251,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Effectif</p>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-xl font-black text-slate-900 font-mono">{stats.total}</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{stats.total}</span>
                 <span className="text-[10px] font-semibold text-slate-500">salariés</span>
               </div>
             </div>
@@ -264,7 +264,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Effectif Actif</p>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-xl font-black text-slate-900 font-mono">{stats.actifs}</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{stats.actifs}</span>
                 <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded font-mono">
                   {stats.total > 0 ? Math.round((stats.actifs / stats.total) * 100) : 0}%
                 </span>
@@ -279,7 +279,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Contrats CDI</p>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-xl font-black text-slate-900 font-mono">{stats.cdiCount}</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{stats.cdiCount}</span>
                 <span className="text-[10px] font-semibold text-slate-500">permanents</span>
               </div>
             </div>
@@ -292,7 +292,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Taux Parité (F)</p>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-xl font-black text-slate-900 font-mono">{stats.pctFemmes}%</span>
+                <span className="text-xl font-bold text-slate-900 font-mono">{stats.pctFemmes}%</span>
                 <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded font-mono">
                   {stats.femmes} femmes
                 </span>
@@ -329,7 +329,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                   <span>{tab.label}</span>
                   <span
                     className={cn(
-                      "px-2 py-0.5 rounded-full text-[10px] font-mono font-black",
+                      "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold",
                       isActive ? "bg-[#FF8200] text-white" : "bg-slate-200 text-slate-700"
                     )}
                   >
@@ -345,7 +345,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             <EmployeeDialog 
               employees={employees}
               trigger={
-                <button className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#FF8200] hover:bg-[#E07400] text-white text-xs font-black transition-all shadow-md shadow-[#FF8200]/20 hover:scale-105 active:scale-95 cursor-pointer outline-none">
+                <button className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#FF8200] hover:bg-[#E07400] text-white text-xs font-bold transition-all shadow-md shadow-[#FF8200]/20 hover:scale-105 active:scale-95 cursor-pointer outline-none">
                   <UserCheck size={16} weight="bold" />
                   <span>+ Nouveau Collaborateur</span>
                 </button>
@@ -443,7 +443,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
         {/* Quick Department Filter Pills (Zero-Click User Journey) */}
         {departements.length > 0 && (
           <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 no-scrollbar">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
               <Building size={12} weight="bold" /> Départements:
             </span>
             <button
@@ -500,36 +500,36 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 select-none">
                     <th 
-                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider cursor-pointer hover:text-slate-900 transition-colors"
+                      className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider cursor-pointer hover:text-slate-900 transition-colors"
                       onClick={() => handleSort("full_name")}
                     >
                       Collaborateur <SortIcon column="full_name" />
                     </th>
                     <th 
-                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                      className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
                       onClick={() => handleSort("matricule")}
                     >
                       Matricule & Genre <SortIcon column="matricule" />
                     </th>
                     <th 
-                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider hidden md:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                      className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider hidden md:table-cell cursor-pointer hover:text-slate-900 transition-colors"
                       onClick={() => handleSort("type_contrat")}
                     >
                       Contrat & Département <SortIcon column="type_contrat" />
                     </th>
                     <th 
-                      className="px-6 py-4 text-right text-[11px] font-black uppercase tracking-wider hidden xl:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                      className="px-6 py-4 text-right text-[11px] font-bold uppercase tracking-wider hidden xl:table-cell cursor-pointer hover:text-slate-900 transition-colors"
                       onClick={() => handleSort("salaire_brut")}
                     >
                       Rémunération Brut <SortIcon column="salaire_brut" />
                     </th>
                     <th 
-                      className="px-6 py-4 text-[11px] font-black uppercase tracking-wider cursor-pointer hover:text-slate-900 transition-colors"
+                      className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider cursor-pointer hover:text-slate-900 transition-colors"
                       onClick={() => handleSort("statut")}
                     >
                       Statut <SortIcon column="statut" />
                     </th>
-                    <th className="px-6 py-4 text-center text-[11px] font-black uppercase tracking-wider">Actions</th>
+                    <th className="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
@@ -540,7 +540,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200/90 border border-slate-200/80 flex items-center justify-center text-slate-800 font-black text-xs shadow-2xs group-hover:border-[#FF8200]/40 transition-colors">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200/90 border border-slate-200/80 flex items-center justify-center text-slate-800 font-bold text-xs shadow-2xs group-hover:border-[#FF8200]/40 transition-colors">
                             {getInitials(emp.full_name)}
                           </div>
                           <div className="min-w-0">
@@ -564,7 +564,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
 
                       <td className="px-6 py-4 hidden md:table-cell">
                         <div className="flex flex-col gap-1">
-                          <span className="inline-flex items-center px-2.5 py-0.5 bg-amber-50 text-amber-800 rounded-md text-[10px] font-black uppercase tracking-wider border border-amber-200/60 w-max">
+                          <span className="inline-flex items-center px-2.5 py-0.5 bg-amber-50 text-amber-800 rounded-md text-[10px] font-bold uppercase tracking-wider border border-amber-200/60 w-max">
                             {emp.type_contrat || 'N/A'}
                           </span>
                           <span className="text-xs text-slate-600 font-medium flex items-center gap-1.5">
@@ -575,7 +575,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                       </td>
 
                       <td className="px-6 py-4 text-right hidden xl:table-cell">
-                        <div className="text-sm font-black text-slate-900 font-mono tabular-nums">
+                        <div className="text-sm font-bold text-slate-900 font-mono tabular-nums">
                           {emp.salaire_brut != null ? fmt(emp.salaire_brut) : "—"}
                         </div>
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Brut Mensuel</span>
@@ -602,7 +602,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                               </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-52 p-2 rounded-2xl border-slate-200 shadow-xl bg-white">
-                              <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-2.5 py-1.5">Options Collaborateur</DropdownMenuLabel>
+                              <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2.5 py-1.5">Options Collaborateur</DropdownMenuLabel>
                               <DropdownMenuItem asChild>
                                 <Link href={`/employes/${emp.id}`} className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-slate-50 font-semibold text-xs text-slate-700 outline-none">
                                   <Eye size={16} weight="duotone" className="text-slate-400" />
@@ -660,13 +660,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-4">
                       <div className="flex items-center gap-3.5">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200/80 flex items-center justify-center text-slate-800 font-black text-sm shadow-2xs group-hover:border-[#FF8200]/40 transition-colors">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200/80 flex items-center justify-center text-slate-800 font-bold text-sm shadow-2xs group-hover:border-[#FF8200]/40 transition-colors">
                           {getInitials(emp.full_name)}
                         </div>
                         <div>
                           <Link 
                             href={`/employes/${emp.id}`}
-                            className="font-black text-sm text-slate-900 hover:text-[#FF8200] transition-colors line-clamp-1"
+                            className="font-bold text-sm text-slate-900 hover:text-[#FF8200] transition-colors line-clamp-1"
                           >
                             {emp.full_name}
                           </Link>
@@ -713,7 +713,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                       </div>
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-slate-400 font-medium">Contrat:</span>
-                        <span className="font-black text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-md text-[10px] uppercase border border-amber-200/60">{emp.type_contrat || "—"}</span>
+                        <span className="font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-md text-[10px] uppercase border border-amber-200/60">{emp.type_contrat || "—"}</span>
                       </div>
                     </div>
                   </div>
@@ -749,7 +749,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                         <Building size={18} weight="bold" />
                       </div>
                       <div>
-                        <h3 className="text-sm font-black text-slate-900">Répartition par Département</h3>
+                        <h3 className="text-sm font-bold text-slate-900">Répartition par Département</h3>
                         <p className="text-[11px] text-slate-500 font-medium">Distribution globale de l'effectif</p>
                       </div>
                     </div>
@@ -788,7 +788,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                         <Briefcase size={18} weight="bold" />
                       </div>
                       <div>
-                        <h3 className="text-sm font-black text-slate-900">Structures Contractuelles</h3>
+                        <h3 className="text-sm font-bold text-slate-900">Structures Contractuelles</h3>
                         <p className="text-[11px] text-slate-500 font-medium">Répartition CDI, CDD et autres</p>
                       </div>
                     </div>
@@ -847,7 +847,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
       <div className="border-t border-slate-200/80 bg-slate-50/50 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-500 font-bold">
-            Affichage de <span className="text-slate-900 font-black font-mono">{employees.length}</span> sur <span className="text-slate-900 font-black font-mono">{totalCount}</span> collaborateurs
+            Affichage de <span className="text-slate-900 font-bold font-mono">{employees.length}</span> sur <span className="text-slate-900 font-bold font-mono">{totalCount}</span> collaborateurs
           </span>
         </div>
         

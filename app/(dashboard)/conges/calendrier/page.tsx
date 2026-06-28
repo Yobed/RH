@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { CongesCalendrierClient } from "@/components/rh/CongesCalendrierClient";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Calendrier des Absences — RH Manager CI" };
 
@@ -69,30 +70,22 @@ export default async function CalendrierPage({
   ).sort();
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="flex items-start justify-between gap-4 pb-5 border-b border-slate-100">
-        <div>
-          <Link
-            href="/conges"
-            className="inline-flex items-center gap-1 text-xs text-slate-600 hover:text-slate-600 transition-colors mb-2"
-          >
-            ← Retour aux congés
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Calendrier des Absences</h1>
-          <p className="text-sm text-slate-600 mt-0.5 font-medium">
-            Vue mensuelle par équipe — filtre par département
-          </p>
-        </div>
-        <span className="shrink-0 text-xs font-mono text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 bg-white">
-          {new Date(mois + "-01").toLocaleDateString("fr-CI", { month: "long", year: "numeric" })}
-        </span>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Calendrier des Absences"
+        description="Vue mensuelle par équipe — filtre par département"
+        actions={
+          <span className="shrink-0 text-xs font-mono text-slate-600 border border-slate-200 rounded-lg px-2.5 py-1 bg-white">
+            {new Date(mois + "-01").toLocaleDateString("fr-CI", { month: "long", year: "numeric" })}
+          </span>
+        }
+      />
 
       <CongesCalendrierClient
         conges={conges}
         departements={departements}
         moisInitial={mois}
       />
-    </div>
+    </PageShell>
   );
 }

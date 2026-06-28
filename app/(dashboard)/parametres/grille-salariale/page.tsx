@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Grille salariale catégorielle — RH Manager CI" };
 export const dynamic = "force-dynamic";
@@ -50,30 +51,25 @@ export default async function GrilleSalarialePage() {
   const maxSalary = rows.length ? Math.max(...rows.map((r) => r.salaire_base)) : 0;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Grille salariale catégorielle
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Référentiel partagé — Convention Collective Interprofessionnelle Côte d'Ivoire.
-            Les salaires de base s'auto-remplissent dans la fiche employé selon la catégorie choisie.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-center">
-            <p className="text-[10px] uppercase tracking-wide text-slate-500">Catégories</p>
-            <p className="text-lg font-semibold text-slate-900">{rows.length}</p>
-          </div>
-          <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-center">
-            <p className="text-[10px] uppercase tracking-wide text-slate-500">Min — Max</p>
-            <p className="text-sm font-semibold text-slate-900">
-              {formatFCFA(minSalary)} → {formatFCFA(maxSalary)}
-            </p>
-          </div>
-        </div>
-      </header>
+    <PageShell>
+      <PageHeader
+        title="Grille salariale catégorielle"
+        description="Référentiel partagé — Convention Collective Interprofessionnelle Côte d'Ivoire. Les salaires de base s'auto-remplissent dans la fiche employé selon la catégorie choisie."
+        actions={
+          <>
+            <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-center">
+              <p className="text-[10px] uppercase tracking-wide text-slate-500">Catégories</p>
+              <p className="text-lg font-semibold text-slate-900">{rows.length}</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-center">
+              <p className="text-[10px] uppercase tracking-wide text-slate-500">Min — Max</p>
+              <p className="text-sm font-semibold text-slate-900">
+                {formatFCFA(minSalary)} → {formatFCFA(maxSalary)}
+              </p>
+            </div>
+          </>
+        }
+      />
 
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
@@ -125,6 +121,6 @@ export default async function GrilleSalarialePage() {
         Toute modification doit être réalisée par un super-administrateur via la base Supabase
         ou une migration dédiée.
       </footer>
-    </div>
+    </PageShell>
   );
 }

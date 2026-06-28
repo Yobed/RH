@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ContractDialog, type ExistingContract } from "@/components/rh/ContractDialog";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 export const dynamic = 'force-dynamic';
@@ -117,20 +117,13 @@ export default async function ContratsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Contrats</h1>
-            <PageHelp text="Tous les contrats de travail (CDI, CDD, avenants) de vos salariés. L'écrit est obligatoire pour un CDD et fortement recommandé pour un CDI (Code du Travail ivoirien)." />
-          </div>
-          <p className="text-sm text-slate-600 mt-0.5">
-            Gestion des contrats de travail — CDD, CDI, Stage, Apprentissage
-          </p>
-        </div>
-        <ContractDialog employees={employees ?? []} />
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Contrats"
+        description="Gestion des contrats de travail — CDD, CDI, Stage, Apprentissage"
+        help="Tous les contrats de travail (CDI, CDD, avenants) de vos salariés. L'écrit est obligatoire pour un CDD et fortement recommandé pour un CDI (Code du Travail ivoirien)."
+        actions={<ContractDialog employees={employees ?? []} />}
+      />
 
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -291,6 +284,6 @@ export default async function ContratsPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

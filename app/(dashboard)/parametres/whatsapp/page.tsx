@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 interface Config {
   api_key: string;
@@ -62,22 +63,24 @@ export default function WhatsAppPage() {
   }
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 max-w-2xl">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Notifications WhatsApp</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Envoi de messages WhatsApp via{" "}
-          <a
-            href="https://wasenderapi.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-500 hover:underline"
-          >
-            Wasender API
-          </a>{" "}
-          pour les bulletins de paie et notifications RH.
-        </p>
-      </div>
+    <PageShell width="narrow">
+      <PageHeader
+        title="Notifications WhatsApp"
+        description={
+          <>
+            Envoi de messages WhatsApp via{" "}
+            <a
+              href="https://wasenderapi.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-500 hover:underline"
+            >
+              Wasender API
+            </a>{" "}
+            pour les bulletins de paie et notifications RH.
+          </>
+        }
+      />
 
       <div className="rounded-xl border border-border bg-card p-6 space-y-5">
         <div className="flex items-center justify-between">
@@ -166,6 +169,6 @@ export default function WhatsAppPage() {
           ))}
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

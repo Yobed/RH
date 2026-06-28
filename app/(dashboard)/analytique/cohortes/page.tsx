@@ -3,6 +3,7 @@ export const metadata = { title: "Cohortes d'embauche — RH Manager CI" };
 
 import { createServerClient } from "@/lib/supabase/server";
 import { Users, TrendingDown, Calendar } from "lucide-react";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 interface Employee {
   id: string;
@@ -95,19 +96,11 @@ export default async function CohortesPage() {
   const maxMonthly = Math.max(...Object.values(monthlyHires), ...Object.values(monthlyDepartures), 1);
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      {/* En-tête */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-indigo-600 flex items-center justify-center">
-            <Users className="h-4 w-4 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Cohortes d'embauche</h1>
-        </div>
-        <p className="text-sm text-slate-500 ml-10">
-          Suivi de rétention par génération de recrutement — taux de présence et ancienneté moyenne.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Cohortes d'embauche"
+        description="Suivi de rétention par génération de recrutement — taux de présence et ancienneté moyenne."
+      />
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -259,6 +252,6 @@ export default async function CohortesPage() {
           </table>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { buildReminders } from "@/lib/reminders-engine";
@@ -17,8 +18,8 @@ export default async function RappelsPage() {
   const reminders = await buildReminders(supabase, companyId as string);
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <RemindersClient initial={reminders} />
-    </div>
+    </PageShell>
   );
 }

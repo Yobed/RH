@@ -84,7 +84,7 @@ export default async function EvaluationsPage() {
             
             <div className="relative z-10 space-y-6">
                <div className="flex items-center gap-4">
-                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none font-black text-[10px] uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-sm">
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none font-bold text-[10px] uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-sm">
                     Intelligence RH v4.0
                   </Badge>
                   <div className="flex items-center gap-1.5">
@@ -94,7 +94,7 @@ export default async function EvaluationsPage() {
                </div>
                
                <div className="space-y-2">
-                  <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tightest leading-[0.9] flex flex-col">
+                  <h1 className="text-5xl md:text-7xl font-bold text-slate-900 tracking-tightest leading-[0.9] flex flex-col">
                     <span className="opacity-40">ANALYTICS</span>
                     <span className="flex items-center gap-4">
                        Performance
@@ -116,8 +116,8 @@ export default async function EvaluationsPage() {
                     { label: 'Pending', value: enAttente, color: 'text-amber-500' }
                   ].map((kpi, idx) => (
                     <div key={idx} className="bg-white/90 p-6 md:p-8 rounded-[2rem] shadow-[0_8px_16px_rgba(0,0,0,0.02)] border border-white min-w-[120px] md:min-w-[160px] text-center hover:scale-[1.02] transition-all duration-500 group/item">
-                       <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-3 group-hover/item:text-slate-900 transition-colors uppercase">{kpi.label}</p>
-                       <p className={`text-4xl md:text-6xl font-black ${kpi.color} tracking-tightest`}>{kpi.value}</p>
+                       <p className="text-[9px] font-bold uppercase text-slate-400 tracking-widest mb-3 group-hover/item:text-slate-900 transition-colors uppercase">{kpi.label}</p>
+                       <p className={`text-4xl md:text-6xl font-bold ${kpi.color} tracking-tightest`}>{kpi.value}</p>
                        <div className="flex justify-center mt-4">
                          <div className="h-1 w-6 bg-slate-100 rounded-full group-hover/item:w-10 group-hover/item:bg-primary transition-all duration-500" />
                        </div>
@@ -134,7 +134,7 @@ export default async function EvaluationsPage() {
         <div className="flex items-center justify-center min-h-[600px] bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-100">
            <div className="text-center space-y-4">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-primary mx-auto" />
-              <p className="text-[10px] font-black uppercase text-slate-300 tracking-[0.3em]">Synchronisation des données...</p>
+              <p className="text-[10px] font-bold uppercase text-slate-300 tracking-[0.3em]">Synchronisation des données...</p>
            </div>
         </div>
       }>

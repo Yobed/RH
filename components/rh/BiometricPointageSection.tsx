@@ -240,7 +240,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               Borne Biométrique Active • Station #01 HQ Abidjan
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-heading">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-heading">
               Module de Pointage Biométrique IA
             </h2>
             <p className="text-sm text-slate-300 leading-relaxed">
@@ -266,7 +266,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#FF8200] to-amber-500 hover:from-amber-600 hover:to-[#FF8200] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-95"
+              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#FF8200] to-amber-500 hover:from-amber-600 hover:to-[#FF8200] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-95"
             >
               <Camera className="h-4 w-4" />
               <span>Ouvrir la Borne de Scan Faciale</span>
@@ -282,7 +282,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
             <span className="text-[10px] font-extrabold uppercase tracking-wider">Pointages Enregistrés</span>
             <Clock className="h-4 w-4 text-[#FF8200]" />
           </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
+          <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.total}
           </div>
           <span className="text-[11px] text-slate-500 font-medium mt-1 block">Aujourd'hui en temps réel</span>
@@ -293,7 +293,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
             <span className="text-[10px] font-extrabold uppercase tracking-wider">Taux de Match Biométrique</span>
             <ShieldCheck className="h-4 w-4 text-emerald-500" />
           </div>
-          <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
             {stats.avgMatch}%
           </div>
           <span className="text-[11px] text-emerald-700/80 dark:text-emerald-400/80 font-medium mt-1 block flex items-center gap-1">
@@ -306,7 +306,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
             <span className="text-[10px] font-extrabold uppercase tracking-wider">Arrivées Valides</span>
             <UserCheck className="h-4 w-4 text-indigo-500" />
           </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
+          <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.arrivees}
           </div>
           <span className="text-[11px] text-slate-500 font-medium mt-1 block">Collaborateurs identifiés</span>
@@ -317,7 +317,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
             <span className="text-[10px] font-extrabold uppercase tracking-wider">Écarts de Ponctualité</span>
             <AlertCircle className="h-4 w-4 text-amber-500" />
           </div>
-          <div className="text-2xl font-black text-amber-600 dark:text-amber-400 tabular-nums">
+          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 tabular-nums">
             {stats.retard}
           </div>
           <span className="text-[11px] text-slate-500 font-medium mt-1 block">Retards comptabilisés</span>
@@ -333,7 +333,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900 dark:text-white font-heading">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white font-heading">
                 Registre des Pointages Biométriques
               </h3>
               <p className="text-xs text-slate-500 font-medium">Historique infalsifiable et horodaté des scans d'entrée/sortie</p>

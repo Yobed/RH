@@ -279,7 +279,7 @@ export function CalcSursalaireForm() {
               <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 text-indigo-600 dark:text-indigo-400">
                 Sursalaire à fixer
               </p>
-              <p className="text-base font-black tabular-nums leading-none text-indigo-900 dark:text-indigo-100">
+              <p className="text-base font-bold tabular-nums leading-none text-indigo-900 dark:text-indigo-100">
                 {fcfa(computed.sursalaire)}
               </p>
             </div>
@@ -287,7 +287,7 @@ export function CalcSursalaireForm() {
               <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 text-emerald-600 dark:text-emerald-400">
                 Net garanti
               </p>
-              <p className="text-base font-black tabular-nums leading-none text-emerald-900 dark:text-emerald-100">
+              <p className="text-base font-bold tabular-nums leading-none text-emerald-900 dark:text-emerald-100">
                 {fcfa(computed.net_calcule)}
               </p>
             </div>
@@ -295,7 +295,7 @@ export function CalcSursalaireForm() {
               <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 text-amber-600 dark:text-amber-400">
                 ITS retenu
               </p>
-              <p className="text-base font-black tabular-nums leading-none text-amber-900 dark:text-amber-100">
+              <p className="text-base font-bold tabular-nums leading-none text-amber-900 dark:text-amber-100">
                 {fcfa(computed.its_salarial)}
               </p>
             </div>

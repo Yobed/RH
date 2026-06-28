@@ -147,11 +147,11 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-             <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-black uppercase px-2 py-0.5">Capital Humain</Badge>
+             <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-bold uppercase px-2 py-0.5">Capital Humain</Badge>
              <div className="h-1 w-1 rounded-full bg-slate-300" />
-             <span className="text-[10px] text-muted-foreground font-black uppercase tracking-tight">Gestion de la Performance</span>
+             <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">Gestion de la Performance</span>
           </div>
-          <h2 className="text-4xl font-black tracking-tightest flex items-center gap-4 text-slate-900">
+          <h2 className="text-4xl font-bold tracking-tightest flex items-center gap-4 text-slate-900">
             Performance & Insights
           </h2>
           <p className="text-muted-foreground text-sm font-medium max-w-2xl mt-2 leading-relaxed">
@@ -185,12 +185,12 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
             <CardHeader className="pb-2 p-8">
                <div className="flex items-center gap-3 mb-4">
                   <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                  <CardDescription className="text-white/40 text-[10px] font-black uppercase tracking-[0.3em]">Campaign Focus</CardDescription>
+                  <CardDescription className="text-white/40 text-[10px] font-bold uppercase tracking-[0.3em]">Campaign Focus</CardDescription>
                </div>
-               <CardTitle className="text-6xl font-black tracking-tightest leading-none">{pendingCount}</CardTitle>
+               <CardTitle className="text-6xl font-bold tracking-tightest leading-none">{pendingCount}</CardTitle>
             </CardHeader>
             <CardContent className="p-8 pt-0">
-               <p className="text-[11px] font-black text-white/50 flex items-center gap-2 uppercase tracking-wide">
+               <p className="text-[11px] font-bold text-white/50 flex items-center gap-2 uppercase tracking-wide">
                   Active Reviews In-Flight
                </p>
             </CardContent>
@@ -204,15 +204,15 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                <TrendUp weight="duotone" size={160} />
             </div>
             <CardHeader className="pb-2 p-8">
-               <CardDescription className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">Completion Velocity</CardDescription>
-               <CardTitle className="text-6xl font-black tracking-tightest text-slate-900 leading-none">
+               <CardDescription className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-4">Completion Velocity</CardDescription>
+               <CardTitle className="text-6xl font-bold tracking-tightest text-slate-900 leading-none">
                  {evaluations.length > 0 ? Math.round((completedCount / evaluations.length) * 100) : 0}<span className="text-2xl text-emerald-500">%</span>
                </CardTitle>
             </CardHeader>
             <CardContent className="p-8 pt-0">
                <div className="space-y-4">
                   <Progress value={evaluations.length > 0 ? (completedCount / evaluations.length) * 100 : 0} className="h-2 bg-slate-50" />
-                  <p className="text-[10px] text-slate-500 font-black uppercase tracking-tight">Milestones Achieved</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Milestones Achieved</p>
                </div>
             </CardContent>
           </Card>
@@ -224,11 +224,11 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                <Trophy weight="duotone" size={160} />
             </div>
             <CardHeader className="pb-2 p-8">
-               <CardDescription className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4">Top Talent Pool</CardDescription>
-               <CardTitle className="text-6xl font-black tracking-tightest text-slate-900 leading-none">{highPerformers}</CardTitle>
+               <CardDescription className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400 mb-4">Top Talent Pool</CardDescription>
+               <CardTitle className="text-6xl font-bold tracking-tightest text-slate-900 leading-none">{highPerformers}</CardTitle>
             </CardHeader>
             <CardContent className="p-8 pt-0">
-               <p className="text-[10px] text-slate-500 font-black uppercase flex items-center gap-2 tracking-wide">
+               <p className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-2 tracking-wide">
                   <Star weight="fill" className="h-4 w-4 text-amber-400" />
                   Performance Leaders
                </p>
@@ -242,11 +242,11 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                <Warning weight="duotone" size={160} />
             </div>
             <CardHeader className="pb-2 p-8">
-               <CardDescription className={`text-[10px] font-black uppercase tracking-[0.3em] mb-4 ${trialAlerts > 0 ? 'text-red-500' : 'text-slate-400'}`}>Critical Alerts</CardDescription>
-               <CardTitle className={`text-6xl font-black tracking-tightest leading-none ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-900'}`}>{trialAlerts}</CardTitle>
+               <CardDescription className={`text-[10px] font-bold uppercase tracking-[0.3em] mb-4 ${trialAlerts > 0 ? 'text-red-500' : 'text-slate-400'}`}>Critical Alerts</CardDescription>
+               <CardTitle className={`text-6xl font-bold tracking-tightest leading-none ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-900'}`}>{trialAlerts}</CardTitle>
             </CardHeader>
             <CardContent className="p-8 pt-0">
-               <p className={`text-[10px] font-black uppercase flex items-center gap-2 tracking-wide ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-500'}`}>
+               <p className={`text-[10px] font-bold uppercase flex items-center gap-2 tracking-wide ${trialAlerts > 0 ? 'text-red-600' : 'text-slate-500'}`}>
                   {trialAlerts > 0 ? 'Trial Period Decisions' : 'Compliance Verified'}
                </p>
             </CardContent>
@@ -258,15 +258,15 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
 
       <Tabs defaultValue="upcoming" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="flex w-fit mb-12 bg-white/50 p-2 h-16 rounded-[2rem] backdrop-blur-xl border border-white shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-black text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
+          <TabsTrigger value="upcoming" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-bold text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
             <Clock weight="bold" className="h-4 w-4" />
             Workflow Actif
           </TabsTrigger>
-          <TabsTrigger value="completed" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-black text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
+          <TabsTrigger value="completed" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-bold text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
             <ClockCounterClockwise weight="bold" className="h-4 w-4" />
             Historique Audit
           </TabsTrigger>
-          <TabsTrigger value="mobility" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-black text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
+          <TabsTrigger value="mobility" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:shadow-2xl font-bold text-[11px] uppercase tracking-wider px-10 rounded-[1.5rem] gap-3 transition-all">
             <ArrowsLeftRight weight="bold" className="h-4 w-4" />
             Talent Strategy
           </TabsTrigger>
@@ -286,7 +286,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                   <Button 
                     key={type}
                     variant={filterType === type ? "default" : "outline"}
-                    className={`rounded-xl font-black text-[9px] uppercase h-8 px-4 transition-all ${filterType === type ? 'shadow-lg shadow-primary/20' : 'bg-white'}`}
+                    className={`rounded-xl font-bold text-[9px] uppercase h-8 px-4 transition-all ${filterType === type ? 'shadow-lg shadow-primary/20' : 'bg-white'}`}
                     onClick={() => setFilterType(type)}
                   >
                     {type === 'ALL' ? 'Tous les cycles' : getTypeLabel(type)}
@@ -312,19 +312,19 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                       <div className="flex justify-between items-start">
                         <div className="space-y-2">
                           <div className="flex items-center gap-3">
-                            <Badge className="font-black text-[9px] uppercase border-none bg-primary/10 text-primary tracking-widest px-3 py-1">
+                            <Badge className="font-bold text-[9px] uppercase border-none bg-primary/10 text-primary tracking-widest px-3 py-1">
                               {getTypeLabel(ev.type)}
                             </Badge>
                             {ev.statut.toUpperCase() === 'EN_COURS' && (
                               <div className="flex items-center gap-1 bg-blue-500 rounded-full px-2 py-0.5">
                                  <span className="h-1.5 w-1.5 bg-white rounded-full animate-ping" />
-                                 <span className="text-[8px] font-black uppercase text-white">Actif</span>
+                                 <span className="text-[8px] font-bold uppercase text-white">Actif</span>
                               </div>
                             )}
                           </div>
-                          <CardTitle className="text-2xl font-black text-slate-800 tracking-tight group-hover:translate-x-1 transition-transform">{ev.employee_name}</CardTitle>
+                          <CardTitle className="text-2xl font-bold text-slate-800 tracking-tight group-hover:translate-x-1 transition-transform">{ev.employee_name}</CardTitle>
                           <div className="flex items-center gap-2">
-                             <Badge variant="outline" className="text-[10px] font-black uppercase text-slate-600 border-slate-200">
+                             <Badge variant="outline" className="text-[10px] font-bold uppercase text-slate-600 border-slate-200">
                                 {ev.employee_role}
                              </Badge>
                           </div>
@@ -335,7 +335,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                               <DotsThreeVertical weight="bold" className="h-6 w-6" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="font-black text-[10px] uppercase p-2 border-2 rounded-xl">
+                          <DropdownMenuContent align="end" className="font-bold text-[10px] uppercase p-2 border-2 rounded-xl">
                             <DropdownMenuItem className="gap-3 py-3 hover:bg-primary/5 rounded-lg"><FileText weight="fill" /> Modifier</DropdownMenuItem>
                             <DropdownMenuItem className="text-red-500 gap-3 py-3 hover:bg-red-50 rounded-lg"><Warning weight="fill" /> Annuler</DropdownMenuItem>
                           </DropdownMenuContent>
@@ -343,7 +343,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                       </div>
                     </CardHeader>
                     <CardContent className="pb-6">
-                      <div className="flex items-center justify-between text-[11px] font-black bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                      <div className="flex items-center justify-between text-[11px] font-bold bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
                         <div className="flex items-center gap-3 text-slate-600">
                           <div className="p-2 bg-white rounded-lg shadow-sm">
                              <Calendar weight="duotone" className="h-5 w-5 text-primary" />
@@ -366,7 +366,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                           <div className="h-1.5 w-6 rounded-full bg-slate-200" />
                           <div className="h-1.5 w-6 rounded-full bg-slate-200" />
                        </div>
-                      <Button className="rounded-2xl font-black text-[11px] uppercase group/btn px-6 relative overflow-hidden">
+                      <Button className="rounded-2xl font-bold text-[11px] uppercase group/btn px-6 relative overflow-hidden">
                         <span className="relative z-10 flex items-center gap-2">
                            Lancer l'audit
                            <CaretRight weight="bold" className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -385,9 +385,9 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                     >
                        <Target weight="thin" size={80} className="text-slate-300 mx-auto mb-6" />
                     </motion.div>
-                    <h4 className="text-2xl font-black text-slate-600">Aucune campagne en attente.</h4>
-                    <p className="text-[11px] font-black text-slate-300 uppercase tracking-[0.3em] mb-8 mt-2">Votre flux d'évaluation est parfaitement synchronisé.</p>
-                    <Button variant="outline" className="font-black border-2 rounded-2xl px-10 h-14 uppercase text-[11px] hover:bg-slate-900 hover:text-white transition-all shadow-xl">
+                    <h4 className="text-2xl font-bold text-slate-600">Aucune campagne en attente.</h4>
+                    <p className="text-[11px] font-bold text-slate-300 uppercase tracking-[0.3em] mb-8 mt-2">Votre flux d'évaluation est parfaitement synchronisé.</p>
+                    <Button variant="outline" className="font-bold border-2 rounded-2xl px-10 h-14 uppercase text-[11px] hover:bg-slate-900 hover:text-white transition-all shadow-xl">
                        Démarrer un nouveau cycle
                     </Button>
                 </div>
@@ -405,11 +405,11 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-slate-50 text-slate-600">
-                        <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] border-b">Collaborateur</th>
-                        <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] border-b text-center">Cycle</th>
-                        <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] border-b">KPI Performance</th>
-                        <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] border-b">Verdict</th>
-                        <th className="p-6 font-black uppercase text-[10px] tracking-[0.2em] border-b text-right">Actions</th>
+                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">Collaborateur</th>
+                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b text-center">Cycle</th>
+                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">KPI Performance</th>
+                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">Verdict</th>
+                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y border-slate-50">
@@ -417,25 +417,25 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                         <tr key={ev.id} className="hover:bg-slate-50/80 transition-all duration-300 group">
                           <td className="p-6">
                             <div className="flex items-center gap-4">
-                               <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-slate-600 shadow-inner group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                               <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center font-bold text-slate-600 shadow-inner group-hover:bg-primary group-hover:text-white transition-all duration-500">
                                   {ev.employee_name?.split(' ').map(n => n[0]).join('')}
                                </div>
                                <div>
-                                 <p className="font-black text-sm text-slate-800">{ev.employee_name}</p>
-                                 <p className="text-[10px] font-black uppercase text-slate-600 group-hover:text-primary transition-colors">{ev.employee_role}</p>
+                                 <p className="font-bold text-sm text-slate-800">{ev.employee_name}</p>
+                                 <p className="text-[10px] font-bold uppercase text-slate-600 group-hover:text-primary transition-colors">{ev.employee_role}</p>
                                </div>
                             </div>
                           </td>
                           <td className="p-6 text-center">
-                            <Badge variant="outline" className="font-black text-[9px] uppercase border-slate-200 bg-white">
+                            <Badge variant="outline" className="font-bold text-[9px] uppercase border-slate-200 bg-white">
                               {getTypeLabel(ev.type)}
                             </Badge>
                           </td>
                           <td className="p-6">
                              <div className="space-y-2 w-40">
                                 <div className="flex justify-between items-end">
-                                   <span className="text-[9px] font-black uppercase text-slate-600">Score Moyen</span>
-                                   <span className="text-sm font-black text-slate-700">{ev.score_global}%</span>
+                                   <span className="text-[9px] font-bold uppercase text-slate-600">Score Moyen</span>
+                                   <span className="text-sm font-bold text-slate-700">{ev.score_global}%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                                    <motion.div 
@@ -449,7 +449,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                           <td className="p-6">
                              <Badge 
                                variant={scoreVariant(ev.score_global)} 
-                               className="font-black text-[9px] uppercase tracking-widest px-4 py-1.5 shadow-sm rounded-lg"
+                               className="font-bold text-[9px] uppercase tracking-widest px-4 py-1.5 shadow-sm rounded-lg"
                              >
                                 {scoreLabel(ev.score_global)}
                              </Badge>
@@ -511,13 +511,13 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                                <Trophy weight="fill" size={32} />
                             </div>
                             <div>
-                               <Badge variant="secondary" className="text-[10px] font-black uppercase text-primary bg-primary/10 border-primary/20 mb-1">Talent Intelligence</Badge>
-                               <CardTitle className="text-3xl font-black text-slate-900 tracking-tightest">Matrice de Potentiel vs Performance</CardTitle>
+                               <Badge variant="secondary" className="text-[10px] font-bold uppercase text-primary bg-primary/10 border-primary/20 mb-1">Talent Intelligence</Badge>
+                               <CardTitle className="text-3xl font-bold text-slate-900 tracking-tightest">Matrice de Potentiel vs Performance</CardTitle>
                             </div>
                          </div>
                          <Button 
                             variant="outline" 
-                            className="rounded-2xl font-black text-[11px] uppercase px-8 h-12 border-2 hover:bg-slate-900 hover:text-white transition-all shadow-lg"
+                            className="rounded-2xl font-bold text-[11px] uppercase px-8 h-12 border-2 hover:bg-slate-900 hover:text-white transition-all shadow-lg"
                             onClick={() => {
                                toast.info("Génération du rapport prédictif en cours...");
                                // Mock export for now
@@ -557,13 +557,13 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                         <div className="flex items-center gap-3">
                            <Trophy weight="duotone" size={40} className="text-amber-500" />
                            <div>
-                              <Badge variant="secondary" className="text-[9px] font-black uppercase text-amber-700 bg-amber-50 border-amber-100 mb-1">Elite Pool</Badge>
-                              <CardTitle className="text-3xl font-black text-slate-800">Vivier de Talents</CardTitle>
+                              <Badge variant="secondary" className="text-[9px] font-bold uppercase text-amber-700 bg-amber-50 border-amber-100 mb-1">Elite Pool</Badge>
+                              <CardTitle className="text-3xl font-bold text-slate-800">Vivier de Talents</CardTitle>
                            </div>
                         </div>
                         <div className="text-right">
-                           <span className="text-4xl font-black text-amber-500">{highPerformers}</span>
-                           <span className="text-[10px] font-black block uppercase text-slate-600">Collaborateurs Clés</span>
+                           <span className="text-4xl font-bold text-amber-500">{highPerformers}</span>
+                           <span className="text-[10px] font-bold block uppercase text-slate-600">Collaborateurs Clés</span>
                         </div>
                      </div>
                      <CardDescription className="font-bold text-xs leading-relaxed max-w-xl text-slate-600 uppercase tracking-tight">
@@ -580,7 +580,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                            >
                               <div className="flex items-center gap-6">
                                  <div className="relative">
-                                    <div className="h-16 w-16 rounded-[1.5rem] bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-black text-white text-xl shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
+                                    <div className="h-16 w-16 rounded-[1.5rem] bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-bold text-white text-xl shadow-[0_10px_30px_rgba(245,158,11,0.3)]">
                                        {ev.employee_name?.charAt(0)}
                                     </div>
                                     <div className="absolute -bottom-2 -right-2 bg-white p-1 rounded-full shadow-lg">
@@ -590,19 +590,19 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                                     </div>
                                  </div>
                                  <div>
-                                    <h4 className="text-xl font-black text-slate-800">{ev.employee_name}</h4>
+                                    <h4 className="text-xl font-bold text-slate-800">{ev.employee_name}</h4>
                                     <div className="flex items-center gap-2 mt-1">
-                                       <Badge variant="secondary" className="text-[9px] font-black uppercase bg-slate-100 text-slate-600">{ev.employee_role}</Badge>
-                                       <span className="text-[10px] font-black text-emerald-600 uppercase">Haut Potentiel</span>
+                                       <Badge variant="secondary" className="text-[9px] font-bold uppercase bg-slate-100 text-slate-600">{ev.employee_role}</Badge>
+                                       <span className="text-[10px] font-bold text-emerald-600 uppercase">Haut Potentiel</span>
                                     </div>
                                  </div>
                               </div>
                               <div className="flex items-center gap-8">
                                  <div className="text-right">
-                                    <p className="text-3xl font-black text-amber-600">{ev.score_global}</p>
-                                    <p className="text-[10px] font-black uppercase text-slate-600">Score Global</p>
+                                    <p className="text-3xl font-bold text-amber-600">{ev.score_global}</p>
+                                    <p className="text-[10px] font-bold uppercase text-slate-600">Score Global</p>
                                  </div>
-                                 <Button className="font-black text-[11px] uppercase h-12 px-8 rounded-2xl shadow-lg hover:shadow-primary/20 transition-all">
+                                 <Button className="font-bold text-[11px] uppercase h-12 px-8 rounded-2xl shadow-lg hover:shadow-primary/20 transition-all">
                                     Dossier Complet
                                  </Button>
                               </div>
@@ -611,7 +611,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                         {evaluations.filter(e => (e.score_global || 0) >= 80).length === 0 && (
                            <div className="p-24 text-center">
                               <Star weight="thin" size={60} className="text-slate-200 mx-auto mb-4" />
-                              <p className="text-slate-600 font-black uppercase tracking-widest text-xs italic">
+                              <p className="text-slate-600 font-bold uppercase tracking-widest text-xs italic">
                                  En attente de futures évaluations de haut niveau.
                               </p>
                            </div>
@@ -626,7 +626,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                          <ArrowsLeftRight weight="bold" size={100} />
                       </div>
                       <CardHeader className="p-8">
-                         <CardTitle className="text-2xl font-black flex items-center gap-3">
+                         <CardTitle className="text-2xl font-bold flex items-center gap-3">
                             Stratégie Mobilité
                          </CardTitle>
                       </CardHeader>
@@ -636,11 +636,11 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                          </p>
                          <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 space-y-5">
                             <div className="flex justify-between items-center">
-                               <span className="text-[11px] font-black uppercase text-white/60">Opportunités de Gestion</span>
+                               <span className="text-[11px] font-bold uppercase text-white/60">Opportunités de Gestion</span>
                                <Badge className="bg-primary text-white rounded-lg">PROMOTION</Badge>
                             </div>
                             <div className="space-y-2">
-                                <div className="flex justify-between items-center text-[10px] font-black uppercase text-white/40">
+                                <div className="flex justify-between items-center text-[10px] font-bold uppercase text-white/40">
                                    <span>Index de Mobilité</span>
                                    <span>82%</span>
                                 </div>
@@ -649,7 +649,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                                 </div>
                             </div>
                          </div>
-                         <Button className="w-full bg-white text-slate-900 hover:bg-slate-100 font-black uppercase text-[11px] h-14 rounded-2xl shadow-xl">
+                         <Button className="w-full bg-white text-slate-900 hover:bg-slate-100 font-bold uppercase text-[11px] h-14 rounded-2xl shadow-xl">
                             Visualiser la Matrice 9-Box
                          </Button>
                       </CardContent>
@@ -657,7 +657,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
 
                    <Card className="shadow-2xl border-none ring-1 ring-slate-100 rounded-[2rem] overflow-hidden bg-white">
                       <CardHeader className="pb-4 p-8">
-                         <CardTitle className="text-sm font-black flex items-center gap-3 text-red-600">
+                         <CardTitle className="text-sm font-bold flex items-center gap-3 text-red-600">
                             <Warning weight="fill" className="h-5 w-5" />
                             Vigilance Juridique
                          </CardTitle>
@@ -666,13 +666,13 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                          <div className="p-5 bg-red-50/50 rounded-2xl border border-red-100/50 flex gap-4">
                             <Warning weight="duotone" className="h-8 w-8 text-red-500 shrink-0" />
                             <div>
-                               <p className="text-sm font-black text-red-900 leading-tight mb-2">Conformité Période d'Essai</p>
+                               <p className="text-sm font-bold text-red-900 leading-tight mb-2">Conformité Période d'Essai</p>
                                <p className="text-[11px] font-bold text-red-700/70 leading-relaxed">
                                   En Côte d'Ivoire (Art. 14.1), le renouvellement de la période d'essai est unique et doit être notifié par écrit avant son terme.
                                </p>
                             </div>
                          </div>
-                         <Button variant="outline" className="w-full border-2 rounded-2xl font-black uppercase text-[10px] h-12 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-all">
+                         <Button variant="outline" className="w-full border-2 rounded-2xl font-bold uppercase text-[10px] h-12 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-all">
                             Générer Courriers de Rappel
                          </Button>
                       </CardContent>
@@ -692,9 +692,9 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
             </div>
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
-                 <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-black uppercase px-2 py-0.5">Intelligence Artificielle</Badge>
+                 <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-bold uppercase px-2 py-0.5">Intelligence Artificielle</Badge>
               </div>
-              <DialogTitle className="text-3xl font-black tracking-tightest">Analyse de Performance</DialogTitle>
+              <DialogTitle className="text-3xl font-bold tracking-tightest">Analyse de Performance</DialogTitle>
               <DialogDescription className="text-slate-600 font-bold text-xs uppercase tracking-tightest mt-1">
                 Synthèse générée par Gemini Flash pour {selectedEvaluation?.employee_name}
               </DialogDescription>
@@ -707,8 +707,8 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                   <Star weight="fill" size={32} className="text-primary" />
                </div>
                <div className="space-y-4 flex-1">
-                  <h4 className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Synthèse Décisionnelle</h4>
-                  <p className="text-lg font-black text-slate-800 leading-snug italic">
+                  <h4 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Synthèse Décisionnelle</h4>
+                  <p className="text-lg font-bold text-slate-800 leading-snug italic">
                     "{selectedEvaluation?.synthese_ia || "Aucune synthèse disponible pour cette évaluation."}"
                   </p>
                </div>
@@ -716,12 +716,12 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
 
             <div className="grid grid-cols-2 gap-4">
                <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                  <span className="text-[9px] font-black text-slate-600 uppercase block mb-1">Score Global</span>
-                  <span className="text-4xl font-black text-slate-900">{selectedEvaluation?.score_global}%</span>
+                  <span className="text-[9px] font-bold text-slate-600 uppercase block mb-1">Score Global</span>
+                  <span className="text-4xl font-bold text-slate-900">{selectedEvaluation?.score_global}%</span>
                </div>
                <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                  <span className="text-[9px] font-black text-slate-600 uppercase block mb-1">Verdict RH</span>
-                  <Badge variant={scoreVariant(selectedEvaluation?.score_global || 0)} className="font-black text-[10px] uppercase px-3 py-1">
+                  <span className="text-[9px] font-bold text-slate-600 uppercase block mb-1">Verdict RH</span>
+                  <Badge variant={scoreVariant(selectedEvaluation?.score_global || 0)} className="font-bold text-[10px] uppercase px-3 py-1">
                     {scoreLabel(selectedEvaluation?.score_global || 0)}
                   </Badge>
                </div>
@@ -731,7 +731,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
           <DialogFooter className="bg-slate-50/50 p-6 border-t border-slate-100">
             <Button 
                onClick={() => setIsSynthesisModalOpen(false)}
-               className="bg-slate-900 text-white hover:bg-slate-800 font-black uppercase text-[11px] h-14 w-full rounded-2xl shadow-xl transition-all"
+               className="bg-slate-900 text-white hover:bg-slate-800 font-bold uppercase text-[11px] h-14 w-full rounded-2xl shadow-xl transition-all"
             >
               Fermer l'Analyse
             </Button>

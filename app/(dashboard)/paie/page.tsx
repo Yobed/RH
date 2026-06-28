@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
 import Link from "next/link";
@@ -89,24 +89,19 @@ export default async function PaiePage({
   const nbPayes = bulletinsMoisSafe.filter((b) => b.statut === "payé").length;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Bulletins de Paie</h1>
-            <PageHelp text="Les bulletins de salaire de vos collaborateurs : le net à payer est calculé à partir du brut, des cotisations CNPS et de l'ITS (impôt sur les salaires) selon le barème ivoirien." />
-          </div>
-          <p className="text-sm text-slate-600 mt-0.5">
-            CNPS retraite 6,3% + CMU 1 600 FCFA + ITS unifié (barème progressif − RICF) — Réforme 2024 CI
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <PaieExportButton periode={currentPeriode} />
-          <LivrePaieButton bulletins={bulletinsMoisSafe} company={company} periode={currentPeriode} />
-          <PaieDialog employees={employees ?? []} company={company} />
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Bulletins de Paie"
+        description="CNPS retraite 6,3% + CMU 1 600 FCFA + ITS unifié (barème progressif − RICF) — Réforme 2024 CI"
+        help="Les bulletins de salaire de vos collaborateurs : le net à payer est calculé à partir du brut, des cotisations CNPS et de l'ITS (impôt sur les salaires) selon le barème ivoirien."
+        actions={
+          <>
+            <PaieExportButton periode={currentPeriode} />
+            <LivrePaieButton bulletins={bulletinsMoisSafe} company={company} periode={currentPeriode} />
+            <PaieDialog employees={employees ?? []} company={company} />
+          </>
+        }
+      />
 
       {/* Filters */}
       <PaieFilters />
@@ -162,6 +157,6 @@ export default async function PaiePage({
           <BulletinTable bulletins={bulletins} employees={employees ?? []} company={company} totalCount={count ?? 0} />
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

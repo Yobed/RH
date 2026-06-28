@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { DeclarationsManager } from "@/components/rh/DeclarationsManager";
 import { redirect } from "next/navigation";
@@ -30,12 +31,12 @@ export default async function DeclarationsPage() {
   const periods = Array.from(new Set((bulletinPeriods ?? []).map((b) => b.periode))).sort().reverse();
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <DeclarationsManager
         socialDeclarations={socialDecls ?? []}
         taxDeclarations={taxDecls ?? []}
         availablePeriods={periods}
       />
-    </div>
+    </PageShell>
   );
 }

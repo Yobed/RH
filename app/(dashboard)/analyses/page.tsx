@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+import { PageShell } from "@/components/ui/page-shell";
 import { createServerClient } from "@/lib/supabase/server";
 import { CompanySocialAnalysis } from "@/components/rh/CompanySocialAnalysis";
 
@@ -13,8 +14,8 @@ export default async function FinanceDataPage() {
     .eq("statut", "actif");
 
   return (
-    <div className="p-3 sm:p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <PageShell>
       <CompanySocialAnalysis employees={employees || []} />
-    </div>
+    </PageShell>
   );
 }

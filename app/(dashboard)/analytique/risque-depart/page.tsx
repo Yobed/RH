@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { RisqueDepartTable } from "@/components/rh/RisqueDepartTable";
 import type { RisqueDepart } from "@/app/api/analytics/risque-depart/route";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Risque de départ — RH Manager CI" };
 
@@ -46,14 +47,12 @@ export default async function RisqueDepartPage() {
   data.sort((a, b) => b.score - a.score);
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Risque de départ</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Analyse prédictive du turnover — score calculé sur ancienneté, salaire et profil.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Risque de départ"
+        description="Analyse prédictive du turnover — score calculé sur ancienneté, salaire et profil."
+      />
       <RisqueDepartTable data={data} />
-    </div>
+    </PageShell>
   );
 }

@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { CalendrierGlobal } from "@/components/rh/CalendrierGlobal";
 import type { CalendarEvent } from "@/components/rh/CalendrierGlobal";
-import { PageHelp } from "@/components/rh/PageHelp";
+import { PageShell, PageHeader } from "@/components/ui/page-shell";
 
 export const metadata = { title: "Calendrier global — RH Manager CI" };
 
@@ -53,17 +53,13 @@ export default async function CalendrierPage() {
   }
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6">
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold text-foreground">Calendrier global</h1>
-          <PageHelp text="Tous les évènements RH (congés, contrats, visites médicales, échéances) réunis sur un seul calendrier pour une vue d'ensemble." />
-        </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Vue unifiée : congés, formations, fériés ivoiriens et événements RH.
-        </p>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Calendrier global"
+        description="Vue unifiée : congés, formations, fériés ivoiriens et événements RH."
+        help="Tous les évènements RH (congés, contrats, visites médicales, échéances) réunis sur un seul calendrier pour une vue d'ensemble."
+      />
       <CalendrierGlobal events={events} />
-    </div>
+    </PageShell>
   );
 }

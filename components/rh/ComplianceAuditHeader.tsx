@@ -76,7 +76,7 @@ export function ComplianceAuditHeader({ score, risks }: ComplianceAuditHeaderPro
           <div className="flex flex-col">
             <span className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">Index Global</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-black text-white">{score}</span>
+              <span className="text-3xl font-bold text-white">{score}</span>
               <span className="text-slate-600 font-bold text-sm">%</span>
             </div>
           </div>

@@ -204,7 +204,7 @@ export function RagChat() {
               </div>
 
               <div className="max-w-md space-y-3">
-                <h3 className="text-2xl font-black text-slate-800 tracking-tight">Bonjour, comment puis-je vous aider ?</h3>
+                <h3 className="text-2xl font-bold text-slate-800 tracking-tight">Bonjour, comment puis-je vous aider ?</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
                   Je suis votre assistant spécialisé en droit du travail ivoirien. 
                   Je peux analyser vos contrats, simuler des indemnités ou répondre à vos questions réglementaires.
