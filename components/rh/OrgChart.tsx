@@ -542,16 +542,19 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
 
   return (
     <div className="relative inline-block group my-1">
-      <div 
-        className={`w-60 bg-white dark:bg-slate-900 border rounded-2xl p-4 transition-all duration-200 text-left select-none relative ${
-          highlight 
-            ? "border-[#0d9488] ring-2 ring-[#0d9488]/30 shadow-md scale-102 z-10" 
-            : "border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700"
+      <div
+        className={`w-60 overflow-hidden bg-white dark:bg-slate-900 border rounded-2xl p-4 pt-5 transition-all duration-200 text-left select-none relative ${
+          highlight
+            ? "border-[#0d9488] ring-2 ring-[#0d9488]/30 shadow-lg z-10 -translate-y-0.5"
+            : "border-slate-200/70 dark:border-slate-800 shadow-sm hover:-translate-y-0.5 hover:border-[#0d9488]/40 hover:shadow-[0_14px_30px_-14px_rgba(13,148,136,0.4)]"
         }`}
       >
+        {/* Liseré d'accent en tête de carte */}
+        <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0d9488] to-[#2dd4bf]" />
+
         {/* En-tête Carte : Avatar + Actions Rapides Flottantes Épurées */}
         <div className="flex items-center justify-between mb-3">
-          <Avatar src={node.photo_url} name={node.full_name} size={40} rounded="xl" className={`shadow-2xs ${node.photo_url ? "" : avatarGradient(node.id)}`} />
+          <Avatar src={node.photo_url} name={node.full_name} size={44} rounded="full" className={`ring-2 ring-white shadow-sm dark:ring-slate-900 ${node.photo_url ? "" : avatarGradient(node.id)}`} />
 
           {/* Actions rapides épurées au survol */}
           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-slate-900/90 dark:bg-slate-800/90 text-white p-1 rounded-xl shadow-sm backdrop-blur-xs">
@@ -930,67 +933,74 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
           display: flex;
           flex-direction: column;
           align-items: center;
+          padding-top: 0;
         }
+        /* ── Connecteurs hiérarchiques à coins arrondis (elbows) ── */
         .org-tree-children {
           display: flex;
           flex-direction: row;
           justify-content: center;
           list-style: none;
-          padding: 0;
           margin: 0;
-          position: relative;
+          padding: 0;
           padding-top: 2.25rem;
+          position: relative;
         }
-        /* Ligne verticale : Parent -> Barre horizontale */
+        /* Drop vertical : carte parent -> bus horizontal */
         .org-tree-children::before {
           content: '';
           position: absolute;
           top: 0;
           left: 50%;
           transform: translateX(-50%);
-          width: 1.5px;
+          width: 2px;
           height: 2.25rem;
-          background: #cbd5e1;
+          background: #94a3b8;
+          border-radius: 999px;
         }
-        .dark .org-tree-children::before {
-          background: #334155;
-        }
+        .dark .org-tree-children::before { background: #475569; }
+
         .org-tree-li {
           display: flex;
           flex-direction: column;
           align-items: center;
           position: relative;
-          padding: 0 1.25rem;
+          padding: 2.25rem 1.25rem 0;
         }
-        /* Barre horizontale de connexion */
-        .org-tree-children > .org-tree-li::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 1.5px;
-          background: #cbd5e1;
-        }
-        .dark .org-tree-children > .org-tree-li::before {
-          background: #334155;
-        }
-        .org-tree-children > .org-tree-li:first-child::before { left: 50%; }
-        .org-tree-children > .org-tree-li:last-child::before  { right: 50%; }
-        .org-tree-children > .org-tree-li:only-child::before  { display: none; }
-        /* Ligne verticale : Barre horizontale -> Carte enfant */
+        /* Demi-bus horizontal (gauche = ::before, droite = ::after) + drop vertical */
+        .org-tree-children > .org-tree-li::before,
         .org-tree-children > .org-tree-li::after {
           content: '';
           position: absolute;
           top: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 1.5px;
+          right: 50%;
+          width: 50%;
           height: 2.25rem;
-          background: #cbd5e1;
+          border-top: 2px solid #94a3b8;
         }
+        .org-tree-children > .org-tree-li::after {
+          right: auto;
+          left: 50%;
+          border-left: 2px solid #94a3b8;
+        }
+        .dark .org-tree-children > .org-tree-li::before,
         .dark .org-tree-children > .org-tree-li::after {
-          background: #334155;
+          border-color: #475569;
+        }
+        /* Premier / dernier enfant : coins arrondis, segments superflus retirés */
+        .org-tree-children > .org-tree-li:first-child::before,
+        .org-tree-children > .org-tree-li:last-child::after { border: 0 none; }
+        .org-tree-children > .org-tree-li:first-child::after { border-top-left-radius: 14px; }
+        .org-tree-children > .org-tree-li:last-child::before {
+          border-right: 2px solid #94a3b8;
+          border-top-right-radius: 14px;
+        }
+        .dark .org-tree-children > .org-tree-li:last-child::before { border-right-color: #475569; }
+        /* Enfant unique : pas de bus, juste le drop */
+        .org-tree-children > .org-tree-li:only-child::before { display: none; }
+        .org-tree-children > .org-tree-li:only-child::after {
+          border-top: 0 none;
+          border-radius: 0;
         }
       `}</style>
 
