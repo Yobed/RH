@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Scale } from "lucide-react";
 
 import {
   Dialog,
@@ -118,12 +118,18 @@ export function LegalCaseDialog({ employees }: Props) {
         Nouveau dossier
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg overflow-y-auto max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>Nouveau dossier de contentieux</DialogTitle>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="sticky top-0 z-10 flex-row items-center gap-3 border-b border-slate-100 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0d9488]/10 text-[#0f766e] dark:text-[#2dd4bf]">
+            <Scale className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <DialogTitle>Nouveau dossier de contentieux</DialogTitle>
+            <p className="text-xs text-slate-400">Litige ou inspection — droit du travail ivoirien.</p>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-5 py-5">
           {/* Référence & Type */}
           <div className="grid gap-3 sm:grid-cols-2">
             <div>

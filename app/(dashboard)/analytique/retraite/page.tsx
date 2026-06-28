@@ -8,7 +8,7 @@ import {
   type RetraiteUrgence,
 } from "@/lib/retraite-ci";
 import { CalendarBlank, UserMinus, Warning, Cake, UserPlus, ArrowRight } from "@phosphor-icons/react/dist/ssr";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Planning retraite — RH Manager CI" };
@@ -78,11 +78,11 @@ export default async function PlanningRetraitePage({ searchParams }: SearchProps
       />
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Stat label="Total projetés" value={projections.length} icon={<UserMinus className="h-4 w-4 text-slate-500" />} />
-        <Stat label="< 1 an" value={imminentes} icon={<Warning weight="fill" className="h-4 w-4 text-rose-500" />} color="text-rose-600" />
-        <Stat label="1 – 2 ans" value={proches} icon={<CalendarBlank className="h-4 w-4 text-amber-500" />} color="text-amber-600" />
-        <Stat label="2 – 5 ans" value={moyennes} icon={<CalendarBlank className="h-4 w-4 text-teal-500" />} color="text-teal-600" />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard label="Total projetés" value={projections.length} icon={<UserMinus className="h-4 w-4" />} />
+        <StatCard label="< 1 an" value={imminentes} icon={<Warning weight="fill" className="h-4 w-4" />} tone="danger" />
+        <StatCard label="1 – 2 ans" value={proches} icon={<CalendarBlank className="h-4 w-4" />} tone="warning" />
+        <StatCard label="2 – 5 ans" value={moyennes} icon={<CalendarBlank className="h-4 w-4" />} tone="brand" />
       </div>
 
       {/* Liste */}

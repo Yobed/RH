@@ -3,7 +3,7 @@ export const metadata = { title: "Cohortes d'embauche — RH Manager CI" };
 
 import { createServerClient } from "@/lib/supabase/server";
 import { Users, TrendingDown, Calendar } from "lucide-react";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 
 interface Employee {
   id: string;
@@ -104,42 +104,10 @@ export default async function CohortesPage() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-teal-50 flex items-center justify-center shrink-0">
-            <Users className="h-5 w-5 text-teal-600" />
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Total embauches</p>
-            <p className="text-2xl font-bold text-slate-800">{totalEmbauches}</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-            <Users className="h-5 w-5 text-emerald-600" />
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Présents</p>
-            <p className="text-2xl font-bold text-emerald-700">{totalPresents}</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
-            <TrendingDown className="h-5 w-5 text-rose-600" />
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Turnover global</p>
-            <p className="text-2xl font-bold text-rose-700">{turnoverPct}%</p>
-          </div>
-        </div>
-        <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-            <Calendar className="h-5 w-5 text-amber-600" />
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Cohortes</p>
-            <p className="text-2xl font-bold text-slate-800">{cohortes.length}</p>
-          </div>
-        </div>
+        <StatCard label="Total embauches" value={totalEmbauches} icon={<Users className="h-4 w-4" />} tone="brand" />
+        <StatCard label="Présents" value={totalPresents} icon={<Users className="h-4 w-4" />} tone="success" />
+        <StatCard label="Turnover global" value={`${turnoverPct}%`} icon={<TrendingDown className="h-4 w-4" />} tone="danger" />
+        <StatCard label="Cohortes" value={cohortes.length} icon={<Calendar className="h-4 w-4" />} />
       </div>
 
       {/* Graphique mensuel : embauches vs départs sur 12 mois */}
