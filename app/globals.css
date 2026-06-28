@@ -229,6 +229,25 @@ aside[class*="lg:flex"] {
   background: oklch(0.12 0.03 260) !important;
 }
 
+/* ── Impression propre (bulletins, bordereau, STC, listes) ── */
+@media print {
+  @page { margin: 1.4cm; }
+  html, body {
+    background: #fff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Masque uniquement le chrome d'app (la TopNav porte déjà print:hidden) */
+  aside[class*="lg:flex"], [data-print-hidden], .no-print { display: none !important; }
+  /* Encre économe : pas d'ombres ni de fonds décoratifs */
+  * { box-shadow: none !important; }
+  main { overflow: visible !important; }
+  /* Évite de couper les blocs au milieu d'une page */
+  table, tr, .avoid-break, .pro-card { break-inside: avoid; }
+  a[href]::after { content: ""; }
+}
+
 /* ── Emojis animés (délice, motion discrète) ── */
 .emoji-wave {
   display: inline-block;
