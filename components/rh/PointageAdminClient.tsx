@@ -83,41 +83,38 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-[#059669] to-amber-500 text-white shadow-sm">
-              <Camera className="w-5 h-5" />
-            </div>
-            <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white">
               Gestion & Pointage Biométrique
             </h1>
             <PageHelp text="Module de pointage biométrique par reconnaissance faciale 3D et suivi synthétique des heures de travail." />
           </div>
-          <p className="text-xs text-slate-500 font-medium">
-            Terminal d'authentification sans contact & registre d'horodatage infalsifiable
+          <p className="text-xs text-slate-500 mt-0.5">
+            Suivi en temps réel des présences et de la ponctualité des équipes
           </p>
         </div>
 
         {/* View Switcher Tabs */}
-        <div className="flex items-center bg-slate-100 dark:bg-slate-800/60 p-1 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 self-start">
+        <div className="flex items-center bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200 dark:border-slate-700/60 self-start sm:self-auto">
           <button
             onClick={() => setActiveTab("biometric")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${
               activeTab === "biometric"
-                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm"
+                ? "bg-white text-slate-900 dark:bg-slate-900 dark:text-white shadow-xs"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
             }`}
           >
-            <Sparkles className={`w-3.5 h-3.5 ${activeTab === "biometric" ? "text-[#059669]" : "text-slate-400"}`} />
-            <span>Borne & Registre Biométrique</span>
+            <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Borne & Scan Facialis</span>
           </button>
 
           <button
             onClick={() => setActiveTab("weekly")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${
               activeTab === "weekly"
-                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm"
+                ? "bg-white text-slate-900 dark:bg-slate-900 dark:text-white shadow-xs"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
             }`}
           >

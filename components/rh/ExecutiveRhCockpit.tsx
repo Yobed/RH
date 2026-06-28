@@ -13,6 +13,7 @@ const DashboardCharts = dynamic(
   () => import("@/components/rh/DashboardCharts").then((m) => m.DashboardCharts),
   { ssr: false, loading: () => <Skeleton className="h-80 w-full rounded-2xl" /> }
 );
+import { DashboardHeroClient } from "@/components/rh/DashboardHeroClient";
 import { AiSuggestionsWidget } from "@/components/rh/AiSuggestionsWidget";
 import { ActionCenter, type ActionItem } from "@/components/rh/ActionCenter";
 import { ChronometreWidget } from "@/components/rh/ChronometreWidget";
@@ -94,6 +95,65 @@ interface ExecutiveRhCockpitProps {
   essaiExpirant: number;
 }
 
+function DashboardSectionHeader({
+  title,
+  subtitle,
+  icon: Icon,
+  badge,
+  badgeColor = "emerald",
+}: {
+  title: string;
+  subtitle?: string;
+  icon: any;
+  badge?: string;
+  badgeColor?: "emerald" | "amber" | "blue" | "indigo";
+}) {
+  const badgeStyles = {
+    emerald: "border-emerald-200 bg-emerald-100/80 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/80 dark:text-emerald-300",
+    amber: "border-amber-200 bg-amber-100/80 text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/80 dark:text-amber-300",
+    blue: "border-blue-200 bg-blue-100/80 text-blue-800 dark:border-blue-900/60 dark:bg-blue-950/80 dark:text-blue-300",
+    indigo: "border-indigo-200 bg-indigo-100/80 text-indigo-800 dark:border-indigo-900/60 dark:bg-indigo-950/80 dark:text-indigo-300",
+  };
+
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-linear-to-r from-slate-100/90 via-slate-50 to-emerald-50/40 px-5 py-3.5 shadow-2xs dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/20">
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs dark:bg-emerald-600">
+          <Icon className="h-5 w-5" />
+        </span>
+        <div>
+          <h2 className="font-display text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            {title}
+          </h2>
+          {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+        </div>
+      </div>
+      {badge && (
+        <span className={`self-start sm:self-center rounded-full border px-3 py-0.5 text-[11px] font-bold ${badgeStyles[badgeColor]}`}>
+          {badge}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function SectionSeparator({ label }: { label?: string }) {
+  return (
+    <div className="relative py-4 my-2">
+      <div className="absolute inset-0 flex items-center" aria-hidden="true">
+        <div className="w-full border-t border-slate-200/80 dark:border-slate-800" />
+      </div>
+      {label && (
+        <div className="relative flex justify-center">
+          <span className="bg-slate-50 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:bg-slate-950">
+            {label}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function ExecutiveRhCockpit({
   totalActifs,
   totalFemmes,
@@ -117,7 +177,6 @@ export function ExecutiveRhCockpit({
 }: ExecutiveRhCockpitProps) {
   // 5 Odoo-Executive View Modes
   const [viewMode, setViewMode] = useState<"overview" | "kanban" | "list" | "pivot" | "ai_copilot">("overview");
-  const [overviewSubTab, setOverviewSubTab] = useState<"synthese" | "operations" | "conformite">("synthese");
   const [kanbanGroupBy, setKanbanGroupBy] = useState<"department" | "stage">("department");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>("all");
@@ -505,105 +564,119 @@ export function ExecutiveRhCockpit({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="space-y-6"
+              className="space-y-10"
             >
-              {/* Sous-navigation épurée (segmented control) */}
-              <div className="inline-flex items-center gap-1 rounded-xl border border-slate-200/70 bg-white p-1 dark:border-slate-800 dark:bg-slate-900">
-                {[
-                  { id: "synthese", label: "Synthèse" },
-                  { id: "operations", label: "Opérations" },
-                  { id: "conformite", label: "Conformité" },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setOverviewSubTab(tab.id as any)}
-                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      overviewSubTab === tab.id
-                        ? "bg-[#059669] text-white shadow-sm"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+              {/* Hero Banner Executive with 3D Illustration & Telemetry */}
+              <DashboardHeroClient
+                totalActifs={filteredEmployes.length}
+                complianceScore={complianceScore}
+                congesEnAttente={congesEnAttente?.length ?? 0}
+                dateLabel={dateLabel}
+              />
 
-              {/* SYNTHÈSE — page structurée en 3 zones fonctionnelles */}
-              {overviewSubTab === "synthese" && (
-                <div className="space-y-8">
-                  {/* ZONE 1 — Synthèse & actions urgentes (priorité = risque RH) */}
-                  <section className="space-y-4">
-                    <SectionTitle>Synthèse & actions urgentes</SectionTitle>
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                      <div className="lg:col-span-7">
-                        <ComplianceAlertList alerts={allAlerts} />
-                      </div>
-                      <div className="lg:col-span-5">
-                        <AiSuggestionsWidget
-                          totalActifs={totalActifs}
-                          cddExpirant={cddExpirant}
-                          medicalAlertsCount={medicalAlertsCount}
-                          evalBrouillon={evalBrouillon}
-                          contentieuxOuverts={contentieuxOuverts}
-                          congesEnAttente={congesEnAttente?.length ?? 0}
-                        />
-                      </div>
-                    </div>
+              {/* ────────────────────────────────────────────────────────────── */}
+              {/* SECTION 1: PILOTAGE & ALERTES PRIORITAIRES                      */}
+              {/* ────────────────────────────────────────────────────────────── */}
+              <section className="space-y-6">
+                <DashboardSectionHeader
+                  title="1. PILOTAGE & DÉCISIONS REQUISES"
+                  subtitle="Alertes de conformité légale/CNPS et centre d'arbitrage prioritaire"
+                  icon={AlertTriangle}
+                  badge="Urgent & Prioritaire"
+                  badgeColor="amber"
+                />
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  <div className="lg:col-span-8 space-y-6">
+                    <ComplianceAlertList alerts={allAlerts} />
                     <ActionCenter items={actionItems} />
-                  </section>
-
-                  {/* ZONE 2 — Modules & actions rapides */}
-                  <section className="space-y-4">
-                    <SectionTitle>Modules & actions rapides</SectionTitle>
+                  </div>
+                  <div className="lg:col-span-4 space-y-6">
+                    <AiSuggestionsWidget
+                      totalActifs={totalActifs}
+                      cddExpirant={cddExpirant}
+                      medicalAlertsCount={medicalAlertsCount}
+                      evalBrouillon={evalBrouillon}
+                      contentieuxOuverts={contentieuxOuverts}
+                      congesEnAttente={congesEnAttente?.length ?? 0}
+                    />
                     <QuickActions />
-                    <HrSuiteModulesWidget />
-                    <ParcoursGuidesWidget />
-                  </section>
-
-                  {/* ZONE 3 — Ressources & outils avancés */}
-                  <section className="space-y-4">
-                    <SectionTitle>Ressources & outils avancés</SectionTitle>
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                      <div className="lg:col-span-8">
-                        <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
-                      </div>
-                      <div className="lg:col-span-4 space-y-6">
-                        <RessourcesInteretWidget />
-                        <TableauAffichageWidget />
-                      </div>
-                    </div>
-                  </section>
+                  </div>
                 </div>
-              )}
+              </section>
 
-              {/* SUB-TAB 2: OPÉRATIONS & QUOTIDIEN */}
-              {overviewSubTab === "operations" && (
+              <SectionSeparator label="Opérations & Agenda" />
+
+              {/* ────────────────────────────────────────────────────────────── */}
+              {/* SECTION 2: GESTION OPÉRATIONNELLE & AGENDA RH                   */}
+              {/* ────────────────────────────────────────────────────────────── */}
+              <section className="space-y-6">
+                <DashboardSectionHeader
+                  title="2. OPÉRATIONNEL & AGENDA DES ÉQUIPES"
+                  subtitle="Calendrier des absences, chronomètre et parcours de formation"
+                  icon={CalendarCheck2}
+                  badge="Quotidien"
+                  badgeColor="blue"
+                />
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   <div className="lg:col-span-8 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <MesTachesWidget />
                       <MonCalendrierAbsencesWidget />
+                      <ParcoursGuidesWidget />
                     </div>
                   </div>
                   <div className="lg:col-span-4 space-y-6">
                     <ChronometreWidget />
-                    <AnniversairesEvenementsWidget />
+                    <MesTachesWidget />
                   </div>
                 </div>
-              )}
+              </section>
 
-              {/* SUB-TAB 3: CONFORMITÉ & AUDITS */}
-              {overviewSubTab === "conformite" && (
+              <SectionSeparator label="Analytique & KPIs" />
+
+              {/* ────────────────────────────────────────────────────────────── */}
+              {/* SECTION 3: PERFORMANCE & ANALYTIQUE RH                         */}
+              {/* ────────────────────────────────────────────────────────────── */}
+              <section className="space-y-6">
+                <DashboardSectionHeader
+                  title="3. ANALYTIQUE & RÉPARTITION DE LA MASSE SALARIALE"
+                  subtitle="Statistiques par département et répartition par genre"
+                  icon={BarChart3}
+                  badge="Analytique"
+                  badgeColor="emerald"
+                />
+
+                <div>
+                  <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                </div>
+              </section>
+
+              <SectionSeparator label="Suite Modulaire & Outils" />
+
+              {/* ────────────────────────────────────────────────────────────── */}
+              {/* SECTION 4: SUITE MODULES RH & COMMUNICATION INTERNE             */}
+              {/* ────────────────────────────────────────────────────────────── */}
+              <section className="space-y-6">
+                <DashboardSectionHeader
+                  title="4. MODULES SUITE RH & RESSOURCES INTERNES"
+                  subtitle="Accès rapide aux applications et tableau d'affichage"
+                  icon={Layers}
+                  badge="Outillage RH"
+                  badgeColor="indigo"
+                />
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                   <div className="lg:col-span-8 space-y-6">
-                    <ComplianceAlertList alerts={allAlerts} />
+                    <HrSuiteModulesWidget />
                   </div>
                   <div className="lg:col-span-4 space-y-6">
-                    <QuickActions />
+                    <AnniversairesEvenementsWidget />
+                    <TableauAffichageWidget />
                     <RessourcesInteretWidget />
                   </div>
                 </div>
-              )}
+              </section>
             </motion.div>
           )}
 

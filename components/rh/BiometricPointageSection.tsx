@@ -229,31 +229,25 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
   return (
     <div className="space-y-6">
-      {/* Top Hero Banner & Kiosk Controller */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-slate-800">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-[#059669]/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="max-w-xl space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-bold border border-teal-400/30">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Borne Biométrique Active • Station #01 HQ Abidjan
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-heading">
-              Module de Pointage Biométrique IA
-            </h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Espace sécurisé d'identification faciale instantanée. Tous les pointages effectués par les collaborateurs sont automatiquement vérifiés par IA 3D et enregistrés en temps réel dans le registre légal.
-            </p>
+      {/* Top Hero Banner with 3D Illustration */}
+      <div className="pro-card p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 text-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-xl space-y-3 z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            Terminal En Ligne • Station #01 Abidjan
           </div>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-slate-800/60 backdrop-blur-md p-3 rounded-2xl border border-slate-700/60 shadow-lg">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            Borne Biométrique Faciale
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Authentification faciale instantanée. Les pointages sont vérifiés automatiquement et enregistrés en temps réel dans le registre d'horodatage.
+          </p>
+          <div className="pt-2 flex flex-wrap items-center gap-3">
             {employees && employees.length > 0 && (
               <select
                 value={selectedEmployeeForScan}
                 onChange={(e) => setSelectedEmployeeForScan(e.target.value)}
-                className="bg-slate-900 text-xs font-semibold text-slate-200 px-3 py-3 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#059669]"
+                className="bg-slate-800 text-xs font-medium text-slate-200 px-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 <option value="">-- Mode Libre / Wilfried KOUASSI --</option>
                 {employees.map(emp => (
@@ -263,15 +257,22 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                 ))}
               </select>
             )}
-
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#059669] to-amber-500 hover:from-amber-600 hover:to-[#059669] text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2.5 transition-all transform hover:scale-[1.02] active:scale-95"
+              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-sm"
             >
               <Camera className="h-4 w-4" />
-              <span>Ouvrir la Borne de Scan Faciale</span>
+              <span>Lancer le Scan Faciale</span>
             </button>
           </div>
+        </div>
+
+        <div className="w-48 sm:w-64 shrink-0 z-10 flex justify-center">
+          <img
+            src="/images/biometric_terminal_hero.png"
+            alt="Biometric Terminal Illustration"
+            className="w-full h-auto object-contain drop-shadow-2xl"
+          />
         </div>
       </div>
 
@@ -279,65 +280,60 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="pro-card p-4">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider">Pointages Enregistrés</span>
-            <Clock className="h-4 w-4 text-[#059669]" />
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Pointages Jour</span>
+            <Clock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.total}
           </div>
-          <span className="text-[11px] text-slate-500 font-medium mt-1 block">Aujourd'hui en temps réel</span>
+          <span className="text-xs text-slate-500 mt-1 block">Enregistrements actifs</span>
         </div>
 
         <div className="pro-card p-4">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider">Taux de Match Biométrique</span>
-            <ShieldCheck className="h-4 w-4 text-emerald-500" />
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Précision Biométrique</span>
+            <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
             {stats.avgMatch}%
           </div>
-          <span className="text-[11px] text-emerald-700/80 dark:text-emerald-400/80 font-medium mt-1 block flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3 inline" /> Test de présence 3D OK
+          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1 block flex items-center gap-1">
+            <CheckCircle2 className="h-3 w-3 inline" /> Détection 3D conforme
           </span>
         </div>
 
         <div className="pro-card p-4">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider">Arrivées Valides</span>
-            <UserCheck className="h-4 w-4 text-teal-500" />
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Arrivées Valides</span>
+            <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.arrivees}
           </div>
-          <span className="text-[11px] text-slate-500 font-medium mt-1 block">Collaborateurs identifiés</span>
+          <span className="text-xs text-slate-500 mt-1 block">Collaborateurs identifiés</span>
         </div>
 
         <div className="pro-card p-4">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider">Écarts de Ponctualité</span>
-            <AlertCircle className="h-4 w-4 text-amber-500" />
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Retards</span>
+            <AlertCircle className="h-4 w-4 text-slate-400" />
           </div>
-          <div className="text-2xl font-bold text-amber-600 dark:text-amber-400 tabular-nums">
+          <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
             {stats.retard}
           </div>
-          <span className="text-[11px] text-slate-500 font-medium mt-1 block">Retards comptabilisés</span>
+          <span className="text-xs text-slate-500 mt-1 block">Écarts comptabilisés</span>
         </div>
       </div>
 
-      {/* Main Historical Table Workspace ("Espace d'Enregistrement") */}
+      {/* Main Historical Table Workspace */}
       <div className="pro-card overflow-hidden space-y-0">
         {/* Toolbar & Filters */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/20">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-amber-500/10 text-[#059669] flex items-center justify-center">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white font-heading">
-                Registre des Pointages Biométriques
-              </h3>
-              <p className="text-xs text-slate-500 font-medium">Historique infalsifiable et horodaté des scans d'entrée/sortie</p>
-            </div>
+        <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/20">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+              Registre des Scans
+            </h3>
+            <p className="text-xs text-slate-500">Historique horodaté des entrées et sorties</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
