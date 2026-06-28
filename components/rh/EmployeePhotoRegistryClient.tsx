@@ -151,7 +151,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
     <div className="space-y-6">
       {/* 1. Dashboard KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs relative overflow-hidden group hover:border-slate-300 transition-all">
+        <div className="pro-card p-5 relative overflow-hidden group hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Effectif</p>
@@ -164,7 +164,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-emerald-200/80 p-5 shadow-2xs relative overflow-hidden group hover:border-emerald-300 transition-all">
+        <div className="pro-card p-5 border-emerald-200/80 relative overflow-hidden group hover:border-emerald-300 transition-all">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Photos Numérisées</p>
@@ -180,7 +180,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-amber-200/80 p-5 shadow-2xs relative overflow-hidden group hover:border-amber-300 transition-all">
+        <div className="pro-card p-5 border-amber-200/80 relative overflow-hidden group hover:border-amber-300 transition-all">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-amber-600">Photos Manquantes</p>
@@ -196,14 +196,14 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#0d9488]/20 p-5 shadow-2xs relative overflow-hidden group hover:border-[#0d9488]/40 transition-all bg-gradient-to-br from-white via-white to-orange-50/30">
+        <div className="pro-card p-5 border-[#059669]/20 relative overflow-hidden group hover:border-[#059669]/40 transition-all bg-gradient-to-br from-white via-white to-orange-50/30">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0d9488]">Biométrie Prête</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#059669]">Biométrie Prête</p>
               <h3 className="text-2xl font-bold text-slate-900 mt-1">{stats.avecPhoto} / {stats.total}</h3>
               <p className="text-xs text-slate-500 mt-1">Éligibles au pointage faciale</p>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-orange-50 flex items-center justify-center text-[#0d9488] group-hover:scale-110 transition-transform border border-[#0d9488]/20">
+            <div className="h-12 w-12 rounded-xl bg-orange-50 flex items-center justify-center text-[#059669] group-hover:scale-110 transition-transform border border-[#059669]/20">
               <ShieldCheck size={26} weight="bold" />
             </div>
           </div>
@@ -220,7 +220,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             placeholder="Rechercher par nom, matricule, département..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#0d9488]/20 focus:border-[#0d9488] transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#059669]/20 focus:border-[#059669] transition-all"
           />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -269,7 +269,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             <select
               value={filterDept}
               onChange={(e) => setFilterDept(e.target.value)}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-[#0d9488]"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-[#059669]"
             >
               <option value="tous">Tous départements</option>
               {departements.map((d) => (
@@ -296,7 +296,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               title="Tableau Registre Numérique"
               className={cn(
                 "p-2 rounded-lg transition-all",
-                viewMode === "table" ? "bg-white text-[#0d9488] shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                viewMode === "table" ? "bg-white text-[#059669] shadow-2xs" : "text-slate-500 hover:text-slate-800"
               )}
             >
               <ListBullets size={18} weight="bold" />
@@ -306,7 +306,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               title="Vue Trombinoscope Galerie"
               className={cn(
                 "p-2 rounded-lg transition-all",
-                viewMode === "trombinoscope" ? "bg-white text-[#0d9488] shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                viewMode === "trombinoscope" ? "bg-white text-[#059669] shadow-2xs" : "text-slate-500 hover:text-slate-800"
               )}
             >
               <SquaresFour size={18} weight="bold" />
@@ -338,7 +338,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
         </div>
       ) : viewMode === "table" ? (
         /* TABLE VIEW: DEDICATED DIGITAL PHOTO REGISTRY TABLE */
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden">
+        <div className="pro-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -436,7 +436,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
                             "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs active:scale-95",
                             emp.photo_url
                               ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                              : "bg-[#0d9488] hover:bg-[#e07200] text-white"
+                              : "bg-[#059669] hover:bg-[#e07200] text-white"
                           )}
                         >
                           <Camera size={14} weight="bold" />
@@ -460,7 +460,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           {filteredEmployees.map((emp) => (
             <div
               key={emp.id}
-              className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all flex flex-col items-center text-center relative group"
+              className="pro-card p-5 hover:border-slate-300 transition-all flex flex-col items-center text-center relative group"
             >
               {/* Photo Card Container */}
               <div
@@ -490,7 +490,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               {/* Info */}
               <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-wider">{emp.matricule}</span>
               <h4 className="text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{emp.full_name}</h4>
-              <p className="text-xs font-semibold text-[#0d9488] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
+              <p className="text-xs font-semibold text-[#059669] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
               <p className="text-[11px] text-slate-500 mt-0.5">{emp.departement || "Département N/A"}</p>
 
               {/* Status pill */}
@@ -509,7 +509,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               {/* Direct upload action button */}
               <button
                 onClick={() => setActiveUploadEmp(emp)}
-                className="mt-4 w-full py-2 bg-slate-50 hover:bg-[#0d9488] hover:text-white text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200 hover:border-[#0d9488] flex items-center justify-center gap-1.5"
+                className="mt-4 w-full py-2 bg-slate-50 hover:bg-[#059669] hover:text-white text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200 hover:border-[#059669] flex items-center justify-center gap-1.5"
               >
                 <Camera size={14} weight="bold" />
                 <span>{emp.photo_url ? "Modifier photo" : "Numériser photo"}</span>
@@ -537,7 +537,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               </button>
 
               <div>
-                <div className="flex items-center gap-2 text-[#0d9488] text-xs font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#059669] text-xs font-bold uppercase tracking-wider">
                   <Camera size={16} weight="bold" />
                   Numérisation d'Identité
                 </div>

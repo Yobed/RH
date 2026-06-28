@@ -45,12 +45,12 @@ export function PageHeader({ eyebrow, eyebrowIcon, title, description, help, act
         {/* Barre d'accent verticale teal */}
         <span
           aria-hidden
-          className="absolute left-0 top-1 h-[calc(100%-0.5rem)] w-1 rounded-full bg-gradient-to-b from-[#0d9488] to-[#0f766e]"
+          className="absolute left-0 top-1 h-[calc(100%-0.5rem)] w-1 rounded-full bg-gradient-to-b from-[#059669] to-[#047857]"
         />
         {(eyebrow || help) && (
           <div className="mb-2 flex items-center gap-2">
             {eyebrow && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0d9488]/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#0f766e] dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#059669]/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#047857] dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
                 {eyebrowIcon}
                 {eyebrow}
               </span>
@@ -86,11 +86,11 @@ export function SectionTitle({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-3 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10",
+        "flex items-center justify-between gap-3 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10",
         className
       )}
     >
-      <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:text-[#2dd4bf]">
+      <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#047857] dark:text-[#2dd4bf]">
         {children}
       </h2>
       {action}
@@ -112,7 +112,7 @@ export function FormSection({
 }) {
   return (
     <section className={cn("space-y-3", className)}>
-      <div className="flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+      <div className="flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
         {icon}
         {title}
       </div>
@@ -125,7 +125,7 @@ type StatTone = "default" | "brand" | "success" | "warning" | "danger";
 
 const STAT_TONES: Record<StatTone, { value: string; chip: string }> = {
   default: { value: "text-slate-900 dark:text-white", chip: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400" },
-  brand: { value: "text-[#0f766e] dark:text-[#2dd4bf]", chip: "bg-[#0d9488]/10 text-[#0f766e] dark:text-[#2dd4bf]" },
+  brand: { value: "text-[#047857] dark:text-[#2dd4bf]", chip: "bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]" },
   success: { value: "text-emerald-600 dark:text-emerald-400", chip: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400" },
   warning: { value: "text-amber-600 dark:text-amber-400", chip: "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400" },
   danger: { value: "text-rose-600 dark:text-rose-400", chip: "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400" },
@@ -165,7 +165,7 @@ export function StatCard({ label, value, sub, icon, tone = "default", href, onCl
 
   const base = cn(
     "rounded-2xl border border-slate-200/70 bg-white p-5 text-left dark:border-slate-800 dark:bg-slate-900",
-    interactive && "transition-all hover:border-[#0d9488]/40 hover:shadow-[0_8px_24px_-12px_rgba(13,148,136,0.35)] active:scale-[0.99]"
+    interactive && "transition-all hover:border-[#059669]/40 hover:shadow-[0_8px_24px_-12px_rgba(13,148,136,0.35)] active:scale-[0.99]"
   );
 
   if (href) return <Link href={href} className={base}>{inner}</Link>;

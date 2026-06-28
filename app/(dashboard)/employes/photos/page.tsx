@@ -18,7 +18,7 @@ export default async function EmployeePhotosPage() {
     <PageShell>
       <PageHeader
         eyebrow="Identité Visuelle & Biométrie"
-        eyebrowIcon={<IdentificationBadge size={14} weight="bold" className="text-[#0d9488]" />}
+        eyebrowIcon={<IdentificationBadge size={14} weight="bold" className="text-[#059669]" />}
         title="Registre Numérique des Photos"
         help="Table dédiée à la numérisation, au contrôle et à la gestion centralisée des photos d'identité des salariés pour le trombinoscope et le pointage faciale."
       />

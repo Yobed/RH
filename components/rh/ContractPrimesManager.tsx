@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Plus, Trash, PencilSimple, FloppyDisk, X } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,7 +49,7 @@ export function ContractPrimesManager({ employeeId }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch(`/api/employees/${employeeId}/primes`, { cache: "no-store" });
@@ -61,11 +61,11 @@ export function ContractPrimesManager({ employeeId }: Props) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [employeeId]);
 
   useEffect(() => {
     load();
-  }, [employeeId]);
+  }, [load]);
 
   function resetDraft() {
     setDraft(EMPTY_DRAFT);
@@ -147,7 +147,7 @@ export function ContractPrimesManager({ employeeId }: Props) {
     .reduce((s, p) => s + Number(p.montant || 0), 0);
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+    <div className="pro-card overflow-hidden">
       <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-600">
           Primes paramétrables du contrat

@@ -16,16 +16,16 @@ interface KpiCardProps {
 
 const variantConfig = {
   default: {
-    border: "border-slate-200/80 hover:border-[#0d9488]/40 dark:border-slate-800",
+    border: "border-slate-200/80 hover:border-[#059669]/40 dark:border-slate-800",
     value: "text-slate-900 dark:text-slate-50",
-    ribbon: "bg-[#0d9488]",
-    iconBox: "bg-[#0d9488]/10 text-[#0d9488] group-hover:bg-[#0d9488] group-hover:text-white dark:bg-[#0d9488]/20 dark:text-[#0d9488]",
+    ribbon: "bg-[#059669]",
+    iconBox: "bg-[#059669]/10 text-[#059669] group-hover:bg-[#059669] group-hover:text-white dark:bg-[#059669]/20 dark:text-[#059669]",
   },
   warning: {
-    border: "border-amber-200/80 hover:border-[#0d9488]/50 dark:border-amber-900/40",
+    border: "border-amber-200/80 hover:border-[#059669]/50 dark:border-amber-900/40",
     value: "text-amber-950 dark:text-amber-100",
-    ribbon: "bg-[#0d9488]",
-    iconBox: "bg-[#0d9488]/10 text-[#0d9488] group-hover:bg-[#0d9488] group-hover:text-white dark:bg-[#0d9488]/20 dark:text-amber-400",
+    ribbon: "bg-[#059669]",
+    iconBox: "bg-[#059669]/10 text-[#059669] group-hover:bg-[#059669] group-hover:text-white dark:bg-[#059669]/20 dark:text-amber-400",
   },
   danger: {
     border: "border-rose-200/80 hover:border-rose-500/50 dark:border-rose-900/40",
@@ -79,9 +79,9 @@ export function KpiCard({
         "group relative overflow-hidden rounded-3xl bg-white dark:bg-slate-900",
         "border transition-all duration-300",
         cfg.border,
-        "shadow-sm hover:shadow-xl hover:shadow-[#0d9488]/10 hover:-translate-y-1 dark:shadow-none",
+        "shadow-sm hover:shadow-xl hover:shadow-[#059669]/10 hover:-translate-y-1 dark:shadow-none",
         featured
-          ? "p-7 sm:p-8 bg-gradient-to-br from-white via-[#0d9488]/5 to-[#0f766e]/5 dark:from-slate-900 dark:via-slate-900 dark:to-amber-950/20 border-[#0d9488]/30"
+          ? "p-7 sm:p-8 bg-gradient-to-br from-white via-[#059669]/5 to-[#047857]/5 dark:from-slate-900 dark:via-slate-900 dark:to-amber-950/20 border-[#059669]/30"
           : "p-5 sm:p-6 pl-7 sm:pl-8"
       )}
     >
@@ -89,7 +89,7 @@ export function KpiCard({
       <div className={cn("absolute left-0 top-0 bottom-0 w-2 transition-all duration-300 group-hover:w-3", cfg.ribbon)} />
 
       {/* Background ambient glow on hover */}
-      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#0d9488]/5 blur-2xl group-hover:bg-[#0d9488]/15 transition-all duration-500 pointer-events-none" />
+      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#059669]/5 blur-2xl group-hover:bg-[#059669]/15 transition-all duration-500 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent opacity-50 pointer-events-none" />
 
       <div className="relative z-10">
@@ -139,7 +139,7 @@ export function KpiCard({
                   {description}
                 </span>
               </div>
-              <span className="text-[10px] font-extrabold text-slate-400 group-hover:text-[#0d9488] group-hover:translate-x-0.5 transition-all">
+              <span className="text-[10px] font-extrabold text-slate-400 group-hover:text-[#059669] group-hover:translate-x-0.5 transition-all">
                 Détails &rarr;
               </span>
             </div>

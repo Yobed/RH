@@ -76,6 +76,7 @@ export function EmployeePhotoUpload({ value, fullName, onChange }: Props) {
     <div className="flex items-center gap-4">
       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100">
         {value ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={value}
             alt={fullName ?? "Photo employé"}

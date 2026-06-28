@@ -241,6 +241,7 @@ export function TableauAffichageWidget() {
           onClick={() => setIsCreatingPost(true)}
           className="mb-4 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 flex items-center gap-3 cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-all group"
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80"
             alt="Vous"
@@ -330,6 +331,7 @@ export function TableauAffichageWidget() {
               {/* Author info & Delete post button */}
               <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={post.avatar}
                     alt={post.author}
@@ -357,6 +359,7 @@ export function TableauAffichageWidget() {
               {/* Attached Image */}
               {post.image && (
                 <div className="mb-3 rounded-lg overflow-hidden h-40 w-full relative group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={post.image}
                     alt="Attachment"
@@ -427,6 +430,7 @@ export function TableauAffichageWidget() {
                     <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                       {post.comments.map((comment) => (
                         <div key={comment.id} className="group/comment flex gap-2 p-2 rounded-lg bg-white/80 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 items-start">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={comment.avatar}
                             alt={comment.author}

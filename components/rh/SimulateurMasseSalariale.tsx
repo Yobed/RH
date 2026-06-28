@@ -140,7 +140,7 @@ export function SimulateurMasseSalariale({ masseSalarialeActuelle, effectifActue
   return (
     <div className="space-y-6">
       {/* Paramètres */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <div className="pro-card p-6">
         <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
           Paramètres de simulation — {anneeSuivante}
         </h2>
@@ -158,7 +158,7 @@ export function SimulateurMasseSalariale({ masseSalarialeActuelle, effectifActue
         {scenarios.map((s) => (
           <div
             key={s.nom}
-            className="rounded-2xl border bg-white p-5 shadow-sm dark:bg-slate-900"
+            className="pro-card p-5"
             style={{ borderColor: `${s.couleur}44` }}
           >
             <div className="mb-3 flex items-center gap-2">
@@ -189,7 +189,7 @@ export function SimulateurMasseSalariale({ masseSalarialeActuelle, effectifActue
       </div>
 
       {/* Graphique */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <div className="pro-card p-6">
         <h2 className="mb-5 text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
           Évolution mensuelle — {anneeSuivante}
         </h2>

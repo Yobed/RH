@@ -155,8 +155,8 @@ export function GuidedWorkflowWorkspace({
       title: "Parcours Mensuel — Préparation de Paie",
       subtitle: "Contrôle des Variables, Heures Supp. & Exports SI",
       icon: Calculator,
-      color: "text-[#0d9488]",
-      bgColor: "bg-[#0d9488]/10 border-[#0d9488]/30",
+      color: "text-[#059669]",
+      bgColor: "bg-[#059669]/10 border-[#059669]/30",
       step1Title: "1. Détecter — Anomalies & Variables en Attente",
       step2Title: "2. Agir — Validation des Heures & Primes",
       step3Title: "3. Tracer — Clôture, Livre de Paie & Export Sage",
@@ -223,7 +223,7 @@ export function GuidedWorkflowWorkspace({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#0d9488]/10 text-[#0d9488] text-[10px] font-bold uppercase tracking-wider border border-[#0d9488]/20">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#059669]/10 text-[#059669] text-[10px] font-bold uppercase tracking-wider border border-[#059669]/20">
                     Workflow Guidé RH
                   </span>
                   <span className="text-xs font-bold text-slate-400">· Standard Détecter → Agir → Tracer</span>
@@ -255,7 +255,7 @@ export function GuidedWorkflowWorkspace({
                   >
                     <div className={`h-9 w-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all ${
                       isActive 
-                        ? "bg-[#0d9488] text-white shadow-lg shadow-[#0d9488]/30 ring-4 ring-[#0d9488]/20 scale-105" 
+                        ? "bg-[#059669] text-white shadow-lg shadow-[#059669]/30 ring-4 ring-[#059669]/20 scale-105" 
                         : isPassed 
                           ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20" 
                           : "bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700"
@@ -263,7 +263,7 @@ export function GuidedWorkflowWorkspace({
                       {isPassed ? <Check className="h-5 w-5 stroke-[3]" /> : step.num}
                     </div>
                     <div className="hidden sm:block">
-                      <p className={`text-xs font-bold leading-none ${isActive ? "text-[#0d9488]" : isPassed ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
+                      <p className={`text-xs font-bold leading-none ${isActive ? "text-[#059669]" : isPassed ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
                         {step.label}
                       </p>
                       <p className="text-[10px] font-bold text-slate-400 mt-1">{step.desc}</p>
@@ -326,7 +326,7 @@ export function GuidedWorkflowWorkspace({
                           type="checkbox"
                           checked={(checklist as any)[item.key]}
                           onChange={(e) => setChecklist({ ...checklist, [item.key]: e.target.checked })}
-                          className="h-4 w-4 rounded border-slate-300 text-[#0d9488] focus:ring-[#0d9488]"
+                          className="h-4 w-4 rounded border-slate-300 text-[#059669] focus:ring-[#059669]"
                         />
                         <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{item.label}</span>
                       </label>
@@ -338,14 +338,14 @@ export function GuidedWorkflowWorkspace({
               {currentStep === 2 && (
                 <div className="space-y-4 text-center py-4">
                   <div className="max-w-md mx-auto bg-slate-50 dark:bg-slate-800/60 p-6 rounded-3xl border border-slate-200 dark:border-slate-700">
-                    <UserPlus className="h-10 w-10 text-[#0d9488] mx-auto mb-3" />
+                    <UserPlus className="h-10 w-10 text-[#059669] mx-auto mb-3" />
                     <h4 className="text-base font-bold text-slate-900 dark:text-white">Formulaire d'Immatriculation</h4>
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1 mb-4 leading-relaxed">
                       Saisissez l'identité, le poste, la grille salariale et le type de contrat du nouveau collaborateur.
                     </p>
                     <Button 
                       onClick={() => setChildDialogOpen(true)}
-                      className="bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-md shadow-[#0d9488]/20 w-full"
+                      className="bg-[#059669] hover:bg-[#047857] text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-md shadow-[#059669]/20 w-full"
                     >
                       Ouvrir le Formulaire Salarié Complet
                     </Button>
@@ -383,7 +383,7 @@ export function GuidedWorkflowWorkspace({
 
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center gap-3">
-                      <FileText className="h-6 w-6 text-[#0d9488]" />
+                      <FileText className="h-6 w-6 text-[#059669]" />
                       <div>
                         <p className="text-xs font-bold text-slate-900 dark:text-white">Contrat de Travail & Fiche D'accueil</p>
                         <p className="text-[11px] font-bold text-slate-500">Prêt à l'impression et à la signature électronique.</p>
@@ -465,7 +465,7 @@ export function GuidedWorkflowWorkspace({
                                 onClick={() => setCddDecisions({ ...cddDecisions, [emp.id]: btn.id as any })}
                                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                                   decision === btn.id
-                                    ? "bg-[#0d9488] text-white shadow-md shadow-[#0d9488]/20"
+                                    ? "bg-[#059669] text-white shadow-md shadow-[#059669]/20"
                                     : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
                                 }`}
                               >
@@ -490,7 +490,7 @@ export function GuidedWorkflowWorkspace({
                   </div>
                   <Button 
                     onClick={() => toast.success("Avenants et notifications générés !")}
-                    className="w-full bg-[#0d9488] text-white font-bold text-xs py-3 rounded-xl"
+                    className="w-full bg-[#059669] text-white font-bold text-xs py-3 rounded-xl"
                   >
                     Générer les Avenants & Mettre à jour les Dossiers
                   </Button>
@@ -521,7 +521,7 @@ export function GuidedWorkflowWorkspace({
                         <span className="text-[10px] text-slate-400">Bulletins à Générer</span>
                       </div>
                       <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <span className="block font-bold text-[#0d9488]">20h</span>
+                        <span className="block font-bold text-[#059669]">20h</span>
                         <span className="text-[10px] text-slate-400">Heures Supp. à Valider</span>
                       </div>
                       <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800">
@@ -566,7 +566,7 @@ export function GuidedWorkflowWorkspace({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Button 
                       onClick={() => toast.success("Génération du Livre de Paie PDF...")}
-                      className="bg-[#0d9488] text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
+                      className="bg-[#059669] text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2"
                     >
                       <FileSpreadsheet className="h-4 w-4" /> Livre de Paie PDF
                     </Button>
@@ -660,7 +660,7 @@ export function GuidedWorkflowWorkspace({
                   </div>
                   <Button 
                     onClick={handleFinalize}
-                    className="w-full bg-[#0d9488] text-white font-bold text-xs py-3 rounded-xl"
+                    className="w-full bg-[#059669] text-white font-bold text-xs py-3 rounded-xl"
                   >
                     Finaliser & Synchroniser avec le Planning Global
                   </Button>
@@ -685,7 +685,7 @@ export function GuidedWorkflowWorkspace({
           {currentStep < 3 ? (
             <Button
               onClick={handleNextStep}
-              className="bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs px-6 py-2 rounded-xl shadow-md shadow-[#0d9488]/20 flex items-center gap-2"
+              className="bg-[#059669] hover:bg-[#047857] text-white font-bold text-xs px-6 py-2 rounded-xl shadow-md shadow-[#059669]/20 flex items-center gap-2"
             >
               <span>Passer à : {currentStep === 1 ? "Agir" : "Tracer"}</span>
               <ArrowRight className="h-4 w-4" />

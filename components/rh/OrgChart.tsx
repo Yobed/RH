@@ -53,7 +53,7 @@ type OrgNode = OrgEmployee & { children: OrgNode[] };
 // Palette d'avatars harmonisée & épurée (Tons exécutifs & Accents Marque)
 const AVATAR_COLORS = [
   "bg-slate-900 text-white shadow-slate-900/10 dark:bg-slate-100 dark:text-slate-900",
-  "bg-[#0d9488] text-white shadow-[#0d9488]/20",
+  "bg-[#059669] text-white shadow-[#059669]/20",
   "bg-slate-800 text-slate-100 shadow-slate-800/10 dark:bg-slate-800 dark:text-slate-200",
   "bg-amber-600 text-white shadow-amber-600/15",
   "bg-slate-700 text-white shadow-slate-700/10",
@@ -63,8 +63,8 @@ const AVATAR_COLORS = [
 const DEPT_BADGE_STYLES: Record<string, string> = {
   "Direction & IT": "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
   "Direction": "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/40",
-  "RH": "bg-orange-50 dark:bg-orange-950/40 text-[#0d9488] border-orange-200/60 dark:border-orange-900/40",
-  "Ressources Humaines": "bg-orange-50 dark:bg-orange-950/40 text-[#0d9488] border-orange-200/60 dark:border-orange-900/40",
+  "RH": "bg-orange-50 dark:bg-orange-950/40 text-[#059669] border-orange-200/60 dark:border-orange-900/40",
+  "Ressources Humaines": "bg-orange-50 dark:bg-orange-950/40 text-[#059669] border-orange-200/60 dark:border-orange-900/40",
   "Finance": "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40",
   "Comptabilité": "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40",
   "Commercial": "bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-200/60 dark:border-teal-900/40",
@@ -203,7 +203,7 @@ function AddSubordinateModal({
       <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-[#0d9488]/10 text-[#0d9488]">
+            <div className="p-2 rounded-xl bg-[#059669]/10 text-[#059669]">
               <UserPlus className="h-4 w-4" />
             </div>
             Ajouter un subordonné direct
@@ -238,7 +238,7 @@ function AddSubordinateModal({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Rechercher un collaborateur non rattaché…"
-                className="w-full text-xs font-medium pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                className="w-full text-xs font-medium pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
               />
             </div>
 
@@ -256,7 +256,7 @@ function AddSubordinateModal({
                     key={e.id}
                     onClick={() => attachExisting(e.id, e.full_name)}
                     disabled={isPending}
-                    className="flex w-full items-center gap-3 rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-left transition-all hover:border-[#0d9488]/40 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                    className="flex w-full items-center gap-3 rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-left transition-all hover:border-[#059669]/40 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
                   >
                     <Avatar src={e.photo_url} name={e.full_name} size={32} rounded="full" />
                     <div className="min-w-0 flex-1">
@@ -282,7 +282,7 @@ function AddSubordinateModal({
                 placeholder="Ex: Jean Dupont"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
               />
             </div>
             <div>
@@ -293,7 +293,7 @@ function AddSubordinateModal({
                 placeholder="Ex: Analyste RH, Assistant Commercial..."
                 value={poste}
                 onChange={(e) => setPoste(e.target.value)}
-                className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -304,7 +304,7 @@ function AddSubordinateModal({
                   type="text"
                   value={departement}
                   onChange={(e) => setDepartement(e.target.value)}
-                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
                 />
               </div>
               <div>
@@ -313,7 +313,7 @@ function AddSubordinateModal({
                   id="add-sub-contrat"
                   value={typeContrat}
                   onChange={(e) => setTypeContrat(e.target.value as any)}
-                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
                 >
                   <option value="CDI">CDI</option>
                   <option value="CDD">CDD</option>
@@ -334,7 +334,7 @@ function AddSubordinateModal({
               size="sm"
               disabled={isPending || !fullName.trim() || !poste.trim()}
               onClick={handleCreate}
-              className="bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
+              className="bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
             >
               {isPending ? "Création..." : "Créer & rattacher"}
             </Button>
@@ -409,7 +409,7 @@ function EditEmployeeModal({
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
             />
           </div>
 
@@ -420,7 +420,7 @@ function EditEmployeeModal({
               type="text"
               value={poste}
               onChange={(e) => setPoste(e.target.value)}
-              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
             />
           </div>
 
@@ -432,7 +432,7 @@ function EditEmployeeModal({
               value={departement}
               onChange={(e) => setDepartement(e.target.value)}
               placeholder="Ex: Direction & IT, RH, Finance..."
-              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
             />
           </div>
         </div>
@@ -570,7 +570,7 @@ function ManagerPopover({
     <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-72 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xl p-3 text-left animate-in fade-in zoom-in-95 duration-150">
       <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
         <p className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-          <Move className="h-3.5 w-3.5 text-[#0d9488]" /> Changer le Supérieur (N+1)
+          <Move className="h-3.5 w-3.5 text-[#059669]" /> Changer le Supérieur (N+1)
         </p>
         <button onClick={onClose} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-600">
           <X size={12} />
@@ -584,7 +584,7 @@ function ManagerPopover({
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Rechercher un manager..."
-          className="w-full text-xs border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-3 py-1.5 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+          className="w-full text-xs border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-3 py-1.5 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
         />
       </div>
 
@@ -593,11 +593,11 @@ function ManagerPopover({
           onClick={() => assign(null)}
           disabled={isPending}
           className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
-            !node.manager_id ? "bg-orange-50 dark:bg-orange-950/40 text-[#0d9488] font-bold" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 italic"
+            !node.manager_id ? "bg-orange-50 dark:bg-orange-950/40 text-[#059669] font-bold" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 italic"
           }`}
         >
           <span>Définir comme Racine (Sans N+1)</span>
-          {!node.manager_id && <Check size={12} className="text-[#0d9488]" />}
+          {!node.manager_id && <Check size={12} className="text-[#059669]" />}
         </button>
 
         {filtered.map(e => (
@@ -607,7 +607,7 @@ function ManagerPopover({
             disabled={isPending}
             className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
               node.manager_id === e.id 
-                ? "bg-orange-50 dark:bg-orange-950/40 text-[#0d9488] font-bold border border-orange-200/50" 
+                ? "bg-orange-50 dark:bg-orange-950/40 text-[#059669] font-bold border border-orange-200/50" 
                 : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
             }`}
           >
@@ -615,7 +615,7 @@ function ManagerPopover({
               <p className="font-semibold truncate">{e.full_name}</p>
               {e.poste && <p className="text-[10px] text-slate-400 truncate font-normal">{e.poste}</p>}
             </div>
-            {node.manager_id === e.id && <Check size={12} className="text-[#0d9488] shrink-0" />}
+            {node.manager_id === e.id && <Check size={12} className="text-[#059669] shrink-0" />}
           </button>
         ))}
       </div>
@@ -653,12 +653,12 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
       <div
         className={`w-60 overflow-hidden bg-white dark:bg-slate-900 border rounded-2xl p-4 pt-5 transition-all duration-200 text-left select-none relative ${
           highlight
-            ? "border-[#0d9488] ring-2 ring-[#0d9488]/30 shadow-lg z-10 -translate-y-0.5"
-            : "border-slate-200/70 dark:border-slate-800 shadow-sm hover:-translate-y-0.5 hover:border-[#0d9488]/40 hover:shadow-[0_14px_30px_-14px_rgba(13,148,136,0.4)]"
+            ? "border-[#059669] ring-2 ring-[#059669]/30 shadow-lg z-10 -translate-y-0.5"
+            : "border-slate-200/70 dark:border-slate-800 shadow-sm hover:-translate-y-0.5 hover:border-[#059669]/40 hover:shadow-[0_14px_30px_-14px_rgba(13,148,136,0.4)]"
         }`}
       >
         {/* Liseré d'accent en tête de carte */}
-        <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0d9488] to-[#2dd4bf]" />
+        <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#059669] to-[#2dd4bf]" />
 
         {/* En-tête Carte : Avatar + Actions Rapides Flottantes Épurées */}
         <div className="flex items-center justify-between mb-3">
@@ -668,7 +668,7 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-slate-900/90 dark:bg-slate-800/90 text-white p-1 rounded-xl shadow-sm backdrop-blur-xs">
             <button
               onClick={() => setShowAddSubModal(true)}
-              className="p-1 rounded-lg hover:bg-[#0d9488] text-white transition-colors"
+              className="p-1 rounded-lg hover:bg-[#059669] text-white transition-colors"
               title="Ajouter un collaborateur direct"
             >
               <UserPlus size={13} />
@@ -721,7 +721,7 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
           {node.children.length > 0 ? (
             <button
               onClick={onToggle}
-              className="flex items-center gap-1 text-[10px] font-bold text-[#0d9488] hover:text-[#0f766e] bg-orange-50 dark:bg-orange-950/30 px-2.5 py-1 rounded-lg transition-all"
+              className="flex items-center gap-1 text-[10px] font-bold text-[#059669] hover:text-[#047857] bg-orange-50 dark:bg-orange-950/30 px-2.5 py-1 rounded-lg transition-all"
             >
               {collapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
               <span>{node.children.length} rapport{node.children.length > 1 ? "s" : ""}</span>
@@ -875,7 +875,7 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
       {/* BANDEAU D'ANALYSE EN CANVAS BLANC ÉPURÉ & HARMONIEUX */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
         <div className="flex items-center gap-3 p-2">
-          <div className="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#0d9488] flex items-center justify-center shrink-0 border border-orange-200/50 dark:border-orange-900/50">
+          <div className="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#059669] flex items-center justify-center shrink-0 border border-orange-200/50 dark:border-orange-900/50">
             <Users size={18} />
           </div>
           <div>
@@ -925,7 +925,7 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Rechercher nom, poste..."
-            className="w-full text-xs font-medium pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+            className="w-full text-xs font-medium pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
@@ -952,7 +952,7 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
               onClick={() => setSelectedDept(selectedDept === dept ? null : dept)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 selectedDept === dept
-                  ? "bg-[#0d9488] text-white shadow-xs"
+                  ? "bg-[#059669] text-white shadow-xs"
                   : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700"
               }`}
             >

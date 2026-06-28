@@ -32,7 +32,7 @@ export function AnniversairesEvenementsWidget() {
   return (
     <div className="space-y-4">
       {/* 1. Anniversaires Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+      <div className="pro-card p-4 transition-all">
         <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800 mb-3">
           <div className="h-7 w-7 rounded-lg bg-pink-50 dark:bg-pink-950/50 flex items-center justify-center text-pink-600 dark:text-pink-400">
             <Cake className="h-3.5 w-3.5" />
@@ -57,7 +57,7 @@ export function AnniversairesEvenementsWidget() {
       </div>
 
       {/* 2. Événements à venir Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+      <div className="pro-card p-4 transition-all">
         <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800 mb-3">
           <div className="h-7 w-7 rounded-lg bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-amber-600 dark:text-amber-400">
             <Calendar className="h-3.5 w-3.5" />
@@ -82,7 +82,7 @@ export function AnniversairesEvenementsWidget() {
       </div>
 
       {/* 3. Statut de Présence Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+      <div className="pro-card p-4 transition-all">
         <div className="flex items-center gap-2 pb-2.5 border-b border-slate-100 dark:border-slate-800 mb-3">
           <div className="h-7 w-7 rounded-lg bg-sky-50 dark:bg-sky-950/50 flex items-center justify-center text-sky-600 dark:text-sky-400">
             <Users className="h-3.5 w-3.5" />

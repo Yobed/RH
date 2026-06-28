@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { 
   Camera, 
   CheckCircle2, 
@@ -41,6 +41,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
   const [currentTimeStr, setCurrentTimeStr] = useState<string>("");
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   // Live real-time clock update (HH:mm:ss)
   useEffect(() => {
@@ -54,7 +55,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
   }, []);
 
   // Fetch real HTML5 GPS position when modal opens
-  const fetchGpsLocation = () => {
+  const fetchGpsLocation = useCallback(() => {
     setGpsStatus("loading");
     if (typeof window !== "undefined" && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -75,7 +76,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
       setGpsLocation("GPS HQ: 5.3364° N, 4.0267° W (Plateau Abidjan)");
       setGpsStatus("success");
     }
-  };
+  }, []);
 
   // Sound effect generator using Web Audio API
   const playSuccessSound = () => {
@@ -101,6 +102,38 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
     }
   };
 
+  const startCamera = useCallback(async () => {
+    setCameraError(null);
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+        });
+        streamRef.current = mediaStream;
+        setStream(mediaStream);
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+        setCameraActive(true);
+      } else {
+        setCameraError("Caméra non supportée par le navigateur. Mode simulation actif.");
+      }
+    } catch (err) {
+      console.warn("Camera access denied or unavailble:", err);
+      setCameraError("Accès caméra restreint. Simulation 3D activée.");
+      setCameraActive(false);
+    }
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    }
+    setStream(null);
+    setCameraActive(false);
+  }, []);
+
   // Start webcam when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -116,37 +149,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
     return () => {
       stopCamera();
     };
-  }, [isOpen]);
-
-  const startCamera = async () => {
-    setCameraError(null);
-    try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
-        });
-        setStream(mediaStream);
-        if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
-        }
-        setCameraActive(true);
-      } else {
-        setCameraError("Caméra non supportée par le navigateur. Mode simulation actif.");
-      }
-    } catch (err) {
-      console.warn("Camera access denied or unavailble:", err);
-      setCameraError("Accès caméra restreint. Simulation 3D activée.");
-      setCameraActive(false);
-    }
-  };
-
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-    setCameraActive(false);
-  };
+  }, [isOpen, startCamera, fetchGpsLocation, stopCamera]);
 
   // Attach video stream to ref when component mounts/stream updates
   useEffect(() => {
@@ -262,7 +265,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                           : "bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-800 hover:bg-slate-100"
                       }`}
                     >
-                      <IconComp className={`h-4 w-4 mb-1 ${selected ? "text-[#0d9488]" : "text-slate-400"}`} />
+                      <IconComp className={`h-4 w-4 mb-1 ${selected ? "text-[#059669]" : "text-slate-400"}`} />
                       <span className="text-[11px]">{opt.label}</span>
                     </button>
                   );
@@ -371,7 +374,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
             {/* Metadata Footer (GPS, Network, Exact Clock) */}
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                <MapPin className="h-3.5 w-3.5 text-[#0d9488]" />
+                <MapPin className="h-3.5 w-3.5 text-[#059669]" />
                 <span className="font-semibold">{gpsLocation}</span>
               </div>
               <div className="flex items-center gap-2 font-medium">
@@ -394,7 +397,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                 className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md ${
                   scanning
                     ? "bg-slate-400 text-white cursor-not-allowed"
-                    : "bg-gradient-to-r from-[#0d9488] to-amber-500 hover:from-amber-600 hover:to-[#0d9488] text-white shadow-amber-500/20"
+                    : "bg-gradient-to-r from-[#059669] to-amber-500 hover:from-amber-600 hover:to-[#059669] text-white shadow-amber-500/20"
                 }`}
               >
                 {scanning ? (

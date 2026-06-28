@@ -38,8 +38,8 @@ export default async function DashboardLayout({
     <div
       className="flex h-screen flex-col overflow-hidden bg-background"
       style={{
-        "--brand-primary": company?.couleur_primaire ?? "#0d9488",
-        "--brand-secondary": company?.couleur_secondaire ?? "#0f766e",
+        "--brand-primary": company?.couleur_primaire ?? "#059669",
+        "--brand-secondary": company?.couleur_secondaire ?? "#047857",
       } as React.CSSProperties}
     >
       {/* Barre de navigation horizontale */}

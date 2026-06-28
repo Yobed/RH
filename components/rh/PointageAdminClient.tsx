@@ -86,7 +86,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="p-2 rounded-xl bg-gradient-to-tr from-[#0d9488] to-amber-500 text-white shadow-sm">
+            <div className="p-2 rounded-xl bg-gradient-to-tr from-[#059669] to-amber-500 text-white shadow-sm">
               <Camera className="w-5 h-5" />
             </div>
             <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-white">
@@ -109,7 +109,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900"
             }`}
           >
-            <Sparkles className={`w-3.5 h-3.5 ${activeTab === "biometric" ? "text-[#0d9488]" : "text-slate-400"}`} />
+            <Sparkles className={`w-3.5 h-3.5 ${activeTab === "biometric" ? "text-[#059669]" : "text-slate-400"}`} />
             <span>Borne & Registre Biométrique</span>
           </button>
 
@@ -132,7 +132,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
         <BiometricPointageSection employees={employees} />
       ) : (
         <div className="space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+          <div className="pro-card p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">Heures Travaillées Semaine par Semaine</h3>
               <p className="text-xs text-slate-500">
@@ -181,12 +181,12 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
 
           {/* Grille */}
           {employees.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-16 text-center text-slate-400">
+            <div className="pro-card p-16 text-center text-slate-400">
               <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p className="text-sm">Aucun collaborateur actif</p>
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
+            <div className="pro-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead>
@@ -197,7 +197,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                       {days.map(d => (
                         <th
                           key={d.toISOString()}
-                          className={`border-b border-slate-200 dark:border-slate-700 px-2 py-3 text-center text-[10px] font-bold uppercase tracking-widest min-w-[80px] ${isToday(d) ? "bg-amber-50 text-[#0d9488] dark:bg-amber-950/40" : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"}`}
+                          className={`border-b border-slate-200 dark:border-slate-700 px-2 py-3 text-center text-[10px] font-bold uppercase tracking-widest min-w-[80px] ${isToday(d) ? "bg-amber-50 text-[#059669] dark:bg-amber-950/40" : "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"}`}
                         >
                           <div>{format(d, "EEE", { locale: fr })}</div>
                           <div className="text-base font-bold normal-case">{format(d, "d", { locale: fr })}</div>
@@ -255,7 +255,7 @@ function Kpi({
   color?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-3.5 shadow-xs">
+    <div className="pro-card p-3.5">
       <div className="flex items-center justify-between">
         <p className="text-[10px] uppercase tracking-widest text-slate-400 font-extrabold">{label}</p>
         <Icon className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600" />

@@ -94,7 +94,7 @@ export function AuditLogTable() {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="pro-card overflow-hidden">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
             <tr>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -135,7 +135,7 @@ export function RagChat() {
   }
 
   return (
-    <div className="flex h-[750px] flex-col rounded-3xl border border-slate-200/60 bg-slate-50/30 overflow-hidden backdrop-blur-xl shadow-2xl relative">
+    <div className="flex h-[750px] flex-col pro-card overflow-hidden backdrop-blur-xl relative">
       {/* Dynamic Background Accents */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse" />

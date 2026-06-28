@@ -212,9 +212,9 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
   const SortIcon = ({ column }: { column: string }) => {
     if (sortColumn !== column) return <CaretDown className="opacity-20 ml-1 inline text-slate-400" size={12} />;
     return sortDir === "asc" ? (
-      <CaretUp className="opacity-100 ml-1 inline text-[#0d9488]" size={12} weight="bold" />
+      <CaretUp className="opacity-100 ml-1 inline text-[#059669]" size={12} weight="bold" />
     ) : (
-      <CaretDown className="opacity-100 ml-1 inline text-[#0d9488]" size={12} weight="bold" />
+      <CaretDown className="opacity-100 ml-1 inline text-[#059669]" size={12} weight="bold" />
     );
   };
 
@@ -256,12 +256,12 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
+    <div className="pro-card overflow-hidden flex flex-col">
       {/* Sleek Integrated KPI Strip */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-100 bg-white border-b border-slate-200/80">
           <div className="p-4 sm:p-5 flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-[#0d9488]/10 text-[#0d9488] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#059669]/10 text-[#059669] flex items-center justify-center shrink-0">
               <Users size={20} weight="duotone" />
             </div>
             <div>
@@ -346,7 +346,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                   <span
                     className={cn(
                       "px-2 py-0.5 rounded-full text-[10px] font-mono font-bold",
-                      isActive ? "bg-[#0d9488] text-white" : "bg-slate-200 text-slate-700"
+                      isActive ? "bg-[#059669] text-white" : "bg-slate-200 text-slate-700"
                     )}
                   >
                     {tab.count}
@@ -361,7 +361,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             <EmployeeDialog 
               employees={employees}
               trigger={
-                <button className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold transition-all shadow-md shadow-[#0d9488]/20 hover:scale-105 active:scale-95 cursor-pointer outline-none">
+                <button className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-bold transition-all shadow-md shadow-[#059669]/20 hover:scale-105 active:scale-95 cursor-pointer outline-none">
                   <UserCheck size={16} weight="bold" />
                   <span>+ Nouveau Collaborateur</span>
                 </button>
@@ -373,7 +373,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 className={cn(
                   "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
                   viewMode === "table"
-                    ? "bg-white text-[#0d9488] shadow-sm border border-slate-200/80"
+                    ? "bg-white text-[#059669] shadow-sm border border-slate-200/80"
                     : "text-slate-500 hover:text-slate-900"
                 )}
                 title="Vue Tableau Détaillé"
@@ -386,7 +386,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 className={cn(
                   "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
                   viewMode === "grid"
-                    ? "bg-white text-[#0d9488] shadow-sm border border-slate-200/80"
+                    ? "bg-white text-[#059669] shadow-sm border border-slate-200/80"
                     : "text-slate-500 hover:text-slate-900"
                 )}
                 title="Vue Trombinoscope (Cartes RH)"
@@ -399,7 +399,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 className={cn(
                   "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none cursor-pointer",
                   viewMode === "analytics"
-                    ? "bg-white text-[#0d9488] shadow-sm border border-slate-200/80"
+                    ? "bg-white text-[#059669] shadow-sm border border-slate-200/80"
                     : "text-slate-500 hover:text-slate-900"
                 )}
                 title="Vue Cockpit Synthétique & Répartition"
@@ -414,7 +414,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
         {/* Bottom Filter Strip: Search Input & Contract Select */}
         <div className="flex flex-col lg:flex-row gap-3 items-center justify-between pt-1">
           <div className="relative flex-1 w-full group">
-            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#0d9488] transition-colors">
+            <div className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#059669] transition-colors">
               <MagnifyingGlass size={18} weight="bold" />
             </div>
             <input
@@ -422,7 +422,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
               placeholder="Rechercher par nom, matricule, poste, département..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full h-11 pl-10 pr-9 rounded-2xl bg-white border border-slate-200/90 font-medium text-xs text-slate-800 placeholder:text-slate-400 focus:border-[#0d9488] focus:ring-4 focus:ring-[#0d9488]/10 transition-all outline-none shadow-xs"
+              className="w-full h-11 pl-10 pr-9 rounded-2xl bg-white border border-slate-200/90 font-medium text-xs text-slate-800 placeholder:text-slate-400 focus:border-[#059669] focus:ring-4 focus:ring-[#059669]/10 transition-all outline-none shadow-xs"
             />
             {search && (
               <button
@@ -437,13 +437,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
           <div className="flex items-center gap-3 w-full lg:w-auto shrink-0">
             {contrats.length > 0 && (
               <div className="relative group w-full sm:w-auto">
-                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0d9488] z-10 pointer-events-none">
+                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#059669] z-10 pointer-events-none">
                   <Briefcase size={16} weight="bold" />
                 </div>
                 <select
                   value={filterContrat}
                   onChange={(e) => handleContratChange(e.target.value)}
-                  className="h-11 w-full sm:w-auto pl-10 pr-9 rounded-2xl bg-white border border-slate-200/90 font-bold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#0d9488] focus:ring-4 focus:ring-[#0d9488]/10 transition-all min-w-[190px] shadow-xs"
+                  className="h-11 w-full sm:w-auto pl-10 pr-9 rounded-2xl bg-white border border-slate-200/90 font-bold text-xs text-slate-700 appearance-none outline-none cursor-pointer focus:border-[#059669] focus:ring-4 focus:ring-[#059669]/10 transition-all min-w-[190px] shadow-xs"
                 >
                   <option value="tous">Tous les types de contrat</option>
                   {contrats.map((c) => (
@@ -482,7 +482,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                   className={cn(
                     "px-3 py-1 rounded-xl text-[11px] font-bold transition-all shrink-0 cursor-pointer border flex items-center gap-1.5",
                     isSelected
-                      ? "bg-[#0d9488] text-white border-[#0d9488] shadow-2xs"
+                      ? "bg-[#059669] text-white border-[#059669] shadow-2xs"
                       : "bg-white text-slate-600 border-slate-200/80 hover:bg-slate-100 hover:text-slate-900"
                   )}
                 >
@@ -561,12 +561,12 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                             name={emp.full_name}
                             size={40}
                             rounded="xl"
-                            className="border border-slate-200/80 shadow-2xs transition-colors group-hover:border-[#0d9488]/40"
+                            className="border border-slate-200/80 shadow-2xs transition-colors group-hover:border-[#059669]/40"
                           />
                           <div className="min-w-0">
                             <Link 
                               href={`/employes/${emp.id}`}
-                              className="text-sm font-bold text-slate-900 hover:text-[#0d9488] transition-colors line-clamp-1"
+                              className="text-sm font-bold text-slate-900 hover:text-[#059669] transition-colors line-clamp-1"
                             >
                               {emp.full_name}
                             </Link>
@@ -609,7 +609,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                         <div className="flex items-center justify-center gap-1.5">
                           <Link
                             href={`/employes/${emp.id}`}
-                            className="h-9 px-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-[#0d9488] text-slate-700 hover:text-white text-xs font-bold transition-all outline-none"
+                            className="h-9 px-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-100 hover:bg-[#059669] text-slate-700 hover:text-white text-xs font-bold transition-all outline-none"
                             title="Consulter la fiche RH"
                           >
                             <Eye size={15} weight="bold" />
@@ -684,7 +684,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
               {employees.map((emp) => (
                 <div
                   key={emp.id}
-                  className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs hover:shadow-md hover:border-slate-300 transition-all flex flex-col justify-between group"
+                  className="pro-card p-5 transition-all flex flex-col justify-between group hover:border-slate-300"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-4">
@@ -694,12 +694,12 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                           name={emp.full_name}
                           size={48}
                           rounded="xl"
-                          className="border border-slate-200/80 shadow-2xs transition-colors group-hover:border-[#0d9488]/40"
+                          className="border border-slate-200/80 shadow-2xs transition-colors group-hover:border-[#059669]/40"
                         />
                         <div>
                           <Link 
                             href={`/employes/${emp.id}`}
-                            className="font-bold text-sm text-slate-900 hover:text-[#0d9488] transition-colors line-clamp-1"
+                            className="font-bold text-sm text-slate-900 hover:text-[#059669] transition-colors line-clamp-1"
                           >
                             {emp.full_name}
                           </Link>
@@ -755,7 +755,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                     <StatutBadge statut={emp.statut} />
                     <Link
                       href={`/employes/${emp.id}`}
-                      className="text-xs font-bold text-[#0d9488] hover:underline inline-flex items-center gap-1"
+                      className="text-xs font-bold text-[#059669] hover:underline inline-flex items-center gap-1"
                     >
                       Fiche RH &rarr;
                     </Link>
@@ -778,7 +778,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                 <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-[#0d9488]/10 text-[#0d9488] flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-[#059669]/10 text-[#059669] flex items-center justify-center">
                         <Building size={18} weight="bold" />
                       </div>
                       <div>
@@ -796,14 +796,14 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                         <div key={dept} className="space-y-1">
                           <div className="flex justify-between text-xs font-bold">
                             <span className="text-slate-700 flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-[#0d9488]"></span>
+                              <span className="w-2 h-2 rounded-full bg-[#059669]"></span>
                               {dept}
                             </span>
                             <span className="text-slate-900 font-mono">{count} <span className="text-slate-400 font-normal">({pct}%)</span></span>
                           </div>
                           <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                             <div 
-                              className="h-full bg-gradient-to-r from-[#0d9488] to-amber-500 rounded-full transition-all duration-500"
+                              className="h-full bg-gradient-to-r from-[#059669] to-amber-500 rounded-full transition-all duration-500"
                               style={{ width: `${pct}%` }}
                             />
                           </div>
@@ -867,7 +867,7 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
             action={
               <button 
                 onClick={() => handleSearchChange("")}
-                className="text-xs font-bold text-[#0d9488] hover:underline uppercase tracking-wider cursor-pointer"
+                className="text-xs font-bold text-[#059669] hover:underline uppercase tracking-wider cursor-pointer"
               >
                 Effacer les filtres
               </button>

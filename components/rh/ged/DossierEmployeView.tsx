@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   FileText, Upload, Download, Trash2, Loader2,
-  FileSpreadsheet, Image, File, ChevronRight, Sparkles, Eye,
+  FileSpreadsheet, Image as ImageIcon, File, ChevronRight, Sparkles, Eye,
 } from "lucide-react";
 import { DocumentAnalyzerDialog } from "@/components/rh/ged/DocumentAnalyzerDialog";
 import { DocumentVersionsDialog } from "@/components/rh/ged/DocumentVersionsDialog";
@@ -106,7 +106,7 @@ function fileIcon(fileType: string | null) {
   if (fileType.includes("sheet") || fileType.includes("xls") || fileType.includes("csv"))
     return <FileSpreadsheet className="h-5 w-5 text-green-500" />;
   if (fileType.includes("image") || fileType.includes("png") || fileType.includes("jpg"))
-    return <Image className="h-5 w-5 text-slate-500" />;
+    return <ImageIcon className="h-5 w-5 text-slate-500" />;
   return <File className="h-5 w-5 text-slate-400" />;
 }
 

@@ -83,7 +83,7 @@ export default async function EmployesPage({
     <PageShell>
       <PageHeader
         eyebrow="Effectif RH"
-        eyebrowIcon={<IdentificationBadge size={14} weight="bold" className="text-[#0d9488]" />}
+        eyebrowIcon={<IdentificationBadge size={14} weight="bold" className="text-[#059669]" />}
         title="Gestion des Collaborateurs"
         help="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié."
         actions={

@@ -107,7 +107,7 @@ export function AiSuggestionsWidget({
     <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5 transition-all">
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-4">
-        <div className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-[#0d9488]/10 text-[#0d9488]">
+        <div className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0 bg-[#059669]/10 text-[#059669]">
           <Robot weight="duotone" size={18} />
         </div>
         <div>
@@ -125,7 +125,7 @@ export function AiSuggestionsWidget({
         <div className="flex items-center gap-2.5 py-6 justify-center">
           <SpinnerGap
             size={18}
-            className="animate-spin text-[#0d9488]"
+            className="animate-spin text-[#059669]"
           />
           <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
             Analyse en cours…
@@ -177,7 +177,7 @@ export function AiSuggestionsWidget({
                 {/* CTA */}
                 <Link
                   href={s.href}
-                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0d9488] hover:text-[#0f766e] hover:underline transition-all self-start group pt-1"
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#059669] hover:text-[#047857] hover:underline transition-all self-start group pt-1"
                 >
                   Agir
                   <ArrowRight

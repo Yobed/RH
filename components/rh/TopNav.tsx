@@ -8,57 +8,48 @@ import { toast } from "sonner";
 import { createClientSupabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import {
-  Buildings,
-  CaretDown,
-  SignOut,
-  SquaresFour,
+  Building2,
+  ChevronDown,
+  LogOut,
+  LayoutGrid,
   Users,
-  Money,
-  ChartPieSlice,
-  Student,
+  Banknote,
+  PieChart,
+  GraduationCap,
   ShieldCheck,
-  Robot,
-  Gear,
-  TreeStructure,
+  Bot,
+  Settings,
+  Network,
   FileText,
-  CalendarBlank,
+  Calendar,
   Clock,
-  FirstAid,
+  Stethoscope,
   UserPlus,
   UserMinus,
   CalendarCheck,
-  ChartBar,
-  Stamp,
-  Bank,
-  ShieldWarning,
-  UploadSimple,
-  Target,
-  CalendarDots,
-  TrendUp,
-  UsersThree,
-  FilePdf,
-  Books,
+  BarChart3,
+  FileCheck,
+  Landmark,
+  ShieldAlert,
+  CalendarDays,
+  TrendingUp,
+  Library,
   Archive,
-  ChartLineUp,
-  Scales,
+  Scale,
   Presentation,
-  ChatCircleText,
+  MessageSquare,
   Bell,
   Calculator,
-  Key,
   Plug,
-  DeviceMobile,
-  BellRinging,
-  UserCircle,
-  Question,
-} from "@phosphor-icons/react";
+  User,
+  HelpCircle,
+} from "lucide-react";
 import { CommandPaletteButton } from "./CommandPalette";
 import { ThemeToggle } from "./ThemeToggle";
 import { NotificationBell } from "./NotificationBell";
 import { MobileSidebar } from "./MobileSidebar";
 
 // ── Taxonomie : 7 domaines (8 avec Admin) au lieu de ~57 liens ──
-// Chaque feuille porte sa propre description : la nav s'explique d'elle-même.
 interface NavLeaf {
   href: string;
   label: string;
@@ -74,28 +65,26 @@ interface NavDomain {
   id: string;
   label: string;
   icon: React.ElementType;
-  accent: string;
   href?: string;
   columns?: NavColumn[];
   adminOnly?: boolean;
 }
 
 const NAV_DOMAINS: NavDomain[] = [
-  { id: "dashboard", label: "Tableau de bord", icon: SquaresFour, accent: "#0d9488", href: "/rh" },
+  { id: "dashboard", label: "Tableau de bord", icon: LayoutGrid, href: "/rh" },
   {
     id: "people",
     label: "Collaborateurs",
     icon: Users,
-    accent: "#0d9488",
     columns: [
       {
         title: "Équipe & Présence",
         items: [
           { href: "/employes", label: "Fiches collaborateurs", desc: "Dossiers des salariés", icon: Users },
-          { href: "/employes/organigramme", label: "Organigramme", desc: "Structure hiérarchique", icon: TreeStructure },
+          { href: "/employes/organigramme", label: "Organigramme", desc: "Structure hiérarchique", icon: Network },
           { href: "/contrats", label: "Contrats", desc: "CDI, CDD, avenants", icon: FileText },
           { href: "/pointage", label: "Pointage Biométrique", desc: "Heures & Géolocalisation", icon: Clock },
-          { href: "/conges", label: "Absences & Congés", desc: "Demandes et soldes", icon: CalendarBlank },
+          { href: "/conges", label: "Absences & Congés", desc: "Demandes et soldes", icon: Calendar },
         ],
       },
       {
@@ -105,7 +94,7 @@ const NAV_DOMAINS: NavDomain[] = [
           { href: "/offboarding", label: "Offboarding", desc: "Parcours de départ", icon: UserMinus },
           { href: "/planning", label: "Planning & Équipes", desc: "Rotations & Shifts", icon: CalendarCheck },
           { href: "/heures-sup", label: "Heures supplémentaires", desc: "Suivi & majoration", icon: Clock },
-          { href: "/medical", label: "Visites médicales", desc: "Médecine du travail", icon: FirstAid },
+          { href: "/medical", label: "Visites médicales", desc: "Médecine du travail", icon: Stethoscope },
         ],
       },
     ],
@@ -113,24 +102,23 @@ const NAV_DOMAINS: NavDomain[] = [
   {
     id: "paie",
     label: "Paie",
-    icon: Money,
-    accent: "#0d9488",
+    icon: Banknote,
     columns: [
       {
         title: "Gestion Paie",
         items: [
-          { href: "/paie", label: "Bulletins de paie", desc: "Édition des bulletins", icon: Money },
-          { href: "/paie/generer-lot", label: "Génération en lot", desc: "Tous les bulletins", icon: Stamp },
-          { href: "/paie/bordereau", label: "Bordereau de virement", desc: "Ordre bancaire", icon: Bank },
-          { href: "/paie/anomalies", label: "Anomalies de paie", desc: "Écarts détectés", icon: ShieldWarning, pulse: true },
+          { href: "/paie", label: "Bulletins de paie", desc: "Édition des bulletins", icon: Banknote },
+          { href: "/paie/generer-lot", label: "Génération en lot", desc: "Tous les bulletins", icon: FileCheck },
+          { href: "/paie/bordereau", label: "Bordereau de virement", desc: "Ordre bancaire", icon: Landmark },
+          { href: "/paie/anomalies", label: "Anomalies de paie", desc: "Écarts détectés", icon: ShieldAlert, pulse: true },
         ],
       },
       {
         title: "Déclarations & Coûts",
         items: [
           { href: "/paie/fin-de-contrat", label: "Solde de tout compte", desc: "STC en fin de contrat", icon: FileText },
-          { href: "/declarations", label: "Déclarations sociales", desc: "CNPS, ITS, FDFP", icon: Stamp },
-          { href: "/analyses", label: "Masse salariale", desc: "Coûts & répartition", icon: ChartBar },
+          { href: "/declarations", label: "Déclarations sociales", desc: "CNPS, ITS, FDFP", icon: FileCheck },
+          { href: "/analyses", label: "Masse salariale", desc: "Coûts & répartition", icon: BarChart3 },
         ],
       },
     ],
@@ -138,15 +126,14 @@ const NAV_DOMAINS: NavDomain[] = [
   {
     id: "talents",
     label: "Talents",
-    icon: Student,
-    accent: "#0d9488",
+    icon: GraduationCap,
     columns: [
       {
         title: "Développement RH",
         items: [
           { href: "/recrutement", label: "Recrutement", desc: "Offres & candidatures", icon: UserPlus },
-          { href: "/evaluations", label: "Évaluations & Performance", desc: "Entretiens annuels", icon: ChartLineUp },
-          { href: "/formation", label: "Formation & FDFP", desc: "Plan & taxe formation", icon: Student },
+          { href: "/evaluations", label: "Évaluations & Performance", desc: "Entretiens annuels", icon: TrendingUp },
+          { href: "/formation", label: "Formation & FDFP", desc: "Plan & taxe formation", icon: GraduationCap },
         ],
       },
     ],
@@ -154,23 +141,22 @@ const NAV_DOMAINS: NavDomain[] = [
   {
     id: "analytique",
     label: "Analytique",
-    icon: ChartPieSlice,
-    accent: "#0d9488",
+    icon: PieChart,
     columns: [
       {
         title: "Tableaux & Rapports",
         items: [
-          { href: "/analytique", label: "Analytique RH", desc: "Tableaux de bord BI", icon: ChartPieSlice },
+          { href: "/analytique", label: "Analytique RH", desc: "Tableaux de bord BI", icon: PieChart },
           { href: "/reporting", label: "Reporting RH", desc: "Rapports & exports", icon: Presentation },
-          { href: "/calendrier", label: "Calendrier global", desc: "Événements d'entreprise", icon: CalendarDots },
+          { href: "/calendrier", label: "Calendrier global", desc: "Événements d'entreprise", icon: CalendarDays },
         ],
       },
       {
         title: "Prévisions & Rétention",
         items: [
           { href: "/analytique/risque-depart", label: "Risque de départ", desc: "Turnover prévisionnel", icon: UserMinus },
-          { href: "/analytique/prevision", label: "Prévision effectifs", desc: "Projection N+1", icon: TrendUp },
-          { href: "/analytique/cohortes", label: "Cohortes d'embauche", desc: "Par année d'arrivée", icon: UsersThree },
+          { href: "/analytique/prevision", label: "Prévision effectifs", desc: "Projection N+1", icon: TrendingUp },
+          { href: "/analytique/cohortes", label: "Cohortes d'embauche", desc: "Par année d'arrivée", icon: Users },
         ],
       },
     ],
@@ -179,22 +165,21 @@ const NAV_DOMAINS: NavDomain[] = [
     id: "conformite",
     label: "Conformité",
     icon: ShieldCheck,
-    accent: "#0d9488",
     columns: [
       {
         title: "Qualité & Juridique",
         items: [
-          { href: "/disciplinaire", label: "Procédures disciplinaires", desc: "Sanctions & avertissements", icon: ShieldWarning },
-          { href: "/contentieux", label: "Contentieux", desc: "Litiges & inspections", icon: Scales },
-          { href: "/qhse", label: "QHSE & Accidents", desc: "Sécurité au travail", icon: FirstAid },
-          { href: "/duerp", label: "Risques pro (DUERP)", desc: "Évaluation obligatoire", icon: ShieldWarning },
+          { href: "/disciplinaire", label: "Procédures disciplinaires", desc: "Sanctions & avertissements", icon: ShieldAlert },
+          { href: "/contentieux", label: "Contentieux", desc: "Litiges & inspections", icon: Scale },
+          { href: "/qhse", label: "QHSE & Accidents", desc: "Sécurité au travail", icon: Stethoscope },
+          { href: "/duerp", label: "Risques pro (DUERP)", desc: "Évaluation obligatoire", icon: ShieldAlert },
         ],
       },
       {
         title: "GED & Documents",
         items: [
-          { href: "/documents-rh", label: "Documents RH", desc: "Attestations & modèles", icon: FilePdf },
-          { href: "/ged", label: "Documents numérisés (GED)", desc: "Coffre-fort documentaire", icon: Books, pulse: true },
+          { href: "/documents-rh", label: "Documents RH", desc: "Attestations & modèles", icon: FileText },
+          { href: "/ged", label: "Documents numérisés (GED)", desc: "Coffre-fort documentaire", icon: Library, pulse: true },
           { href: "/archives", label: "Archives", desc: "Dossiers clôturés", icon: Archive },
         ],
       },
@@ -203,22 +188,21 @@ const NAV_DOMAINS: NavDomain[] = [
   {
     id: "outils",
     label: "Outils",
-    icon: Robot,
-    accent: "#0d9488",
+    icon: Bot,
     columns: [
       {
         title: "Assistant & Calculs",
         items: [
-          { href: "/agent-juridique", label: "Agent juridique IA", desc: "Droit du travail CI", icon: Robot },
+          { href: "/agent-juridique", label: "Agent juridique IA", desc: "Droit du travail CI", icon: Bot },
           { href: "/calculateur", label: "Simulateur de paie", desc: "Calculs Net & Brut", icon: Calculator },
         ],
       },
       {
         title: "Communication & Aide",
         items: [
-          { href: "/messages", label: "Messagerie interne", desc: "Échanges d'équipe", icon: ChatCircleText },
+          { href: "/messages", label: "Messagerie interne", desc: "Échanges d'équipe", icon: MessageSquare },
           { href: "/notifications", label: "Notifications & Alertes", desc: "Rappels & Échéances", icon: Bell },
-          { href: "/aide", label: "Guide & Aide", desc: "Documentation des modules", icon: Question },
+          { href: "/aide", label: "Guide & Aide", desc: "Documentation des modules", icon: HelpCircle },
         ],
       },
     ],
@@ -226,16 +210,15 @@ const NAV_DOMAINS: NavDomain[] = [
   {
     id: "admin",
     label: "Administration",
-    icon: Gear,
-    accent: "#0d9488",
+    icon: Settings,
     adminOnly: true,
     columns: [
       {
         title: "Configuration",
         items: [
-          { href: "/parametres", label: "Paramètres généraux", desc: "Configuration entreprise", icon: Gear },
-          { href: "/parametres/workflows", label: "Circuits d'approbation", desc: "Valideurs & règles", icon: ChartLineUp },
-          { href: "/parametres/permissions", label: "Rôles & Permissions", desc: "Gestion des accès", icon: UsersThree },
+          { href: "/parametres", label: "Paramètres généraux", desc: "Configuration entreprise", icon: Settings },
+          { href: "/parametres/workflows", label: "Circuits d'approbation", desc: "Valideurs & règles", icon: TrendingUp },
+          { href: "/parametres/permissions", label: "Rôles & Permissions", desc: "Gestion des accès", icon: Users },
         ],
       },
       {
@@ -263,17 +246,16 @@ function getInitials(name: string | null): string {
 }
 
 // ── Lien feuille dans un méga-menu ──
-function LeafLink({ leaf, accent, onNavigate }: { leaf: NavLeaf; accent: string; onNavigate: () => void }) {
+function LeafLink({ leaf, onNavigate }: { leaf: NavLeaf; onNavigate: () => void }) {
   const Icon = leaf.icon;
   return (
     <Link
       href={leaf.href}
       onClick={onNavigate}
-      style={{ "--ac": accent } as React.CSSProperties}
-      className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 outline-none transition-colors hover:bg-slate-100/80 focus-visible:ring-2 focus-visible:ring-amber-500/60 dark:hover:bg-white/5"
+      className="group/leaf flex items-start gap-3 rounded-xl px-2.5 py-2 outline-none transition-colors hover:bg-slate-100/80 focus-visible:ring-2 focus-visible:ring-primary/60 dark:hover:bg-white/5"
     >
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500 transition-colors group-hover/leaf:bg-[#0d9488]/10 group-hover/leaf:text-[#0d9488]">
-        <Icon weight="duotone" className="h-4 w-4" />
+      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 transition-colors group-hover/leaf:bg-primary/10 group-hover/leaf:text-primary">
+        <Icon className="h-4 w-4" />
       </span>
       <span className="min-w-0">
         <span className="flex items-center gap-1.5">
@@ -308,23 +290,23 @@ function DomainItem({
   const hasMenu = !!domain.columns;
 
   const triggerCls = cn(
-    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488]/60",
+    "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium tracking-tight transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60",
     active || open
-      ? "bg-[#0d9488]/10 text-[#0d9488] font-semibold"
-      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+      ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 font-semibold shadow-2xs"
+      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
   );
 
   return (
     <div className="relative" onMouseEnter={onHover}>
       {hasMenu ? (
         <button type="button" className={triggerCls} aria-expanded={open} onClick={onToggle}>
-          <Icon weight={active || open ? "duotone" : "regular"} className="h-4 w-4" />
+          <Icon className="h-4 w-4" />
           <span>{domain.label}</span>
-          <CaretDown weight="bold" className={cn("h-2.5 w-2.5 transition-transform duration-200", open && "rotate-180")} />
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", open && "rotate-180")} />
         </button>
       ) : (
         <Link href={domain.href!} className={triggerCls} onClick={onNavigate}>
-          <Icon weight={active ? "duotone" : "regular"} className="h-4 w-4" />
+          <Icon className="h-4 w-4" />
           <span>{domain.label}</span>
         </Link>
       )}
@@ -347,7 +329,7 @@ function DomainItem({
                     </p>
                     <div className="flex flex-col gap-0.5">
                       {col.items.map((it) => (
-                        <LeafLink key={it.href} leaf={it} accent={domain.accent} onNavigate={onNavigate} />
+                        <LeafLink key={it.href} leaf={it} onNavigate={onNavigate} />
                       ))}
                     </div>
                   </div>
@@ -391,7 +373,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-sm outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#0d9488]/50 bg-gradient-to-br from-[#0d9488] to-[#0f766e]"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-xs outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-500/50 bg-gradient-to-br from-emerald-600 to-teal-700"
         aria-label="Menu utilisateur"
         aria-expanded={open}
       >
@@ -409,7 +391,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#0d9488] to-[#0f766e]"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-emerald-600 to-teal-700"
               >
                 {initials}
               </span>
@@ -422,9 +404,9 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
               <Link
                 href="/parametres"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-100/80 focus-visible:ring-2 focus-visible:ring-amber-500 dark:text-slate-300 dark:hover:bg-white/5"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 outline-none transition-colors hover:bg-slate-100/80 focus-visible:ring-2 focus-visible:ring-emerald-500 dark:text-slate-300 dark:hover:bg-white/5"
               >
-                <UserCircle weight="duotone" className="h-4 w-4 text-slate-400" />
+                <User className="h-4 w-4 text-slate-400" />
                 Mon profil
               </Link>
               <button
@@ -432,7 +414,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
                 onClick={handleLogout}
                 className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-rose-600 outline-none transition-colors hover:bg-rose-50 focus-visible:ring-2 focus-visible:ring-rose-400 dark:text-rose-400 dark:hover:bg-rose-500/10"
               >
-                <SignOut weight="bold" className="h-4 w-4" />
+                <LogOut className="h-4 w-4" />
                 Se déconnecter
               </button>
             </div>
@@ -473,19 +455,19 @@ export function TopNav({
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl dark:border-slate-800/80 dark:bg-[oklch(0.15_0.028_255)]/85 print:hidden">
+    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/85 print:hidden">
       <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-1 px-3 sm:px-4">
         {/* Mobile : hamburger */}
         <MobileSidebar companyName={companyName} role={role} />
 
         {/* Logo */}
         <Link href="/rh" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white shadow-sm transition-transform hover:scale-105">
-            <Buildings weight="fill" className="h-4 w-4" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-xs transition-transform hover:scale-105">
+            <Building2 className="h-4 w-4" />
           </span>
           <span className="hidden flex-col leading-none xl:flex">
-            <span className="text-[13px] font-bold tracking-tight text-slate-900 dark:text-white">{companyName}</span>
-            <span className="mt-0.5 text-[10px] text-slate-400">Ressources humaines</span>
+            <span className="font-heading text-[13px] font-bold tracking-tight text-slate-900 dark:text-white">{companyName}</span>
+            <span className="mt-0.5 text-[10px] text-slate-500 font-medium">Ressources humaines</span>
           </span>
         </Link>
 

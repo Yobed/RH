@@ -136,7 +136,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
   return (
     <div className="overflow-hidden rounded-3xl border-2 border-slate-300/90 dark:border-slate-700 bg-white shadow-2xl shadow-slate-300/40 dark:bg-slate-900 dark:shadow-none transition-all duration-300">
       {/* En-tête Studio RH Prioritaire Amplifié */}
-      <div className="relative flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 px-6 py-4.5 dark:border-slate-800 bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-orange-500/10 dark:from-slate-800 dark:to-slate-900 border-t-4 border-t-[#0d9488] gap-3">
+      <div className="relative flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 px-6 py-4.5 dark:border-slate-800 bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-orange-500/10 dark:from-slate-800 dark:to-slate-900 border-t-4 border-t-[#059669] gap-3">
         <div className="flex items-center gap-3.5">
           <div className="flex h-3.5 w-3.5 relative shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75" />
@@ -147,7 +147,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
               <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                 Flux RH Intelligents — Décisions Prioritaires
               </h2>
-              <span className="rounded-full bg-[#0d9488] text-white px-2.5 py-0.5 text-xs font-bold shadow-xs">
+              <span className="rounded-full bg-[#059669] text-white px-2.5 py-0.5 text-xs font-bold shadow-xs">
                 {total} à traiter
               </span>
             </div>
@@ -180,14 +180,14 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                   <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-xs transition-transform group-hover:scale-105 relative ${TINT[cfg.priority]}`}>
                     <Icon className="h-5.5 w-5.5 stroke-[2.25]" />
                     {isTop3 && (
-                      <span className="absolute -top-1.5 -left-1.5 h-5 w-5 rounded-full bg-[#0d9488] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs">
+                      <span className="absolute -top-1.5 -left-1.5 h-5 w-5 rounded-full bg-[#059669] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs">
                         #{index + 1}
                       </span>
                     )}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#0d9488] transition-colors">
+                      <span className="truncate text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-[#059669] transition-colors">
                         {cfg.label(item.count)}
                       </span>
                       <span className={`text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-md ${CATEGORY_BADGE[cfg.category]}`}>
@@ -196,7 +196,7 @@ export function ActionCenter({ items }: { items: ActionItem[] }) {
                     </div>
                   </div>
                 </div>
-                <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] px-4.5 py-2 text-xs font-bold text-white transition-all shadow-md shadow-[#0d9488]/20 group-hover:scale-105 active:scale-95">
+                <span className="flex shrink-0 items-center gap-1.5 rounded-xl bg-[#059669] hover:bg-[#047857] px-4.5 py-2 text-xs font-bold text-white transition-all shadow-md shadow-[#059669]/20 group-hover:scale-105 active:scale-95">
                   {cfg.cta}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </span>

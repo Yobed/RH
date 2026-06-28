@@ -181,7 +181,7 @@ export function ExecutiveRhCockpit({
       deptMap[d] = (deptMap[d] || 0) + 1;
     });
 
-    const colors = ["bg-teal-600", "bg-[#0d9488]", "bg-emerald-600", "bg-amber-500", "bg-slate-600"];
+    const colors = ["bg-teal-600", "bg-[#059669]", "bg-emerald-600", "bg-amber-500", "bg-slate-600"];
     return Object.entries(deptMap).map(([name, count], idx) => ({
       id: name,
       title: name,
@@ -306,29 +306,28 @@ export function ExecutiveRhCockpit({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 font-sans antialiased text-slate-900 dark:text-slate-100 pb-24 selection:bg-[#0d9488] selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 font-sans antialiased text-slate-900 dark:text-slate-100 pb-24 selection:bg-primary selection:text-white">
       
       {/* ── Barre d'outils du cockpit (titre + recherche + actions) ── */}
       {/* Non sticky : la barre de navigation globale (TopNav) reste la seule barre fixe. */}
       <header className="relative bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
 
         {/* Titre de page & contrôles */}
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-2.5 flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
 
           {/* Titre de page */}
           <div className="flex items-center justify-between md:justify-start gap-3">
             <div>
-              <h1 className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="font-heading text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Tableau de bord
-                <span className="emoji-wave" aria-hidden>👋</span>
               </h1>
-              <p className="text-[11px] font-medium text-slate-400 capitalize">{dateLabel}</p>
+              <p className="text-xs font-medium text-slate-500 capitalize mt-0.5">{dateLabel}</p>
             </div>
 
             {/* Mobile quick action */}
             <Link
               href="/employes"
-              className="md:hidden p-1.5 rounded-lg bg-[#0d9488] text-white shadow-xs"
+              className="md:hidden p-1.5 rounded-lg bg-primary text-white shadow-xs"
             >
               <Plus className="h-4 w-4" />
             </Link>
@@ -338,23 +337,23 @@ export function ExecutiveRhCockpit({
           <div className="flex items-center gap-2.5 w-full md:w-auto">
             
             {/* Odoo Control Panel Search Bar */}
-            <div className="relative flex-1 md:w-80 flex items-center bg-slate-100 dark:bg-slate-800 focus-within:bg-white dark:focus-within:bg-slate-900 text-slate-900 dark:text-white rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-700 transition-all shadow-2xs h-8">
-              <Search className="h-3.5 w-3.5 shrink-0 text-slate-400 mr-2" />
+            <div className="relative flex-1 md:w-80 flex items-center bg-slate-100 dark:bg-slate-800 focus-within:bg-white dark:focus-within:bg-slate-900 text-slate-900 dark:text-white rounded-lg px-3 py-1.5 border border-slate-200 dark:border-slate-700 transition-all shadow-2xs h-9">
+              <Search className="h-4 w-4 shrink-0 text-slate-400 mr-2" />
               <input
                 type="text"
                 placeholder="Rechercher un salarié, un poste…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-xs font-bold outline-none placeholder-slate-400"
+                className="w-full bg-transparent text-xs font-medium outline-none placeholder-slate-400"
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery("")} className="text-slate-400 hover:text-slate-600 mr-1">
-                  <X className="h-3 w-3" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               )}
               <button
                 onClick={() => setIsCommandPaletteOpen(true)}
-                className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[9px] font-bold text-slate-600 dark:text-slate-300 shrink-0"
+                className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[10px] font-semibold text-slate-600 dark:text-slate-300 shrink-0"
               >
                 ⌘K
               </button>
@@ -363,9 +362,9 @@ export function ExecutiveRhCockpit({
             {/* Main Primary CTA Button */}
             <Link
               href="/employes"
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold transition-all shadow-2xs active:scale-95 shrink-0 h-8"
+              className="hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-semibold transition-all shadow-2xs active:scale-95 shrink-0 h-9"
             >
-              <UserPlus className="h-3.5 w-3.5 stroke-[2.5]" />
+              <UserPlus className="h-4 w-4 stroke-[2]" />
               <span>Nouveau Salarié</span>
             </Link>
           </div>
@@ -376,8 +375,8 @@ export function ExecutiveRhCockpit({
 
           {/* Group 1: Quick Filter Chips */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-            <span className="flex items-center gap-1 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.08em] shrink-0">
-              <Filter className="h-3 w-3 text-[#0d9488]" />
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 uppercase tracking-wider shrink-0">
+              <Filter className="h-3.5 w-3.5 text-primary" />
               Filtres
             </span>
             <div className="flex items-center gap-1.5">
@@ -391,13 +390,13 @@ export function ExecutiveRhCockpit({
                   <button
                     key={f.id}
                     onClick={() => setActiveFilter(f.id)}
-                    className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1.5 ${
+                    className={`px-3 py-1 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                       isActive
-                        ? "bg-[#0d9488] text-white shadow-sm shadow-[#0d9488]/30 ring-2 ring-[#0d9488]/20"
+                        ? "bg-primary text-white shadow-sm ring-2 ring-primary/20"
                         : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700 hover:bg-slate-50 hover:border-slate-300"
                     }`}
                   >
-                    {isActive && <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />}
+                    {isActive && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
                     <span>{f.label}</span>
                   </button>
                 );
@@ -409,7 +408,7 @@ export function ExecutiveRhCockpit({
 
           {/* Group 2: View Mode Switcher */}
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-            <span className="hidden lg:inline text-[10px] font-semibold text-slate-400 uppercase tracking-[0.08em]">Vues</span>
+            <span className="hidden lg:inline text-xs font-semibold text-slate-500 uppercase tracking-wider">Vues</span>
             <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
               {[
                 { id: "overview", label: "Aperçu", icon: BarChart3 },
@@ -424,7 +423,7 @@ export function ExecutiveRhCockpit({
                   <button
                     key={tab.id}
                     onClick={() => setViewMode(tab.id as any)}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1.5 relative ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 relative ${
                       isActive
                         ? tab.special
                           ? "bg-amber-600 text-white shadow-md shadow-amber-600/30 ring-1 ring-amber-400"
@@ -432,10 +431,10 @@ export function ExecutiveRhCockpit({
                         : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40"
                     }`}
                   >
-                    <IconComp className={`h-3.5 w-3.5 ${isActive && !tab.special ? "text-[#0d9488]" : isActive && tab.special ? "text-amber-300" : ""}`} />
+                    <IconComp className={`h-3.5 w-3.5 ${isActive && !tab.special ? "text-primary" : isActive && tab.special ? "text-amber-300" : ""}`} />
                     <span className="hidden sm:inline">{tab.label}</span>
                     {isActive && (
-                      <span className={`h-1.5 w-1.5 rounded-full ${tab.special ? "bg-amber-200" : "bg-[#0d9488]"} animate-pulse ml-0.5`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${tab.special ? "bg-amber-200" : "bg-primary"} ml-0.5`} />
                     )}
                   </button>
                 );
@@ -520,7 +519,7 @@ export function ExecutiveRhCockpit({
                     onClick={() => setOverviewSubTab(tab.id as any)}
                     className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                       overviewSubTab === tab.id
-                        ? "bg-[#0d9488] text-white shadow-sm"
+                        ? "bg-[#059669] text-white shadow-sm"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
                     }`}
                   >
@@ -623,7 +622,7 @@ export function ExecutiveRhCockpit({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs gap-3">
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-                    <Sliders className="h-4 w-4 text-[#0d9488]" /> Regroupement :
+                    <Sliders className="h-4 w-4 text-[#059669]" /> Regroupement :
                   </span>
                   <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
                     <button
@@ -646,7 +645,7 @@ export function ExecutiveRhCockpit({
                 </div>
 
                 <div className="text-xs font-bold text-slate-500">
-                  Affichage de <span className="text-[#0d9488] font-bold">{filteredEmployes.length}</span> cartes
+                  Affichage de <span className="text-[#059669] font-bold">{filteredEmployes.length}</span> cartes
                 </div>
               </div>
 
@@ -697,7 +696,7 @@ export function ExecutiveRhCockpit({
                                 <div className="flex items-center gap-3">
                                   <Avatar src={emp.photo_url} name={emp.full_name} size={36} />
                                   <div>
-                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight hover:text-[#0d9488] transition-colors">
+                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight hover:text-[#059669] transition-colors">
                                       {emp.full_name}
                                     </h4>
                                     <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{emp.poste}</p>
@@ -706,7 +705,7 @@ export function ExecutiveRhCockpit({
                               </div>
 
                               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/60 text-[10px] font-extrabold">
-                                <span className="px-2 py-0.5 rounded bg-[#0d9488]/15 text-[#0d9488]">
+                                <span className="px-2 py-0.5 rounded bg-[#059669]/15 text-[#059669]">
                                   {emp.type_contrat || "CDI"}
                                 </span>
                                 <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
@@ -738,7 +737,7 @@ export function ExecutiveRhCockpit({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs gap-4">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <ListIcon className="h-4 w-4 text-[#0d9488]" /> Registre des Collaborateurs
+                    <ListIcon className="h-4 w-4 text-[#059669]" /> Registre des Collaborateurs
                   </h3>
                   <p className="text-xs text-slate-500 font-semibold mt-0.5">Vue synthétique pour consultation et extraction des dossiers personnels</p>
                 </div>
@@ -771,13 +770,13 @@ export function ExecutiveRhCockpit({
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedEmployee(emp)}>
                               <Avatar src={emp.photo_url} name={emp.full_name} size={32} />
-                              <span className="font-bold text-slate-900 dark:text-white hover:text-[#0d9488] transition-colors">{emp.full_name}</span>
+                              <span className="font-bold text-slate-900 dark:text-white hover:text-[#059669] transition-colors">{emp.full_name}</span>
                             </div>
                           </td>
                           <td className="py-3 px-4 text-slate-700 dark:text-slate-300">{emp.poste}</td>
                           <td className="py-3 px-4 text-slate-500 uppercase tracking-wide text-[11px] font-bold">{emp.departement || "Général"}</td>
                           <td className="py-3 px-4">
-                            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#0d9488]/15 text-[#0d9488]">
+                            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#059669]/15 text-[#059669]">
                               {emp.type_contrat || "CDI"}
                             </span>
                           </td>
@@ -789,7 +788,7 @@ export function ExecutiveRhCockpit({
                           <td className="py-3 px-4 text-right">
                             <button
                               onClick={() => setSelectedEmployee(emp)}
-                              className="text-[#0d9488] hover:underline font-bold text-xs inline-flex items-center gap-1"
+                              className="text-[#059669] hover:underline font-bold text-xs inline-flex items-center gap-1"
                             >
                               Inspecter <Eye className="h-3.5 w-3.5" />
                             </button>
@@ -817,7 +816,7 @@ export function ExecutiveRhCockpit({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs gap-4">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Table className="h-4 w-4 text-[#0d9488]" /> Matrice Pivot BI
+                    <Table className="h-4 w-4 text-[#059669]" /> Matrice Pivot BI
                   </h3>
                   <p className="text-xs text-slate-500 font-semibold mt-0.5">Ventilation analytique de l'effectif et des contrats par pôle d'activité</p>
                 </div>
@@ -859,7 +858,7 @@ export function ExecutiveRhCockpit({
                             }}
                           >
                             <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#0d9488]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-[#059669]" />
                               {dept.name}
                             </td>
                             <td className="py-3.5 px-4 text-center tabular-nums text-sm font-bold text-slate-900 dark:text-white">
@@ -867,7 +866,7 @@ export function ExecutiveRhCockpit({
                             </td>
                             <td className="py-3.5 px-4 text-center text-emerald-600 font-extrabold">{Math.round(dept.value * 0.8)} pers.</td>
                             <td className="py-3.5 px-4 text-center text-rose-500 font-extrabold">{Math.round(dept.value * 0.2)} pers.</td>
-                            <td className="py-3.5 px-4 text-center text-[#0d9488]">{idx === 0 ? congesEnAttente.length : 0} en attente</td>
+                            <td className="py-3.5 px-4 text-center text-[#059669]">{idx === 0 ? congesEnAttente.length : 0} en attente</td>
                             <td className="py-3.5 px-4 text-right">
                               <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-[10px]">
                                 100% Conforme
@@ -896,7 +895,7 @@ export function ExecutiveRhCockpit({
             >
               <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
                 <div className="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
-                  <div className="h-12 w-12 rounded-xl bg-[#0d9488]/10 text-[#0d9488] flex items-center justify-center shrink-0 border border-[#0d9488]/20">
+                  <div className="h-12 w-12 rounded-xl bg-[#059669]/10 text-[#059669] flex items-center justify-center shrink-0 border border-[#059669]/20">
                     <Cpu className="h-6 w-6" />
                   </div>
                   <div>
@@ -925,16 +924,16 @@ export function ExecutiveRhCockpit({
                           setAiPromptInput(prompt);
                           handleRunAiPrompt(prompt);
                         }}
-                        className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-[#0d9488]/10 hover:text-[#0d9488] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-[#059669]/10 hover:text-[#059669] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Sparkle className="h-3.5 w-3.5 text-[#0d9488]" /> {prompt}
+                        <Sparkle className="h-3.5 w-3.5 text-[#059669]" /> {prompt}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Multi-line Input Bar */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#0d9488] focus-within:ring-2 focus-within:ring-[#0d9488]/20 transition-all">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#059669] focus-within:ring-2 focus-within:ring-[#059669]/20 transition-all">
                   <textarea
                     rows={3}
                     value={aiPromptInput}
@@ -951,7 +950,7 @@ export function ExecutiveRhCockpit({
                   <button
                     onClick={() => handleRunAiPrompt()}
                     disabled={isAiLoading}
-                    className="px-5 py-3 rounded-lg bg-[#0d9488] text-white font-bold text-xs hover:bg-[#0f766e] transition-colors shrink-0 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                    className="px-5 py-3 rounded-lg bg-[#059669] text-white font-bold text-xs hover:bg-[#047857] transition-colors shrink-0 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                   >
                     {isAiLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 fill-current" />}
                     <span>Générer</span>
@@ -963,18 +962,18 @@ export function ExecutiveRhCockpit({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-6 rounded-xl bg-[#0d9488]/5 border border-[#0d9488]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-medium space-y-4"
+                    className="p-6 rounded-xl bg-[#059669]/5 border border-[#059669]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-medium space-y-4"
                   >
                     <div className="flex items-start gap-3.5">
-                      <Sparkle className="h-5 w-5 text-[#0d9488] shrink-0 mt-0.5" />
+                      <Sparkle className="h-5 w-5 text-[#059669] shrink-0 mt-0.5" />
                       <div className="flex-1 whitespace-pre-wrap font-sans text-xs leading-relaxed space-y-1.5">
                         {aiSimulatedResponse}
                       </div>
                     </div>
-                    <div className="pt-3 border-t border-[#0d9488]/10 flex items-center justify-end">
+                    <div className="pt-3 border-t border-[#059669]/10 flex items-center justify-end">
                       <button
                         onClick={() => toast.success("Recommandation transmise au système RH")}
-                        className="px-4 py-2 rounded-xl bg-[#0d9488] text-white font-bold text-xs hover:bg-[#0f766e] transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-[#059669] text-white font-bold text-xs hover:bg-[#047857] transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer"
                       >
                         <Check className="h-4 w-4" /> Valider la recommandation
                       </button>
@@ -1011,7 +1010,7 @@ export function ExecutiveRhCockpit({
                   <Avatar src={selectedEmployee.photo_url} name={selectedEmployee.full_name} size={44} rounded="xl" className="shadow-sm" />
                   <div>
                     <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">{selectedEmployee.full_name}</h3>
-                    <p className="text-xs font-bold text-[#0d9488]">{selectedEmployee.poste}</p>
+                    <p className="text-xs font-bold text-[#059669]">{selectedEmployee.poste}</p>
                   </div>
                 </div>
                 <button

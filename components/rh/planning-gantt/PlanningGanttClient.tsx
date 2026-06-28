@@ -121,7 +121,7 @@ export function PlanningGanttClient({
       }
     }
     return m;
-  }, [slots]);
+  }, [visibleSlots]);
 
   // Postes ouverts (non assignés)
   const openSlots = visibleSlots.filter((s) => !s.employee_id);
@@ -145,7 +145,7 @@ export function PlanningGanttClient({
       }
     }
     return m;
-  }, [slots]);
+  }, [visibleSlots]);
 
   const totalSlots = visibleSlots.length;
   const draftCount = visibleSlots.filter((s) => s.status === "brouillon").length;

@@ -101,7 +101,7 @@ export function BrandingForm({
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-6 dark:border-slate-700 dark:bg-slate-900">
+    <div className="pro-card p-6 space-y-6">
       {/* En-tête section */}
       <div className="flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 border border-teal-100 dark:bg-teal-900/30 dark:border-teal-800">

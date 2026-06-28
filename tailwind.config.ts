@@ -19,19 +19,20 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
-        heading: ["var(--font-sans)", "system-ui", "sans-serif"],
+        heading: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
       },
       colors: {
         // Tokens OKLCH : les variables CSS portent les canaux bruts (L C H),
         // on les enveloppe ici pour supporter les modificateurs d'opacité (ex. bg-primary/50).
         border: "oklch(var(--border) / <alpha-value>)",
         input: "oklch(var(--input) / <alpha-value>)",
-        ring: "oklch(var(--ring) / <alpha-value>)",
+        ring: "var(--brand-primary, #059669)",
         background: "oklch(var(--background) / <alpha-value>)",
         foreground: "oklch(var(--foreground) / <alpha-value>)",
         primary: {
-          DEFAULT: "oklch(var(--primary) / <alpha-value>)",
-          foreground: "oklch(var(--primary-foreground) / <alpha-value>)",
+          DEFAULT: "var(--brand-primary, #059669)",
+          foreground: "var(--primary-foreground, #ffffff)",
         },
         secondary: {
           DEFAULT: "oklch(var(--secondary) / <alpha-value>)",

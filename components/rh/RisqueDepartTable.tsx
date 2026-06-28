@@ -55,7 +55,7 @@ function MethodologyCard() {
         className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
       >
         <span className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0d9488]/10 text-[#0f766e] dark:text-[#2dd4bf]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]">
             <Info weight="duotone" className="h-4 w-4" />
           </span>
           <span>
@@ -179,7 +179,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
               <button
                 key={emp.employee_id}
                 onClick={() => { setFilter("tous"); setExpanded(emp.employee_id); }}
-                className="flex items-center gap-2 rounded-full border border-slate-200/70 bg-white px-2.5 py-1.5 text-left transition-colors hover:border-[#0d9488]/40 dark:border-slate-800 dark:bg-slate-900"
+                className="flex items-center gap-2 rounded-full border border-slate-200/70 bg-white px-2.5 py-1.5 text-left transition-colors hover:border-[#059669]/40 dark:border-slate-800 dark:bg-slate-900"
               >
                 <Avatar src={emp.photo_url} name={emp.full_name} size={22} rounded="full" />
                 <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">{emp.full_name}</span>
@@ -202,7 +202,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
             onClick={() => setFilter(n)}
             className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
               filter === n
-                ? "border-[#0d9488] bg-[#0d9488] text-white"
+                ? "border-[#059669] bg-[#059669] text-white"
                 : "border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-800 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400"
             }`}
           >
@@ -212,7 +212,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <div className="pro-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -253,7 +253,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
                       <td className="px-4 py-3"><ScoreGauge score={emp.score} niveau={emp.niveau} /></td>
                       <td className="px-4 py-3"><NiveauBadge niveau={emp.niveau} /></td>
                       <td className="px-4 py-3 text-right">
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0f766e] dark:text-[#2dd4bf]">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#047857] dark:text-[#2dd4bf]">
                           {emp.facteurs.length} facteur{emp.facteurs.length > 1 ? "s" : ""}
                           <CaretDown weight="bold" className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                         </span>
@@ -267,7 +267,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
                             <div className="flex justify-end">
                               <Link
                                 href={`/employes/${emp.employee_id}`}
-                                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-[#0d9488]/40 hover:text-[#0f766e] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:border-[#059669]/40 hover:text-[#047857] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
                               >
                                 Ouvrir la fiche <ArrowRight className="h-3.5 w-3.5" />
                               </Link>

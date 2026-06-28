@@ -21,8 +21,8 @@ export default async function CongesPage() {
       .from("conges")
       .select(
         `id, type, date_debut, date_fin, nb_jours, statut, commentaire, refus_motif, created_at,
-         est_justifie, est_at, justificatif_url,
-         employees(full_name, matricule)`
+         est_justifie, est_at, justificatif_url, employee_id,
+         employees(id, full_name, matricule)`
       )
       .order("created_at", { ascending: false })
       .limit(500),
@@ -46,10 +46,6 @@ export default async function CongesPage() {
   const userRole = profile?.role ?? "salarie";
   const canManagerApprove = ["admin", "manager", "responsable_rh"].includes(userRole);
   const canRhApprove = ["admin", "responsable_rh"].includes(userRole);
-
-  const enAttenteManager = conges?.filter((c) => c.statut === "en_attente") ?? [];
-  const enAttenteRh = conges?.filter((c) => c.statut === "valide_manager") ?? [];
-  const historique = conges?.filter((c) => c.statut === "approuve" || c.statut === "refuse") ?? [];
 
   const employeesForArret = (employees ?? []).map((e) => ({
     id: e.id,
@@ -91,6 +87,26 @@ export default async function CongesPage() {
     return { ...emp, jours_acquis, jours_pris, solde };
   }).sort((a, b) => a.solde - b.solde);
 
+  const soldeMap = new Map<string, number>();
+  soldesEquipe.forEach((e) => {
+    soldeMap.set(e.id, e.solde);
+    if (e.full_name) soldeMap.set(e.full_name, e.solde);
+  });
+
+  const congesEnrichis = (conges ?? []).map((c) => {
+    const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
+    const empId = (c as any).employee_id ?? (emp as any)?.id;
+    const solde = soldeMap.get(empId) ?? soldeMap.get(emp?.full_name ?? "") ?? 0;
+    return {
+      ...c,
+      solde_employe: solde,
+    };
+  });
+
+  const enAttenteManager = congesEnrichis.filter((c) => c.statut === "en_attente");
+  const enAttenteRh = congesEnrichis.filter((c) => c.statut === "valide_manager");
+  const historique = congesEnrichis.filter((c) => c.statut === "approuve" || c.statut === "refuse");
+
   const soldeMoyenEquipe =
     soldesEquipe.length > 0
       ? soldesEquipe.reduce((s, e) => s + e.solde, 0) / soldesEquipe.length
@@ -131,7 +147,7 @@ export default async function CongesPage() {
       </div>
 
       {/* Rappel légal */}
-      <div className="rounded-2xl border border-teal-100 bg-teal-50/60 p-4 text-sm text-teal-800">
+      <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 text-sm text-emerald-800">
         <p className="font-semibold mb-1">Droits légaux — Code du Travail ivoirien</p>
         <div className="flex flex-wrap gap-4 text-xs">
           <span>Annuel : <strong>26,4 jours/an base</strong> (2,2j × 12 mois)</span>
