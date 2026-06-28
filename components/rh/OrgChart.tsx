@@ -166,8 +166,9 @@ function AddSubordinateModal({
 
         <div className="space-y-3.5 py-3">
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet *</label>
+            <label htmlFor="add-sub-fullname" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet *</label>
             <input
+              id="add-sub-fullname"
               type="text"
               placeholder="Ex: Jean Dupont"
               value={fullName}
@@ -177,8 +178,9 @@ function AddSubordinateModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Intitulé *</label>
+            <label htmlFor="add-sub-poste" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Intitulé *</label>
             <input
+              id="add-sub-poste"
               type="text"
               placeholder="Ex: Analyste RH, Assistant Commercial..."
               value={poste}
@@ -189,8 +191,9 @@ function AddSubordinateModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département</label>
+              <label htmlFor="add-sub-dept" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département</label>
               <input
+                id="add-sub-dept"
                 type="text"
                 value={departement}
                 onChange={(e) => setDepartement(e.target.value)}
@@ -198,8 +201,9 @@ function AddSubordinateModal({
               />
             </div>
             <div>
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Contrat</label>
+              <label htmlFor="add-sub-contrat" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Contrat</label>
               <select
+                id="add-sub-contrat"
                 value={typeContrat}
                 onChange={(e) => setTypeContrat(e.target.value as any)}
                 className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
@@ -289,8 +293,9 @@ function EditEmployeeModal({
 
         <div className="space-y-3.5 py-3">
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet</label>
+            <label htmlFor="edit-emp-fullname" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet</label>
             <input
+              id="edit-emp-fullname"
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -299,8 +304,9 @@ function EditEmployeeModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Fonction</label>
+            <label htmlFor="edit-emp-poste" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Fonction</label>
             <input
+              id="edit-emp-poste"
               type="text"
               value={poste}
               onChange={(e) => setPoste(e.target.value)}
@@ -309,8 +315,9 @@ function EditEmployeeModal({
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département / Service</label>
+            <label htmlFor="edit-emp-dept" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département / Service</label>
             <input
+              id="edit-emp-dept"
               type="text"
               value={departement}
               onChange={(e) => setDepartement(e.target.value)}
@@ -509,7 +516,7 @@ function ManagerPopover({
 // ──────────────────────────────────────────────────────────────
 // CARTE D'UN SALARIÉ DANS L'ORGANIGRAMME (STYLE ÉPURÉ & MODERNE)
 // ──────────────────────────────────────────────────────────────
-function OrgNodeCard({
+const OrgNodeCard = React.memo(function OrgNodeCard({
   node,
   all,
   collapsed,
@@ -640,12 +647,12 @@ function OrgNodeCard({
       )}
     </div>
   );
-}
+});
 
 // ──────────────────────────────────────────────────────────────
 // RECURSIVE TREE NODE
 // ──────────────────────────────────────────────────────────────
-function TreeNode({ 
+const TreeNode = React.memo(function TreeNode({ 
   node, 
   all, 
   searchQuery,
@@ -698,7 +705,7 @@ function TreeNode({
       )}
     </li>
   );
-}
+});
 
 // ──────────────────────────────────────────────────────────────
 // COMPOSANT PRINCIPAL ORGANIGRAMME (DESIGN ÉPURÉ & HARMONIEUX)
