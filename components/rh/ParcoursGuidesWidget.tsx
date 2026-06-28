@@ -13,10 +13,7 @@ import {
   ShieldAlert,
   Play
 } from "lucide-react";
-import { EmployeeDialog } from "./EmployeeDialog";
-import { ContractDialog } from "./ContractDialog";
-import { PaieDialog } from "./PaieDialog";
-import { CongesDialog } from "./CongesDialog";
+import { GuidedWorkflowWorkspace } from "./GuidedWorkflowWorkspace";
 
 export function ParcoursGuidesWidget() {
   const [activeModal, setActiveModal] = useState<"employee" | "contract" | "paie" | "conges" | null>(null);
@@ -145,36 +142,12 @@ export function ParcoursGuidesWidget() {
         </div>
       </div>
 
-      {/* Modales guidées réactives */}
-      {activeModal === "employee" && (
-        <EmployeeDialog
+      {/* Espace de travail guidé réactif (Détecter -> Agir -> Tracer) */}
+      {activeModal && (
+        <GuidedWorkflowWorkspace
           open={true}
           onOpenChange={(open) => !open && setActiveModal(null)}
-          onSuccess={() => setActiveModal(null)}
-        />
-      )}
-
-      {activeModal === "contract" && (
-        <ContractDialog
-          open={true}
-          onOpenChange={(open) => !open && setActiveModal(null)}
-          onSuccess={() => setActiveModal(null)}
-        />
-      )}
-
-      {activeModal === "paie" && (
-        <PaieDialog
-          open={true}
-          onOpenChange={(open) => !open && setActiveModal(null)}
-          onSuccess={() => setActiveModal(null)}
-        />
-      )}
-
-      {activeModal === "conges" && (
-        <CongesDialog
-          open={true}
-          onOpenChange={(open) => !open && setActiveModal(null)}
-          onSuccess={() => setActiveModal(null)}
+          workflow={activeModal}
         />
       )}
     </>

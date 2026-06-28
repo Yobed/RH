@@ -1,10 +1,41 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Users, ChevronDown, ChevronRight, UserPlus, X, Check, TrendingUp } from "lucide-react";
+import React, { useState, useTransition, useMemo } from "react";
+import { 
+  Users, 
+  ChevronDown, 
+  ChevronRight, 
+  UserPlus, 
+  X, 
+  Check, 
+  TrendingUp, 
+  Edit3, 
+  Trash2, 
+  Move, 
+  Search, 
+  ZoomIn, 
+  ZoomOut, 
+  RotateCcw,
+  Briefcase,
+  UserCheck,
+  ShieldAlert,
+  Printer,
+  Network,
+  Layers,
+  Maximize2,
+  Minimize2
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export type OrgEmployee = {
   id: string;
@@ -17,12 +48,30 @@ export type OrgEmployee = {
 
 type OrgNode = OrgEmployee & { children: OrgNode[] };
 
+// Palette d'avatars harmonisée & épurée (Tons exécutifs & Accents Marque)
 const AVATAR_COLORS = [
-  "bg-rose-500", "bg-violet-500", "bg-blue-500", "bg-emerald-500",
-  "bg-amber-500", "bg-cyan-500", "bg-pink-500", "bg-indigo-500", "bg-teal-500",
+  "bg-slate-900 text-white shadow-slate-900/10 dark:bg-slate-100 dark:text-slate-900",
+  "bg-[#FF8200] text-white shadow-[#FF8200]/20",
+  "bg-slate-800 text-slate-100 shadow-slate-800/10 dark:bg-slate-800 dark:text-slate-200",
+  "bg-amber-600 text-white shadow-amber-600/15",
+  "bg-slate-700 text-white shadow-slate-700/10",
 ];
 
-function avatarColor(id: string) {
+// Badges départements harmonisés (Style Pill minimaliste et sobre)
+const DEPT_BADGE_STYLES: Record<string, string> = {
+  "Direction & IT": "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+  "Direction": "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200/60 dark:border-amber-900/40",
+  "RH": "bg-orange-50 dark:bg-orange-950/40 text-[#FF8200] border-orange-200/60 dark:border-orange-900/40",
+  "Ressources Humaines": "bg-orange-50 dark:bg-orange-950/40 text-[#FF8200] border-orange-200/60 dark:border-orange-900/40",
+  "Finance": "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40",
+  "Comptabilité": "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-900/40",
+  "Commercial": "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-900/40",
+  "Ventes": "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-900/40",
+  "Exploitation": "bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+  "Logistique": "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-900/40",
+};
+
+function avatarGradient(id: string) {
   const sum = id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
   return AVATAR_COLORS[sum % AVATAR_COLORS.length];
 }
@@ -45,6 +94,324 @@ function buildTree(employees: OrgEmployee[]): OrgNode[] {
   return roots;
 }
 
+// ──────────────────────────────────────────────────────────────
+// MODALE D'AJOUT D'UN SUBORDONNÉ DIRECT
+// ──────────────────────────────────────────────────────────────
+function AddSubordinateModal({
+  manager,
+  open,
+  onClose,
+}: {
+  manager: OrgEmployee;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [fullName, setFullName] = useState("");
+  const [poste, setPoste] = useState("");
+  const [departement, setDepartement] = useState(manager.departement || "");
+  const [typeContrat, setTypeContrat] = useState<"CDI" | "CDD" | "Stage" | "Apprentissage">("CDI");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleCreate = () => {
+    if (!fullName.trim() || !poste.trim()) return;
+
+    startTransition(async () => {
+      const res = await fetch("/api/employees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: fullName,
+          matricule: `EMP-${Date.now().toString().slice(-4)}`,
+          poste,
+          departement: departement || null,
+          date_embauche: new Date().toISOString().split("T")[0],
+          type_contrat: typeContrat,
+          statut: "actif",
+        }),
+      });
+
+      if (res.ok) {
+        const created = await res.json();
+        await fetch("/api/employees/manager", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ employee_id: created.id, manager_id: manager.id }),
+        });
+
+        toast.success(`Collaborateur ${fullName} ajouté avec succès sous ${manager.full_name}`);
+        onClose();
+        router.refresh();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Erreur lors de la création");
+      }
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl p-6">
+        <DialogHeader>
+          <DialogTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-[#FF8200]">
+              <UserPlus className="h-4 w-4" />
+            </div>
+            Nouveau Subordonné Direct
+          </DialogTitle>
+          <DialogDescription className="text-xs text-slate-500 mt-1">
+            Rattachement hiérarchique direct à <strong className="text-slate-800 dark:text-slate-200 font-semibold">{manager.full_name}</strong>.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-3.5 py-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet *</label>
+            <input
+              type="text"
+              placeholder="Ex: Jean Dupont"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Intitulé *</label>
+            <input
+              type="text"
+              placeholder="Ex: Analyste RH, Assistant Commercial..."
+              value={poste}
+              onChange={(e) => setPoste(e.target.value)}
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département</label>
+              <input
+                type="text"
+                value={departement}
+                onChange={(e) => setDepartement(e.target.value)}
+                className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Contrat</label>
+              <select
+                value={typeContrat}
+                onChange={(e) => setTypeContrat(e.target.value as any)}
+                className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+              >
+                <option value="CDI">CDI</option>
+                <option value="CDD">CDD</option>
+                <option value="Stage">Stage</option>
+                <option value="Apprentissage">Apprentissage</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-xs font-semibold text-slate-500 rounded-xl">
+            Annuler
+          </Button>
+          <Button
+            size="sm"
+            disabled={isPending || !fullName.trim() || !poste.trim()}
+            onClick={handleCreate}
+            className="bg-[#FF8200] hover:bg-[#E07400] text-white text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
+          >
+            {isPending ? "Création..." : "Ajouter au sous-arbre"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────
+// MODALE DE MODIFICATION D'UN SALARIÉ
+// ──────────────────────────────────────────────────────────────
+function EditEmployeeModal({
+  employee,
+  open,
+  onClose,
+}: {
+  employee: OrgEmployee;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [fullName, setFullName] = useState(employee.full_name);
+  const [poste, setPoste] = useState(employee.poste || "");
+  const [departement, setDepartement] = useState(employee.departement || "");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleSave = () => {
+    startTransition(async () => {
+      const res = await fetch(`/api/employees/${employee.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          full_name: fullName,
+          poste,
+          departement: departement || null,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success(`Profil mis à jour pour ${fullName}`);
+        onClose();
+        router.refresh();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Erreur lors de la modification");
+      }
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl p-6">
+        <DialogHeader>
+          <DialogTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
+              <Edit3 className="h-4 w-4" />
+            </div>
+            Modifier le Collaborateur
+          </DialogTitle>
+          <DialogDescription className="text-xs text-slate-500 mt-1">
+            Mise à jour des informations de poste et de département.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-3.5 py-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet</label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Fonction</label>
+            <input
+              type="text"
+              value={poste}
+              onChange={(e) => setPoste(e.target.value)}
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département / Service</label>
+            <input
+              type="text"
+              value={departement}
+              onChange={(e) => setDepartement(e.target.value)}
+              placeholder="Ex: Direction & IT, RH, Finance..."
+              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-xs font-semibold text-slate-500 rounded-xl">
+            Annuler
+          </Button>
+          <Button
+            size="sm"
+            disabled={isPending || !fullName.trim()}
+            onClick={handleSave}
+            className="bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
+          >
+            {isPending ? "Enregistrement..." : "Enregistrer"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────
+// MODALE DE SUPPRESSION / ARCHIVAGE D'UN SALARIÉ
+// ──────────────────────────────────────────────────────────────
+function DeleteEmployeeModal({
+  employee,
+  open,
+  onClose,
+}: {
+  employee: OrgEmployee;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleDelete = () => {
+    startTransition(async () => {
+      const res = await fetch(`/api/employees/${employee.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        toast.success(`${employee.full_name} a été archivé avec succès.`);
+        onClose();
+        router.refresh();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Erreur lors de l'archivage");
+      }
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl p-6">
+        <DialogHeader>
+          <DialogTitle className="text-base font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600">
+              <ShieldAlert className="h-4 w-4" />
+            </div>
+            Archiver le Collaborateur
+          </DialogTitle>
+          <DialogDescription className="text-xs text-slate-500 mt-1">
+            Êtes-vous sûr de vouloir archiver <strong className="text-slate-800 dark:text-slate-200 font-semibold">{employee.full_name}</strong> ?
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 my-2">
+          <p className="text-xs font-medium text-slate-600 dark:text-slate-300">
+            ℹ️ Le statut passera en inactif. Les éventuels rattachés directs pourront être réassignés.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-xs font-semibold text-slate-500 rounded-xl">
+            Annuler
+          </Button>
+          <Button
+            size="sm"
+            disabled={isPending}
+            onClick={handleDelete}
+            className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
+          >
+            {isPending ? "Archivage..." : "Archiver"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────
+// POPOVER DE RÉASSIGNATION HIÉRARCHIQUE (DEPLACER)
+// ──────────────────────────────────────────────────────────────
 function ManagerPopover({
   node,
   all,
@@ -61,7 +428,7 @@ function ManagerPopover({
   const filtered = all
     .filter(e => e.id !== node.id)
     .filter(e =>
-      !search || e.full_name.toLowerCase().includes(search.toLowerCase())
+      !search || e.full_name.toLowerCase().includes(search.toLowerCase()) || (e.poste && e.poste.toLowerCase().includes(search.toLowerCase()))
     );
 
   const assign = (managerId: string | null) => {
@@ -72,51 +439,66 @@ function ManagerPopover({
         body: JSON.stringify({ employee_id: node.id, manager_id: managerId }),
       });
       if (res.ok) {
-        toast.success("Supérieur mis à jour");
+        toast.success(`Rattachement hiérarchique mis à jour !`);
         onClose();
         router.refresh();
       } else {
         const err = await res.json().catch(() => ({})) as { error?: string };
-        toast.error(err.error ?? "Erreur");
+        toast.error(err.error ?? "Erreur de réassignation");
       }
     });
   };
 
   return (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-64 bg-white border border-slate-200 rounded-xl shadow-2xl p-3">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-semibold text-slate-700">Supérieur hiérarchique</p>
-        <button onClick={onClose} className="p-0.5 hover:bg-slate-100 rounded">
-          <X size={12} className="text-slate-400" />
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 w-72 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xl p-3 text-left animate-in fade-in zoom-in-95 duration-150">
+      <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+          <Move className="h-3.5 w-3.5 text-[#FF8200]" /> Changer le Supérieur (N+1)
+        </p>
+        <button onClick={onClose} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-slate-600">
+          <X size={12} />
         </button>
       </div>
-      <input
-        autoFocus
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        placeholder="Rechercher..."
-        className="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 mb-2 focus:outline-none focus:ring-1 focus:ring-blue-300"
-      />
-      <div className="space-y-0.5 max-h-44 overflow-y-auto">
+
+      <div className="relative mb-2">
+        <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+        <input
+          autoFocus
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Rechercher un manager..."
+          className="w-full text-xs border border-slate-200 dark:border-slate-700 rounded-xl pl-8 pr-3 py-1.5 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+        />
+      </div>
+
+      <div className="space-y-1 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
         <button
           onClick={() => assign(null)}
           disabled={isPending}
-          className="w-full text-left text-xs px-2 py-1.5 rounded hover:bg-slate-100 text-slate-400 italic"
+          className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
+            !node.manager_id ? "bg-orange-50 dark:bg-orange-950/40 text-[#FF8200] font-bold" : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 italic"
+          }`}
         >
-          Aucun (racine)
+          <span>Définir comme Racine (Sans N+1)</span>
+          {!node.manager_id && <Check size={12} className="text-[#FF8200]" />}
         </button>
+
         {filtered.map(e => (
           <button
             key={e.id}
             onClick={() => assign(e.id)}
             disabled={isPending}
-            className={`w-full text-left text-xs px-2 py-1.5 rounded hover:bg-blue-50 flex items-center justify-between ${node.manager_id === e.id ? "bg-blue-50 text-blue-700" : "text-slate-700"}`}
+            className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between ${
+              node.manager_id === e.id 
+                ? "bg-orange-50 dark:bg-orange-950/40 text-[#FF8200] font-bold border border-orange-200/50" 
+                : "hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300"
+            }`}
           >
-            <span>
-              {e.full_name}
-              {e.poste && <span className="text-slate-400 ml-1">· {e.poste}</span>}
-            </span>
-            {node.manager_id === e.id && <Check size={10} className="text-blue-600" />}
+            <div className="truncate pr-2">
+              <p className="font-semibold truncate">{e.full_name}</p>
+              {e.poste && <p className="text-[10px] text-slate-400 truncate font-normal">{e.poste}</p>}
+            </div>
+            {node.manager_id === e.id && <Check size={12} className="text-[#FF8200] shrink-0" />}
           </button>
         ))}
       </div>
@@ -124,75 +506,173 @@ function ManagerPopover({
   );
 }
 
+// ──────────────────────────────────────────────────────────────
+// CARTE D'UN SALARIÉ DANS L'ORGANIGRAMME (STYLE ÉPURÉ & MODERNE)
+// ──────────────────────────────────────────────────────────────
 function OrgNodeCard({
   node,
   all,
   collapsed,
   onToggle,
+  highlight,
 }: {
   node: OrgNode;
   all: OrgEmployee[];
   collapsed: boolean;
   onToggle: () => void;
+  highlight?: boolean;
 }) {
-  const [editing, setEditing] = useState(false);
+  const [showManagerPopover, setShowManagerPopover] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAddSubModal, setShowAddSubModal] = useState(false);
+
+  const deptStyle = node.departement && DEPT_BADGE_STYLES[node.departement]
+    ? DEPT_BADGE_STYLES[node.departement]
+    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200/80 dark:border-slate-700/80";
 
   return (
-    <div className="relative inline-block group">
-      <div className="w-44 bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md hover:border-slate-300 transition-all text-left select-none">
-        <div className="flex items-start justify-between mb-2">
-          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 ${avatarColor(node.id)}`}>
+    <div className="relative inline-block group my-1">
+      <div 
+        className={`w-60 bg-white dark:bg-slate-900 border rounded-2xl p-4 transition-all duration-200 text-left select-none relative ${
+          highlight 
+            ? "border-[#FF8200] ring-2 ring-[#FF8200]/30 shadow-md scale-102 z-10" 
+            : "border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700"
+        }`}
+      >
+        {/* En-tête Carte : Avatar + Actions Rapides Flottantes Épurées */}
+        <div className="flex items-center justify-between mb-3">
+          <div className={`w-10 h-10 rounded-xl ${avatarGradient(node.id)} flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs`}>
             {initials(node.full_name)}
           </div>
-          <button
-            onClick={() => setEditing(v => !v)}
-            className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-100 text-slate-400 transition-opacity"
-            title="Modifier le supérieur"
-          >
-            <UserPlus size={12} />
-          </button>
+
+          {/* Actions rapides épurées au survol */}
+          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-slate-900/90 dark:bg-slate-800/90 text-white p-1 rounded-xl shadow-sm backdrop-blur-xs">
+            <button
+              onClick={() => setShowAddSubModal(true)}
+              className="p-1 rounded-lg hover:bg-[#FF8200] text-white transition-colors"
+              title="Ajouter un collaborateur direct"
+            >
+              <UserPlus size={13} />
+            </button>
+            <button
+              onClick={() => setShowManagerPopover(v => !v)}
+              className="p-1 rounded-lg hover:bg-slate-700 text-amber-300 transition-colors"
+              title="Changer de supérieur (N+1)"
+            >
+              <Move size={13} />
+            </button>
+            <button
+              onClick={() => setShowEditModal(true)}
+              className="p-1 rounded-lg hover:bg-slate-700 text-blue-300 transition-colors"
+              title="Modifier"
+            >
+              <Edit3 size={13} />
+            </button>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="p-1 rounded-lg hover:bg-rose-600 text-white transition-colors"
+              title="Archiver"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
         </div>
 
-        <p className="text-xs font-semibold text-slate-800 leading-snug line-clamp-2">{node.full_name}</p>
-        {node.poste && (
-          <p className="text-[10px] text-slate-500 mt-0.5 truncate">{node.poste}</p>
-        )}
-        {node.departement && (
-          <span className="mt-1.5 inline-block text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full truncate max-w-full">
-            {node.departement}
-          </span>
-        )}
+        {/* Détails Salarié */}
+        <div className="space-y-1">
+          <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight truncate">
+            {node.full_name}
+          </h4>
+          <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate flex items-center gap-1.5">
+            <Briefcase className="h-3 w-3 shrink-0 text-slate-400" />
+            <span className="truncate">{node.poste || "Poste non défini"}</span>
+          </p>
 
-        <div className="mt-2 flex items-center justify-between gap-2">
+          {node.departement && (
+            <div className="pt-1 flex items-center">
+              <span className={`text-[10px] font-semibold tracking-wide px-2 py-0.5 rounded-full border truncate max-w-full ${deptStyle}`}>
+                {node.departement}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Pied de carte : Subordonnés & Lien Fiche */}
+        <div className="mt-3.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
           {node.children.length > 0 ? (
             <button
               onClick={onToggle}
-              className="flex items-center gap-0.5 text-[10px] text-blue-600 hover:text-blue-800"
+              className="flex items-center gap-1 text-[10px] font-bold text-[#FF8200] hover:text-[#E07400] bg-orange-50 dark:bg-orange-950/30 px-2.5 py-1 rounded-lg transition-all"
             >
-              {collapsed ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
-              {node.children.length} rapport{node.children.length > 1 ? "s" : ""}
+              {collapsed ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
+              <span>{node.children.length} rapport{node.children.length > 1 ? "s" : ""}</span>
             </button>
-          ) : <span />}
+          ) : (
+            <span className="text-[10px] font-medium text-slate-400 italic">Opérationnel</span>
+          )}
+
           <Link
             href={`/employes/${node.id}#parcours`}
-            className="opacity-0 group-hover:opacity-100 inline-flex items-center gap-0.5 text-[10px] text-slate-500 hover:text-slate-900 transition-opacity"
-            title="Voir le parcours"
+            className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+            title="Voir la fiche complète"
           >
-            <TrendingUp size={10} />
-            Parcours
+            <TrendingUp size={11} />
+            <span>Fiche</span>
           </Link>
         </div>
       </div>
 
-      {editing && (
-        <ManagerPopover node={node} all={all} onClose={() => setEditing(false)} />
+      {/* Popover Réassignation */}
+      {showManagerPopover && (
+        <ManagerPopover node={node} all={all} onClose={() => setShowManagerPopover(false)} />
+      )}
+
+      {/* Modales */}
+      {showAddSubModal && (
+        <AddSubordinateModal manager={node} open={showAddSubModal} onClose={() => setShowAddSubModal(false)} />
+      )}
+      {showEditModal && (
+        <EditEmployeeModal employee={node} open={showEditModal} onClose={() => setShowEditModal(false)} />
+      )}
+      {showDeleteModal && (
+        <DeleteEmployeeModal employee={node} open={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
       )}
     </div>
   );
 }
 
-function TreeNode({ node, all }: { node: OrgNode; all: OrgEmployee[] }) {
+// ──────────────────────────────────────────────────────────────
+// RECURSIVE TREE NODE
+// ──────────────────────────────────────────────────────────────
+function TreeNode({ 
+  node, 
+  all, 
+  searchQuery,
+  forceCollapseState
+}: { 
+  node: OrgNode; 
+  all: OrgEmployee[];
+  searchQuery: string;
+  forceCollapseState: boolean | null;
+}) {
   const [collapsed, setCollapsed] = useState(false);
+
+  React.useEffect(() => {
+    if (forceCollapseState !== null) {
+      setCollapsed(forceCollapseState);
+    }
+  }, [forceCollapseState]);
+
+  const isMatch = useMemo(() => {
+    if (!searchQuery) return false;
+    const q = searchQuery.toLowerCase();
+    return Boolean(
+      node.full_name.toLowerCase().includes(q) ||
+      (node.poste && node.poste.toLowerCase().includes(q)) ||
+      (node.departement && node.departement.toLowerCase().includes(q))
+    );
+  }, [node, searchQuery]);
 
   return (
     <li className="org-tree-li">
@@ -201,11 +681,18 @@ function TreeNode({ node, all }: { node: OrgNode; all: OrgEmployee[] }) {
         all={all}
         collapsed={collapsed}
         onToggle={() => setCollapsed(v => !v)}
+        highlight={isMatch}
       />
       {!collapsed && node.children.length > 0 && (
         <ul className="org-tree-children">
           {node.children.map(child => (
-            <TreeNode key={child.id} node={child} all={all} />
+            <TreeNode 
+              key={child.id} 
+              node={child} 
+              all={child.children ? all : all} 
+              searchQuery={searchQuery} 
+              forceCollapseState={forceCollapseState}
+            />
           ))}
         </ul>
       )}
@@ -213,28 +700,221 @@ function TreeNode({ node, all }: { node: OrgNode; all: OrgEmployee[] }) {
   );
 }
 
+// ──────────────────────────────────────────────────────────────
+// COMPOSANT PRINCIPAL ORGANIGRAMME (DESIGN ÉPURÉ & HARMONIEUX)
+// ──────────────────────────────────────────────────────────────
 export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
-  const roots = buildTree(employees);
-  const all = employees;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDept, setSelectedDept] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [globalCollapse, setGlobalCollapse] = useState<boolean | null>(null);
+
+  const departments = useMemo(() => {
+    const set = new Set<string>();
+    employees.forEach(e => { if (e.departement) set.add(e.departement); });
+    return Array.from(set);
+  }, [employees]);
+
+  const filteredEmployees = useMemo(() => {
+    if (!selectedDept) return employees;
+    return employees.filter(e => e.departement === selectedDept || employees.some(child => child.manager_id === e.id && child.departement === selectedDept));
+  }, [employees, selectedDept]);
+
+  const roots = useMemo(() => buildTree(filteredEmployees), [filteredEmployees]);
+
+  const structStats = useMemo(() => {
+    const managers = new Set(employees.map(e => e.manager_id).filter(Boolean));
+    const managersCount = managers.size;
+    const total = employees.length;
+    const ratioEncadrement = total > 0 ? Math.round((managersCount / total) * 100) : 0;
+    
+    function calculateDepth(nodes: OrgNode[]): number {
+      if (!nodes.length) return 0;
+      let max = 0;
+      for (const n of nodes) {
+        const d = 1 + calculateDepth(n.children);
+        if (d > max) max = d;
+      }
+      return max;
+    }
+    const maxDepth = calculateDepth(roots);
+
+    return { managersCount, ratioEncadrement, maxDepth };
+  }, [employees, roots]);
 
   if (!employees.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-        <Users className="w-14 h-14 mb-3 opacity-30" />
-        <p className="text-sm">Aucun collaborateur actif</p>
+      <div className="flex flex-col items-center justify-center py-20 text-slate-400 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <Users className="w-12 h-12 mb-3 text-slate-300 dark:text-slate-700" />
+        <h3 className="text-sm font-bold text-slate-800 dark:text-white">Aucun collaborateur actif</h3>
+        <p className="text-xs text-slate-500 mt-1">Ajoutez des salariés dans le registre pour générer l'organigramme.</p>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="space-y-4">
+      {/* BANDEAU D'ANALYSE EN CANVAS BLANC ÉPURÉ & HARMONIEUX */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
+        <div className="flex items-center gap-3 p-2">
+          <div className="w-9 h-9 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#FF8200] flex items-center justify-center shrink-0 border border-orange-200/50 dark:border-orange-900/50">
+            <Users size={18} />
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Effectif Total</p>
+            <p className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">{employees.length} <span className="text-[10px] text-slate-400 font-normal">salariés</span></p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-2">
+          <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-200/50 dark:border-blue-900/50">
+            <UserCheck size={18} />
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Encadrants (N+1)</p>
+            <p className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">{structStats.managersCount} <span className="text-[10px] text-slate-400 font-normal">managers</span></p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-2">
+          <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-200/50 dark:border-emerald-900/50">
+            <Network size={18} />
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Ratio Encadrement</p>
+            <p className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">{structStats.ratioEncadrement}% <span className="text-[10px] text-slate-400 font-normal">du personnel</span></p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-2">
+          <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-200/50 dark:border-indigo-900/50">
+            <Layers size={18} />
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Profondeur Max</p>
+            <p className="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">{structStats.maxDepth} <span className="text-[10px] text-slate-400 font-normal">niveaux</span></p>
+          </div>
+        </div>
+      </div>
+
+      {/* BARRE D'OUTILS ET FILTRES HARMONISÉS */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs print:hidden">
+        {/* Recherche interactive */}
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher nom, poste..."
+            className="w-full text-xs font-medium pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FF8200]/40 transition-all"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+              <X size={13} />
+            </button>
+          )}
+        </div>
+
+        {/* Filtres Départements Épurés */}
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
+          <button
+            onClick={() => setSelectedDept(null)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+              selectedDept === null
+                ? "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xs"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700"
+            }`}
+          >
+            Tous ({employees.length})
+          </button>
+          {departments.map(dept => (
+            <button
+              key={dept}
+              onClick={() => setSelectedDept(selectedDept === dept ? null : dept)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                selectedDept === dept
+                  ? "bg-[#FF8200] text-white shadow-xs"
+                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700"
+              }`}
+            >
+              {dept}
+            </button>
+          ))}
+        </div>
+
+        {/* Contrôles de Vue, Zoom et Impression */}
+        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+          {/* Toggle Développer / Réduire */}
+          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <button
+              onClick={() => setGlobalCollapse(false)}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors"
+              title="Développer tout l'arbre"
+            >
+              <Maximize2 size={13} />
+            </button>
+            <button
+              onClick={() => setGlobalCollapse(true)}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 transition-colors"
+              title="Réduire tout l'arbre"
+            >
+              <Minimize2 size={13} />
+            </button>
+          </div>
+
+          {/* Zooms */}
+          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <button
+              onClick={() => setZoomLevel(prev => Math.max(0.5, prev - 0.1))}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors"
+              title="Zoom arrière"
+            >
+              <ZoomOut size={13} />
+            </button>
+            <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-300 px-1.5 min-w-[36px] text-center">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+            <button
+              onClick={() => setZoomLevel(prev => Math.min(1.5, prev + 0.1))}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300 transition-colors"
+              title="Zoom avant"
+            >
+              <ZoomIn size={13} />
+            </button>
+            <button
+              onClick={() => setZoomLevel(1)}
+              className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
+              title="Réinitialiser zoom"
+            >
+              <RotateCcw size={12} />
+            </button>
+          </div>
+
+          {/* Impression HD */}
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-xs font-semibold transition-all cursor-pointer"
+            title="Exporter / Imprimer l'organigramme"
+          >
+            <Printer size={13} />
+            <span className="hidden sm:inline">Imprimer</span>
+          </button>
+        </div>
+      </div>
+
+      {/* STYLES CSS CONNECTEURS HIÉRARCHIQUES ÉPURÉS & PROPRES */}
       <style>{`
+        .org-tree-container {
+          transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          transform-origin: top center;
+        }
         .org-tree-root {
           display: flex;
           flex-direction: row;
           justify-content: center;
           flex-wrap: wrap;
-          gap: 3rem;
+          gap: 3.5rem;
           list-style: none;
           padding: 0;
           margin: 0;
@@ -252,59 +932,77 @@ export function OrgChart({ employees }: { employees: OrgEmployee[] }) {
           padding: 0;
           margin: 0;
           position: relative;
-          padding-top: 2rem;
+          padding-top: 2.25rem;
         }
-        /* Vertical line: parent → horizontal bar */
+        /* Ligne verticale : Parent -> Barre horizontale */
         .org-tree-children::before {
           content: '';
           position: absolute;
           top: 0;
           left: 50%;
           transform: translateX(-50%);
-          width: 1px;
-          height: 2rem;
+          width: 1.5px;
+          height: 2.25rem;
           background: #cbd5e1;
+        }
+        .dark .org-tree-children::before {
+          background: #334155;
         }
         .org-tree-li {
           display: flex;
           flex-direction: column;
           align-items: center;
           position: relative;
-          padding: 0 1rem;
+          padding: 0 1.25rem;
         }
-        /* Horizontal connector bar */
+        /* Barre horizontale de connexion */
         .org-tree-children > .org-tree-li::before {
           content: '';
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
-          height: 1px;
+          height: 1.5px;
           background: #cbd5e1;
+        }
+        .dark .org-tree-children > .org-tree-li::before {
+          background: #334155;
         }
         .org-tree-children > .org-tree-li:first-child::before { left: 50%; }
         .org-tree-children > .org-tree-li:last-child::before  { right: 50%; }
         .org-tree-children > .org-tree-li:only-child::before  { display: none; }
-        /* Vertical line: horizontal bar → child card */
+        /* Ligne verticale : Barre horizontale -> Carte enfant */
         .org-tree-children > .org-tree-li::after {
           content: '';
           position: absolute;
           top: 0;
           left: 50%;
           transform: translateX(-50%);
-          width: 1px;
-          height: 2rem;
+          width: 1.5px;
+          height: 2.25rem;
           background: #cbd5e1;
+        }
+        .dark .org-tree-children > .org-tree-li::after {
+          background: #334155;
         }
       `}</style>
 
-      <div className="overflow-auto pb-6 pt-4">
-        <ul className="org-tree-root">
-          {roots.map(root => (
-            <TreeNode key={root.id} node={root} all={all} />
-          ))}
-        </ul>
+      {/* Surface de rendu de l'Arbre avec Fond Épuré */}
+      <div className="bg-slate-50/50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-8 overflow-auto min-h-[550px] relative bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] dark:bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:20px_20px]">
+        <div className="org-tree-container" style={{ transform: `scale(${zoomLevel})` }}>
+          <ul className="org-tree-root">
+            {roots.map(root => (
+              <TreeNode 
+                key={root.id} 
+                node={root} 
+                all={employees} 
+                searchQuery={searchQuery} 
+                forceCollapseState={globalCollapse}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
