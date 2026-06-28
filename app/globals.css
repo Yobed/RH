@@ -167,6 +167,13 @@
   .dark ::-webkit-scrollbar-thumb:hover { background: #2dd4bf; }
 
   a, button { transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1); }
+
+  /* Focus clavier visible et cohérent (a11y) — sans gêner la souris */
+  :where(a, button, input, select, textarea, summary, [role="button"], [role="tab"], [role="menuitem"], [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid #0d9488;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
 }
 
 @layer base {
