@@ -63,6 +63,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { StatCard, SectionTitle } from "@/components/ui/page-shell";
+import { Avatar } from "@/components/ui/avatar";
 
 interface ExecutiveRhCockpitProps {
   totalActifs: number;
@@ -686,9 +687,7 @@ export function ExecutiveRhCockpit({
                             >
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex items-center gap-3">
-                                  <div className="h-9 w-9 rounded-lg bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                                    {emp.full_name?.charAt(0)}
-                                  </div>
+                                  <Avatar src={emp.photo_url} name={emp.full_name} size={36} />
                                   <div>
                                     <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight hover:text-[#0d9488] transition-colors">
                                       {emp.full_name}
@@ -763,9 +762,7 @@ export function ExecutiveRhCockpit({
                         <tr key={emp.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedEmployee(emp)}>
-                              <div className="h-8 w-8 rounded-lg bg-slate-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                                {emp.full_name?.charAt(0)}
-                              </div>
+                              <Avatar src={emp.photo_url} name={emp.full_name} size={32} />
                               <span className="font-bold text-slate-900 dark:text-white hover:text-[#0d9488] transition-colors">{emp.full_name}</span>
                             </div>
                           </td>
@@ -1003,9 +1000,7 @@ export function ExecutiveRhCockpit({
             >
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-base shadow-sm">
-                    {selectedEmployee.full_name?.charAt(0)}
-                  </div>
+                  <Avatar src={selectedEmployee.photo_url} name={selectedEmployee.full_name} size={44} rounded="xl" className="shadow-sm" />
                   <div>
                     <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">{selectedEmployee.full_name}</h3>
                     <p className="text-xs font-bold text-[#0d9488]">{selectedEmployee.poste}</p>

@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import { Avatar } from "@/components/ui/avatar";
 import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
 import { DocumentDropdown } from "@/components/rh/DocumentDropdown";
@@ -273,13 +274,13 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
       <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-4">
-            {/* Avatar initiales */}
-            <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-bold"
-              style={{ background: "oklch(0.175 0.04 248)", color: "oklch(0.78 0.13 73)" }}
-            >
-              {getInitials(emp.full_name)}
-            </div>
+            <Avatar
+              src={(emp as { photo_url?: string | null }).photo_url}
+              name={emp.full_name}
+              size={56}
+              rounded="xl"
+              className="shadow-sm"
+            />
             <div>
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{emp.full_name}</h1>
               <div className="flex flex-wrap items-center gap-2 mt-1">

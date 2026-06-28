@@ -62,7 +62,7 @@ export default async function RhPage() {
       .eq("statut", "ouvert"),
     supabase
       .from("employees")
-      .select("id, full_name, poste, departement, date_embauche, statut, type_contrat")
+      .select("id, full_name, poste, departement, date_embauche, statut, type_contrat, photo_url")
       .eq("statut", "actif")
       .order("created_at", { ascending: false }),
     supabase.from("employees").select("departement").eq("statut", "actif"),

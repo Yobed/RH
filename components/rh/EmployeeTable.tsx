@@ -32,6 +32,7 @@ import { EmployeeDialog } from "@/components/rh/EmployeeDialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Avatar } from "@/components/ui/avatar";
 import { 
   DotsThreeVertical,
   Eye,
@@ -540,9 +541,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3.5">
-                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200/90 border border-slate-200/80 flex items-center justify-center text-slate-800 font-bold text-xs shadow-2xs group-hover:border-[#0d9488]/40 transition-colors">
-                            {getInitials(emp.full_name)}
-                          </div>
+                          <Avatar
+                            src={(emp as { photo_url?: string | null }).photo_url}
+                            name={emp.full_name}
+                            size={40}
+                            rounded="xl"
+                            className="border border-slate-200/80 shadow-2xs transition-colors group-hover:border-[#0d9488]/40"
+                          />
                           <div className="min-w-0">
                             <Link 
                               href={`/employes/${emp.id}`}
@@ -660,9 +665,13 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-4">
                       <div className="flex items-center gap-3.5">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-200/80 flex items-center justify-center text-slate-800 font-bold text-sm shadow-2xs group-hover:border-[#0d9488]/40 transition-colors">
-                          {getInitials(emp.full_name)}
-                        </div>
+                        <Avatar
+                          src={(emp as { photo_url?: string | null }).photo_url}
+                          name={emp.full_name}
+                          size={48}
+                          rounded="xl"
+                          className="border border-slate-200/80 shadow-2xs transition-colors group-hover:border-[#0d9488]/40"
+                        />
                         <div>
                           <Link 
                             href={`/employes/${emp.id}`}

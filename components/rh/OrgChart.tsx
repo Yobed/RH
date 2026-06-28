@@ -36,6 +36,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Avatar } from "@/components/ui/avatar";
 
 export type OrgEmployee = {
   id: string;
@@ -44,6 +45,7 @@ export type OrgEmployee = {
   departement: string | null;
   manager_id: string | null;
   statut: string;
+  photo_url?: string | null;
 };
 
 type OrgNode = OrgEmployee & { children: OrgNode[] };
@@ -549,9 +551,7 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
       >
         {/* En-tête Carte : Avatar + Actions Rapides Flottantes Épurées */}
         <div className="flex items-center justify-between mb-3">
-          <div className={`w-10 h-10 rounded-xl ${avatarGradient(node.id)} flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs`}>
-            {initials(node.full_name)}
-          </div>
+          <Avatar src={node.photo_url} name={node.full_name} size={40} rounded="xl" className={`shadow-2xs ${node.photo_url ? "" : avatarGradient(node.id)}`} />
 
           {/* Actions rapides épurées au survol */}
           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-slate-900/90 dark:bg-slate-800/90 text-white p-1 rounded-xl shadow-sm backdrop-blur-xs">

@@ -11,7 +11,7 @@ export default async function OrganigrammePage() {
 
   const { data: employees } = await supabase
     .from("employees")
-    .select("id, full_name, poste, departement, manager_id, statut")
+    .select("id, full_name, poste, departement, manager_id, statut, photo_url")
     .neq("statut", "inactif")
     .order("full_name");
 
