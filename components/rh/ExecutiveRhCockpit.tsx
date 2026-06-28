@@ -311,8 +311,9 @@ export function ExecutiveRhCockpit({
           {/* Titre de page */}
           <div className="flex items-center justify-between md:justify-start gap-3">
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 dark:text-white">
                 Tableau de bord
+                <span className="emoji-wave" aria-hidden>👋</span>
               </h1>
               <p className="text-[11px] font-medium text-slate-400 capitalize">{dateLabel}</p>
             </div>

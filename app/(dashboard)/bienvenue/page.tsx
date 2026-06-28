@@ -207,7 +207,7 @@ export default async function BienvenuePage() {
     <div className="mx-auto max-w-5xl px-6 md:px-8 pb-16 pt-2 space-y-10">
       {/* En-tête */}
       <header className="space-y-3">
-        <div className="text-5xl select-none" aria-hidden>👋</div>
+        <div className="text-5xl select-none" aria-hidden><span className="emoji-wave">👋</span></div>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
           Bonjour {greeting},
         </h1>

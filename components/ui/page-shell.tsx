@@ -84,11 +84,15 @@ export function SectionTitle({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-center gap-3", className)}>
-      <h2 className="text-[12px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10",
+        className
+      )}
+    >
+      <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:text-[#2dd4bf]">
         {children}
       </h2>
-      <div className="h-px flex-1 bg-slate-200/80 dark:bg-slate-800" />
       {action}
     </div>
   );

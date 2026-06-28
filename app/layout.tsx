@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Lato, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/rh/ThemeProvider";
 
-// Police principale : Lato — la police signature d'Odoo (corps + titres).
-const lato = Lato({
+// Police principale : Inter — corps (400) et titres (500–700).
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "700", "900"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -28,10 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="fr"
-      className={`${lato.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className={lato.className}>
+      <body className={inter.className}>
         <ThemeProvider>
           {children}
           <Toaster richColors position="top-right" />
