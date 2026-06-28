@@ -1,11 +1,18 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { KpiCard } from "@/components/rh/KpiCard";
 import { ComplianceAlertList } from "@/components/rh/ComplianceAlertList";
 import { QuickActions } from "@/components/rh/QuickActions";
-import { DashboardCharts } from "@/components/rh/DashboardCharts";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Graphes (recharts) chargés à la demande — allège le premier rendu de /rh.
+const DashboardCharts = dynamic(
+  () => import("@/components/rh/DashboardCharts").then((m) => m.DashboardCharts),
+  { ssr: false, loading: () => <Skeleton className="h-80 w-full rounded-2xl" /> }
+);
 import { AiSuggestionsWidget } from "@/components/rh/AiSuggestionsWidget";
 import { ActionCenter, type ActionItem } from "@/components/rh/ActionCenter";
 import { ChronometreWidget } from "@/components/rh/ChronometreWidget";
