@@ -98,6 +98,29 @@ export function SectionTitle({
   );
 }
 
+// En-tête de section de formulaire surligné (bande teal) — réutilisable dans les dialogues.
+export function FormSection({
+  title,
+  icon,
+  children,
+  className,
+}: {
+  title: string;
+  icon?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={cn("space-y-3", className)}>
+      <div className="flex items-center gap-2 rounded-lg border border-[#0d9488]/15 bg-[#0d9488]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#0f766e] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+        {icon}
+        {title}
+      </div>
+      {children}
+    </section>
+  );
+}
+
 type StatTone = "default" | "brand" | "success" | "warning" | "danger";
 
 const STAT_TONES: Record<StatTone, { value: string; chip: string }> = {

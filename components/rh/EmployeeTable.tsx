@@ -218,6 +218,21 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
     );
   };
 
+  const handleReactivate = async (id: string, name: string) => {
+    try {
+      const res = await fetch(`/api/employees/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ statut: "actif" }),
+      });
+      if (!res.ok) throw new Error("Erreur");
+      toast.success(`${name} a été réactivé(e)`);
+      router.refresh();
+    } catch {
+      toast.error("Impossible de réactiver le collaborateur");
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const res = await fetch(`/api/employees/${id}`, { method: "DELETE" });
@@ -625,6 +640,15 @@ export function EmployeeTable({ employees, totalCount, allEmployees, stats }: Pr
                                   }
                                 />
                               </DropdownMenuItem>
+                              {emp.statut !== "actif" && (
+                                <DropdownMenuItem
+                                  onSelect={() => handleReactivate(emp.id, emp.full_name)}
+                                  className="flex items-center gap-2.5 p-2 rounded-xl cursor-pointer text-emerald-600 focus:text-emerald-600 focus:bg-emerald-50 font-semibold text-xs outline-none"
+                                >
+                                  <UserCheck size={16} weight="duotone" />
+                                  <span>Réactiver le profil</span>
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuSeparator className="my-1 bg-slate-100" />
                               <ConfirmDialog
                                 title="Archiver le collaborateur"
