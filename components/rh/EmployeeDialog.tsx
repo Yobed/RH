@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +43,7 @@ const FAMILLE_LABELS: Record<SalaryGridRow["famille"], string> = {
 };
 
 const selectClass =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0d9488] disabled:cursor-not-allowed disabled:opacity-50";
+  "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-2xs outline-none transition-all focus-visible:border-[#0d9488] focus-visible:ring-2 focus-visible:ring-[#0d9488]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white";
 
 const schema = z
   .object({
@@ -381,16 +382,26 @@ export function EmployeeDialog({
         </DialogTrigger>
       )}
 
-      <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh] bg-white border-slate-200 p-0">
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-slate-100">
-          <DialogTitle className="text-base font-semibold text-slate-800">{employee ? "Modifier l'employé" : "Nouvel employé"}</DialogTitle>
+      <DialogContent className="sm:max-w-3xl max-h-[92vh] overflow-y-auto rounded-2xl border-slate-200 bg-white p-0 dark:border-slate-800 dark:bg-slate-900">
+        <DialogHeader className="sticky top-0 z-10 flex-row items-center gap-3 border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0d9488]/10 text-[#0f766e] dark:text-[#2dd4bf]">
+            <Plus className="h-5 w-5" weight="bold" />
+          </span>
+          <div className="min-w-0">
+            <DialogTitle className="font-display text-base font-bold text-slate-900 dark:text-white">
+              {employee ? "Modifier le collaborateur" : "Nouveau collaborateur"}
+            </DialogTitle>
+            <p className="text-xs text-slate-400">
+              {employee ? "Mettez à jour les informations du salarié." : "Renseignez les informations du nouveau salarié."}
+            </p>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-6">
 
           {/* ── IDENTITÉ ─────────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
               Identité
             </p>
 
@@ -402,7 +413,7 @@ export function EmployeeDialog({
 
             <div className="grid gap-3 sm:grid-cols-[120px_1fr]">
               <div>
-                <label className="text-sm font-medium">Civilité</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Civilité</label>
                 <select {...register("civilite")} className={`mt-1 ${selectClass}`}>
                   <option value="">—</option>
                   <option value="M.">M.</option>
@@ -411,7 +422,7 @@ export function EmployeeDialog({
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Nom complet *</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Nom complet *</label>
                 <Input {...register("full_name")} placeholder="KOUASSI Jean-Marc" className="mt-1" />
                 {errors.full_name && <p className="mt-1 text-xs text-red-500">{errors.full_name.message}</p>}
               </div>
@@ -419,7 +430,7 @@ export function EmployeeDialog({
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Genre</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Genre</label>
                 <select {...register("genre")} className={`mt-1 ${selectClass}`}>
                   <option value="">— Choisir —</option>
                   <option value="M">Masculin</option>
@@ -427,25 +438,25 @@ export function EmployeeDialog({
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Date de naissance</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Date de naissance</label>
                 <Input type="date" {...register("date_naissance")} className="mt-1" />
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Lieu de naissance</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Lieu de naissance</label>
                 <Input {...register("lieu_naissance")} placeholder="Abidjan" className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">Nationalité</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Nationalité</label>
                 <Input {...register("nationalite")} placeholder="Ivoirien(ne)" className="mt-1" />
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
-                <label className="text-sm font-medium">État civil</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">État civil</label>
                 <select {...register("etat_civil")} className={`mt-1 ${selectClass}`}>
                   <option value="">— Choisir —</option>
                   <option value="Célibataire">Célibataire</option>
@@ -456,11 +467,11 @@ export function EmployeeDialog({
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Enfants à charge</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Enfants à charge</label>
                 <Input type="number" min="0" max="20" {...register("nb_enfants")} className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">Personnes à charge (total)</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Personnes à charge (total)</label>
                 <Input type="number" min="0" max="30" {...register("nb_personnes_charge")} className="mt-1" />
                 <p className="mt-0.5 text-[10px] text-muted-foreground">Conjoints + enfants + ascendants</p>
               </div>
@@ -468,7 +479,7 @@ export function EmployeeDialog({
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Groupe sanguin</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Groupe sanguin</label>
                 <select {...register("groupe_sanguin")} className={`mt-1 ${selectClass}`}>
                   <option value="">—</option>
                   {["A+","A-","B+","B-","AB+","AB-","O+","O-"].map(g => (
@@ -477,7 +488,7 @@ export function EmployeeDialog({
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Matricule</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Matricule</label>
                 <div className="mt-1 flex gap-2">
                   <Input
                     {...register("matricule")}
@@ -500,20 +511,20 @@ export function EmployeeDialog({
 
           {/* ── PIÈCE D'IDENTITÉ & CNPS ──────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
               Pièce d&apos;identité & Sécurité sociale
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
-                <label className="text-sm font-medium">N° CNI / Passeport</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">N° CNI / Passeport</label>
                 <Input {...register("num_cni")} placeholder="CI-0000000-A" className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">Expiration CNI</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Expiration CNI</label>
                 <Input type="date" {...register("date_expiration_cni")} className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">N° CNPS</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">N° CNPS</label>
                 <Input {...register("num_cnps")} placeholder="CI-00-000000" className="mt-1" />
               </div>
             </div>
@@ -521,29 +532,29 @@ export function EmployeeDialog({
 
           {/* ── COORDONNÉES ──────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
               Coordonnées
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Email</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Email</label>
                 <Input type="email" {...register("email")} placeholder="jean@entreprise.ci" className="mt-1" />
                 {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
               </div>
               <div>
-                <label className="text-sm font-medium">Téléphone</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Téléphone</label>
                 <Input {...register("phone")} placeholder="+225 07 00 00 00" className="mt-1" />
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium">Adresse domicile</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Adresse domicile</label>
               <Input {...register("adresse")} placeholder="Quartier Deux Plateaux, Cocody, Abidjan" className="mt-1" />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Situation logement</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Situation logement</label>
                 <select {...register("situation_logement")} className={`mt-1 ${selectClass}`}>
                   <option value="">— Choisir —</option>
                   <option value="Locataire">Locataire</option>
@@ -552,23 +563,23 @@ export function EmployeeDialog({
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Mobile Money</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Mobile Money</label>
                 <Input {...register("mobile_money")} placeholder="Orange Money / Wave / MTN" className="mt-1" />
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium">RIB / Coordonnées bancaires</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">RIB / Coordonnées bancaires</label>
               <Input {...register("rib")} placeholder="CI00 XXXX XXXX XXXX XXXX XXXX XXX" className="mt-1" />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Contact urgence — Nom</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Contact urgence — Nom</label>
                 <Input {...register("contact_urgence_nom")} placeholder="KONE Aminata (épouse)" className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">Contact urgence — Tél</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Contact urgence — Tél</label>
                 <Input {...register("contact_urgence_tel")} placeholder="+225 05 00 00 00" className="mt-1" />
               </div>
             </div>
@@ -576,36 +587,36 @@ export function EmployeeDialog({
 
           {/* ── POSTE & CONTRAT ──────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
               Poste & Contrat
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Intitulé du poste *</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Intitulé du poste *</label>
                 <Input {...register("poste")} placeholder="Comptable" className="mt-1" />
                 {errors.poste && <p className="mt-1 text-xs text-red-500">{errors.poste.message}</p>}
               </div>
               <div>
-                <label className="text-sm font-medium">Département</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Département</label>
                 <Input {...register("departement")} placeholder="Finance" className="mt-1" />
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Site / Lieu de travail</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Site / Lieu de travail</label>
                 <Input {...register("site_travail")} placeholder="Siège Abidjan / Bouaké" className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">Convention collective</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Convention collective</label>
                 <Input {...register("convention_collective")} placeholder="Interprofessionnelle / BTP / Commerce…" className="mt-1" />
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                   Catégorie professionnelle
                   <span className="ml-1 text-[10px] text-teal-600 font-normal">
                     (auto-remplit le salaire de base)
@@ -638,7 +649,7 @@ export function EmployeeDialog({
                 )}
               </div>
               <div>
-                <label className="text-sm font-medium">Niveau d'études</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Niveau d'études</label>
                 <select {...register("niveau_etude")} className={`mt-1 ${selectClass}`}>
                   <option value="">— Choisir —</option>
                   <option value="Primaire">Primaire</option>
@@ -654,7 +665,7 @@ export function EmployeeDialog({
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Type de contrat</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Type de contrat</label>
                 <select {...register("type_contrat")} className={`mt-1 ${selectClass}`}>
                   <option value="">— Choisir —</option>
                   <option value="CDI">CDI</option>
@@ -664,7 +675,7 @@ export function EmployeeDialog({
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium">Date d'embauche *</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Date d'embauche *</label>
                 <Input type="date" {...register("date_embauche")} className="mt-1" />
                 {errors.date_embauche && <p className="mt-1 text-xs text-red-500">{errors.date_embauche.message}</p>}
               </div>
@@ -673,7 +684,7 @@ export function EmployeeDialog({
             {needsDateFin && (
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium">Date de fin du contrat *</label>
+                  <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Date de fin du contrat *</label>
                   <Input type="date" {...register("date_fin_contrat")} className="mt-1" />
                   {errors.date_fin_contrat && <p className="mt-1 text-xs text-red-500">{errors.date_fin_contrat.message}</p>}
                 </div>
@@ -682,13 +693,13 @@ export function EmployeeDialog({
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">Ancienneté antérieure (mois)</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Ancienneté antérieure (mois)</label>
                 <Input type="number" min="0" {...register("anciennete_anterieure")} className="mt-1" />
                 <p className="mt-0.5 text-[10px] text-muted-foreground">Si reprise d'ancienneté négociée à l'embauche</p>
               </div>
               {employees.length > 0 && (
                 <div>
-                  <label className="text-sm font-medium">Responsable hiérarchique</label>
+                  <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Responsable hiérarchique</label>
                   <select {...register("manager_id")} className={`mt-1 ${selectClass}`}>
                     <option value="">— Aucun / À définir —</option>
                     {employees
@@ -703,14 +714,14 @@ export function EmployeeDialog({
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-sm font-medium">
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                   <span className="font-mono text-muted-foreground text-xs mr-1">01</span>
                   Salaire catégoriel (FCFA)
                 </label>
                 <Input type="number" min="0" step="1000" {...register("salaire_brut")} placeholder="150 000" className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium">Statut</label>
+                <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">Statut</label>
                 <select {...register("statut")} className={`mt-1 ${selectClass}`}>
                   <option value="actif">Actif</option>
                   <option value="inactif">Inactif</option>
@@ -722,7 +733,7 @@ export function EmployeeDialog({
 
           {/* ── PRIMES & INDEMNITÉS ──────────────────────────────── */}
           <section className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+            <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
               Primes & Indemnités habituelles
               <span className="ml-2 font-normal normal-case text-slate-400/70">
                 (reprises automatiquement à chaque bulletin)
@@ -800,7 +811,7 @@ export function EmployeeDialog({
           {/* ── MOTIF MODIFICATION (édition uniquement) ──────────── */}
           {employee && (
             <section className="space-y-2">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
+              <p className="mb-1 flex items-center gap-2 border-b border-slate-100 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#0f766e] dark:border-slate-800 dark:text-[#2dd4bf]">
                 Motif de modification
               </p>
               <div>
@@ -817,17 +828,20 @@ export function EmployeeDialog({
             </section>
           )}
 
-          <DialogFooter className="pt-2 border-t border-slate-100">
+          <DialogFooter className="sticky bottom-0 z-10 -mx-6 -mb-5 mt-2 flex-row items-center justify-end gap-2 border-t border-slate-100 bg-white/95 px-6 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
+            <DialogClose render={<Button type="button" variant="ghost" className="text-slate-500" />}>
+              Annuler
+            </DialogClose>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-[#0d9488] hover:bg-[#0f766e] text-white border-0"
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white border-0 shadow-sm"
             >
               {isSubmitting
                 ? "Enregistrement..."
                 : employee
                 ? "Enregistrer les modifications"
-                : "Ajouter l'employé"}
+                : "Ajouter le collaborateur"}
             </Button>
           </DialogFooter>
         </form>
