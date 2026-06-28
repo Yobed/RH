@@ -1,16 +1,14 @@
 "use client";
 
-import { 
-  Warning, 
-  Clock, 
-  FileText, 
-  Pulse, 
+import {
+  Warning,
+  Clock,
+  FileText,
+  Pulse,
   ShieldWarning,
-  CaretRight 
+  CaretRight,
 } from "@phosphor-icons/react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 
 interface AlertItem {
   id: string;
@@ -25,99 +23,91 @@ interface ComplianceAlertListProps {
   alerts: AlertItem[];
 }
 
-const typeConfig = {
-  CONTRACT: { icon: FileText, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
-  TRIAL: { icon: Clock, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
-  MEDICAL: { icon: Pulse, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
-  DOCUMENT: { icon: ShieldWarning, className: "bg-slate-50 border border-slate-200/60 text-slate-600 dark:bg-slate-850 dark:border-slate-700/60 dark:text-slate-300" },
+const TYPE_ICON = {
+  CONTRACT: FileText,
+  TRIAL: Clock,
+  MEDICAL: Pulse,
+  DOCUMENT: ShieldWarning,
 };
+
+const URGENCY_STYLE: Record<AlertItem["urgency"], { chip: string; tag: string; label: string }> = {
+  high: { chip: "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400", tag: "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300", label: "Urgent" },
+  medium: { chip: "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400", tag: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300", label: "À suivre" },
+  low: { chip: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400", tag: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300", label: "Info" },
+};
+
+const MAX_VISIBLE = 4;
 
 export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
   if (alerts.length === 0) return null;
 
+  const visible = alerts.slice(0, MAX_VISIBLE);
+  const remaining = alerts.length - visible.length;
+
   return (
-    <div className="rounded-xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 shadow-sm overflow-hidden flex flex-col h-full">
-      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
+    // Panneau à forte visibilité : fond teinté ambre (risque RH)
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-amber-200/80 bg-amber-50/40 shadow-sm dark:border-amber-900/40 dark:bg-amber-950/10">
+      <div className="flex items-center justify-between border-b border-amber-200/60 px-5 py-4 dark:border-amber-900/40">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60">
-            <Warning weight="bold" className="h-4 w-4" />
-          </div>
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
+            <Warning weight="fill" className="h-5 w-5" />
+          </span>
           <div>
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white leading-none">Vigilance Prioritaire</h2>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">Alertes de conformité</p>
+            <h2 className="font-display text-sm font-bold leading-none text-slate-900 dark:text-white">Vigilance prioritaire</h2>
+            <p className="mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">Alertes de conformité RH</p>
           </div>
         </div>
-        <div className="px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-[11px] font-bold text-slate-700 dark:text-slate-300 shadow-xs">
-          {alerts.length} Alertes
-        </div>
+        <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
+          {alerts.length} alerte{alerts.length > 1 ? "s" : ""}
+        </span>
       </div>
 
-      <div className="divide-y divide-slate-100 dark:divide-slate-800/60 flex-1">
-        {alerts.map((alert, i) => {
-          const cfg = typeConfig[alert.type] || typeConfig.DOCUMENT;
+      <div className="flex-1 divide-y divide-amber-100/70 dark:divide-amber-900/30">
+        {visible.map((alert, i) => {
+          const Icon = TYPE_ICON[alert.type] || ShieldWarning;
+          const u = URGENCY_STYLE[alert.urgency];
           return (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="px-6 py-4 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors duration-150 flex items-center justify-between gap-4 group"
+            <Link
+              key={`${alert.id}-${i}`}
+              href={`/employes/${alert.id}`}
+              className="group flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-white/70 dark:hover:bg-slate-900/40"
             >
-              <div className="flex items-center gap-3.5 flex-1 min-w-0">
-                <div 
-                  className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${cfg.className}`}
-                >
-                  <cfg.icon weight="duotone" className="h-5 w-5" />
-                </div>
+              <div className="flex min-w-0 items-center gap-3">
+                <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${u.chip}`}>
+                  <Icon weight="duotone" className="h-5 w-5" />
+                </span>
                 <div className="min-w-0">
-                  <Link 
-                    href={`/employes/${alert.id}`} 
-                    className="text-sm font-semibold text-slate-900 truncate block hover:text-[#0d9488] transition-colors"
-                  >
+                  <p className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-[#0f766e] dark:text-white">
                     {alert.employeeName}
-                  </Link>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      {alert.label}
-                    </span>
+                  </p>
+                  <div className="mt-0.5 flex items-center gap-2">
+                    <span className="truncate text-[11px] font-medium text-slate-500 dark:text-slate-400">{alert.label}</span>
                     {alert.date && (
-                      <>
-                        <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-                        <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500">
-                          {new Date(alert.date).toLocaleDateString('fr-FR')}
-                        </span>
-                      </>
+                      <span className="shrink-0 font-mono text-[11px] text-slate-400">
+                        {new Date(alert.date).toLocaleDateString("fr-FR")}
+                      </span>
                     )}
                   </div>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-3 shrink-0">
-                {alert.urgency === "high" && (
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                    Urgent
-                  </span>
-                )}
-                <Link 
-                  href={`/employes/${alert.id}`} 
-                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 border border-slate-200 text-slate-600 hover:bg-[#0d9488] hover:text-white hover:border-[#0d9488] transition-colors duration-150"
-                >
-                  <CaretRight weight="bold" className="h-3.5 w-3.5" />
-                </Link>
+              <div className="flex shrink-0 items-center gap-2">
+                <span className={`hidden rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide sm:inline ${u.tag}`}>
+                  {u.label}
+                </span>
+                <CaretRight weight="bold" className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-[#0f766e]" />
               </div>
-            </motion.div>
+            </Link>
           );
         })}
       </div>
-      
-      <div className="p-4 bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800/80 mt-auto">
-        <Link 
-          href="/reporting" 
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#0d9488] transition-colors shadow-xs"
-        >
-          Accéder au centre de conformité
-        </Link>
-      </div>
+
+      <Link
+        href="/reporting"
+        className="flex items-center justify-center gap-2 border-t border-amber-200/60 px-5 py-3 text-xs font-semibold text-amber-800 transition-colors hover:bg-amber-100/50 dark:border-amber-900/40 dark:text-amber-300"
+      >
+        {remaining > 0 ? `Voir toutes les alertes (${remaining} de plus)` : "Voir toutes les alertes"}
+        <CaretRight weight="bold" className="h-3.5 w-3.5" />
+      </Link>
     </div>
   );
 }

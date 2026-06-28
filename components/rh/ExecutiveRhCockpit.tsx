@@ -62,7 +62,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { StatCard } from "@/components/ui/page-shell";
+import { StatCard, SectionTitle } from "@/components/ui/page-shell";
 
 interface ExecutiveRhCockpitProps {
   totalActifs: number;
@@ -499,73 +499,72 @@ export function ExecutiveRhCockpit({
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
-              {/* HR Suite Modules Navigation Bar */}
-              <HrSuiteModulesWidget />
-
-              {/* Cognitive Load Reduction Sub-Navigation Bar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-2.5 sm:p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs">
-                <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar">
-                  {[
-                    { id: "synthese", label: "📊 Synthèse Stratégique", desc: "KPIs, Arbitrages & Analytique" },
-                    { id: "operations", label: "⚡ Opérations & Quotidien", desc: "Pointage, Absences & Agenda" },
-                    { id: "conformite", label: "🛡️ Conformité & Audits", desc: "Alertes Juridiques & Ressources" },
-                  ].map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setOverviewSubTab(tab.id as any)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all text-left whitespace-nowrap ${
-                        overviewSubTab === tab.id
-                          ? "bg-[#0d9488] text-white shadow-md shadow-[#0d9488]/20"
-                          : "bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-                <div className="hidden lg:block text-[11px] font-bold text-slate-400 pr-2">
-                  Espace d'Arbitrage Thématique
-                </div>
+              {/* Sous-navigation épurée (segmented control) */}
+              <div className="inline-flex items-center gap-1 rounded-xl border border-slate-200/70 bg-white p-1 dark:border-slate-800 dark:bg-slate-900">
+                {[
+                  { id: "synthese", label: "Synthèse" },
+                  { id: "operations", label: "Opérations" },
+                  { id: "conformite", label: "Conformité" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setOverviewSubTab(tab.id as any)}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      overviewSubTab === tab.id
+                        ? "bg-[#0d9488] text-white shadow-sm"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
 
-              {/* SUB-TAB 1: SYNTHÈSE STRATÉGIQUE (Focus Cockpit Ultra-Décisionnel) */}
+              {/* SYNTHÈSE — page structurée en 3 zones fonctionnelles */}
               {overviewSubTab === "synthese" && (
-                <div className="space-y-6">
-                  {/* 1. Bloc Action Primordial : Flux RH Intelligents (Amplifié) */}
-                  <ActionCenter items={actionItems} />
+                <div className="space-y-8">
+                  {/* ZONE 1 — Synthèse & actions urgentes (priorité = risque RH) */}
+                  <section className="space-y-4">
+                    <SectionTitle>Synthèse & actions urgentes</SectionTitle>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                      <div className="lg:col-span-7">
+                        <ComplianceAlertList alerts={allAlerts} />
+                      </div>
+                      <div className="lg:col-span-5">
+                        <AiSuggestionsWidget
+                          totalActifs={totalActifs}
+                          cddExpirant={cddExpirant}
+                          medicalAlertsCount={medicalAlertsCount}
+                          evalBrouillon={evalBrouillon}
+                          contentieuxOuverts={contentieuxOuverts}
+                          congesEnAttente={congesEnAttente?.length ?? 0}
+                        />
+                      </div>
+                    </div>
+                    <ActionCenter items={actionItems} />
+                  </section>
 
-                  {/* 2. Parcours Guidés de Pilotage (4 Procédures Fréquentes) */}
-                  <ParcoursGuidesWidget />
+                  {/* ZONE 2 — Modules & actions rapides */}
+                  <section className="space-y-4">
+                    <SectionTitle>Modules & actions rapides</SectionTitle>
+                    <QuickActions />
+                    <HrSuiteModulesWidget />
+                    <ParcoursGuidesWidget />
+                  </section>
 
-                  {/* 3. Vues de Pilotage & Analytics (Séparées de l'Action Directe) */}
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div className="lg:col-span-8 space-y-6">
-                      <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                  {/* ZONE 3 — Ressources & outils avancés */}
+                  <section className="space-y-4">
+                    <SectionTitle>Ressources & outils avancés</SectionTitle>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                      <div className="lg:col-span-8">
+                        <DashboardCharts deptData={chartDeptData} genderData={chartGenderData} />
+                      </div>
+                      <div className="lg:col-span-4 space-y-6">
+                        <RessourcesInteretWidget />
+                        <TableauAffichageWidget />
+                      </div>
                     </div>
-                    <div className="lg:col-span-4 space-y-6">
-                      <AiSuggestionsWidget
-                        totalActifs={totalActifs}
-                        cddExpirant={cddExpirant}
-                        medicalAlertsCount={medicalAlertsCount}
-                        evalBrouillon={evalBrouillon}
-                        contentieuxOuverts={contentieuxOuverts}
-                        congesEnAttente={congesEnAttente?.length ?? 0}
-                      />
-                    </div>
-                  </div>
-
-                  {/* 4. Couche Communautaire Secondaire (Tableau d'Affichage) */}
-                  <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">
-                        📢 Espace Communautaire & Affichage Interne
-                      </span>
-                      <div className="h-[1px] flex-1 bg-slate-200 dark:bg-slate-800" />
-                    </div>
-                    <div className="max-w-2xl">
-                      <TableauAffichageWidget />
-                    </div>
-                  </div>
+                  </section>
                 </div>
               )}
 

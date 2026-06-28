@@ -12,80 +12,68 @@ import {
   PieChart,
   Receipt,
   ShieldAlert,
-  ChevronRight,
-  Sparkles,
+  ArrowRight,
+  LayoutGrid,
 } from "lucide-react";
 
 interface HrModule {
   title: string;
   href: string;
-  icon: any;
-  desc: string;
+  icon: typeof Users;
+  desc: string; // baseline courte — 1 ligne max
 }
 
-export function HrSuiteModulesWidget() {
-  const modules: HrModule[] = [
-    { title: "Recrutement ATS", href: "/recrutement", icon: UserPlus, desc: "Sourcing candidats, CVthèque & offres" },
-    { title: "Portail employé", href: "/portail", icon: Users, desc: "Espace self-service & demandes RH" },
-    { title: "Suivi du temps & pointage", href: "/pointage", icon: Clock, desc: "Calcul heures, présences & anomalies" },
-    { title: "Évaluations de performance", href: "/evaluations", icon: Award, desc: "Entretiens annuels & suivi des KPIs" },
-    { title: "Enquêtes QVT", href: "/bienvenue", icon: HeartHandshake, desc: "Climat social, baromètre & feedback" },
-    { title: "Préparation de la paie", href: "/paie", icon: DollarSign, desc: "Simulations, contrôle & export Sage/X3/CNPS" },
-    { title: "Signature numérique", href: "/contrats", icon: FileSignature, desc: "Validation légale & paraphage contrats" },
-    { title: "HR Analytics BI", href: "/analytique", icon: PieChart, desc: "Masse salariale, effectifs & simulations" },
-    { title: "Notes de frais", href: "/calculateur", icon: Receipt, desc: "Validation débours & justificatifs" },
-    { title: "Canal de signalement", href: "/contentieux", icon: ShieldAlert, desc: "Conformité CNPS, légale & éthique" },
-  ];
+const MODULES: HrModule[] = [
+  { title: "Recrutement ATS", href: "/recrutement", icon: UserPlus, desc: "Sourcing, CVthèque, offres" },
+  { title: "Portail employé", href: "/portail", icon: Users, desc: "Self-service & demandes" },
+  { title: "Temps & pointage", href: "/pointage", icon: Clock, desc: "Présences & anomalies" },
+  { title: "Évaluations", href: "/evaluations", icon: Award, desc: "Entretiens & KPIs" },
+  { title: "Enquêtes QVT", href: "/bienvenue", icon: HeartHandshake, desc: "Climat & baromètre" },
+  { title: "Paie", href: "/paie", icon: DollarSign, desc: "Bulletins & contrôles" },
+  { title: "Signature numérique", href: "/contrats", icon: FileSignature, desc: "Contrats & paraphage" },
+  { title: "HR Analytics", href: "/analytique", icon: PieChart, desc: "Effectifs & masse salariale" },
+  { title: "Conformité & litiges", href: "/contentieux", icon: ShieldAlert, desc: "CNPS, légal & éthique" },
+];
 
+export function HrSuiteModulesWidget() {
   return (
-    <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xl shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-900 dark:shadow-none transition-all duration-300">
-      {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-5">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-[#0d9488]/10 flex items-center justify-center text-[#0d9488] border border-[#0d9488]/20 shadow-xs">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div>
-            <h3 className="text-base font-bold tracking-tight text-slate-900 dark:text-white">Modules de la Suite RH</h3>
-            <p className="text-xs text-slate-500 font-bold dark:text-slate-400">Accès rapide aux applications métier</p>
-          </div>
-        </div>
-        <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-          Suite Complète 2026
+    <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="mb-4 flex items-center gap-2.5">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0d9488]/10 text-[#0f766e] dark:text-[#2dd4bf]">
+          <LayoutGrid className="h-4 w-4" />
         </span>
+        <div>
+          <h3 className="font-display text-sm font-bold tracking-tight text-slate-900 dark:text-white">
+            Modules de la suite RH
+          </h3>
+          <p className="text-[11px] font-medium text-slate-400">Accès aux applications métier</p>
+        </div>
       </div>
 
-      {/* Grid of Modules */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-        {modules.map((mod, idx) => {
+      {/* Grille uniforme 2 → 3 colonnes, cartes de même taille */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+        {MODULES.map((mod) => {
           const Icon = mod.icon;
           return (
             <Link
-              key={idx}
+              key={mod.href}
               href={mod.href}
-              className="group p-3.5 rounded-2xl bg-slate-50/70 hover:bg-white border border-slate-200/60 hover:border-[#0d9488]/40 hover:shadow-lg hover:shadow-[#0d9488]/5 transition-all duration-200 flex items-center gap-3 dark:bg-slate-800/40 dark:hover:bg-slate-800 dark:border-slate-700/60"
+              className="group flex flex-col gap-2.5 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 transition-all hover:-translate-y-0.5 hover:border-[#0d9488]/40 hover:bg-white hover:shadow-[0_10px_24px_-14px_rgba(13,148,136,0.45)] dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
             >
-              <div className="h-10 w-10 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 group-hover:bg-[#0d9488] group-hover:text-white flex items-center justify-center shrink-0 transition-colors border border-slate-200 dark:border-slate-700 group-hover:border-[#0d9488] shadow-xs">
-                <Icon className="h-5 w-5" />
-              </div>
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors group-hover:border-[#0d9488] group-hover:bg-[#0d9488] group-hover:text-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+                <Icon className="h-[18px] w-[18px]" />
+              </span>
               <div className="min-w-0 flex-1">
-                <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-[#0d9488] truncate transition-colors">
-                  {mod.title}
-                </h4>
-                <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 truncate mt-0.5">{mod.desc}</p>
+                <h4 className="truncate text-[13px] font-semibold text-slate-900 dark:text-white">{mod.title}</h4>
+                <p className="truncate text-[11px] text-slate-400">{mod.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-slate-300 dark:text-slate-600 group-hover:text-[#0d9488] group-hover:translate-x-0.5 transition-all shrink-0" />
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0f766e] opacity-0 transition-opacity group-hover:opacity-100 dark:text-[#2dd4bf]">
+                Ouvrir <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+              </span>
             </Link>
           );
         })}
       </div>
-
-      <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 text-right">
-        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-[#0d9488] dark:hover:text-[#0d9488] cursor-pointer inline-flex items-center gap-1.5 transition-colors">
-          ... et plus encore dans votre portail d'entreprise ➔
-        </span>
-      </div>
     </div>
   );
 }
-
