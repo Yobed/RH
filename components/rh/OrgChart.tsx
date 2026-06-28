@@ -101,13 +101,17 @@ function buildTree(employees: OrgEmployee[]): OrgNode[] {
 // ──────────────────────────────────────────────────────────────
 function AddSubordinateModal({
   manager,
+  all,
   open,
   onClose,
 }: {
   manager: OrgEmployee;
+  all: OrgEmployee[];
   open: boolean;
   onClose: () => void;
 }) {
+  const [mode, setMode] = useState<"existing" | "new">("existing");
+  const [search, setSearch] = useState("");
   const [fullName, setFullName] = useState("");
   const [poste, setPoste] = useState("");
   const [departement, setDepartement] = useState(manager.departement || "");
@@ -115,9 +119,54 @@ function AddSubordinateModal({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  // Ascendants du manager (pour éviter les cycles : on ne rattache pas un chef au-dessus de lui sous lui)
+  const ancestorIds = useMemo(() => {
+    const set = new Set<string>();
+    let cur = manager.manager_id;
+    let guard = 0;
+    while (cur && guard < 100) {
+      set.add(cur);
+      cur = all.find((e) => e.id === cur)?.manager_id ?? null;
+      guard++;
+    }
+    return set;
+  }, [manager, all]);
+
+  // Employés disponibles : non encore rattachés (manager_id nul), hors soi-même, ascendants et inactifs
+  const candidates = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return all
+      .filter(
+        (e) =>
+          !e.manager_id &&
+          e.id !== manager.id &&
+          !ancestorIds.has(e.id) &&
+          e.statut !== "inactif"
+      )
+      .filter((e) => !q || e.full_name.toLowerCase().includes(q) || (e.poste ?? "").toLowerCase().includes(q));
+  }, [all, manager.id, ancestorIds, search]);
+
+  // Rattacher un employé existant comme subordonné direct
+  const attachExisting = (employeeId: string, name: string) => {
+    startTransition(async () => {
+      const res = await fetch("/api/employees/manager", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employee_id: employeeId, manager_id: manager.id }),
+      });
+      if (res.ok) {
+        toast.success(`${name} rattaché(e) sous ${manager.full_name}`);
+        onClose();
+        router.refresh();
+      } else {
+        const err = await res.json().catch(() => ({})) as { error?: string };
+        toast.error(err.error ?? "Erreur lors du rattachement");
+      }
+    });
+  };
+
   const handleCreate = () => {
     if (!fullName.trim() || !poste.trim()) return;
-
     startTransition(async () => {
       const res = await fetch("/api/employees", {
         method: "POST",
@@ -132,7 +181,6 @@ function AddSubordinateModal({
           statut: "actif",
         }),
       });
-
       if (res.ok) {
         const created = await res.json();
         await fetch("/api/employees/manager", {
@@ -140,8 +188,7 @@ function AddSubordinateModal({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ employee_id: created.id, manager_id: manager.id }),
         });
-
-        toast.success(`Collaborateur ${fullName} ajouté avec succès sous ${manager.full_name}`);
+        toast.success(`Collaborateur ${fullName} ajouté sous ${manager.full_name}`);
         onClose();
         router.refresh();
       } else {
@@ -156,81 +203,142 @@ function AddSubordinateModal({
       <DialogContent className="sm:max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-[#0d9488]">
+            <div className="p-2 rounded-xl bg-[#0d9488]/10 text-[#0d9488]">
               <UserPlus className="h-4 w-4" />
             </div>
-            Nouveau Subordonné Direct
+            Ajouter un subordonné direct
           </DialogTitle>
           <DialogDescription className="text-xs text-slate-500 mt-1">
             Rattachement hiérarchique direct à <strong className="text-slate-800 dark:text-slate-200 font-semibold">{manager.full_name}</strong>.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3.5 py-3">
-          <div>
-            <label htmlFor="add-sub-fullname" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet *</label>
-            <input
-              id="add-sub-fullname"
-              type="text"
-              placeholder="Ex: Jean Dupont"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
-            />
-          </div>
+        {/* Bascule : rattacher un existant (défaut) ou créer un nouveau */}
+        <div className="my-3 inline-flex items-center gap-1 rounded-xl border border-slate-200/70 bg-slate-50 p-1 dark:border-slate-800 dark:bg-slate-800/60">
+          <button
+            onClick={() => setMode("existing")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${mode === "existing" ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white" : "text-slate-500"}`}
+          >
+            Collaborateur existant
+          </button>
+          <button
+            onClick={() => setMode("new")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${mode === "new" ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white" : "text-slate-500"}`}
+          >
+            Nouveau
+          </button>
+        </div>
 
-          <div>
-            <label htmlFor="add-sub-poste" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Intitulé *</label>
-            <input
-              id="add-sub-poste"
-              type="text"
-              placeholder="Ex: Analyste RH, Assistant Commercial..."
-              value={poste}
-              onChange={(e) => setPoste(e.target.value)}
-              className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="add-sub-dept" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département</label>
+        {mode === "existing" ? (
+          <div className="space-y-3 pb-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <input
-                id="add-sub-dept"
+                autoFocus
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Rechercher un collaborateur non rattaché…"
+                className="w-full text-xs font-medium pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+              />
+            </div>
+
+            <div className="max-h-64 space-y-1 overflow-y-auto pr-1">
+              {candidates.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-5 text-center">
+                  <p className="text-xs font-medium text-slate-500">Aucun collaborateur disponible.</p>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    Tous les collaborateurs sont déjà rattachés. Crée un nouveau profil via l'onglet « Nouveau ».
+                  </p>
+                </div>
+              ) : (
+                candidates.map((e) => (
+                  <button
+                    key={e.id}
+                    onClick={() => attachExisting(e.id, e.full_name)}
+                    disabled={isPending}
+                    className="flex w-full items-center gap-3 rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-left transition-all hover:border-[#0d9488]/40 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                  >
+                    <Avatar src={e.photo_url} name={e.full_name} size={32} rounded="full" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-semibold text-slate-900 dark:text-white">{e.full_name}</p>
+                      <p className="truncate text-[11px] text-slate-400">
+                        {e.poste || "Poste non défini"}
+                        {e.departement ? ` · ${e.departement}` : ""}
+                      </p>
+                    </div>
+                    <UserPlus className="h-4 w-4 shrink-0 text-slate-300" />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3.5 py-1">
+            <div>
+              <label htmlFor="add-sub-fullname" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Nom complet *</label>
+              <input
+                id="add-sub-fullname"
                 type="text"
-                value={departement}
-                onChange={(e) => setDepartement(e.target.value)}
+                placeholder="Ex: Jean Dupont"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
                 className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
               />
             </div>
             <div>
-              <label htmlFor="add-sub-contrat" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Contrat</label>
-              <select
-                id="add-sub-contrat"
-                value={typeContrat}
-                onChange={(e) => setTypeContrat(e.target.value as any)}
+              <label htmlFor="add-sub-poste" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Poste / Intitulé *</label>
+              <input
+                id="add-sub-poste"
+                type="text"
+                placeholder="Ex: Analyste RH, Assistant Commercial..."
+                value={poste}
+                onChange={(e) => setPoste(e.target.value)}
                 className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
-              >
-                <option value="CDI">CDI</option>
-                <option value="CDD">CDD</option>
-                <option value="Stage">Stage</option>
-                <option value="Apprentissage">Apprentissage</option>
-              </select>
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="add-sub-dept" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Département</label>
+                <input
+                  id="add-sub-dept"
+                  type="text"
+                  value={departement}
+                  onChange={(e) => setDepartement(e.target.value)}
+                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                />
+              </div>
+              <div>
+                <label htmlFor="add-sub-contrat" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">Contrat</label>
+                <select
+                  id="add-sub-contrat"
+                  value={typeContrat}
+                  onChange={(e) => setTypeContrat(e.target.value as any)}
+                  className="w-full text-xs font-medium px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0d9488]/40 transition-all"
+                >
+                  <option value="CDI">CDI</option>
+                  <option value="CDD">CDD</option>
+                  <option value="Stage">Stage</option>
+                  <option value="Apprentissage">Apprentissage</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
           <Button variant="ghost" size="sm" onClick={onClose} className="text-xs font-semibold text-slate-500 rounded-xl">
-            Annuler
+            {mode === "existing" ? "Fermer" : "Annuler"}
           </Button>
-          <Button
-            size="sm"
-            disabled={isPending || !fullName.trim() || !poste.trim()}
-            onClick={handleCreate}
-            className="bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
-          >
-            {isPending ? "Création..." : "Ajouter au sous-arbre"}
-          </Button>
+          {mode === "new" && (
+            <Button
+              size="sm"
+              disabled={isPending || !fullName.trim() || !poste.trim()}
+              onClick={handleCreate}
+              className="bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold px-4 rounded-xl shadow-xs transition-all"
+            >
+              {isPending ? "Création..." : "Créer & rattacher"}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
@@ -640,7 +748,7 @@ const OrgNodeCard = React.memo(function OrgNodeCard({
 
       {/* Modales */}
       {showAddSubModal && (
-        <AddSubordinateModal manager={node} open={showAddSubModal} onClose={() => setShowAddSubModal(false)} />
+        <AddSubordinateModal manager={node} all={all} open={showAddSubModal} onClose={() => setShowAddSubModal(false)} />
       )}
       {showEditModal && (
         <EditEmployeeModal employee={node} open={showEditModal} onClose={() => setShowEditModal(false)} />

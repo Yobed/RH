@@ -103,7 +103,7 @@ export default async function EmployesPage({
       />
 
       {/* Unified Master Workstation Shell */}
-      {!employees || employees.length === 0 ? (
+      {(!employees || employees.length === 0) && !query && statut === "tous" && contrat === "tous" ? (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-12 shadow-2xs">
           <EmptyState
             icon={<Users size={56} className="text-slate-300" weight="duotone" />}
@@ -118,9 +118,9 @@ export default async function EmployesPage({
           />
         </div>
       ) : (
-        <EmployeeTable 
-          employees={employees} 
-          totalCount={count ?? 0} 
+        <EmployeeTable
+          employees={employees ?? []}
+          totalCount={count ?? 0}
           allEmployees={allEmployees ?? []}
           stats={stats}
         />
