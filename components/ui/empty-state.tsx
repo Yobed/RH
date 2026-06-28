@@ -42,11 +42,11 @@ export function EmptyState({
       <div className="mb-4 animate-[fadeIn_0.3s_ease-out]">
         {icon ?? defaultIllustration}
       </div>
-      <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+      <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
         {title}
       </h3>
       {description && (
-        <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400 max-w-[280px]">
+        <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-slate-500 dark:text-slate-400">
           {description}
         </p>
       )}
