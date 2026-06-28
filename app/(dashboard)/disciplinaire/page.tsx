@@ -2,7 +2,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { DisciplinaryDialog } from "@/components/rh/DisciplinaryDialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import Link from "next/link";
 
 export const metadata = { title: "Disciplinaire — RH Manager CI" };
@@ -63,21 +63,9 @@ export default async function DisciplinairePage() {
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Total dossiers</p>
-          <p className="mt-2 text-3xl font-bold text-slate-900">{total}</p>
-          <p className="mt-1 text-xs text-slate-600">procédures enregistrées</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Dossiers ouverts</p>
-          <p className={`mt-2 text-3xl font-bold ${ouverts > 0 ? "text-red-600" : "text-slate-900"}`}>{ouverts}</p>
-          <p className="mt-1 text-xs text-slate-600">en cours de traitement</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Clôturés</p>
-          <p className="mt-2 text-3xl font-bold text-slate-900">{clotures}</p>
-          <p className="mt-1 text-xs text-slate-600">procédures closes</p>
-        </div>
+        <StatCard label="Total dossiers" value={total} sub="procédures enregistrées" />
+        <StatCard label="Dossiers ouverts" value={ouverts} sub="en cours de traitement" tone={ouverts > 0 ? "danger" : "default"} />
+        <StatCard label="Clôturés" value={clotures} sub="procédures closes" tone="success" />
       </div>
 
       {/* Table */}

@@ -4,7 +4,7 @@ import { CongesDialog } from "@/components/rh/CongesDialog";
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { ArretMaladieDialog } from "@/components/rh/ArretMaladieDialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { CalendarDays } from "lucide-react";
 
 export const metadata = { title: "Conges — RH Manager CI" };
@@ -119,28 +119,15 @@ export default async function CongesPage() {
 
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">En attente</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{enAttenteManager.length + enAttenteRh.length}</p>
-          <p className="mt-1 text-xs text-slate-600">demande(s) à traiter</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Approuvés ce mois</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{approuvesCeMois.length}</p>
-          <p className="mt-1 text-xs text-slate-600">congé(s) validé(s)</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours pris ce mois</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{joursTotal}</p>
-          <p className="mt-1 text-xs text-slate-600">jours ouvrés cumulés</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Solde moyen équipe</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
-            {soldeMoyenEquipe.toFixed(1)} j
-          </p>
-          <p className="mt-1 text-xs text-slate-600">congés restants / collaborateur</p>
-        </div>
+        <StatCard
+          label="En attente"
+          value={enAttenteManager.length + enAttenteRh.length}
+          sub="demande(s) à traiter"
+          tone={enAttenteManager.length + enAttenteRh.length > 0 ? "warning" : "default"}
+        />
+        <StatCard label="Approuvés ce mois" value={approuvesCeMois.length} sub="congé(s) validé(s)" tone="success" />
+        <StatCard label="Jours pris ce mois" value={joursTotal} sub="jours ouvrés cumulés" />
+        <StatCard label="Solde moyen équipe" value={`${soldeMoyenEquipe.toFixed(1)} j`} sub="congés restants / collaborateur" tone="brand" />
       </div>
 
       {/* Rappel légal */}

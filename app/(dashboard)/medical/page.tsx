@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { MedicalExamDialog } from "@/components/rh/MedicalExamDialog";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDateLocal } from "@/lib/utils";
 
@@ -43,17 +43,10 @@ export default async function MedicalPage() {
       />
 
       {/* KPI row */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Aptes", value: aptes, color: "text-emerald-600" },
-          { label: "À programmer (30j)", value: aProgrammer, color: aProgrammer > 0 ? "text-amber-600" : "text-slate-900" },
-          { label: "Inaptes / Réserves", value: inaptes, color: inaptes > 0 ? "text-red-600" : "text-slate-900" },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="rounded-xl border border-slate-100 bg-white p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1">{label}</p>
-            <p className={`text-2xl font-bold tabular-nums ${color}`}>{value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-3 gap-4">
+        <StatCard label="Aptes" value={aptes} tone="success" />
+        <StatCard label="À programmer (30j)" value={aProgrammer} tone={aProgrammer > 0 ? "warning" : "default"} />
+        <StatCard label="Inaptes / Réserves" value={inaptes} tone={inaptes > 0 ? "danger" : "default"} />
       </div>
 
       {/* Table */}

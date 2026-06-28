@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { ContractDialog, type ExistingContract } from "@/components/rh/ContractDialog";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 export const dynamic = 'force-dynamic';
@@ -127,27 +127,24 @@ export default async function ContratsPage() {
 
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Contrats actifs</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
-            {tousContrats?.filter((c) => c.statut === "actif").length ?? 0}
-          </p>
-          <p className="mt-1 text-xs text-slate-600">en cours</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Expirant sous 30j</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
-            {contratsExpirants?.length ?? 0}
-          </p>
-          <p className="mt-1 text-xs text-slate-600">à renouveler ou clôturer</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">CDI</p>
-          <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">
-            {tousContrats?.filter((c) => c.type_contrat?.toUpperCase() === "CDI" && c.statut === "actif").length ?? 0}
-          </p>
-          <p className="mt-1 text-xs text-slate-600">contrats permanents</p>
-        </div>
+        <StatCard
+          label="Contrats actifs"
+          value={tousContrats?.filter((c) => c.statut === "actif").length ?? 0}
+          sub="en cours"
+          tone="brand"
+        />
+        <StatCard
+          label="Expirant sous 30j"
+          value={contratsExpirants?.length ?? 0}
+          sub="à renouveler ou clôturer"
+          tone={(contratsExpirants?.length ?? 0) > 0 ? "warning" : "default"}
+        />
+        <StatCard
+          label="CDI"
+          value={tousContrats?.filter((c) => c.type_contrat?.toUpperCase() === "CDI" && c.statut === "actif").length ?? 0}
+          sub="contrats permanents"
+          tone="success"
+        />
       </div>
 
       {/* Alertes expirations */}

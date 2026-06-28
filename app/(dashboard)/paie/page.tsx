@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { PaieDialog } from "@/components/rh/PaieDialog";
 import { PaieStatusButton } from "@/components/rh/PaieStatusButton";
 import Link from "next/link";
@@ -109,21 +109,23 @@ export default async function PaiePage({
       {/* KPI mois courant */}
       {bulletinsMoisSafe.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Masse salariale nette</p>
-            <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseSalariale)}</p>
-            <p className="mt-1 text-xs text-slate-600">{bulletinsMoisSafe.length} bulletin(s) · {currentPeriode}</p>
-          </div>
-          <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Total cotisations (CNPS + ITS)</p>
-            <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{fmt(masseCharges)}</p>
-            <p className="mt-1 text-xs text-slate-600">*** TOTAL DES COTISATIONS *** du mois</p>
-          </div>
-          <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">Bulletins payés</p>
-            <p className="mt-3 text-2xl font-bold text-slate-900 font-mono tabular-nums">{nbPayes}</p>
-            <p className="mt-1 text-xs text-slate-600">sur {bulletinsMoisSafe.length} ce mois</p>
-          </div>
+          <StatCard
+            label="Masse salariale nette"
+            value={fmt(masseSalariale)}
+            sub={`${bulletinsMoisSafe.length} bulletin(s) · ${currentPeriode}`}
+            tone="brand"
+          />
+          <StatCard
+            label="Total cotisations (CNPS + ITS)"
+            value={fmt(masseCharges)}
+            sub="cotisations du mois"
+          />
+          <StatCard
+            label="Bulletins payés"
+            value={nbPayes}
+            sub={`sur ${bulletinsMoisSafe.length} ce mois`}
+            tone="success"
+          />
         </div>
       )}
 

@@ -362,15 +362,15 @@ export function ExecutiveRhCockpit({
           </div>
         </div>
 
-        {/* ── ODOO CONTROL SUB-BAR (VIEW SWITCHER & SMART FILTERS) ── */}
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-2 border-t border-slate-200/80 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-900/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-          
+        {/* ── Barre de contrôle (filtres + vues) — épurée ── */}
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-8 py-2.5 border-t border-slate-200/70 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+
           {/* Group 1: Quick Filter Chips */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider shrink-0">
+            <span className="flex items-center gap-1 text-[10px] font-semibold text-slate-400 uppercase tracking-[0.08em] shrink-0">
               <Filter className="h-3 w-3 text-[#0d9488]" />
-              <span>Filtres</span>
-            </div>
+              Filtres
+            </span>
             <div className="flex items-center gap-1.5">
               {[
                 { id: "all", label: "Tous les salariés" },
@@ -398,12 +398,10 @@ export function ExecutiveRhCockpit({
 
           <div className="hidden sm:block h-4 w-[1px] bg-slate-300 dark:bg-slate-700 mx-1" />
 
-          {/* Group 2: Odoo View Mode Switcher Buttons */}
+          {/* Group 2: View Mode Switcher */}
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
-            <div className="hidden lg:flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200/60 dark:bg-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              <span>Vues</span>
-            </div>
-            <div className="flex items-center gap-1 bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl shadow-inner">
+            <span className="hidden lg:inline text-[10px] font-semibold text-slate-400 uppercase tracking-[0.08em]">Vues</span>
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
               {[
                 { id: "overview", label: "Aperçu", icon: BarChart3 },
                 { id: "kanban", label: "Kanban", icon: Grid },

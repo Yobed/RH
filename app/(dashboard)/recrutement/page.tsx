@@ -4,7 +4,7 @@ import { ScoreCvButton } from "@/components/rh/ScoreCvButton";
 import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
 import { CandidateDialog } from "@/components/rh/CandidateDialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageShell, PageHeader } from "@/components/ui/page-shell";
+import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { CandidateStatusSelect } from "@/components/rh/CandidateStatusSelect";
 import { CandidatePipeline } from "@/components/rh/CandidatePipeline";
 import { RecrutementViewToggle } from "@/components/rh/RecrutementViewToggle";
@@ -66,23 +66,14 @@ export default async function RecrutementPage() {
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Postes ouverts</p>
-          <p className="mt-2 text-3xl font-bold text-slate-900">{postesOuverts}</p>
-          <p className="mt-1 text-xs text-slate-600">offres actives</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Candidats en cours</p>
-          <p className="mt-2 text-3xl font-bold text-slate-900">{candidatsActifs}</p>
-          <p className="mt-1 text-xs text-slate-600">dossiers actifs</p>
-        </div>
-        <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-600">Score IA moyen</p>
-          <p className={`mt-2 text-3xl font-bold font-mono ${scoreMoyen == null ? "text-slate-300" : scoreMoyen >= 80 ? "text-emerald-600" : scoreMoyen >= 60 ? "text-amber-600" : "text-red-500"}`}>
-            {scoreMoyen != null ? scoreMoyen : "—"}
-          </p>
-          <p className="mt-1 text-xs text-slate-600">sur les 10 derniers</p>
-        </div>
+        <StatCard label="Postes ouverts" value={postesOuverts} sub="offres actives" tone="brand" />
+        <StatCard label="Candidats en cours" value={candidatsActifs} sub="dossiers actifs" />
+        <StatCard
+          label="Score IA moyen"
+          value={scoreMoyen != null ? scoreMoyen : "—"}
+          sub="sur les 10 derniers"
+          tone={scoreMoyen == null ? "default" : scoreMoyen >= 80 ? "success" : scoreMoyen >= 60 ? "warning" : "danger"}
+        />
       </div>
 
       {/* Seuils IA */}
