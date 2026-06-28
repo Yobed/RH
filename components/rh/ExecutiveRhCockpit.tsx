@@ -62,6 +62,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { StatCard } from "@/components/ui/page-shell";
 
 interface ExecutiveRhCockpitProps {
   totalActifs: number;
@@ -437,76 +438,49 @@ export function ExecutiveRhCockpit({
         </div>
       </header>
 
-      {/* ════════════════════════════════════════════════════════════════ */}
-      {/* ODOO SMART BUTTONS KPI HEADER                                    */}
-      {/* ════════════════════════════════════════════════════════════════ */}
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 pt-4 pb-1">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {[
-            { 
-              label: "Effectif Filtré", 
-              val: filteredEmployes.length, 
-              sub: activeFilter !== "all" || searchQuery ? "Filtre actif" : "Total sous gestion", 
-              icon: Users, 
-              color: "text-slate-900 dark:text-white", 
-              border: "border-slate-200 dark:border-slate-800", 
-              onClick: () => { setViewMode("list"); setActiveFilter("all"); setSearchQuery(""); } 
-            },
-            { 
-              label: "Congés en Attente", 
-              val: congesEnAttente?.length ?? 0, 
-              sub: "Arbitrages requis", 
-              icon: CalendarCheck2, 
-              color: "text-amber-600", 
-              border: "border-amber-200 dark:border-amber-900/40", 
-              onClick: () => setViewMode("overview") 
-            },
-            { 
-              label: "CDD à Échéance", 
-              val: filteredEmployes.filter(e => e.type_contrat === "CDD").length || cddExpirant, 
-              sub: activeFilter === "cdd" ? "Filtre CDD actif" : "Sous surveillance", 
-              icon: AlertTriangle, 
-              color: "text-rose-600", 
-              border: "border-rose-200 dark:border-rose-900/40", 
-              onClick: () => { setViewMode("kanban"); setKanbanGroupBy("stage"); setActiveFilter("cdd"); } 
-            },
-            { 
-              label: "Postes Ouverts", 
-              val: postesOuverts, 
-              sub: "Recrutement actif", 
-              icon: UserCheck2, 
-              color: "text-amber-600", 
-              border: "border-amber-200 dark:border-amber-900/40", 
-              onClick: () => { setViewMode("kanban"); setKanbanGroupBy("department"); } 
-            },
-            { 
-              label: "Conformité RH", 
-              val: `${Math.round(complianceScore)}%`, 
-              sub: "Audit CNPS & Légal", 
-              icon: ShieldCheck, 
-              color: "text-emerald-600", 
-              border: "border-emerald-200 dark:border-emerald-900/40", 
-              onClick: () => setViewMode("pivot") 
-            },
-          ].map((item, idx) => {
-            const IconComponent = item.icon;
-            return (
-              <button
-                key={idx}
-                onClick={item.onClick}
-                className={`bg-white dark:bg-slate-900 p-3.5 rounded-xl border ${item.border} shadow-2xs hover:shadow-md hover:border-[#0d9488]/50 transition-all text-left flex items-center justify-between group cursor-pointer`}
-              >
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{item.label}</span>
-                  <span className={`text-lg font-bold ${item.color} tracking-tight block mt-0.5`}>{item.val}</span>
-                  <span className="text-[10px] font-bold text-slate-500 block mt-0.5">{item.sub}</span>
-                </div>
-                <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 group-hover:bg-[#0d9488]/10 flex items-center justify-center text-slate-400 group-hover:text-[#0d9488] transition-colors shrink-0">
-                  <IconComponent className="h-4 w-4" />
-                </div>
-              </button>
-            );
-          })}
+      {/* ── Indicateurs clés (StatCards éditoriales, cliquables) ── */}
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-8 pt-6 pb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <StatCard
+            label="Effectif filtré"
+            value={filteredEmployes.length}
+            sub={activeFilter !== "all" || searchQuery ? "Filtre actif" : "Total sous gestion"}
+            icon={<Users className="h-4 w-4" />}
+            tone="brand"
+            onClick={() => { setViewMode("list"); setActiveFilter("all"); setSearchQuery(""); }}
+          />
+          <StatCard
+            label="Congés en attente"
+            value={congesEnAttente?.length ?? 0}
+            sub="Arbitrages requis"
+            icon={<CalendarCheck2 className="h-4 w-4" />}
+            tone="warning"
+            onClick={() => setViewMode("overview")}
+          />
+          <StatCard
+            label="CDD à échéance"
+            value={filteredEmployes.filter((e) => e.type_contrat === "CDD").length || cddExpirant}
+            sub={activeFilter === "cdd" ? "Filtre CDD actif" : "Sous surveillance"}
+            icon={<AlertTriangle className="h-4 w-4" />}
+            tone="danger"
+            onClick={() => { setViewMode("kanban"); setKanbanGroupBy("stage"); setActiveFilter("cdd"); }}
+          />
+          <StatCard
+            label="Postes ouverts"
+            value={postesOuverts}
+            sub="Recrutement actif"
+            icon={<UserCheck2 className="h-4 w-4" />}
+            tone="default"
+            onClick={() => { setViewMode("kanban"); setKanbanGroupBy("department"); }}
+          />
+          <StatCard
+            label="Conformité RH"
+            value={`${Math.round(complianceScore)}%`}
+            sub="Audit CNPS & Légal"
+            icon={<ShieldCheck className="h-4 w-4" />}
+            tone="success"
+            onClick={() => setViewMode("pivot")}
+          />
         </div>
       </div>
 
