@@ -251,16 +251,16 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
           </div>
 
           {/* Dynamic Presentation Layout Switcher */}
-          <div className="bg-slate-900/90 p-2 rounded-2xl border border-white/15 backdrop-blur-xl flex flex-wrap lg:flex-nowrap items-center gap-2 self-start lg:self-center shadow-2xl">
+          <div className="bg-slate-950/90 p-2 rounded-2xl border border-white/20 backdrop-blur-xl flex flex-wrap lg:flex-nowrap items-center gap-2 self-start lg:self-center shadow-2xl">
             <button
               onClick={() => setPresentationMode("split_kiosk")}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 presentationMode === "split_kiosk"
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
-              <Camera className="w-4 h-4" />
+              <Camera className="w-4 h-4 text-emerald-400" />
               <span>Vue Borne Kiosque</span>
             </button>
 
@@ -269,10 +269,10 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 presentationMode === "cards_feed"
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
               <span>Vue Grille Cartes Live</span>
             </button>
 
@@ -281,10 +281,10 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 presentationMode === "audit_table"
                   ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
-              <Clock className="w-4 h-4" />
+              <Clock className="w-4 h-4 text-emerald-400" />
               <span>Vue Registre Table</span>
             </button>
           </div>

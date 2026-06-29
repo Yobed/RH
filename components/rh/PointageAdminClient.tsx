@@ -102,16 +102,16 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
           </div>
 
           {/* Radiant View Switcher Tabs */}
-          <div className="flex items-center bg-slate-950/60 p-1.5 rounded-xl border border-white/10 backdrop-blur-md self-start sm:self-auto shadow-inner">
+          <div className="flex items-center bg-slate-950/80 p-1.5 rounded-xl border border-white/20 backdrop-blur-md self-start sm:self-auto shadow-inner gap-1.5">
             <button
               onClick={() => setActiveTab("biometric")}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
                 activeTab === "biometric"
-                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400/50"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-3.5 h-3.5 text-emerald-400" />
               <span>Borne & Scan Facialis</span>
             </button>
 
@@ -119,11 +119,11 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
               onClick={() => setActiveTab("weekly")}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
                 activeTab === "weekly"
-                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400/50"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
-              <Calendar className="w-3.5 h-3.5" />
+              <Calendar className="w-3.5 h-3.5 text-emerald-400" />
               <span>Synthèse Hebdomadaire</span>
             </button>
           </div>
