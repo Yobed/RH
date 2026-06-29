@@ -23,7 +23,8 @@ import {
   RefreshCw,
   User,
   SlidersHorizontal,
-  ChevronRight
+  ChevronRight,
+  Activity
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -199,6 +200,8 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
     }
   };
 
+  const [presentationMode, setPresentationMode] = useState<"split_kiosk" | "cards_feed" | "audit_table">("split_kiosk");
+
   const filteredLogs = useMemo(() => {
     return logs.filter(log => {
       const matchesSearch = 
@@ -221,279 +224,296 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
   }, [logs]);
 
   const typeConfig = {
-    arrivee: { label: "Arrivée Matin", icon: Sun, badgeClass: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800" },
-    pause: { label: "Pause Déjeuner", icon: Coffee, badgeClass: "bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-800" },
-    reprise: { label: "Reprise Travail", icon: Briefcase, badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800" },
-    depart: { label: "Départ Soir", icon: Moon, badgeClass: "bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-950/40 dark:text-slate-300 dark:border-slate-800" }
+    arrivee: { label: "Arrivée Matin", icon: Sun, badgeClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 ring-1 ring-amber-500/20" },
+    pause: { label: "Pause Déjeuner", icon: Coffee, badgeClass: "bg-teal-500/15 text-teal-700 dark:text-teal-300 border-teal-500/30 ring-1 ring-teal-500/20" },
+    reprise: { label: "Reprise Travail", icon: Briefcase, badgeClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 ring-1 ring-emerald-500/20" },
+    depart: { label: "Départ Soir", icon: Moon, badgeClass: "bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30 ring-1 ring-slate-500/20" }
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Hero Banner with 3D Illustration */}
-      <div className="pro-card p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 text-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="max-w-xl space-y-3 z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            Terminal En Ligne • Station #01 Abidjan
+      {/* Top Hero Banner & Layout Switcher Bar */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/80 p-6 sm:p-8 text-white shadow-xl">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold ring-1 ring-emerald-500/30 shadow-inner">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+              Station Biométrique Faciale 3D • Mode Haute Précision
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+              Terminal Facialis HQ
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Choisissez votre mise en page préférentielle pour superviser les pointeuses, déclencher des scans en direct et analyser le flux de présence.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Borne Biométrique Faciale
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Authentification faciale instantanée. Les pointages sont vérifiés automatiquement et enregistrés en temps réel dans le registre d'horodatage.
-          </p>
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            {employees && employees.length > 0 && (
-              <select
-                value={selectedEmployeeForScan}
-                onChange={(e) => setSelectedEmployeeForScan(e.target.value)}
-                className="bg-slate-800 text-xs font-medium text-slate-200 px-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="">-- Mode Libre / Wilfried KOUASSI --</option>
-                {employees.map(emp => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.full_name} ({emp.poste || "Salarié"})
-                  </option>
-                ))}
-              </select>
-            )}
+
+          {/* Dynamic Presentation Layout Switcher */}
+          <div className="bg-slate-900/90 p-2 rounded-2xl border border-white/15 backdrop-blur-xl flex flex-wrap lg:flex-nowrap items-center gap-2 self-start lg:self-center shadow-2xl">
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-sm"
+              onClick={() => setPresentationMode("split_kiosk")}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                presentationMode === "split_kiosk"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
             >
-              <Camera className="h-4 w-4" />
-              <span>Lancer le Scan Faciale</span>
+              <Camera className="w-4 h-4" />
+              <span>Vue Borne Kiosque</span>
+            </button>
+
+            <button
+              onClick={() => setPresentationMode("cards_feed")}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                presentationMode === "cards_feed"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>Vue Grille Cartes Live</span>
+            </button>
+
+            <button
+              onClick={() => setPresentationMode("audit_table")}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                presentationMode === "audit_table"
+                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <Clock className="w-4 h-4" />
+              <span>Vue Registre Table</span>
             </button>
           </div>
         </div>
-
-        <div className="w-48 sm:w-64 shrink-0 z-10 flex justify-center">
-          <img
-            src="/images/biometric_terminal_hero.png"
-            alt="Biometric Terminal Illustration"
-            className="w-full h-auto object-contain drop-shadow-2xl"
-          />
-        </div>
       </div>
 
-      {/* KPI Cards Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="pro-card p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Pointages Jour</span>
-            <Clock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
-            {stats.total}
-          </div>
-          <span className="text-xs text-slate-500 mt-1 block">Enregistrements actifs</span>
-        </div>
+      {/* Dynamic Layout Rendering based on presentationMode */}
+      {presentationMode === "split_kiosk" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column (5 Cols): Interactive Kiosk & Terminal Control Station */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-b from-slate-900 via-slate-900 to-slate-950 p-6 text-white shadow-xl dark:border-slate-800">
+              <div className="absolute top-0 right-0 h-32 w-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+              
+              <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Borne Faciale #01</span>
+                </div>
+                <span className="text-xs font-mono text-slate-400">{format(new Date(), "HH:mm:ss")}</span>
+              </div>
 
-        <div className="pro-card p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Précision Biométrique</span>
-            <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          </div>
-          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-            {stats.avgMatch}%
-          </div>
-          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1 block flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3 inline" /> Détection 3D conforme
-          </span>
-        </div>
+              {/* Terminal Camera View Simulation */}
+              <div className="relative aspect-4/3 rounded-2xl bg-slate-950 border border-emerald-500/30 overflow-hidden flex flex-col items-center justify-center p-6 text-center shadow-inner group">
+                <div className="absolute inset-4 border-2 border-dashed border-emerald-500/40 rounded-xl pointer-events-none animate-pulse" />
+                <img
+                  src="/images/biometric_terminal_hero.png"
+                  alt="Biometric Terminal"
+                  className="w-36 h-36 object-contain drop-shadow-2xl mb-3 group-hover:scale-105 transition-transform"
+                />
+                <p className="text-xs font-bold text-slate-200">Reconnaissance Faciale 3D Active</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">Placez le visage face à la caméra</p>
 
-        <div className="pro-card p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Arrivées Valides</span>
-            <UserCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
-            {stats.arrivees}
-          </div>
-          <span className="text-xs text-slate-500 mt-1 block">Collaborateurs identifiés</span>
-        </div>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="mt-4 px-6 py-3 rounded-xl bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>DÉCLENCHER LE SCAN EN DIRECT</span>
+                </button>
+              </div>
 
-        <div className="pro-card p-4">
-          <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Retards</span>
-            <AlertCircle className="h-4 w-4 text-slate-400" />
-          </div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">
-            {stats.retard}
-          </div>
-          <span className="text-xs text-slate-500 mt-1 block">Écarts comptabilisés</span>
-        </div>
-      </div>
-
-      {/* Main Historical Table Workspace */}
-      <div className="pro-card overflow-hidden space-y-0">
-        {/* Toolbar & Filters */}
-        <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-800/20">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-              Registre des Scans
-            </h3>
-            <p className="text-xs text-slate-500">Historique horodaté des entrées et sorties</p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Rechercher salarié, matricule..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 pr-3 py-2 text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl w-48 sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#059669]"
-              />
+              {/* Employee Selector Form */}
+              <div className="mt-5 space-y-2">
+                <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Sélectionner un Collaborateur pour Test</label>
+                {employees && employees.length > 0 && (
+                  <select
+                    value={selectedEmployeeForScan}
+                    onChange={(e) => setSelectedEmployeeForScan(e.target.value)}
+                    className="w-full bg-slate-800/90 text-xs font-medium text-slate-100 px-3.5 py-2.5 rounded-xl border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="">-- Mode Automatique / Wilfried KOUASSI --</option>
+                    {employees.map(emp => (
+                      <option key={emp.id} value={emp.id}>
+                        {emp.full_name} ({emp.poste || "Salarié"})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
             </div>
 
-            {/* Type Filter */}
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#059669]"
-            >
-              <option value="all">Tous les Types</option>
-              <option value="arrivee">Arrivées Matin</option>
-              <option value="pause">Pauses Déjeuner</option>
-              <option value="reprise">Reprises Travail</option>
-              <option value="depart">Départs Soir</option>
-            </select>
+            {/* Quick Gauges Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 shadow-2xs">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Précision Biométrique</p>
+                <h4 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{stats.avgMatch}%</h4>
+                <p className="text-[11px] text-slate-500 mt-0.5">Algorithme 3D conforme</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 shadow-2xs">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Scans Jour</p>
+                <h4 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.total}</h4>
+                <p className="text-[11px] text-slate-500 mt-0.5">Enregistrements actifs</p>
+              </div>
+            </div>
+          </div>
 
-            <button
-              onClick={() => toast.info("Exportation du registre biométrique en format CSV/Excel...")}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Exporter</span>
-            </button>
+          {/* Right Column (7 Cols): Real-Time Stream Feed Cards */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-emerald-500" />
+                  Flux des Pointages en Temps Réel
+                </h3>
+                <p className="text-xs text-slate-500">Dernières vérifications faciales certifiées</p>
+              </div>
+              <button
+                onClick={fetchRealLogs}
+                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-all text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+                <span>Actualiser</span>
+              </button>
+            </div>
+
+            {/* Stream Feed Cards */}
+            <div className="space-y-3">
+              {filteredLogs.map((log) => {
+                const typeInfo = typeConfig[log.type];
+                const TypeIcon = typeInfo.icon;
+                return (
+                  <div key={log.id} className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 shadow-2xs hover:border-emerald-500/40 transition-all">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3.5">
+                        <div className="h-11 w-11 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
+                          {log.employeeName.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-sm text-slate-900 dark:text-white">{log.employeeName}</h4>
+                            <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                              {log.employeeId}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500">{log.role} • {log.department}</p>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700 inline-block">
+                          {log.timestamp}
+                        </span>
+                        <div className="mt-1 flex items-center justify-end gap-1.5">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${typeInfo.badgeClass}`}>
+                            <TypeIcon className="w-3 h-3" />
+                            {typeInfo.label}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
+      )}
 
-        {/* Table List */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 text-[11px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-slate-400">
-                <th className="py-3.5 px-4">Horodatage & Date</th>
-                <th className="py-3.5 px-4">Collaborateur & Matricule</th>
-                <th className="py-3.5 px-4">Type de Pointage</th>
-                <th className="py-3.5 px-4">Authentification IA</th>
-                <th className="py-3.5 px-4">Localisation Borne</th>
-                <th className="py-3.5 px-4">Ponctualité</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-              {filteredLogs.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-400">
-                    <Clock className="h-10 w-10 mx-auto mb-2 opacity-30" />
-                    <p className="text-sm font-medium">Aucun enregistrement trouvé pour ces critères.</p>
-                  </td>
+      {/* PRESENTATION MODE 2: CARDS GRID */}
+      {presentationMode === "cards_feed" && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredLogs.map((log) => {
+              const typeInfo = typeConfig[log.type];
+              const TypeIcon = typeInfo.icon;
+              return (
+                <div key={log.id} className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 shadow-2xs hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-slate-800 to-slate-950 text-emerald-400 flex items-center justify-center font-black text-lg shadow-inner ring-1 ring-white/10">
+                        {log.employeeName.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-white">{log.employeeName}</h4>
+                        <p className="text-xs text-slate-500">{log.role}</p>
+                      </div>
+                    </div>
+                    <span className="font-mono text-xs font-extrabold bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg text-slate-800 dark:text-slate-200">
+                      {log.timestamp}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${typeInfo.badgeClass}`}>
+                      <TypeIcon className="w-3.5 h-3.5" />
+                      {typeInfo.label}
+                    </span>
+                    <button
+                      onClick={() => setSelectedLog(log)}
+                      className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Détails</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* PRESENTATION MODE 3: AUDIT TABLE */}
+      {presentationMode === "audit_table" && (
+        <div className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 overflow-hidden shadow-2xs">
+          <div className="p-4 bg-slate-50/50 dark:bg-slate-800/20 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Registre Complet d'Horodatage</h3>
+            <span className="text-xs text-slate-500">{filteredLogs.length} enregistrements certifiés</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 text-[11px] uppercase tracking-wider font-extrabold text-slate-500 dark:text-slate-400">
+                  <th className="py-3.5 px-4">Horodatage</th>
+                  <th className="py-3.5 px-4">Collaborateur</th>
+                  <th className="py-3.5 px-4">Type</th>
+                  <th className="py-3.5 px-4">Match IA</th>
+                  <th className="py-3.5 px-4">Localisation</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
-              ) : (
-                filteredLogs.map((log) => {
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                {filteredLogs.map((log) => {
                   const typeInfo = typeConfig[log.type];
                   const TypeIcon = typeInfo.icon;
-
                   return (
-                    <tr 
-                      key={log.id} 
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group"
-                    >
-                      {/* Horodatage */}
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-slate-900 dark:text-white text-sm bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
-                            {log.timestamp}
-                          </span>
-                          <span className="text-[11px] text-slate-500 font-medium">
-                            {format(new Date(log.date), "dd MMM yyyy", { locale: fr })}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Collaborateur */}
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-teal-500 to-[#059669] text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                            {log.employeeName.charAt(0)}
-                          </div>
-                          <div>
-                            <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                              {log.employeeName}
-                              <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.2 rounded">
-                                {log.employeeId}
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-slate-500 font-medium">
-                              {log.role} • <span className="text-slate-400">{log.department}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Type de pointage */}
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${typeInfo.badgeClass}`}>
-                          <TypeIcon className="h-3.5 w-3.5" />
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">{log.timestamp}</td>
+                      <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{log.employeeName}</td>
+                      <td className="py-3.5 px-4">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${typeInfo.badgeClass}`}>
+                          <TypeIcon className="w-3 h-3" />
                           {typeInfo.label}
                         </span>
                       </td>
-
-                      {/* Authentification Biométrique */}
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-extrabold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                            <ShieldCheck className="h-3 w-3" />
-                            Match {log.matchScore}%
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-medium">{log.verificationMethod}</span>
-                        </div>
-                      </td>
-
-                      {/* Localisation */}
-                      <td className="py-3.5 px-4 whitespace-nowrap text-slate-600 dark:text-slate-300 font-medium">
-                        <div className="flex items-center gap-1 text-[11px]">
-                          <MapPin className="h-3.5 w-3.5 text-slate-400" />
-                          {log.location}
-                        </div>
-                      </td>
-
-                      {/* Ponctualité */}
-                      <td className="py-3.5 px-4 whitespace-nowrap">
-                        {log.status === "retard" ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
-                            <AlertCircle className="h-3 w-3" /> Retard léger
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
-                            <CheckCircle2 className="h-3 w-3" /> À l'heure
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Action */}
-                      <td className="py-3.5 px-4 whitespace-nowrap text-right">
-                        <button
-                          onClick={() => setSelectedLog(log)}
-                          className="px-2.5 py-1 rounded-lg text-xs font-semibold text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/50 transition-colors inline-flex items-center gap-1"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          <span>Inspecter</span>
-                        </button>
+                      <td className="py-3.5 px-4 text-emerald-600 font-bold">{log.matchScore}%</td>
+                      <td className="py-3.5 px-4 text-slate-500">{log.location}</td>
+                      <td className="py-3.5 px-4 text-right">
+                        <button onClick={() => setSelectedLog(log)} className="text-teal-600 font-bold hover:underline cursor-pointer">Inspecter</button>
                       </td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Biometric Scan Trigger Modal */}
       <FacialPointageModal

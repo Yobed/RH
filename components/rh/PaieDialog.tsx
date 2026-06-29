@@ -354,16 +354,17 @@ export function PaieDialog({
       )}
 
       <DialogContent className="sm:max-w-2xl overflow-y-auto max-h-[90vh] bg-white border-slate-200 p-0">
-        <DialogHeader className="px-6 pt-5 pb-4 border-b border-slate-100">
-          <DialogTitle className="text-base font-semibold text-slate-800">
-            {isEdit ? `Modifier le bulletin — ${bulletin!.periode}` : "Nouveau bulletin de paie"}
+        <DialogHeader className="px-6 pt-5 pb-4 border-b border-slate-100 bg-slate-900 text-white rounded-t-lg">
+          <DialogTitle className="text-base font-black text-white flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            {isEdit ? `Modifier le bulletin — ${bulletin!.periode}` : "Nouveau bulletin de paie SAGE / SYSCOHADA"}
           </DialogTitle>
           {isEdit && (
-            <p className="text-xs text-slate-500 mt-0.5">{bulletin!.employee_name}</p>
+            <p className="text-xs text-slate-300 mt-0.5">{bulletin!.employee_name}</p>
           )}
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-5 space-y-6">
 
           {/* Employé + Période */}
           {!isEdit && (
@@ -387,10 +388,10 @@ export function PaieDialog({
           )}
 
           {/* ── ÉLÉMENTS DE SALAIRE ─────────────────────────────────── */}
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
-              Éléments de salaire
-            </p>
+          <div className="space-y-4">
+            <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 font-black text-xs inline-flex items-center gap-2">
+              01. Éléments de Rémunération Brute
+            </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               {/* 01 — Salaire catégoriel : dropdown grille + saisie libre */}
@@ -544,10 +545,10 @@ export function PaieDialog({
           </div>
 
           {/* ── HEURES SUPPLÉMENTAIRES ───────────────────────────────── */}
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
-              Heures Supplémentaires
-            </p>
+          <div className="space-y-4">
+            <div className="px-3.5 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-800 dark:text-teal-300 font-black text-xs inline-flex items-center gap-2">
+              02. Majorations &amp; Heures Supplémentaires
+            </div>
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
                 <label className="text-xs font-medium text-slate-700">HS 15% (Jours ouvrables)</label>
@@ -568,10 +569,10 @@ export function PaieDialog({
           </div>
 
           {/* ── RETENUES DIVERSES ────────────────────────────────────── */}
-          <div className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-100 pb-2">
-              Retenues
-            </p>
+          <div className="space-y-4">
+            <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-black text-xs inline-flex items-center gap-2">
+              03. Deductions &amp; Retenues Prélevées
+            </div>
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
                 <label className="text-xs font-medium text-slate-700">Autres retenues (FCFA)</label>

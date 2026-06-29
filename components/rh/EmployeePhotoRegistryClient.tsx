@@ -148,9 +148,44 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* 1. Dashboard KPI Cards with Radiant Accents */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-8">
+      {/* Banner Exécutif Trombinoscope Haute Éclat */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-r from-slate-900 via-slate-900 to-teal-950 p-8 shadow-xl text-white dark:border-slate-800">
+        <div className="absolute top-0 right-0 h-48 w-48 bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between relative z-10">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-500/30 text-teal-300 text-xs font-bold uppercase tracking-wider">
+              <Sparkle weight="fill" className="w-3.5 h-3.5 text-teal-400" /> REGISTRE BIOMÉTRIQUE & TROMBINOSCOPE
+            </div>
+            <h1 className="font-black text-2xl sm:text-3xl tracking-tight text-white flex items-center gap-3">
+              Identités Visuelles & Conformité 3D
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              Gestion centralisée des photos de profil numérisées pour l'habilitation au pointage biométrique facial et le trombinoscope d'entreprise.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
+            <div className="text-right">
+              <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Taux de Conformité</span>
+              <span className="font-black text-2xl text-teal-400">{stats.pct}% <span className="text-xs font-semibold text-slate-400">numérisé</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Titre en Gros Plan avec Fond en Surbrillance - Dashboard KPI */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 border border-teal-500/30 text-teal-700 dark:text-teal-300 font-black text-lg shadow-xs flex items-center gap-2">
+            <IdentificationBadge weight="bold" className="w-5 h-5 text-teal-600" />
+            01. Indicateurs de Couverture Visuelle
+          </div>
+          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+        </div>
+
+        {/* 1. Dashboard KPI Cards with Radiant Accents */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 relative overflow-hidden group hover:border-slate-300 transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
@@ -209,9 +244,20 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           </div>
         </div>
       </div>
+      </div>
 
-      {/* 2. Control Bar (Filters & Search & View Modes) */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Titre en Gros Plan avec Fond en Surbrillance - Section 02 Registre */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-black text-lg shadow-xs flex items-center gap-2">
+            <SquaresFour weight="bold" className="w-5 h-5 text-emerald-600" />
+            02. Filtres & Registre des Salariés
+          </div>
+          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+        </div>
+
+        {/* 2. Control Bar (Filters & Search & View Modes) */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-4 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
           <MagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} weight="bold" />
@@ -313,6 +359,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             </button>
           </div>
         </div>
+      </div>
       </div>
 
       {/* 3. Main Data Content Area */}

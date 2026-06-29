@@ -433,114 +433,137 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Banner Exécutif de Synthèse */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <TrendUp weight="bold" className="h-4 w-4" />
-              </span>
-              <h2 className="font-display text-base font-bold text-slate-900 dark:text-white">
-                Cockpit d&apos;Analyse du Turnover & Rétention
-              </h2>
+    <div className="space-y-8">
+      {/* Banner Exécutif de Synthèse Haute Éclat */}
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-r from-slate-900 via-slate-900 to-emerald-950 p-8 shadow-xl text-white dark:border-slate-800">
+        <div className="absolute top-0 right-0 h-48 w-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between relative z-10">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+              <Sparkle weight="fill" className="w-3.5 h-3.5" /> IA PRÉDICTIVE RH & RÉTENTION
             </div>
-            <p className="text-xs text-slate-500 max-w-2xl">
+            <h1 className="font-black text-2xl sm:text-3xl tracking-tight text-white flex items-center gap-3">
+              Cockpit d'Analyse du Turnover
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
               Surveillance proactive des signaux faibles de démission pour préserver le capital humain et réduire les coûts de recrutement.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4 md:border-t-0 md:pt-0 dark:border-slate-800">
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-800/50">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
               <div className="text-right">
-                <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Indice Moyen</span>
-                <span className="font-display text-lg font-bold text-slate-900 dark:text-white">{avgScore} / 100</span>
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Indice Moyen Rétention</span>
+                <span className="font-black text-2xl text-emerald-400">{avgScore} <span className="text-xs font-semibold text-slate-400">/ 100</span></span>
               </div>
             </div>
 
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-2xs transition-all hover:bg-slate-50 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+              className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-5 py-3.5 text-xs font-black text-white shadow-lg shadow-emerald-500/25 transition-all active:scale-95 cursor-pointer"
             >
-              <DownloadSimple weight="bold" className="h-4 w-4 text-emerald-600" />
-              Exporter l&apos;Analyse (CSV)
+              <DownloadSimple weight="bold" className="h-4 w-4" />
+              Exporter l'Analyse (CSV)
             </button>
           </div>
         </div>
       </div>
 
-      {/* Cards de résumé cliquables */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard
-          label="Critique"
-          value={counts.critique}
-          sub="≥ 70 pts · Action urgente"
-          tone="danger"
-          onClick={() => setFilter(filter === "critique" ? "tous" : "critique")}
-        />
-        <StatCard
-          label="Élevé"
-          value={counts.eleve}
-          sub="45 – 69 pts · Vigilance RH"
-          tone="warning"
-          onClick={() => setFilter(filter === "eleve" ? "tous" : "eleve")}
-        />
-        <StatCard
-          label="Modéré"
-          value={counts.modere}
-          sub="20 – 44 pts · Suivi régulier"
-          tone="warning"
-          onClick={() => setFilter(filter === "modere" ? "tous" : "modere")}
-        />
-        <StatCard
-          label="Faible"
-          value={counts.faible}
-          sub="< 20 pts · Profils stables"
-          tone="success"
-          onClick={() => setFilter(filter === "faible" ? "tous" : "faible")}
-        />
+      {/* SECTION 1: Titre en Gros Plan avec Fond en Surbrillance - Répartition des Risques */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-black text-lg shadow-xs flex items-center gap-2">
+            <TrendUp weight="bold" className="w-5 h-5 text-emerald-500" />
+            01. Synthèse Globale des Niveaux d'Alerte
+          </div>
+          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+        </div>
+
+        {/* Cards de résumé cliquables */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <StatCard
+            label="Critique"
+            value={counts.critique}
+            sub="≥ 70 pts · Action urgente"
+            tone="danger"
+            onClick={() => setFilter(filter === "critique" ? "tous" : "critique")}
+          />
+          <StatCard
+            label="Élevé"
+            value={counts.eleve}
+            sub="45 – 69 pts · Vigilance RH"
+            tone="warning"
+            onClick={() => setFilter(filter === "eleve" ? "tous" : "eleve")}
+          />
+          <StatCard
+            label="Modéré"
+            value={counts.modere}
+            sub="20 – 44 pts · Suivi régulier"
+            tone="warning"
+            onClick={() => setFilter(filter === "modere" ? "tous" : "modere")}
+          />
+          <StatCard
+            label="Faible"
+            value={counts.faible}
+            sub="< 20 pts · Profils stables"
+            tone="success"
+            onClick={() => setFilter(filter === "faible" ? "tous" : "faible")}
+          />
+        </div>
       </div>
 
-      {/* Top 5 à surveiller en priorité */}
+      {/* SECTION 2: Top 5 à surveiller en priorité */}
       {top5.length > 0 && (
-        <div className="rounded-2xl border border-rose-200/80 bg-rose-50/30 p-5 dark:border-rose-900/40 dark:bg-rose-950/20">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <WarningOctagon weight="fill" className="h-4 w-4 text-rose-600 dark:text-rose-400" />
-              <p className="text-xs font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400">
-                Alerte Rétention — Top {top5.length} des collaborateurs les plus vulnérables
-              </p>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="px-4 py-2 rounded-2xl bg-rose-500/10 dark:bg-rose-500/20 border border-rose-500/30 text-rose-700 dark:text-rose-300 font-black text-lg shadow-xs flex items-center gap-2">
+              <WarningOctagon weight="fill" className="w-5 h-5 text-rose-600 dark:text-rose-400" />
+              02. Urgent — Top {top5.length} des Collaborateurs à Risque Vulnérable
             </div>
+            <div className="h-px flex-1 bg-linear-to-r from-rose-200 to-transparent dark:from-rose-900/40" />
           </div>
-          <div className="flex flex-wrap gap-2.5">
-            {top5.map((emp) => (
-              <button
-                key={emp.employee_id}
-                onClick={() => {
-                  setFilter("tous");
-                  setSelectedDept("tous");
-                  setSearch("");
-                  setExpanded(emp.employee_id);
-                }}
-                className="flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-left shadow-2xs transition-all hover:border-emerald-500/50 hover:shadow-xs dark:border-slate-800 dark:bg-slate-900"
-              >
-                <Avatar src={emp.photo_url} name={emp.full_name} size={26} rounded="full" />
-                <div>
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{emp.full_name}</p>
-                  <p className="text-[10px] text-slate-400">{emp.poste}</p>
-                </div>
-                <span className={`ml-1 rounded-md px-1.5 py-0.5 font-display text-xs font-bold tabular-nums ${RISK_LEVEL_META[emp.niveau].text}`}>
-                  {emp.score} pts
-                </span>
-              </button>
-            ))}
+
+          <div className="rounded-3xl border border-rose-200/80 bg-linear-to-br from-rose-50/50 via-white to-rose-50/30 p-6 shadow-sm dark:border-rose-900/40 dark:bg-rose-950/20">
+            <div className="flex flex-wrap gap-3">
+              {top5.map((emp) => (
+                <button
+                  key={emp.employee_id}
+                  onClick={() => {
+                    setFilter("tous");
+                    setSelectedDept("tous");
+                    setSearch("");
+                    setExpanded(emp.employee_id);
+                  }}
+                  className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 text-left shadow-2xs transition-all hover:border-emerald-500 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 cursor-pointer"
+                >
+                  <Avatar src={emp.photo_url} name={emp.full_name} size={32} rounded="full" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white">{emp.full_name}</p>
+                    <p className="text-[10px] text-slate-500">{emp.poste}</p>
+                  </div>
+                  <span className={`ml-2 rounded-lg px-2 py-1 font-mono text-xs font-black tabular-nums ${RISK_LEVEL_META[emp.niveau].badge}`}>
+                    {emp.score} pts
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Collapsible Méthodologie */}
-      <MethodologyCard />
+      {/* SECTION 3: Titre avec Fond en Surbrillance - Registre & Filtrage */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="px-4 py-2 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 border border-teal-500/30 text-teal-700 dark:text-teal-300 font-black text-lg shadow-xs flex items-center gap-2">
+            <Briefcase weight="bold" className="w-5 h-5 text-teal-600" />
+            03. Registre Général d'Audit des Collaborateurs
+          </div>
+          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+        </div>
+
+        {/* Collapsible Méthodologie */}
+        <MethodologyCard />
+      </div>
 
       {/* Barre d'outils de Recherche & Filtres */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
