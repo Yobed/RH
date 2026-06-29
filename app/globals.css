@@ -23,7 +23,7 @@
     --secondary-foreground: 0.22 0.04 260;
 
     --muted: 0.965 0.006 240;
-    --muted-foreground: 0.45 0.02 260;
+    --muted-foreground: 0.18 0.03 260;
 
     --accent: 0.58 0.15 158;
     --accent-foreground: 1 0 0;
@@ -218,6 +218,19 @@ body.dark {
   /* Executive Glass Card surface utility */
   .pro-card {
     @apply rounded-xl border border-slate-200/90 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-200;
+  }
+
+  /* Executive High-Contrast Typography System across ALL pages */
+  body:not(.dark) .text-slate-600,
+  body:not(.dark) .text-slate-500,
+  body:not(.dark) .text-gray-600,
+  body:not(.dark) .text-gray-500 {
+    color: oklch(0.20 0.03 260) !important;
+  }
+
+  body:not(.dark) .text-slate-400,
+  body:not(.dark) .text-gray-400 {
+    color: oklch(0.32 0.03 260) !important;
   }
 }
 
