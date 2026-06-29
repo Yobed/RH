@@ -149,61 +149,61 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* 1. Dashboard KPI Cards */}
+      {/* 1. Dashboard KPI Cards with Radiant Accents */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="pro-card p-5 relative overflow-hidden group hover:border-slate-300 transition-all">
+        <div className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 relative overflow-hidden group hover:border-slate-300 transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Effectif</p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">{stats.total}</h3>
-              <p className="text-xs text-slate-500 mt-1">Salariés enregistrés</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Effectif</p>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{stats.total}</h3>
+              <p className="text-xs text-slate-500 mt-1 font-medium">Salariés enregistrés</p>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 group-hover:scale-110 transition-transform">
+            <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:scale-110 transition-transform shadow-inner">
               <User size={24} weight="bold" />
             </div>
           </div>
         </div>
 
-        <div className="pro-card p-5 border-emerald-200/80 relative overflow-hidden group hover:border-emerald-300 transition-all">
+        <div className="rounded-2xl border border-emerald-500/30 bg-linear-to-br from-emerald-500/10 via-white to-white dark:from-emerald-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-emerald-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-emerald-600">Photos Numérisées</p>
-              <h3 className="text-2xl font-bold text-emerald-700 mt-1">{stats.avecPhoto}</h3>
-              <p className="text-xs text-emerald-600/80 mt-1 font-medium">{stats.pct}% de conformité</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Photos Numérisées</p>
+              <h3 className="text-2xl font-black text-emerald-700 dark:text-emerald-300 mt-1 tabular-nums">{stats.avecPhoto}</h3>
+              <p className="text-xs text-emerald-600/90 dark:text-emerald-400/90 mt-1 font-bold">{stats.pct}% de conformité</p>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+            <div className="h-12 w-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shadow-inner ring-1 ring-emerald-500/30">
               <CheckCircle size={26} weight="bold" />
             </div>
           </div>
-          <div className="w-full bg-emerald-100 h-1.5 rounded-full mt-3 overflow-hidden">
-            <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${stats.pct}%` }} />
+          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden p-0.5 border border-slate-200/50 dark:border-slate-700">
+            <div className="bg-linear-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.pct}%` }} />
           </div>
         </div>
 
-        <div className="pro-card p-5 border-amber-200/80 relative overflow-hidden group hover:border-amber-300 transition-all">
+        <div className="rounded-2xl border border-amber-500/30 bg-linear-to-br from-amber-500/10 via-white to-white dark:from-amber-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-amber-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-amber-600">Photos Manquantes</p>
-              <h3 className="text-2xl font-bold text-amber-700 mt-1">{stats.sansPhoto}</h3>
-              <p className="text-xs text-amber-600/80 mt-1 font-medium">À régulariser</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">Photos Manquantes</p>
+              <h3 className="text-2xl font-black text-amber-700 dark:text-amber-300 mt-1 tabular-nums">{stats.sansPhoto}</h3>
+              <p className="text-xs text-amber-600/90 dark:text-amber-400/90 mt-1 font-bold">À régulariser</p>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+            <div className="h-12 w-12 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform shadow-inner ring-1 ring-amber-500/30">
               <WarningCircle size={26} weight="bold" />
             </div>
           </div>
-          <div className="w-full bg-amber-100 h-1.5 rounded-full mt-3 overflow-hidden">
-            <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${stats.total > 0 ? ((stats.sansPhoto / stats.total) * 100) : 0}%` }} />
+          <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden p-0.5 border border-slate-200/50 dark:border-slate-700">
+            <div className="bg-linear-to-r from-amber-500 to-orange-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.total > 0 ? ((stats.sansPhoto / stats.total) * 100) : 0}%` }} />
           </div>
         </div>
 
-        <div className="pro-card p-5 border-[#059669]/20 relative overflow-hidden group hover:border-[#059669]/40 transition-all bg-gradient-to-br from-white via-white to-orange-50/30">
+        <div className="rounded-2xl border border-teal-500/30 bg-linear-to-br from-teal-500/10 via-white to-white dark:from-teal-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-teal-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#059669]">Biométrie Prête</p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-1">{stats.avecPhoto} / {stats.total}</h3>
-              <p className="text-xs text-slate-500 mt-1">Éligibles au pointage faciale</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal-600 dark:text-teal-400">Biométrie Prête</p>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{stats.avecPhoto} / {stats.total}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Éligibles au pointage faciale</p>
             </div>
-            <div className="h-12 w-12 rounded-xl bg-orange-50 flex items-center justify-center text-[#059669] group-hover:scale-110 transition-transform border border-[#059669]/20">
+            <div className="h-12 w-12 rounded-2xl bg-teal-500/20 flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform shadow-inner ring-1 ring-teal-500/30">
               <ShieldCheck size={26} weight="bold" />
             </div>
           </div>
