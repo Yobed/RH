@@ -36,33 +36,24 @@ interface PageHeaderProps {
   actions?: React.ReactNode;
 }
 
-// En-tête éditorial : barre d'accent teal + titre display (Jakarta) large,
-// filet de séparation pleine largeur (grille suisse). Une seule hiérarchie partout.
+// En-tête éditorial : le TITRE est le point focal de la page. Eyebrow discret
+// (accent réservé), description calme, filet de séparation. Une hiérarchie nette.
 export function PageHeader({ eyebrow, eyebrowIcon, title, description, help, actions }: PageHeaderProps) {
   return (
-    <header className="flex flex-col gap-5 border-b border-slate-200/70 pb-5 dark:border-slate-800 sm:flex-row sm:items-end sm:justify-between">
-      <div className="relative min-w-0 pl-4">
-        {/* Barre d'accent verticale teal */}
-        <span
-          aria-hidden
-          className="absolute left-0 top-1 h-[calc(100%-0.5rem)] w-1 rounded-full bg-gradient-to-b from-[#059669] to-[#047857]"
-        />
+    <header className="flex flex-col gap-4 border-b border-slate-200 pb-6 dark:border-slate-800 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
         {(eyebrow || help) && (
-          <div className="mb-2 flex items-center gap-2">
-            {eyebrow && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#059669]/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#047857] dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
-                {eyebrowIcon}
-                {eyebrow}
-              </span>
-            )}
+          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">
+            {eyebrowIcon}
+            {eyebrow && <span>{eyebrow}</span>}
             {help && <PageHelp text={help} />}
           </div>
         )}
-        <h1 className="font-display text-[1.7rem] font-bold leading-[1.1] tracking-[-0.02em] text-slate-900 dark:text-white sm:text-[2rem]">
+        <h1 className="font-display text-[1.8rem] font-bold leading-[1.04] tracking-[-0.025em] text-slate-900 dark:text-white sm:text-[2.25rem]">
           {title}
         </h1>
         {description && (
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+          <p className="mt-2.5 max-w-2xl text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
             {description}
           </p>
         )}
@@ -73,7 +64,8 @@ export function PageHeader({ eyebrow, eyebrowIcon, title, description, help, act
   );
 }
 
-// ── Intitulé de section : libellé + filet, pour rythmer une page (style suisse) ──
+// ── Intitulé de section : libellé sobre + filet (séparateur éditorial discret).
+// Pas de bande colorée : les sections ne doivent pas concurrencer le titre de page.
 export function SectionTitle({
   children,
   action,
@@ -84,21 +76,17 @@ export function SectionTitle({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between gap-3 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10",
-        className
-      )}
-    >
-      <h2 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#047857] dark:text-[#2dd4bf]">
+    <div className={cn("flex items-center gap-4", className)}>
+      <h2 className="shrink-0 text-[12px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
         {children}
       </h2>
-      {action}
+      <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
 
-// En-tête de section de formulaire surligné (bande teal) — réutilisable dans les dialogues.
+// En-tête de section de formulaire : libellé sobre + filet (réutilisable dialogues).
 export function FormSection({
   title,
   icon,
@@ -112,7 +100,7 @@ export function FormSection({
 }) {
   return (
     <section className={cn("space-y-3", className)}>
-      <div className="flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:border-slate-800 dark:text-slate-400">
         {icon}
         {title}
       </div>
