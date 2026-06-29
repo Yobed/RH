@@ -16,7 +16,6 @@ const DashboardCharts = dynamic(
 import { DashboardHeroClient } from "@/components/rh/DashboardHeroClient";
 import { AiSuggestionsWidget } from "@/components/rh/AiSuggestionsWidget";
 import { ActionCenter, type ActionItem } from "@/components/rh/ActionCenter";
-import { ChronometreWidget } from "@/components/rh/ChronometreWidget";
 import { MesTachesWidget } from "@/components/rh/MesTachesWidget";
 import { MonCalendrierAbsencesWidget } from "@/components/rh/MonCalendrierAbsencesWidget";
 import { TableauAffichageWidget } from "@/components/rh/TableauAffichageWidget";
@@ -613,20 +612,19 @@ export function ExecutiveRhCockpit({
               <section className="space-y-6">
                 <DashboardSectionHeader
                   title="2. OPÉRATIONNEL & AGENDA DES ÉQUIPES"
-                  subtitle="Calendrier des absences, chronomètre et parcours de formation"
+                  subtitle="Calendrier des absences, tâches et parcours de formation"
                   icon={CalendarCheck2}
                   badge="Quotidien"
                   badgeColor="blue"
                 />
 
                 <div className="space-y-6">
-                  {/* Ligne 1 : Calendrier à gauche (6 cols), Badgeuse & Tâches à droite (6 cols) */}
+                  {/* Ligne 1 : Calendrier des absences (6 cols) & Mes Tâches & Validations RH (6 cols) */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
                     <div className="lg:col-span-6 flex flex-col">
                       <MonCalendrierAbsencesWidget />
                     </div>
-                    <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
-                      <ChronometreWidget />
+                    <div className="lg:col-span-6 flex flex-col">
                       <MesTachesWidget />
                     </div>
                   </div>
