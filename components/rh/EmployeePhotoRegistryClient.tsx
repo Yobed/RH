@@ -150,7 +150,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
   return (
     <div className="space-y-8">
       {/* Banner Exécutif Trombinoscope Haute Éclat */}
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-r from-slate-900 via-slate-900 to-teal-950 p-8 shadow-xl text-white dark:border-slate-800">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-r from-slate-900 via-slate-900 to-teal-950 p-8 shadow-xl text-white dark:border-slate-800">
         <div className="absolute top-0 right-0 h-48 w-48 bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between relative z-10">
           <div className="space-y-2">
@@ -181,7 +181,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             <IdentificationBadge weight="bold" className="w-5 h-5 text-teal-600" />
             01. Indicateurs de Couverture Visuelle
           </div>
-          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+          <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />
         </div>
 
         {/* 1. Dashboard KPI Cards with Radiant Accents */}
@@ -189,17 +189,17 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
         <div className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 relative overflow-hidden group hover:border-slate-300 transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Effectif</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-slate-200">Total Effectif</p>
               <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{stats.total}</h3>
-              <p className="text-xs text-slate-500 mt-1 font-medium">Salariés enregistrés</p>
+              <p className="text-xs text-slate-800 mt-1 font-bold dark:text-slate-300">Salariés enregistrés</p>
             </div>
-            <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 group-hover:scale-110 transition-transform shadow-inner">
+            <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-900 dark:text-slate-100 group-hover:scale-110 transition-transform shadow-inner">
               <User size={24} weight="bold" />
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-emerald-500/30 bg-linear-to-br from-emerald-500/10 via-white to-white dark:from-emerald-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-emerald-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
+        <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-white to-white dark:from-emerald-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-emerald-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Photos Numérisées</p>
@@ -211,11 +211,11 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             </div>
           </div>
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden p-0.5 border border-slate-200/50 dark:border-slate-700">
-            <div className="bg-linear-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.pct}%` }} />
+            <div className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.pct}%` }} />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-amber-500/30 bg-linear-to-br from-amber-500/10 via-white to-white dark:from-amber-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-amber-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
+        <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-white to-white dark:from-amber-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-amber-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">Photos Manquantes</p>
@@ -227,18 +227,18 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             </div>
           </div>
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden p-0.5 border border-slate-200/50 dark:border-slate-700">
-            <div className="bg-linear-to-r from-amber-500 to-orange-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.total > 0 ? ((stats.sansPhoto / stats.total) * 100) : 0}%` }} />
+            <div className="bg-gradient-to-r from-amber-500 to-orange-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.total > 0 ? ((stats.sansPhoto / stats.total) * 100) : 0}%` }} />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-teal-500/30 bg-linear-to-br from-teal-500/10 via-white to-white dark:from-teal-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-teal-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
+        <div className="rounded-2xl border border-teal-500/30 bg-gradient-to-br from-teal-500/10 via-white to-white dark:from-teal-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-teal-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal-600 dark:text-teal-400">Biométrie Prête</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal-700 dark:text-teal-400">Biométrie Prête</p>
               <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{stats.avecPhoto} / {stats.total}</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">Éligibles au pointage faciale</p>
+              <p className="text-xs text-slate-800 dark:text-slate-200 mt-1 font-bold">Éligibles au pointage faciale</p>
             </div>
-            <div className="h-12 w-12 rounded-2xl bg-teal-500/20 flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform shadow-inner ring-1 ring-teal-500/30">
+            <div className="h-12 w-12 rounded-2xl bg-teal-500/20 flex items-center justify-center text-teal-700 dark:text-teal-400 group-hover:scale-110 transition-transform shadow-inner ring-1 ring-teal-500/30">
               <ShieldCheck size={26} weight="bold" />
             </div>
           </div>
@@ -253,7 +253,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             <SquaresFour weight="bold" className="w-5 h-5 text-emerald-600" />
             02. Filtres & Registre des Salariés
           </div>
-          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+          <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />
         </div>
 
         {/* 2. Control Bar (Filters & Search & View Modes) */}
@@ -389,7 +389,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <tr className="border-b border-slate-200 bg-slate-100/90 text-[11px] font-black text-slate-900 uppercase tracking-wider">
                   <th className="py-3.5 px-4">Photo d'identité</th>
                   <th className="py-3.5 px-4">Matricule</th>
                   <th className="py-3.5 px-4">Collaborateur</th>
@@ -434,18 +434,18 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
 
                     {/* Collaborateur */}
                     <td className="py-3 px-4">
-                      <div className="font-bold text-slate-900">{emp.full_name}</div>
-                      <div className="text-[11px] text-slate-500">{emp.email || emp.phone || "Aucun contact"}</div>
+                      <div className="font-extrabold text-slate-900">{emp.full_name}</div>
+                      <div className="text-[11px] font-bold text-slate-700">{emp.email || emp.phone || "Aucun contact"}</div>
                     </td>
 
                     {/* Department & Poste */}
                     <td className="py-3 px-4">
-                      <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-                        <Building size={13} className="text-slate-400" />
+                      <div className="flex items-center gap-1.5 font-extrabold text-slate-900">
+                        <Building size={13} className="text-slate-700" />
                         {emp.departement || "Non affecté"}
                       </div>
-                      <div className="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
-                        <Briefcase size={12} className="text-slate-400" />
+                      <div className="text-[11px] font-bold text-slate-700 flex items-center gap-1.5 mt-0.5">
+                        <Briefcase size={12} className="text-slate-700" />
                         {emp.poste || "—"}
                       </div>
                     </td>
@@ -535,10 +535,10 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               </div>
 
               {/* Info */}
-              <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-wider">{emp.matricule}</span>
-              <h4 className="text-sm font-bold text-slate-900 mt-0.5 line-clamp-1">{emp.full_name}</h4>
-              <p className="text-xs font-semibold text-[#059669] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">{emp.departement || "Département N/A"}</p>
+              <span className="font-mono text-[10px] font-black text-slate-900 uppercase tracking-wider">{emp.matricule}</span>
+              <h4 className="text-sm font-extrabold text-slate-900 mt-0.5 line-clamp-1">{emp.full_name}</h4>
+              <p className="text-xs font-black text-[#059669] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
+              <p className="text-[11px] font-bold text-slate-800 mt-0.5">{emp.departement || "Département N/A"}</p>
 
               {/* Status pill */}
               <div className="mt-3">

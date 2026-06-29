@@ -183,54 +183,78 @@ function EmployeeDetail({
 }) {
   if (row.facteurs.length === 0) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-emerald-200/70 bg-emerald-50/50 px-4 py-3.5 text-xs font-medium text-emerald-800 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-300">
-        <ShieldCheck weight="duotone" className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-        <span>Aucun facteur d&apos;alerte détecté. Le profil présente un niveau de rétention optimal et un engagement stable.</span>
+      <div className="flex items-center gap-3 rounded-2xl border border-emerald-300 bg-emerald-50/80 px-5 py-4 text-xs font-bold text-emerald-900 shadow-xs dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200">
+        <ShieldCheck weight="duotone" className="h-6 w-6 shrink-0 text-emerald-600 dark:text-emerald-400" />
+        <span>Aucun facteur d&apos;alerte détecté. Le profil présente un niveau de rétention optimal et un engagement très stable.</span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-2">
-        {row.facteurs.map((f) => (
-          <div
-            key={f.key}
-            className="flex flex-col justify-between rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs dark:border-slate-800 dark:bg-slate-900"
-          >
-            <div>
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-bold text-slate-900 dark:text-slate-100">{f.label}</p>
-                <span className="shrink-0 rounded-md bg-rose-50 px-2 py-0.5 font-display text-xs font-bold tabular-nums text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">
-                  +{f.points} pts
-                </span>
+    <div className="space-y-4 pt-1 pb-2">
+      <div className="grid gap-4 sm:grid-cols-2">
+        {row.facteurs.map((f) => {
+          const isHighPoints = f.points >= 20;
+          return (
+            <div
+              key={f.key}
+              className={`relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-white p-4 shadow-md transition-all dark:bg-slate-900 ${
+                isHighPoints
+                  ? "border-rose-300 dark:border-rose-900/60 border-l-4 border-l-rose-600"
+                  : "border-amber-300 dark:border-amber-900/60 border-l-4 border-l-amber-500"
+              }`}
+            >
+              <div>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <p className="text-sm font-black text-slate-900 dark:text-white leading-snug">{f.label}</p>
+                    {f.detail && (
+                      <span className="inline-block rounded-md bg-rose-100 dark:bg-rose-950/60 px-2 py-0.5 text-xs font-extrabold text-rose-700 dark:text-rose-300">
+                        {f.detail}
+                      </span>
+                    )}
+                  </div>
+                  <span className="shrink-0 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 px-2.5 py-1 font-mono text-xs font-black tabular-nums text-white shadow-xs">
+                    +{f.points} pts
+                  </span>
+                </div>
+
+                <div className="mt-3.5 flex items-start gap-2.5 rounded-xl border border-amber-200/80 bg-amber-50/80 p-3 dark:border-amber-900/50 dark:bg-amber-950/40">
+                  <Lightbulb weight="fill" className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                  <p className="text-xs leading-relaxed text-slate-800 dark:text-slate-200">
+                    <strong className="font-extrabold text-amber-900 dark:text-amber-300">Recommandation RH : </strong>
+                    {f.recommendation}
+                  </p>
+                </div>
               </div>
-              {f.detail && <p className="mt-0.5 text-[11px] font-semibold text-rose-500">{f.detail}</p>}
-              <p className="mt-2 flex items-start gap-2 text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
-                <Lightbulb weight="duotone" className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                <span><strong className="font-semibold text-slate-800 dark:text-slate-200">Recommandation RH :</strong> {f.recommendation}</span>
-              </p>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/70 bg-slate-50/70 p-3 dark:border-slate-800 dark:bg-slate-800/40">
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
-          <Sparkle weight="fill" className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          <span>Plan d&apos;action préventif recommandé pour désamorcer le risque.</span>
+      {/* Footer Banner Exécutif Radiant */}
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950 p-4 text-white shadow-lg">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30">
+            <Sparkle weight="fill" className="h-5 w-5 animate-pulse" />
+          </span>
+          <div>
+            <p className="text-xs font-black text-white tracking-wide">Plan d&apos;Action Rétention Stratégique</p>
+            <p className="text-[11px] text-emerald-200/80">Mesures RH prioritaires recommandées pour désamorcer le risque de départ.</p>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => onOpenAction(row)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-emerald-700 active:scale-95"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-4 py-2.5 text-xs font-black text-white shadow-md shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
           >
-            <PaperPlaneRight weight="bold" className="h-3.5 w-3.5" />
+            <PaperPlaneRight weight="bold" className="h-4 w-4" />
             Lancer un plan de rétention
           </button>
           <Link
             href={`/employes/${row.employee_id}`}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 px-4 py-2.5 text-xs font-bold text-white transition-all backdrop-blur-xs cursor-pointer"
           >
             Fiche collaborateur <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -435,7 +459,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
   return (
     <div className="space-y-8">
       {/* Banner Exécutif de Synthèse Haute Éclat */}
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-r from-slate-900 via-slate-900 to-emerald-950 p-8 shadow-xl text-white dark:border-slate-800">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950 p-8 shadow-xl text-white dark:border-slate-800">
         <div className="absolute top-0 right-0 h-48 w-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between relative z-10">
           <div className="space-y-2">
@@ -460,7 +484,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
 
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 rounded-xl bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-5 py-3.5 text-xs font-black text-white shadow-lg shadow-emerald-500/25 transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-5 py-3.5 text-xs font-black text-white shadow-lg shadow-emerald-500/25 transition-all active:scale-95 cursor-pointer"
             >
               <DownloadSimple weight="bold" className="h-4 w-4" />
               Exporter l'Analyse (CSV)
@@ -476,7 +500,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
             <TrendUp weight="bold" className="w-5 h-5 text-emerald-500" />
             01. Synthèse Globale des Niveaux d'Alerte
           </div>
-          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+          <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />
         </div>
 
         {/* Cards de résumé cliquables */}
@@ -520,10 +544,10 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
               <WarningOctagon weight="fill" className="w-5 h-5 text-rose-600 dark:text-rose-400" />
               02. Urgent — Top {top5.length} des Collaborateurs à Risque Vulnérable
             </div>
-            <div className="h-px flex-1 bg-linear-to-r from-rose-200 to-transparent dark:from-rose-900/40" />
+            <div className="h-px flex-1 bg-gradient-to-r from-rose-200 to-transparent dark:from-rose-900/40" />
           </div>
 
-          <div className="rounded-3xl border border-rose-200/80 bg-linear-to-br from-rose-50/50 via-white to-rose-50/30 p-6 shadow-sm dark:border-rose-900/40 dark:bg-rose-950/20">
+          <div className="rounded-3xl border border-rose-200/80 bg-gradient-to-br from-rose-50/50 via-white to-rose-50/30 p-6 shadow-sm dark:border-rose-900/40 dark:bg-rose-950/20">
             <div className="flex flex-wrap gap-3">
               {top5.map((emp) => (
                 <button
@@ -558,7 +582,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
             <Briefcase weight="bold" className="w-5 h-5 text-teal-600" />
             03. Registre Général d'Audit des Collaborateurs
           </div>
-          <div className="h-px flex-1 bg-linear-to-r from-slate-200 to-transparent dark:from-slate-800" />
+          <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />
         </div>
 
         {/* Collapsible Méthodologie */}
@@ -569,16 +593,16 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xs dark:border-slate-800 dark:bg-slate-900">
         {/* Recherche */}
         <div className="relative flex-1 max-w-md">
-          <MagnifyingGlass className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <MagnifyingGlass className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-700 dark:text-slate-300" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher par collaborateur, poste, département..."
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-9 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-800 dark:text-white"
+            className="w-full rounded-xl border border-slate-300 bg-slate-50/50 pl-9 pr-4 py-2.5 text-xs font-bold text-slate-900 placeholder:text-slate-700 focus:border-emerald-500 focus:bg-white focus:outline-hidden dark:border-slate-800 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-300"
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-900 dark:text-slate-300">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
@@ -591,7 +615,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
               <select
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-semibold text-slate-700 focus:border-emerald-500 focus:outline-hidden dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
+                className="rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2 text-xs font-black text-slate-900 focus:border-emerald-500 focus:outline-hidden dark:border-slate-800 dark:bg-slate-800 dark:text-slate-100"
               >
                 <option value="tous">Tous départements</option>
                 {departments.map((d) => (
@@ -603,7 +627,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
             </div>
           )}
 
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
+          <div className="h-4 w-px bg-slate-300 dark:bg-slate-800 hidden sm:block" />
 
           {/* Boutons de Filtre Niveau */}
           <div className="flex flex-wrap items-center gap-1">
@@ -611,10 +635,10 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
               <button
                 key={n}
                 onClick={() => setFilter(n)}
-                className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
+                className={`rounded-lg border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                   filter === n
-                    ? "border-emerald-600 bg-emerald-600 text-white shadow-2xs"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400"
+                    ? "border-emerald-600 bg-emerald-600 text-white shadow-2xs font-extrabold"
+                    : "border-slate-300 bg-white text-slate-900 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
                 }`}
               >
                 {n === "tous" ? `Tous (${data.length})` : `${RISK_LEVEL_META[n].label} (${counts[n]})`}
@@ -625,38 +649,38 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
       </div>
 
       {/* Tableau des Collaborateurs */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-2xs dark:border-slate-800 dark:bg-slate-900">
+      <div className="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200/70 bg-slate-50/70 dark:border-slate-800 dark:bg-slate-800/40">
-                <th className="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr className="border-b border-slate-200 bg-slate-100/80 dark:border-slate-800 dark:bg-slate-800/60">
+                <th className="px-5 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
                   Collaborateur
                 </th>
-                <th className="hidden px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500 md:table-cell">
+                <th className="hidden px-5 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-900 md:table-cell dark:text-white">
                   Département & Ancienneté
                 </th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <th className="px-5 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
                   Score de Risque
                 </th>
-                <th className="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <th className="px-5 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
                   Niveau
                 </th>
-                <th className="px-5 py-3.5 text-right text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <th className="px-5 py-3.5 text-right text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
                   Signaux Détectés
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center text-slate-400">
-                      <UserCheck className="h-8 w-8 mb-2 opacity-50" />
-                      <p className="text-sm font-semibold">Aucun collaborateur ne correspond aux critères.</p>
+                    <div className="flex flex-col items-center justify-center text-slate-800 dark:text-slate-200">
+                      <UserCheck className="h-8 w-8 mb-2 opacity-70" />
+                      <p className="text-sm font-bold">Aucun collaborateur ne correspond aux critères.</p>
                       <button
                         onClick={() => { setFilter("tous"); setSelectedDept("tous"); setSearch(""); }}
-                        className="mt-2 text-xs font-bold text-emerald-600 hover:underline"
+                        className="mt-2 text-xs font-black text-emerald-600 hover:underline"
                       >
                         Réinitialiser tous les filtres
                       </button>
@@ -672,40 +696,40 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
                       onClick={() => setExpanded(isOpen ? null : emp.employee_id)}
                       className={`cursor-pointer transition-colors ${
                         isOpen
-                          ? "bg-slate-50 dark:bg-slate-800/50"
-                          : "hover:bg-slate-50/70 dark:hover:bg-slate-800/30"
+                          ? "bg-emerald-50/40 dark:bg-slate-800/70"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800/40"
                       }`}
                     >
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <Avatar src={emp.photo_url} name={emp.full_name} size={38} rounded="full" />
+                          <Avatar src={emp.photo_url} name={emp.full_name} size={40} rounded="full" />
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-bold text-slate-900 dark:text-white">
+                            <p className="truncate text-sm font-extrabold text-slate-900 dark:text-white">
                               {emp.full_name}
                             </p>
-                            <p className="truncate text-xs text-slate-500">{emp.poste}</p>
+                            <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-300">{emp.poste}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="hidden px-5 py-3.5 text-xs text-slate-600 md:table-cell dark:text-slate-300">
-                        <span className="font-semibold">{emp.departement}</span>
-                        <span className="block text-[11px] text-slate-400">{emp.anciennete_ans.toFixed(1)} an(s) d&apos;ancienneté</span>
+                      <td className="hidden px-5 py-4 text-xs md:table-cell">
+                        <span className="font-extrabold text-slate-900 dark:text-white block">{emp.departement}</span>
+                        <span className="block text-xs font-bold text-slate-700 dark:text-slate-300">{emp.anciennete_ans.toFixed(1)} an(s) d&apos;ancienneté</span>
                       </td>
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-4">
                         <ScoreGauge score={emp.score} niveau={emp.niveau} />
                       </td>
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-4">
                         <NiveauBadge niveau={emp.niveau} />
                       </td>
-                      <td className="px-5 py-3.5 text-right">
-                        <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-emerald-700 shadow-2xs dark:border-slate-700 dark:bg-slate-800 dark:text-emerald-300">
+                      <td className="px-5 py-4 text-right">
+                        <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-black text-emerald-800 shadow-xs dark:border-slate-700 dark:bg-slate-800 dark:text-emerald-300">
                           {emp.facteurs.length} signal{emp.facteurs.length > 1 ? "s" : ""}
-                          <CaretDown weight="bold" className={`h-3 w-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                          <CaretDown weight="bold" className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                         </span>
                       </td>
                     </tr>
                     {isOpen && (
-                      <tr className="bg-slate-50/80 dark:bg-slate-800/30">
+                      <tr className="bg-slate-50 dark:bg-slate-800/40">
                         <td colSpan={5} className="px-6 py-5">
                           <EmployeeDetail row={emp} onOpenAction={(e) => setActionEmployee(e)} />
                         </td>

@@ -132,18 +132,24 @@ function AddSubordinateModal({
     return set;
   }, [manager, all]);
 
-  // Employés disponibles : non encore rattachés (manager_id nul), hors soi-même, ascendants et inactifs
+  // Employés disponibles : hors soi-même, hors rattachés directs actuels, ascendants et inactifs
   const candidates = useMemo(() => {
     const q = search.trim().toLowerCase();
     return all
       .filter(
         (e) =>
-          !e.manager_id &&
+          e.manager_id !== manager.id &&
           e.id !== manager.id &&
           !ancestorIds.has(e.id) &&
           e.statut !== "inactif"
       )
-      .filter((e) => !q || e.full_name.toLowerCase().includes(q) || (e.poste ?? "").toLowerCase().includes(q));
+      .filter(
+        (e) =>
+          !q ||
+          e.full_name.toLowerCase().includes(q) ||
+          (e.poste ?? "").toLowerCase().includes(q) ||
+          (e.departement ?? "").toLowerCase().includes(q)
+      );
   }, [all, manager.id, ancestorIds, search]);
 
   // Rattacher un employé existant comme subordonné direct
@@ -237,7 +243,7 @@ function AddSubordinateModal({
                 autoFocus
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Rechercher un collaborateur non rattaché…"
+                placeholder="Rechercher un collaborateur (nom, poste, département)..."
                 className="w-full text-xs font-medium pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#059669]/40 transition-all"
               />
             </div>
@@ -245,30 +251,42 @@ function AddSubordinateModal({
             <div className="max-h-64 space-y-1 overflow-y-auto pr-1">
               {candidates.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-5 text-center">
-                  <p className="text-xs font-medium text-slate-500">Aucun collaborateur disponible.</p>
+                  <p className="text-xs font-medium text-slate-500">Aucun collaborateur trouvé.</p>
                   <p className="mt-0.5 text-[11px] text-slate-400">
-                    Tous les collaborateurs sont déjà rattachés. Crée un nouveau profil via l'onglet « Nouveau ».
+                    {search ? "Modifiez votre recherche ou créez" : "Créez"} un nouveau profil via l'onglet « Nouveau ».
                   </p>
                 </div>
               ) : (
-                candidates.map((e) => (
-                  <button
-                    key={e.id}
-                    onClick={() => attachExisting(e.id, e.full_name)}
-                    disabled={isPending}
-                    className="flex w-full items-center gap-3 rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-left transition-all hover:border-[#059669]/40 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
-                  >
-                    <Avatar src={e.photo_url} name={e.full_name} size={32} rounded="full" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-semibold text-slate-900 dark:text-white">{e.full_name}</p>
-                      <p className="truncate text-[11px] text-slate-400">
-                        {e.poste || "Poste non défini"}
-                        {e.departement ? ` · ${e.departement}` : ""}
-                      </p>
-                    </div>
-                    <UserPlus className="h-4 w-4 shrink-0 text-slate-300" />
-                  </button>
-                ))
+                candidates.map((e) => {
+                  const currentMgr = e.manager_id ? all.find((m) => m.id === e.manager_id) : null;
+                  return (
+                    <button
+                      key={e.id}
+                      onClick={() => attachExisting(e.id, e.full_name)}
+                      disabled={isPending}
+                      className="flex w-full items-center gap-3 rounded-xl border border-slate-200/70 bg-white px-3 py-2 text-left transition-all hover:border-[#059669]/40 hover:bg-slate-50 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                    >
+                      <Avatar src={e.photo_url} name={e.full_name} size={32} rounded="full" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs font-semibold text-slate-900 dark:text-white">{e.full_name}</p>
+                        <p className="truncate text-[11px] text-slate-400">
+                          {e.poste || "Poste non défini"}
+                          {e.departement ? ` · ${e.departement}` : ""}
+                        </p>
+                        {currentMgr ? (
+                          <p className="truncate text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                            Rattaché à {currentMgr.full_name}
+                          </p>
+                        ) : (
+                          <p className="truncate text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                            Non rattaché
+                          </p>
+                        )}
+                      </div>
+                      <UserPlus className="h-4 w-4 shrink-0 text-slate-300" />
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>

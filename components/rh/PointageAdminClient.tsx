@@ -83,7 +83,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
   return (
     <div className="space-y-6">
       {/* Radiant Page Header */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-linear-to-r from-slate-900 via-slate-800 to-emerald-950 p-6 shadow-md dark:border-slate-800">
+      <div className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 p-6 shadow-md dark:border-slate-800">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-emerald-500/15 blur-2xl pointer-events-none" />
         <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1">
@@ -265,7 +265,7 @@ function Kpi({
   return (
     <div className={`rounded-2xl border p-4 shadow-2xs transition-all ${
       highlight
-        ? "border-emerald-500/30 bg-linear-to-br from-emerald-500/10 via-white to-white dark:from-emerald-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-emerald-500/30"
+        ? "border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-white to-white dark:from-emerald-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-emerald-500/30"
         : "border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900"
     }`}>
       <div className="flex items-center justify-between">

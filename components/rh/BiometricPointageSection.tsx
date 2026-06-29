@@ -296,31 +296,31 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column (5 Cols): Interactive Kiosk & Terminal Control Station */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-linear-to-b from-slate-900 via-slate-900 to-slate-950 p-6 text-white shadow-xl dark:border-slate-800">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 p-6 text-white shadow-2xl">
               <div className="absolute top-0 right-0 h-32 w-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
               
               <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
                 <div className="flex items-center gap-2">
                   <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-ping" />
-                  <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">Borne Faciale #01</span>
+                  <span className="text-xs font-mono font-black text-emerald-400 uppercase tracking-wider">Borne Faciale #01</span>
                 </div>
-                <span className="text-xs font-mono text-slate-400">{format(new Date(), "HH:mm:ss")}</span>
+                <span className="text-xs font-mono font-bold text-slate-200 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">{format(new Date(), "HH:mm:ss")}</span>
               </div>
 
               {/* Terminal Camera View Simulation */}
-              <div className="relative aspect-4/3 rounded-2xl bg-slate-950 border border-emerald-500/30 overflow-hidden flex flex-col items-center justify-center p-6 text-center shadow-inner group">
+              <div className="relative aspect-4/3 rounded-2xl bg-slate-950 border border-emerald-500/40 overflow-hidden flex flex-col items-center justify-center p-6 text-center shadow-inner group">
                 <div className="absolute inset-4 border-2 border-dashed border-emerald-500/40 rounded-xl pointer-events-none animate-pulse" />
                 <img
                   src="/images/biometric_terminal_hero.png"
                   alt="Biometric Terminal"
                   className="w-36 h-36 object-contain drop-shadow-2xl mb-3 group-hover:scale-105 transition-transform"
                 />
-                <p className="text-xs font-bold text-slate-200">Reconnaissance Faciale 3D Active</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">Placez le visage face à la caméra</p>
+                <p className="text-sm font-black text-white tracking-wide">Reconnaissance Faciale 3D Active</p>
+                <p className="text-xs font-semibold text-slate-300 mt-1">Placez le visage face à la caméra</p>
 
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="mt-4 px-6 py-3 rounded-xl bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+                  className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
                 >
                   <Camera className="w-4 h-4" />
                   <span>DÉCLENCHER LE SCAN EN DIRECT</span>
@@ -329,12 +329,12 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
               {/* Employee Selector Form */}
               <div className="mt-5 space-y-2">
-                <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider block">Sélectionner un Collaborateur pour Test</label>
+                <label className="text-xs font-black text-emerald-400 uppercase tracking-wider block">Sélectionner un Collaborateur pour Test</label>
                 {employees && employees.length > 0 && (
                   <select
                     value={selectedEmployeeForScan}
                     onChange={(e) => setSelectedEmployeeForScan(e.target.value)}
-                    className="w-full bg-slate-800/90 text-xs font-medium text-slate-100 px-3.5 py-2.5 rounded-xl border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                    className="w-full bg-slate-800 text-xs font-bold text-white px-3.5 py-3 rounded-xl border border-slate-700 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 shadow-sm"
                   >
                     <option value="">-- Mode Automatique / Wilfried KOUASSI --</option>
                     {employees.map(emp => (
@@ -390,7 +390,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                   <div key={log.id} className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 shadow-2xs hover:border-emerald-500/40 transition-all">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3.5">
-                        <div className="h-11 w-11 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
+                        <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
                           {log.employeeName.charAt(0)}
                         </div>
                         <div>
@@ -435,7 +435,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                 <div key={log.id} className="rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 shadow-2xs hover:border-emerald-500/50 transition-all flex flex-col justify-between">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-2xl bg-linear-to-br from-slate-800 to-slate-950 text-emerald-400 flex items-center justify-center font-black text-lg shadow-inner ring-1 ring-white/10">
+                      <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 text-emerald-400 flex items-center justify-center font-black text-lg shadow-inner ring-1 ring-white/10">
                         {log.employeeName.charAt(0)}
                       </div>
                       <div>
