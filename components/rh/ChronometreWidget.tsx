@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Play, Pause, Square, Camera, CheckCircle2, MapPin } from "lucide-react";
+import { Clock, Play, Pause, Camera, CheckCircle2, MapPin, Info } from "lucide-react";
 import { FacialPointageModal } from "@/components/rh/FacialPointageModal";
 
 export function ChronometreWidget() {
@@ -33,46 +33,60 @@ export function ChronometreWidget() {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
-      {/* Widget Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-teal-50 dark:bg-teal-950/50 flex items-center justify-center text-teal-600 dark:text-teal-400">
-            <Clock className="h-4 w-4" />
+    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none transition-all flex flex-col justify-between h-full">
+      <div>
+        {/* Widget Header */}
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl bg-teal-500 text-white flex items-center justify-center shadow-md shadow-teal-500/20 shrink-0">
+              <Clock className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-white leading-tight">
+                Badgeuse & Pointage
+              </h3>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                Simulateur de présence et validation faciale
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">Chronomètre</h3>
-            <p className="text-[11px] text-slate-500 font-medium">Suivi du temps et pointage</p>
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            {status === "bureau" ? "Au bureau" : status === "teletravail" ? "Télétravail" : "En pause"}
+          </span>
         </div>
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          {status === "bureau" ? "Au bureau" : status === "teletravail" ? "Télétravail" : "En pause"}
-        </span>
-      </div>
 
-      {/* Main Digital Clock Display */}
-      <div className="my-5 text-center bg-slate-50 dark:bg-slate-800/40 py-4 rounded-xl border border-slate-100 dark:border-slate-800">
-        <div className="text-3xl font-bold font-mono tracking-wider text-slate-900 dark:text-white">
-          {formatTime(seconds)}
+        {/* Info banner explaining purpose */}
+        <div className="mb-4 p-3 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/60 dark:border-teal-900/50 flex items-start gap-2.5 text-xs text-teal-900 dark:text-teal-200">
+          <Info className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
+          <p className="font-bold leading-relaxed">
+            Module de test permettant aux managers de valider la géolocalisation et le pointage par caméra.
+          </p>
         </div>
-        <div className="flex items-center justify-center gap-1 text-xs text-slate-500 font-medium mt-1">
-          <MapPin className="h-3 w-3 text-slate-400" />
-          <span>Poste : Abidjan Plateau (Réseau HQ)</span>
-        </div>
-        {lastPointage && (
-          <div className="mt-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
-            <CheckCircle2 className="h-3 w-3" />
-            <span>Dernier pointage : {lastPointage}</span>
+
+        {/* Digital Clock Display */}
+        <div className="my-4 text-center bg-slate-50 dark:bg-slate-800/50 py-5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+          <div className="text-3xl sm:text-4xl font-black font-mono tracking-wider text-slate-900 dark:text-white">
+            {formatTime(seconds)}
           </div>
-        )}
+          <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">
+            <MapPin className="h-3.5 w-3.5 text-[#059669]" />
+            <span>Poste : Abidjan Plateau (Réseau HQ)</span>
+          </div>
+          {lastPointage && (
+            <div className="mt-2.5 text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/60 py-1.5 px-3 rounded-xl mx-4 border border-emerald-200">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Dernier pointage : {lastPointage}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Action Buttons Row */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3 mt-2">
         <button
           onClick={() => setIsRunning(!isRunning)}
-          className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shadow-xs ${
+          className={`flex items-center justify-center gap-2 py-3 px-3 rounded-2xl text-xs font-extrabold transition-all shadow-md ${
             isRunning
               ? "bg-amber-500 hover:bg-amber-600 text-white"
               : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-teal-600 dark:hover:bg-teal-700"
@@ -80,22 +94,22 @@ export function ChronometreWidget() {
         >
           {isRunning ? (
             <>
-              <Pause className="h-3.5 w-3.5 fill-current" />
+              <Pause className="h-4 w-4 fill-current" />
               <span>Pause journée</span>
             </>
           ) : (
             <>
-              <Play className="h-3.5 w-3.5 fill-current" />
-              <span>Début de la journée</span>
+              <Play className="h-4 w-4 fill-current" />
+              <span>Démarrer</span>
             </>
           )}
         </button>
 
         <button
           onClick={() => setShowFacialModal(true)}
-          className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:hover:bg-teal-900 dark:text-teal-300 text-xs font-bold border border-teal-200/60 dark:border-teal-800/60 transition-all cursor-pointer shadow-xs"
+          className="flex items-center justify-center gap-2 py-3 px-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-extrabold shadow-md transition-all cursor-pointer"
         >
-          <Camera className="h-3.5 w-3.5" />
+          <Camera className="h-4 w-4" />
           <span>Pointage Facial</span>
         </button>
       </div>
@@ -109,4 +123,3 @@ export function ChronometreWidget() {
     </div>
   );
 }
-

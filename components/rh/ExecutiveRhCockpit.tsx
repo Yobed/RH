@@ -619,16 +619,21 @@ export function ExecutiveRhCockpit({
                   badgeColor="blue"
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  <div className="lg:col-span-8 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
+                  {/* Ligne 1 : Calendrier à gauche (6 cols), Badgeuse & Tâches à droite (6 cols) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <div className="lg:col-span-6 flex flex-col">
                       <MonCalendrierAbsencesWidget />
-                      <ParcoursGuidesWidget />
+                    </div>
+                    <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                      <ChronometreWidget />
+                      <MesTachesWidget />
                     </div>
                   </div>
-                  <div className="lg:col-span-4 space-y-6">
-                    <ChronometreWidget />
-                    <MesTachesWidget />
+
+                  {/* Ligne 2 : Parcours Guidés de Pilotage plein écran (12 cols) pour un confort visuel optimal */}
+                  <div className="w-full pt-2">
+                    <ParcoursGuidesWidget />
                   </div>
                 </div>
               </section>
@@ -666,14 +671,25 @@ export function ExecutiveRhCockpit({
                   badgeColor="indigo"
                 />
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  <div className="lg:col-span-8 space-y-6">
-                    <HrSuiteModulesWidget />
+                <div className="space-y-6">
+                  {/* Ligne 1 : Suite Modulaire RH (7 cols) & Tableau d'Affichage Interne (5 cols) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <div className="lg:col-span-7">
+                      <HrSuiteModulesWidget />
+                    </div>
+                    <div className="lg:col-span-5">
+                      <TableauAffichageWidget />
+                    </div>
                   </div>
-                  <div className="lg:col-span-4 space-y-6">
-                    <AnniversairesEvenementsWidget />
-                    <TableauAffichageWidget />
-                    <RessourcesInteretWidget />
+
+                  {/* Ligne 2 : Événements/Absences/Anniversaires en 3 cartes horizontales (8 cols) & Ressources (4 cols) */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    <div className="lg:col-span-8">
+                      <AnniversairesEvenementsWidget />
+                    </div>
+                    <div className="lg:col-span-4">
+                      <RessourcesInteretWidget />
+                    </div>
                   </div>
                 </div>
               </section>

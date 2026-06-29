@@ -202,7 +202,7 @@ export function TableauAffichageWidget() {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none transition-all flex flex-col justify-between h-full">
       {/* Widget Header */}
       <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
         <div className="flex items-center gap-2">
