@@ -655,7 +655,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
             <thead>
               <tr className="border-b border-slate-200 bg-slate-100/80 dark:border-slate-800 dark:bg-slate-800/60">
                 <th className="px-5 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
-                  Collaborateur
+                  Nom & Prénoms
                 </th>
                 <th className="hidden px-5 py-3.5 text-left text-xs font-black uppercase tracking-wider text-slate-900 md:table-cell dark:text-white">
                   Département & Ancienneté

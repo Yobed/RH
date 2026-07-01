@@ -4,12 +4,14 @@ import { createServerClient } from "@/lib/supabase/server";
 import { ScoreCvButton } from "@/components/rh/ScoreCvButton";
 import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
 import { CandidateDialog } from "@/components/rh/CandidateDialog";
+import { CopyLinkButton } from "@/components/rh/CopyLinkButton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { CandidateStatusSelect } from "@/components/rh/CandidateStatusSelect";
 import { CandidatePipeline } from "@/components/rh/CandidatePipeline";
 import { RecrutementViewToggle } from "@/components/rh/RecrutementViewToggle";
 import { Info } from "@phosphor-icons/react/dist/ssr";
+import { Megaphone, Share2, Sparkles, UserRoundCheck, ArrowRight, Users, Globe, type LucideIcon } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -40,7 +42,7 @@ export default async function RecrutementPage() {
   const { data: candidats } = await supabase
     .from("candidates")
     .select(
-      `id, full_name, email, score_ia, statut,
+      `id, full_name, email, score_ia, statut, job_id,
        job_postings(titre)`
     )
     .order("created_at", { ascending: false });
@@ -51,6 +53,17 @@ export default async function RecrutementPage() {
   const scoreMoyen = scoresIa.length > 0
     ? Math.round(scoresIa.reduce((a, b) => a + b, 0) / scoresIa.length)
     : null;
+
+  // Agrégats par offre : nb candidats, nb scorés, score moyen, embauchés.
+  const statsByJob = new Map<string, { total: number; scored: number; sumScore: number; embauches: number }>();
+  for (const c of candidats ?? []) {
+    if (!c.job_id) continue;
+    const s = statsByJob.get(c.job_id) ?? { total: 0, scored: 0, sumScore: 0, embauches: 0 };
+    s.total += 1;
+    if (c.score_ia != null) { s.scored += 1; s.sumScore += c.score_ia as number; }
+    if (c.statut === "embauche") s.embauches += 1;
+    statsByJob.set(c.job_id, s);
+  }
 
   return (
     <PageShell>
@@ -64,6 +77,19 @@ export default async function RecrutementPage() {
           </>
         }
       />
+
+      {/* Parcours de recrutement — 4 étapes lisibles */}
+      <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] sm:items-center">
+          <WorkflowStep n={1} icon={Megaphone} title="Publier l'offre" desc="Créez la description du poste" tint="#ee7f03" />
+          <StepArrow />
+          <WorkflowStep n={2} icon={Share2} title="Diffuser le lien" desc="Les candidats postulent avec leur CV" tint="#ee7f03" />
+          <StepArrow />
+          <WorkflowStep n={3} icon={Sparkles} title="Scorer les CV" desc="Analyse & tri par l'IA" tint="#69b5a2" />
+          <StepArrow />
+          <WorkflowStep n={4} icon={UserRoundCheck} title="Recruter & signer" desc="Signature → employé actif" tint="#3f7d6e" />
+        </div>
+      </div>
 
       {/* KPI row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -116,10 +142,10 @@ export default async function RecrutementPage() {
           }) ?? []
         }
         listView={
-          <Tabs defaultValue="pipeline" className="space-y-6">
+          <Tabs defaultValue="offres" className="space-y-6">
             <TabsList className="bg-slate-100/50 p-1 rounded-xl">
-              <TabsTrigger value="pipeline" className="rounded-lg px-6">Pipeline de Talents</TabsTrigger>
               <TabsTrigger value="offres" className="rounded-lg px-6">Offres d'emploi</TabsTrigger>
+              <TabsTrigger value="pipeline" className="rounded-lg px-6">Pipeline de Talents</TabsTrigger>
               <TabsTrigger value="liste" className="rounded-lg px-6">Liste des Candidats</TabsTrigger>
             </TabsList>
 
@@ -147,38 +173,66 @@ export default async function RecrutementPage() {
                     />
                   </div>
                 ) : (
-                  postes.map((p) => (
-                    <div
-                      key={p.id}
-                      className="rounded-md border border-slate-200 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="font-bold text-slate-900 leading-tight">{p.titre}</p>
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter ${
-                            p.statut === "ouvert"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-slate-100 text-slate-600"
-                          }`}
-                        >
-                          {p.statut}
-                        </span>
+                  postes.map((p) => {
+                    const s = statsByJob.get(p.id) ?? { total: 0, scored: 0, sumScore: 0, embauches: 0 };
+                    const avg = s.scored > 0 ? Math.round(s.sumScore / s.scored) : null;
+                    const isOpen = p.statut === "ouvert";
+                    return (
+                      <div
+                        key={p.id}
+                        className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:border-[#ee7f03]/40 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
+                      >
+                        {/* Zone cliquable → cockpit de l'offre */}
+                        <Link href={`/recrutement/${p.id}`} className="block p-4">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="font-semibold leading-tight text-slate-900 group-hover:text-[#b35c00] dark:text-white">{p.titre}</p>
+                            <span
+                              className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-tighter ${
+                                isOpen ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
+                              }`}
+                            >
+                              <span className={`h-1.5 w-1.5 rounded-full ${isOpen ? "bg-emerald-500" : "bg-slate-400"}`} />
+                              {isOpen ? "Publiée" : p.statut}
+                            </span>
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {p.type_contrat && (
+                              <span className="rounded-md border border-slate-100 bg-slate-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter text-slate-500">{p.type_contrat}</span>
+                            )}
+                            {p.is_internal && (
+                              <span className="rounded-md border border-sky-100 bg-sky-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter text-sky-600">Interne</span>
+                            )}
+                            {p.date_limite && (
+                              <span className="rounded-md border border-slate-100 bg-slate-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-tighter text-slate-500">
+                                Exp. {new Date(p.date_limite).toLocaleDateString("fr-CI")}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Indicateurs candidatures + scoring de l'offre */}
+                          <div className="mt-3 grid grid-cols-3 gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
+                            <OfferMetric icon={Users} value={s.total} label="Candidats" />
+                            <OfferMetric icon={Sparkles} value={avg != null ? `${avg}%` : "—"} label={`${s.scored} scorés`} tint="#69b5a2" />
+                            <OfferMetric icon={UserRoundCheck} value={s.embauches} label="Embauché" tint="#3f7d6e" />
+                          </div>
+                        </Link>
+
+                        {/* Barre d'actions — diffusion du lien de candidature */}
+                        <div className="mt-auto flex items-center gap-2 border-t border-slate-100 bg-slate-50/60 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-800/40">
+                          <CopyLinkButton path={`/postuler/${p.id}`} label="Lien candidature" />
+                          <a
+                            href={`/postuler/${p.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex h-9 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                            title="Ouvrir la page publique de candidature"
+                          >
+                            <Globe className="h-4 w-4 text-slate-400" />
+                          </a>
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {p.type_contrat && (
-                          <span className="text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100 uppercase tracking-tighter">{p.type_contrat}</span>
-                        )}
-                        {p.is_internal && (
-                          <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-100 uppercase tracking-tighter">Interne</span>
-                        )}
-                      </div>
-                      {p.date_limite && (
-                        <p className="text-[10px] text-slate-500 mt-auto pt-2 border-t border-slate-50 font-bold uppercase tracking-tighter">
-                          Expire le {new Date(p.date_limite).toLocaleDateString("fr-CI")}
-                        </p>
-                      )}
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </TabsContent>
@@ -241,5 +295,60 @@ export default async function RecrutementPage() {
         }
       />
     </PageShell>
+  );
+}
+
+function WorkflowStep({
+  n,
+  icon: Icon,
+  title,
+  desc,
+  tint,
+}: {
+  n: number;
+  icon: LucideIcon;
+  title: string;
+  desc: string;
+  tint: string;
+}) {
+  return (
+    <div className="flex items-center gap-3">
+      <span
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white shadow-sm"
+        style={{ backgroundColor: tint }}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-[13px] font-semibold leading-tight text-slate-900 dark:text-white">
+          {n}. {title}
+        </p>
+        <p className="truncate text-[11px] text-slate-500">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+function StepArrow() {
+  return <ArrowRight className="mx-auto hidden h-4 w-4 shrink-0 text-slate-300 sm:block" />;
+}
+
+function OfferMetric({
+  icon: Icon,
+  value,
+  label,
+  tint = "#ee7f03",
+}: {
+  icon: LucideIcon;
+  value: number | string;
+  label: string;
+  tint?: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-0.5 text-center">
+      <Icon className="h-4 w-4" style={{ color: tint }} />
+      <span className="text-[15px] font-bold leading-none text-slate-900 dark:text-white">{value}</span>
+      <span className="text-[10px] leading-tight text-slate-400">{label}</span>
+    </div>
   );
 }
