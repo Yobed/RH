@@ -199,7 +199,7 @@ export function PointageAdminClient({ employees, entries, weekStart }: Props) {
                   <thead>
                     <tr>
                       <th className="sticky left-0 z-10 bg-slate-100/90 dark:bg-slate-800/90 backdrop-blur-xs border-b border-r border-slate-200 dark:border-slate-700 px-4 py-3.5 text-left text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest min-w-[180px]">
-                        Collaborateur
+                        Nom & Prénoms
                       </th>
                       {days.map(d => (
                         <th

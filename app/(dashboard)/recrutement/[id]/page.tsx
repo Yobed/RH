@@ -181,7 +181,12 @@ export default async function JobDetailPage({ params }: { params: { id: string }
                           )}
                         </td>
                         <td className="px-3 py-2.5">
-                          <div className="w-36"><CandidateStatusSelect candidateId={c.id} currentStatut={c.statut || "nouveau"} /></div>
+                          <div className="w-36 space-y-1.5">
+                            <CandidateStatusSelect candidateId={c.id} currentStatut={c.statut || "nouveau"} />
+                            {c.statut === "offre" && (
+                              <CopyLinkButton path={`/signer/${c.id}`} label="Lien signature" />
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}

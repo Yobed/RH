@@ -405,7 +405,7 @@ export default function PerformanceReviewManager({ initialEvaluations = [], empl
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-slate-50 text-slate-600">
-                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">Collaborateur</th>
+                        <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">Nom & Prénoms</th>
                         <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b text-center">Cycle</th>
                         <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">KPI Performance</th>
                         <th className="p-6 font-bold uppercase text-[10px] tracking-[0.2em] border-b">Verdict</th>

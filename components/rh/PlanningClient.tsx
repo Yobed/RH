@@ -161,7 +161,7 @@ export function PlanningClient({ employees, shifts, assignments, weekStart }: Pr
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="rounded-xl border border-slate-100 bg-white p-3">
-          <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Collaborateurs</p>
+          <p className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Nom & Prénoms</p>
           <p className="text-xl font-bold text-slate-800 mt-1 tabular-nums">{employees.length}</p>
         </div>
         <div className="rounded-xl border border-slate-100 bg-white p-3">
@@ -225,7 +225,7 @@ export function PlanningClient({ employees, shifts, assignments, weekStart }: Pr
               <thead>
                 <tr>
                   <th className="sticky left-0 z-10 bg-slate-50 border-b border-r border-slate-200 px-4 py-3 text-left text-[10px] font-semibold text-slate-600 uppercase tracking-widest min-w-[180px]">
-                    Collaborateur
+                    Nom & Prénoms
                   </th>
                   {days.map(d => (
                     <th

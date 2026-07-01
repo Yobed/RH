@@ -351,16 +351,16 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
     return (
       <div
         ref={containerRef}
-        className="fixed inset-0 z-50 bg-slate-950 text-white flex flex-col justify-between p-6 select-none font-sans"
+        className="fixed inset-0 z-50 bg-[#f5f6f3] text-slate-900 flex flex-col justify-between p-6 select-none font-sans"
       >
         {/* Kiosk Header */}
-        <header className="flex items-center justify-between border-b border-slate-900 pb-4">
+        <header className="flex items-center justify-between border-b border-slate-200 pb-4">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#ee7f03]/10 text-[#ee7f03] border border-[#ee7f03]/30">
               <Fingerprint className="h-6 w-6 animate-pulse" />
             </span>
             <div>
-              <h1 className="text-lg font-bold tracking-tight text-white">BORNE DE POINTAGE FACIALE 3D</h1>
+              <h1 className="text-lg font-bold tracking-tight text-slate-900">BORNE DE POINTAGE FACIALE 3D</h1>
               <p className="text-xs text-slate-500 font-medium">Gravel Ivoire ERP · HQ Terminal #01</p>
             </div>
           </div>
@@ -368,11 +368,11 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-xl font-black font-mono tracking-wider text-[#ee7f03]">{currentTimeStr}</p>
-              <p className="text-[10px] text-slate-400 capitalize">{currentDateStr}</p>
+              <p className="text-[10px] text-slate-500 capitalize">{currentDateStr}</p>
             </div>
             <button
               onClick={exitKiosk}
-              className="h-9 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-300 border border-slate-800 transition-colors"
+              className="h-9 px-4 rounded-lg bg-white hover:bg-slate-100 text-xs font-bold text-slate-600 border border-slate-200 transition-colors"
             >
               Quitter
             </button>
@@ -385,11 +385,11 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
           <div className="lg:col-span-5 space-y-6 flex flex-col justify-center">
             {/* Step 1: Employee Autocomplete */}
             <div className="relative">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">
                 Étape 1 : Identifiez-vous
               </label>
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
                 <input
                   type="text"
                   placeholder="Saisissez votre nom ou matricule..."
@@ -399,7 +399,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
                     setShowDropdown(true);
                   }}
                   onFocus={() => setShowDropdown(true)}
-                  className="h-11 w-full rounded-xl border border-slate-800 bg-slate-900 pl-10 pr-4 text-[13px] text-white placeholder-slate-500 outline-none focus:border-[#ee7f03] transition-colors"
+                  className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-[13px] text-slate-900 placeholder-slate-400 outline-none focus:border-[#ee7f03] transition-colors"
                 />
                 {searchEmp && (
                   <button
@@ -407,7 +407,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
                       setSearchEmp("");
                       setKioskSelectedEmp(null);
                     }}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs font-semibold"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-900 text-xs font-semibold"
                   >
                     Effacer
                   </button>
@@ -415,7 +415,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
               </div>
 
               {showDropdown && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 z-30 mt-1 max-h-48 overflow-y-auto rounded-xl border border-slate-800 bg-slate-900 p-1 shadow-2xl no-scrollbar">
+                <div className="absolute top-full left-0 right-0 z-30 mt-1 max-h-48 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-2xl no-scrollbar">
                   {suggestions.map((emp) => (
                     <button
                       key={emp.employeeId}
@@ -424,12 +424,12 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
                         setSearchEmp(emp.fullName);
                         setShowDropdown(false);
                       }}
-                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[12.5px] hover:bg-slate-800 transition-colors"
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[12.5px] hover:bg-slate-100 transition-colors"
                     >
-                      <Avatar src={emp.photoUrl} name={emp.fullName} size={30} rounded="lg" className="border border-slate-700" />
+                      <Avatar src={emp.photoUrl} name={emp.fullName} size={30} rounded="lg" className="border border-slate-200" />
                       <div>
-                        <p className="font-semibold text-white">{emp.fullName}</p>
-                        <p className="text-[10px] text-slate-400">{emp.matricule} · {emp.poste || "Employé"}</p>
+                        <p className="font-semibold text-slate-900">{emp.fullName}</p>
+                        <p className="text-[10px] text-slate-500">{emp.matricule} · {emp.poste || "Employé"}</p>
                       </div>
                     </button>
                   ))}
@@ -439,7 +439,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
 
             {/* Step 2: Pointage Type Selection */}
             <div>
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 block">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 block">
                 Étape 2 : Type de pointage
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -459,10 +459,10 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
                       className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold transition-all ${
                         selected
                           ? "bg-white text-slate-950 border-white shadow-lg"
-                          : "bg-slate-900 text-slate-400 border-slate-800 hover:bg-slate-800"
+                          : "bg-white text-slate-500 border-slate-200 hover:bg-slate-100"
                       }`}
                     >
-                      <IconComp className={`h-4 w-4 ${selected ? "text-[#ee7f03]" : "text-slate-400"}`} />
+                      <IconComp className={`h-4 w-4 ${selected ? "text-[#ee7f03]" : "text-slate-500"}`} />
                       <span>{opt.label}</span>
                     </button>
                   );
@@ -477,9 +477,9 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
                 disabled={kioskScanning || !kioskSelectedEmp}
                 className={`w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg ${
                   !kioskSelectedEmp
-                    ? "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700/50"
+                    ? "bg-slate-100 text-slate-500 cursor-not-allowed border border-slate-200/50"
                     : kioskScanning
-                    ? "bg-slate-700 text-white cursor-not-allowed"
+                    ? "bg-slate-200 text-slate-400 cursor-not-allowed"
                     : "bg-[#ee7f03] text-white hover:bg-[#d67002]"
                 }`}
               >
@@ -500,7 +500,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
 
           {/* Center viewport: Camera Scan */}
           <div className="lg:col-span-4 flex flex-col items-center justify-center">
-            <div className="relative w-full aspect-square max-w-[340px] rounded-3xl bg-slate-950 overflow-hidden border-2 border-slate-850 flex items-center justify-center shadow-2xl">
+            <div className="relative w-full aspect-square max-w-[340px] rounded-3xl bg-[#f5f6f3] overflow-hidden border-2 border-slate-200 flex items-center justify-center shadow-2xl">
               {kioskStream ? (
                 <video
                   ref={kioskVideoRef}
@@ -510,7 +510,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
                   className="w-full h-full object-cover transform scale-x-[-1]"
                 />
               ) : (
-                <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950">
+                <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-100 to-slate-200">
                   <div className="relative h-28 w-28 rounded-full border-2 border-dashed border-[#ee7f03]/50 flex items-center justify-center">
                     <div className="h-20 w-20 rounded-full bg-[#ee7f03]/10 flex items-center justify-center animate-pulse">
                       <Camera className="h-8 w-8 text-[#ee7f03] opacity-80" />
@@ -525,7 +525,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
               )}
 
               {/* HUD markers */}
-              <div className="absolute inset-6 pointer-events-none border border-slate-800/40 rounded-2xl flex items-center justify-center">
+              <div className="absolute inset-6 pointer-events-none border border-slate-200/40 rounded-2xl flex items-center justify-center">
                 <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[#ee7f03] rounded-tl-md" />
                 <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-[#ee7f03] rounded-tr-md" />
                 <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-[#ee7f03] rounded-bl-md" />
@@ -551,11 +551,11 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
 
               {/* Status Header Overlay */}
               <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                <div className="bg-slate-900/80 backdrop-blur-md px-2 py-0.5 rounded-full border border-slate-800 text-[10px] font-bold text-white flex items-center gap-1">
+                <div className="bg-white/80 backdrop-blur-md px-2 py-0.5 rounded-full border border-slate-200 text-[10px] font-bold text-slate-900 flex items-center gap-1">
                   <span className={`h-1.5 w-1.5 rounded-full ${kioskScanning ? "bg-amber-400 animate-ping" : kioskSuccess ? "bg-emerald-400" : "bg-[#ee7f03] animate-pulse"}`} />
                   {kioskScanning ? kioskScanStep : kioskSuccess ? "Validé !" : "Prêt pour scan"}
                 </div>
-                <div className="bg-slate-900/80 backdrop-blur-md px-2 py-0.5 rounded-full border border-slate-800 text-[9px] font-mono text-slate-400">
+                <div className="bg-white/80 backdrop-blur-md px-2 py-0.5 rounded-full border border-slate-200 text-[9px] font-mono text-slate-500">
                   AES-256
                 </div>
               </div>
@@ -564,14 +564,14 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
 
           {/* Right panel: Recent log updates */}
           <div className="lg:col-span-3 space-y-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Derniers pointages</h3>
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Derniers pointages</h3>
             <div className="space-y-2 max-h-[300px] overflow-y-auto no-scrollbar">
               {recentCheckIns.map((log, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-slate-850">
+                <div key={index} className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-200">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <Avatar src={log.photoUrl} name={log.fullName} size={28} rounded="lg" className="border border-slate-800" />
+                    <Avatar src={log.photoUrl} name={log.fullName} size={28} rounded="lg" className="border border-slate-200" />
                     <div className="min-w-0">
-                      <p className="text-[12px] font-semibold truncate text-white">{log.fullName}</p>
+                      <p className="text-[12px] font-semibold truncate text-slate-900">{log.fullName}</p>
                       <p className="text-[10px] text-slate-500">{log.type}</p>
                     </div>
                   </div>
@@ -586,7 +586,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
         </main>
 
         {/* Kiosk Footer metadata */}
-        <footer className="flex items-center justify-between border-t border-slate-900 pt-4 text-[10px] text-slate-600">
+        <footer className="flex items-center justify-between border-t border-slate-200 pt-4 text-[10px] text-slate-600">
           <div className="flex items-center gap-1">
             <Wifi className="h-3.5 w-3.5 text-emerald-500" />
             <span>Sécurisé par VPN IP Fixe · Terminal Actif</span>
@@ -693,7 +693,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
               <input
                 type="text"
-                placeholder="Rechercher un collaborateur…"
+                placeholder="Rechercher par nom, prénoms ou matricule…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="h-8 w-full rounded-md border border-slate-200 bg-white pl-8 pr-3 text-[13px] outline-none transition-colors focus:border-[#ee7f03] lg:w-64"
@@ -706,7 +706,7 @@ export function PointageJournalierClient({ rows, dateStr }: { rows: PointageRow[
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
-                <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide">Collaborateur</th>
+                <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide">Nom & Prénoms</th>
                 <th className="hidden px-3 py-2 text-[11px] font-semibold uppercase tracking-wide md:table-cell">Matricule</th>
                 <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide">
                   <span className="inline-flex items-center gap-1.5"><Sunrise className="h-3.5 w-3.5 text-[#ee7f03]" /> Arrivée matin</span>

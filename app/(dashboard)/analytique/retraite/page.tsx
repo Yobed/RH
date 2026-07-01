@@ -114,7 +114,7 @@ export default async function PlanningRetraitePage({ searchParams }: SearchProps
                 <table className="w-full text-sm">
                   <thead className="text-xs uppercase tracking-wide text-slate-500 bg-slate-50/60 border-b border-slate-100">
                     <tr>
-                      <th className="px-4 py-2 text-left font-medium">Collaborateur</th>
+                      <th className="px-4 py-2 text-left font-medium">Nom & Prénoms</th>
                       <th className="px-4 py-2 text-left font-medium">Poste à remplacer</th>
                       <th className="px-4 py-2 text-left font-medium">Date 60 ans</th>
                       <th className="px-4 py-2 text-left font-medium">Échéance</th>
