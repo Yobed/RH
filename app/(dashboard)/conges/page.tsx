@@ -6,6 +6,7 @@ import { ArretMaladieDialog } from "@/components/rh/ArretMaladieDialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageShell, PageHeader, StatCard } from "@/components/ui/page-shell";
 import { CalendarDays } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
 
 export const metadata = { title: "Conges — RH Manager CI" };
 
@@ -22,13 +23,13 @@ export default async function CongesPage() {
       .select(
         `id, type, date_debut, date_fin, nb_jours, statut, commentaire, refus_motif, created_at,
          est_justifie, est_at, justificatif_url, employee_id,
-         employees(id, full_name, matricule)`
+         employees(id, full_name, matricule, photo_url)`
       )
       .order("created_at", { ascending: false })
       .limit(500),
     supabase
       .from("employees")
-      .select("id, full_name, matricule, date_embauche, salaire_brut, sursalaire")
+      .select("id, full_name, matricule, date_embauche, salaire_brut, sursalaire, photo_url")
       .neq("statut", "inactif") // On permet actif et suspendu
       .order("full_name")
       .limit(1000),
@@ -242,16 +243,16 @@ export default async function CongesPage() {
         return (
           <div>
             <h2 className="text-base font-semibold text-slate-700 mb-3">Prochains départs en congé</h2>
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+            <div className="rounded-md border border-slate-200 bg-white overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-100 bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                    <th className="px-5 py-2.5 text-left font-medium">Collaborateur</th>
-                    <th className="px-5 py-2.5 text-left font-medium">Type</th>
-                    <th className="px-5 py-2.5 text-left font-medium">Départ</th>
-                    <th className="px-5 py-2.5 text-left font-medium">Retour</th>
-                    <th className="px-5 py-2.5 text-right font-medium">Jours</th>
-                    <th className="px-5 py-2.5 text-left font-medium">Impact salaire</th>
+                    <th className="px-3 py-2 text-left font-medium">Nom & Prénoms</th>
+                    <th className="px-3 py-2 text-left font-medium">Type</th>
+                    <th className="px-3 py-2 text-left font-medium">Départ</th>
+                    <th className="px-3 py-2 text-left font-medium">Retour</th>
+                    <th className="px-3 py-2 text-right font-medium">Jours</th>
+                    <th className="px-3 py-2 text-left font-medium">Impact salaire</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -259,20 +260,30 @@ export default async function CongesPage() {
                     const imp = typeImpact[c.type] ?? { badge: "bg-slate-50 text-slate-500 border-slate-200", label: "—" };
                     const emp = (c.employees as unknown as { full_name: string; matricule?: string | null } | null);
                     return (
-                      <tr key={c.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
-                        <td className="px-5 py-3 font-medium text-slate-800">
-                          {emp?.full_name ?? "—"}
-                          {emp?.matricule && <span className="ml-1.5 text-xs text-slate-400">{emp.matricule}</span>}
+                      <tr key={c.id} className="border-b border-slate-50 last:border-0 hover:bg-[#ee7f03]/[0.04]">
+                        <td className="px-3 py-1.5 font-medium text-slate-800">
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              src={(emp as any)?.photo_url}
+                              name={emp?.full_name}
+                              size={44}
+                              className="border border-slate-200/80 shrink-0 shadow-sm"
+                            />
+                            <div className="min-w-0">
+                              <p className="font-semibold text-slate-800 truncate">{emp?.full_name ?? "—"}</p>
+                              {emp?.matricule && <span className="text-xs text-slate-400 font-mono">{emp.matricule}</span>}
+                            </div>
+                          </div>
                         </td>
-                        <td className="px-5 py-3 text-slate-600">{typeLabels[c.type] ?? c.type}</td>
-                        <td className="px-5 py-3 text-slate-700 font-semibold">
+                        <td className="px-3 py-1.5 text-slate-600">{typeLabels[c.type] ?? c.type}</td>
+                        <td className="px-3 py-1.5 text-slate-700 font-semibold">
                           {new Date(c.date_debut).toLocaleDateString("fr-CI")}
                         </td>
-                        <td className="px-5 py-3 text-slate-600">
+                        <td className="px-3 py-1.5 text-slate-600">
                           {new Date(c.date_fin).toLocaleDateString("fr-CI")}
                         </td>
-                        <td className="px-5 py-3 text-right tabular-nums text-slate-700 font-semibold">{c.nb_jours} j</td>
-                        <td className="px-5 py-3">
+                        <td className="px-3 py-1.5 text-right tabular-nums text-slate-700 font-semibold">{c.nb_jours} j</td>
+                        <td className="px-3 py-1.5">
                           <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${imp.badge}`}>
                             {imp.label}
                           </span>
@@ -291,15 +302,15 @@ export default async function CongesPage() {
       {soldesEquipe.length > 0 && (
         <div>
           <h2 className="text-base font-semibold text-slate-700 mb-3">Soldes des congés — Vue équipe</h2>
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-md border border-slate-200 bg-white overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50">
-                  <th className="px-5 py-2.5 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Collaborateur</th>
-                  <th className="px-5 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Acquis</th>
-                  <th className="px-5 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Pris</th>
-                  <th className="px-5 py-2.5 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Solde</th>
-                  <th className="px-5 py-2.5 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Alerte</th>
+                  <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Nom & Prénoms</th>
+                  <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Acquis</th>
+                  <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Pris</th>
+                  <th className="px-3 py-2 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Solde</th>
+                  <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Alerte</th>
                 </tr>
               </thead>
               <tbody>
@@ -318,23 +329,31 @@ export default async function CongesPage() {
                       ? { cls: "bg-amber-50 text-amber-700 border-amber-200", label: "Faible (< 3j)" }
                       : { cls: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "OK" };
                   return (
-                    <tr key={emp.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
-                      <td className="px-5 py-3 font-medium text-slate-800">
-                        {emp.full_name}
-                        {emp.matricule && (
-                          <span className="ml-1.5 text-xs text-slate-400">{emp.matricule}</span>
-                        )}
+                    <tr key={emp.id} className="border-b border-slate-50 last:border-0 hover:bg-[#ee7f03]/[0.04]">
+                      <td className="px-3 py-1.5 font-medium text-slate-800">
+                        <div className="flex items-center gap-3">
+                          <Avatar
+                            src={emp.photo_url}
+                            name={emp.full_name}
+                            size={44}
+                            className="border border-slate-200/80 shrink-0 shadow-sm"
+                          />
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-800 truncate">{emp.full_name}</p>
+                            {emp.matricule && <span className="text-xs text-slate-400 font-mono">{emp.matricule}</span>}
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-5 py-3 text-right tabular-nums font-mono text-slate-600">
+                      <td className="px-3 py-1.5 text-right tabular-nums font-mono text-slate-600">
                         {emp.jours_acquis.toFixed(1)} j
                       </td>
-                      <td className="px-5 py-3 text-right tabular-nums font-mono text-slate-600">
+                      <td className="px-3 py-1.5 text-right tabular-nums font-mono text-slate-600">
                         {emp.jours_pris.toFixed(1)} j
                       </td>
-                      <td className={`px-5 py-3 text-right tabular-nums font-mono font-bold ${soldeClass}`}>
+                      <td className={`px-3 py-1.5 text-right tabular-nums font-mono font-bold ${soldeClass}`}>
                         {soldeDisplay.toFixed(1)} j
                       </td>
-                      <td className="px-5 py-3 text-center">
+                      <td className="px-3 py-1.5 text-center">
                         <span
                           className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${alerteBadge.cls}`}
                         >

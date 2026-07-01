@@ -8,7 +8,7 @@
        Marque : Vert Émeraude (oklch(0.58 0.15 158)) — dynamique & professionnel.
        Fond : alabastre slate clair. Titres : Plus Jakarta Sans.
     */
-    --background: 0.985 0.005 240;
+    --background: 0.966 0.003 150;
     --foreground: 0.16 0.03 260;
 
     --card: 1 0 0;
@@ -16,7 +16,7 @@
     --popover: 1 0 0;
     --popover-foreground: 0.16 0.03 260;
 
-    --primary: 0.58 0.15 158;
+    --primary: 0.72 0.17 57;
     --primary-foreground: 1 0 0;
 
     --secondary: 0.96 0.008 240;
@@ -25,7 +25,7 @@
     --muted: 0.965 0.006 240;
     --muted-foreground: 0.18 0.03 260;
 
-    --accent: 0.58 0.15 158;
+    --accent: 0.72 0.17 57;
     --accent-foreground: 1 0 0;
 
     --destructive: 0.58 0.22 27;
@@ -33,14 +33,14 @@
 
     --border: 0.91 0.008 240;
     --input: 0.91 0.008 240;
-    --ring: 0.58 0.15 158;
-    --radius: 0.75rem;
+    --ring: 0.72 0.17 57;
+    --radius: 0.5rem;
 
-    --chart-1: oklch(0.58 0.15 158);
-    --chart-2: oklch(0.35 0.04 260);
-    --chart-3: oklch(0.55 0.14 160);
-    --chart-4: oklch(0.65 0.16 27);
-    --chart-5: oklch(0.50 0.12 300);
+    --chart-1: #ee7f03;
+    --chart-2: #69b5a2;
+    --chart-3: #cbd0cb;
+    --chart-4: #f6a94d;
+    --chart-5: #3f7d6e;
 
     --sidebar: oklch(0.12 0.03 260);
     --sidebar-foreground: oklch(0.92 0.01 260);
@@ -64,8 +64,8 @@
     --popover: 0.15 0.03 260;
     --popover-foreground: 0.96 0.008 260;
 
-    --primary: 0.70 0.12 186;
-    --primary-foreground: 0.10 0.03 260;
+    --primary: 0.75 0.15 60;
+    --primary-foreground: 1 0 0;
 
     --secondary: 0.19 0.03 260;
     --secondary-foreground: 0.92 0.01 260;
@@ -73,15 +73,15 @@
     --muted: 0.19 0.03 260;
     --muted-foreground: 0.65 0.015 260;
 
-    --accent: 0.70 0.12 186;
-    --accent-foreground: 0.10 0.03 260;
+    --accent: 0.75 0.15 60;
+    --accent-foreground: 1 0 0;
 
     --destructive: 0.65 0.22 27;
     --destructive-foreground: 1 0 0;
 
     --border: 0.21 0.025 260;
     --input: 0.21 0.025 260;
-    --ring: 0.70 0.12 186;
+    --ring: 0.75 0.15 60;
 
     --chart-1: oklch(0.70 0.12 186);
     --chart-2: oklch(0.55 0.14 160);
@@ -123,10 +123,10 @@
 
   h1, h2, h3, h4, h5, h6,
   .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: var(--font-display);
-    font-weight: 600; /* titres : 500–700 (l'inline font-bold pousse à 700) */
-    line-height: 1.1; /* en-têtes serrés */
-    letter-spacing: -0.018em;
+    font-family: var(--font-display); /* Inter */
+    font-weight: 500 !important; /* titres NON gras (Inter medium) — override du font-bold inline */
+    line-height: 1.15;
+    letter-spacing: -0.014em;
     color: inherit;
   }
 
@@ -181,9 +181,9 @@
   }
 }
 
-/* Fond pro et propre en mode clair */
+/* Fond pro et propre en mode clair — gris-blanc #f5f6f3 */
 body:not(.dark) {
-  background-color: oklch(0.985 0.005 240) !important;
+  background-color: #f5f6f3 !important;
   background-image: none !important;
 }
 

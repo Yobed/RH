@@ -150,12 +150,12 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
   return (
     <div className="space-y-8">
       {/* Banner Exécutif Trombinoscope Haute Éclat */}
-      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-r from-slate-900 via-slate-900 to-teal-950 p-8 shadow-xl text-white dark:border-slate-800">
-        <div className="absolute top-0 right-0 h-48 w-48 bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-r from-slate-900 via-slate-900 to-[#b35c00] p-8 shadow-xl text-white dark:border-slate-800">
+        <div className="absolute top-0 right-0 h-48 w-48 bg-[#ee7f03]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between relative z-10">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-500/30 text-teal-300 text-xs font-bold uppercase tracking-wider">
-              <Sparkle weight="fill" className="w-3.5 h-3.5 text-teal-400" /> REGISTRE BIOMÉTRIQUE & TROMBINOSCOPE
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ee7f03]/20 border border-[#ee7f03]/30 text-[#f8d3a3] text-xs font-bold uppercase tracking-wider">
+              <Sparkle weight="fill" className="w-3.5 h-3.5 text-[#f6c68a]" /> REGISTRE BIOMÉTRIQUE & TROMBINOSCOPE
             </div>
             <h1 className="font-black text-2xl sm:text-3xl tracking-tight text-white flex items-center gap-3">
               Identités Visuelles & Conformité 3D
@@ -168,7 +168,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
             <div className="text-right">
               <span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Taux de Conformité</span>
-              <span className="font-black text-2xl text-teal-400">{stats.pct}% <span className="text-xs font-semibold text-slate-400">numérisé</span></span>
+              <span className="font-black text-2xl text-[#f6c68a]">{stats.pct}% <span className="text-xs font-semibold text-slate-400">numérisé</span></span>
             </div>
           </div>
         </div>
@@ -177,8 +177,8 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
       {/* Titre en Gros Plan avec Fond en Surbrillance - Dashboard KPI */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 border border-teal-500/30 text-teal-700 dark:text-teal-300 font-black text-lg shadow-xs flex items-center gap-2">
-            <IdentificationBadge weight="bold" className="w-5 h-5 text-teal-600" />
+          <div className="px-4 py-2 rounded-2xl bg-[#ee7f03]/10 dark:bg-[#ee7f03]/20 border border-[#ee7f03]/30 text-[#ee7f03] dark:text-[#f8d3a3] font-black text-lg shadow-xs flex items-center gap-2">
+            <IdentificationBadge weight="bold" className="w-5 h-5 text-[#ee7f03]" />
             01. Indicateurs de Couverture Visuelle
           </div>
           <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />
@@ -211,7 +211,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             </div>
           </div>
           <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden p-0.5 border border-slate-200/50 dark:border-slate-700">
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.pct}%` }} />
+            <div className="bg-gradient-to-r from-emerald-500 to-[#f6c68a] h-full rounded-full transition-all duration-500 shadow-xs" style={{ width: `${stats.pct}%` }} />
           </div>
         </div>
 
@@ -231,14 +231,14 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-teal-500/30 bg-gradient-to-br from-teal-500/10 via-white to-white dark:from-teal-950/30 dark:via-slate-900 dark:to-slate-900 dark:border-teal-500/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
+        <div className="rounded-2xl border border-[#ee7f03]/30 bg-gradient-to-br from-[#ee7f03]/10 via-white to-white dark:from-[#b35c00]/30 dark:via-slate-900 dark:to-slate-900 dark:border-[#ee7f03]/30 p-5 relative overflow-hidden group transition-all shadow-2xs">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-teal-700 dark:text-teal-400">Biométrie Prête</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#ee7f03] dark:text-[#f6c68a]">Biométrie Prête</p>
               <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{stats.avecPhoto} / {stats.total}</h3>
               <p className="text-xs text-slate-800 dark:text-slate-200 mt-1 font-bold">Éligibles au pointage faciale</p>
             </div>
-            <div className="h-12 w-12 rounded-2xl bg-teal-500/20 flex items-center justify-center text-teal-700 dark:text-teal-400 group-hover:scale-110 transition-transform shadow-inner ring-1 ring-teal-500/30">
+            <div className="h-12 w-12 rounded-2xl bg-[#ee7f03]/20 flex items-center justify-center text-[#ee7f03] dark:text-[#f6c68a] group-hover:scale-110 transition-transform shadow-inner ring-1 ring-[#ee7f03]/30">
               <ShieldCheck size={26} weight="bold" />
             </div>
           </div>
@@ -266,7 +266,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             placeholder="Rechercher par nom, matricule, département..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#059669]/20 focus:border-[#059669] transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-[#ee7f03]/20 focus:border-[#ee7f03] transition-all"
           />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -315,7 +315,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
             <select
               value={filterDept}
               onChange={(e) => setFilterDept(e.target.value)}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-[#059669]"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-[#ee7f03]"
             >
               <option value="tous">Tous départements</option>
               {departements.map((d) => (
@@ -342,7 +342,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               title="Tableau Registre Numérique"
               className={cn(
                 "p-2 rounded-lg transition-all",
-                viewMode === "table" ? "bg-white text-[#059669] shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                viewMode === "table" ? "bg-white text-[#ee7f03] shadow-2xs" : "text-slate-500 hover:text-slate-800"
               )}
             >
               <ListBullets size={18} weight="bold" />
@@ -352,7 +352,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               title="Vue Trombinoscope Galerie"
               className={cn(
                 "p-2 rounded-lg transition-all",
-                viewMode === "trombinoscope" ? "bg-white text-[#059669] shadow-2xs" : "text-slate-500 hover:text-slate-800"
+                viewMode === "trombinoscope" ? "bg-white text-[#ee7f03] shadow-2xs" : "text-slate-500 hover:text-slate-800"
               )}
             >
               <SquaresFour size={18} weight="bold" />
@@ -483,7 +483,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
                             "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs active:scale-95",
                             emp.photo_url
                               ? "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                              : "bg-[#059669] hover:bg-[#e07200] text-white"
+                              : "bg-[#ee7f03] hover:bg-[#e07200] text-white"
                           )}
                         >
                           <Camera size={14} weight="bold" />
@@ -537,7 +537,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               {/* Info */}
               <span className="font-mono text-[10px] font-black text-slate-900 uppercase tracking-wider">{emp.matricule}</span>
               <h4 className="text-sm font-extrabold text-slate-900 mt-0.5 line-clamp-1">{emp.full_name}</h4>
-              <p className="text-xs font-black text-[#059669] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
+              <p className="text-xs font-black text-[#ee7f03] mt-0.5">{emp.poste || "Poste non renseigné"}</p>
               <p className="text-[11px] font-bold text-slate-800 mt-0.5">{emp.departement || "Département N/A"}</p>
 
               {/* Status pill */}
@@ -556,7 +556,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               {/* Direct upload action button */}
               <button
                 onClick={() => setActiveUploadEmp(emp)}
-                className="mt-4 w-full py-2 bg-slate-50 hover:bg-[#059669] hover:text-white text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200 hover:border-[#059669] flex items-center justify-center gap-1.5"
+                className="mt-4 w-full py-2 bg-slate-50 hover:bg-[#ee7f03] hover:text-white text-slate-700 rounded-xl text-xs font-bold transition-all border border-slate-200 hover:border-[#ee7f03] flex items-center justify-center gap-1.5"
               >
                 <Camera size={14} weight="bold" />
                 <span>{emp.photo_url ? "Modifier photo" : "Numériser photo"}</span>
@@ -584,7 +584,7 @@ export function EmployeePhotoRegistryClient({ initialEmployees }: Props) {
               </button>
 
               <div>
-                <div className="flex items-center gap-2 text-[#059669] text-xs font-bold uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-[#ee7f03] text-xs font-bold uppercase tracking-wider">
                   <Camera size={16} weight="bold" />
                   Numérisation d'Identité
                 </div>

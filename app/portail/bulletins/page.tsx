@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { requirePortailContext } from "@/lib/portail";
 import { FileText, Calendar } from "lucide-react";
+import { PortailHeader } from "../PortailHeader";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Mes bulletins — Portail salarié" };
@@ -21,13 +22,11 @@ export default async function MesBulletins() {
 
   return (
     <div className="space-y-6">
-      <header className="pb-4 border-b border-slate-200 dark:border-slate-800">
-        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">Mes bulletins de paie</h1>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
-          Historique complet de vos bulletins. Cliquez sur une ligne pour
-          télécharger l'imprimé.
-        </p>
-      </header>
+      <PortailHeader
+        title="Mes bulletins de paie"
+        subtitle="Historique complet de vos bulletins. Cliquez sur une ligne pour télécharger l'imprimé."
+        icon={FileText}
+      />
 
       {!bulletins || bulletins.length === 0 ? (
         <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-12 text-center">
@@ -42,7 +41,7 @@ export default async function MesBulletins() {
               <li key={b.id}>
                 <Link
                   href={`/paie/${b.id}/print`}
-                  className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 hover:bg-slate-50/60 dark:hover:bg-slate-800/50 transition-colors"
+                  className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 hover:bg-[#ee7f03]/[0.04] dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 shrink-0">

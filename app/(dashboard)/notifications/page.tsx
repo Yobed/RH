@@ -119,7 +119,7 @@ export default async function NotificationsPage() {
             return (
               <div
                 key={notif.id}
-                className={`flex items-start gap-4 rounded-2xl border p-5 transition-colors ${
+                className={`flex items-start gap-4 rounded-md border p-4 transition-colors ${
                   !notif.lu
                     ? `${colors.bg} ${colors.border}`
                     : "bg-white border-slate-100/80"

@@ -76,8 +76,8 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm" className="border-slate-200 hover:bg-[#059669]/10 hover:text-[#059669] hover:border-[#059669]/30 transition-all">
-            <PlusIcon className="h-4 w-4 mr-2 text-[#059669]" />
+          <Button variant="outline" size="sm" className="border-slate-200 hover:bg-[#ee7f03]/10 hover:text-[#ee7f03] hover:border-[#ee7f03]/30 transition-all">
+            <PlusIcon className="h-4 w-4 mr-2 text-[#ee7f03]" />
             Ajouter un événement
           </Button>
         }
@@ -91,7 +91,7 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
             <label className="text-sm font-medium text-slate-700">Type d'événement</label>
             <select
               {...register("event_type")}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-[#059669] focus:outline-none transition-all"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-[#ee7f03] focus:outline-none transition-all"
             >
               <option value="promotion">Promotion</option>
               <option value="mutation">Mutation</option>
@@ -104,7 +104,7 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
           
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Date</label>
-            <Input type="date" {...register("date_event")} className="rounded-xl focus-visible:ring-[#059669]" />
+            <Input type="date" {...register("date_event")} className="rounded-xl focus-visible:ring-[#ee7f03]" />
           </div>
 
           <div className="space-y-2">
@@ -112,7 +112,7 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
             <Input 
               {...register("description")} 
               placeholder="Ex: Passage au grade de Senior Manager" 
-              className="rounded-xl focus-visible:ring-[#059669]"
+              className="rounded-xl focus-visible:ring-[#ee7f03]"
             />
             {errors.description && <p className="text-xs text-red-500">{errors.description.message}</p>}
           </div>
@@ -122,12 +122,12 @@ export function CareerEventDialog({ employeeId, companyId }: { employeeId: strin
             <Input 
               {...register("details")} 
               placeholder="Ex: Agence d'Abobo, +50k FCFA..." 
-              className="rounded-xl focus-visible:ring-[#059669]"
+              className="rounded-xl focus-visible:ring-[#ee7f03]"
             />
           </div>
 
           <div className="pt-4 flex justify-end">
-            <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#059669] hover:bg-[#047857] text-white font-semibold shadow-md shadow-[#059669]/20 px-6">
+            <Button type="submit" disabled={isSubmitting} className="rounded-xl bg-[#ee7f03] hover:bg-[#d67002] text-white font-semibold shadow-md shadow-[#ee7f03]/20 px-6">
               {isSubmitting ? "Enregistrement..." : "Enregistrer l'événement"}
             </Button>
           </div>

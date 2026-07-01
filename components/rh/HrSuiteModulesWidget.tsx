@@ -39,7 +39,7 @@ export function HrSuiteModulesWidget() {
   return (
     <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-4 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ee7f03]/10 text-[#d67002] dark:text-[#2dd4bf]">
           <LayoutGrid className="h-4 w-4" />
         </span>
         <div>
@@ -58,16 +58,16 @@ export function HrSuiteModulesWidget() {
             <Link
               key={mod.href}
               href={mod.href}
-              className="group flex flex-col gap-2.5 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 transition-all hover:-translate-y-0.5 hover:border-[#059669]/40 hover:bg-white hover:shadow-[0_10px_24px_-14px_rgba(13,148,136,0.45)] dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
+              className="group flex flex-col gap-2.5 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 transition-all hover:-translate-y-0.5 hover:border-[#ee7f03]/40 hover:bg-white hover:shadow-[0_10px_24px_-14px_rgba(238,127,3,0.45)] dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors group-hover:border-[#059669] group-hover:bg-[#059669] group-hover:text-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 transition-colors group-hover:border-[#ee7f03] group-hover:bg-[#ee7f03] group-hover:text-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
                 <Icon className="h-[18px] w-[18px]" />
               </span>
               <div className="min-w-0 flex-1">
                 <h4 className="truncate text-[13px] font-semibold text-slate-900 dark:text-white">{mod.title}</h4>
                 <p className="truncate text-[11px] text-slate-400">{mod.desc}</p>
               </div>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#047857] opacity-0 transition-opacity group-hover:opacity-100 dark:text-[#2dd4bf]">
+              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#d67002] opacity-0 transition-opacity group-hover:opacity-100 dark:text-[#2dd4bf]">
                 Ouvrir <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </span>
             </Link>

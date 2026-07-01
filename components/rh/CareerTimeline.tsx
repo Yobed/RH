@@ -13,6 +13,26 @@ export interface CareerEvent {
   new_value?: any;
 }
 
+// Libellés lisibles + formatage des champs bruts du détail d'événement.
+const FIELD_LABELS: Record<string, string> = {
+  poste: "Poste",
+  salaire_brut: "Salaire brut",
+  type_contrat: "Contrat",
+  departement: "Département",
+  categorie: "Catégorie",
+  manager_id: "Manager",
+  date_debut: "Début",
+  date_fin: "Fin",
+};
+
+const fmtXOF = (n: number) =>
+  new Intl.NumberFormat("fr-CI", { style: "currency", currency: "XOF", minimumFractionDigits: 0 }).format(n);
+
+function formatFieldValue(key: string, val: unknown): string {
+  if (/salaire|salary|brut|net/.test(key) && !isNaN(Number(val))) return fmtXOF(Number(val));
+  return String(val);
+}
+
 export function CareerTimeline({ events }: { events: CareerEvent[] }) {
   if (!events || events.length === 0) {
     return (
@@ -42,7 +62,7 @@ export function CareerTimeline({ events }: { events: CareerEvent[] }) {
       case "promotion":
         return "text-emerald-600 bg-emerald-100 border-emerald-200";
       case "mutation":
-        return "text-teal-600 bg-teal-100 border-teal-200";
+        return "text-[#ee7f03] bg-[#ee7f03]/15 border-[#ee7f03]/30";
       case "formation":
         return "text-slate-600 bg-slate-100 border-slate-200";
       case "avenant":
@@ -81,13 +101,18 @@ export function CareerTimeline({ events }: { events: CareerEvent[] }) {
             </div>
             <p className="text-sm text-slate-600">{event.description}</p>
             {event.new_value && typeof event.new_value === "object" && (
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {Object.entries(event.new_value).map(([key, val]) => (
-                  <div key={key} className="text-[10px] bg-slate-50 px-2 py-1 rounded border border-slate-100">
-                    <span className="text-muted-foreground">{key}: </span>
-                    <span className="font-medium text-slate-700">{String(val)}</span>
-                  </div>
-                ))}
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {Object.entries(event.new_value)
+                  .filter(([, val]) => val !== null && val !== undefined && String(val).trim() !== "")
+                  .map(([key, val]) => (
+                    <span
+                      key={key}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] dark:border-slate-700 dark:bg-slate-800"
+                    >
+                      <span className="font-medium text-slate-400">{FIELD_LABELS[key] ?? key}</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-200">{formatFieldValue(key, val)}</span>
+                    </span>
+                  ))}
               </div>
             )}
           </div>

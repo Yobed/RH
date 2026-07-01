@@ -32,7 +32,7 @@ export function PageHelp({ text }: { text: string }) {
         onClick={() => setOpen((v) => !v)}
         aria-label="À quoi sert cette page ?"
         aria-expanded={open}
-        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-400 outline-none transition-colors hover:border-teal-300 hover:text-teal-600 focus-visible:ring-2 focus-visible:ring-teal-400 dark:border-slate-700 dark:text-slate-500 dark:hover:border-teal-700 dark:hover:text-teal-400"
+        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-slate-400 outline-none transition-colors hover:border-[#f8d3a3] hover:text-[#ee7f03] focus-visible:ring-2 focus-visible:ring-[#f6c68a] dark:border-slate-700 dark:text-slate-500 dark:hover:border-[#ee7f03] dark:hover:text-[#f6c68a]"
       >
         <Question weight="bold" className="h-3.5 w-3.5" />
       </button>

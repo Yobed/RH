@@ -78,7 +78,7 @@ export default async function MonPlanningPage({ searchParams }: PageProps) {
       <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <CalendarBlank className="h-5 w-5 text-teal-600" />
+            <CalendarBlank className="h-5 w-5 text-[#ee7f03]" />
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Mon planning</h1>
           </div>
           <p className="text-sm text-slate-500 mt-1">
@@ -111,7 +111,7 @@ export default async function MonPlanningPage({ searchParams }: PageProps) {
 
       {/* Stats compactes */}
       <div className="grid grid-cols-3 gap-3">
-        <StatCard label="Créneaux" value={slotList.length} icon={CalendarBlank} accent="bg-teal-50 text-teal-600" />
+        <StatCard label="Créneaux" value={slotList.length} icon={CalendarBlank} accent="bg-[#ee7f03]/10 text-[#ee7f03]" />
         <StatCard label="Heures totales" value={`${totalHours} h`} icon={Clock} accent="bg-emerald-50 text-emerald-600" />
         <StatCard
           label="Rôles distincts"

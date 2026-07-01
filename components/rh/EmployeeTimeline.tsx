@@ -34,8 +34,8 @@ const typeConfig: Record<
     ),
   },
   contrat: {
-    bg: "bg-teal-500 dark:bg-teal-600",
-    ring: "ring-teal-200 dark:ring-teal-900",
+    bg: "bg-[#ee7f03] dark:bg-[#ee7f03]",
+    ring: "ring-[#ee7f03]/30 dark:ring-[#b35c00]",
     label: "Contrat",
     icon: (
       <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,8 +74,8 @@ const typeConfig: Record<
     ),
   },
   formation: {
-    bg: "bg-teal-500 dark:bg-teal-600",
-    ring: "ring-teal-200 dark:ring-teal-900",
+    bg: "bg-[#ee7f03] dark:bg-[#ee7f03]",
+    ring: "ring-[#ee7f03]/30 dark:ring-[#b35c00]",
     label: "Formation",
     icon: (
       <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -373,7 +373,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-xs outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-500/50 bg-gradient-to-br from-emerald-600 to-teal-700"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-[12px] font-bold text-white shadow-xs outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-500/50 bg-gradient-to-br from-[#ee7f03] to-[#d67002]"
         aria-label="Menu utilisateur"
         aria-expanded={open}
       >
@@ -391,7 +391,7 @@ function TopUserMenu({ fullName, role }: { fullName: string | null; role: string
           >
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3 dark:border-slate-800">
               <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-emerald-600 to-teal-700"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-white bg-gradient-to-br from-[#ee7f03] to-[#d67002]"
               >
                 {initials}
               </span>
@@ -462,7 +462,7 @@ export function TopNav({
 
         {/* Logo */}
         <Link href="/rh" className="flex shrink-0 items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-xs transition-transform hover:scale-105">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#ee7f03] to-[#d67002] text-white shadow-xs transition-transform hover:scale-105">
             <Building2 className="h-4 w-4" />
           </span>
           <span className="hidden flex-col leading-none xl:flex">

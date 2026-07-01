@@ -37,7 +37,7 @@ export function QuickActions() {
   return (
     <div className="space-y-4 rounded-2xl border border-slate-200/70 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ee7f03]/10 text-[#d67002] dark:text-[#2dd4bf]">
           <Lightning weight="fill" className="h-4 w-4" />
         </span>
         <div>
@@ -54,13 +54,13 @@ export function QuickActions() {
             <Link
               key={a.href}
               href={a.href}
-              className="group flex flex-col gap-3 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 transition-all hover:-translate-y-0.5 hover:border-[#059669]/40 hover:bg-white hover:shadow-[0_10px_24px_-14px_rgba(13,148,136,0.45)] dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
+              className="group flex flex-col gap-3 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4 transition-all hover:-translate-y-0.5 hover:border-[#ee7f03]/40 hover:bg-white hover:shadow-[0_10px_24px_-14px_rgba(238,127,3,0.45)] dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#059669] text-white shadow-sm transition-transform group-hover:scale-105">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#ee7f03] text-white shadow-sm transition-transform group-hover:scale-105">
                 <Icon weight="duotone" className="h-6 w-6" />
               </span>
               <p className="text-sm font-semibold leading-tight text-slate-900 dark:text-white">{a.title}</p>
-              <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#047857] dark:text-[#2dd4bf]">
+              <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#d67002] dark:text-[#2dd4bf]">
                 {a.verb} <CaretRight weight="bold" className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </span>
             </Link>
@@ -78,7 +78,7 @@ export function QuickActions() {
               href={a.href}
               className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/60"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors group-hover:text-[#047857] dark:border-slate-700 dark:bg-slate-900">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors group-hover:text-[#d67002] dark:border-slate-700 dark:bg-slate-900">
                 <Icon weight="duotone" className="h-4 w-4" />
               </span>
               <span className="truncate text-[12px] font-medium text-slate-600 group-hover:text-slate-900 dark:text-slate-300">{a.title}</span>

@@ -22,6 +22,7 @@ import {
   Pen,
   Loader2,
 } from "lucide-react";
+import { PortailHeader } from "../PortailHeader";
 
 interface SignatureRequest {
   id: string;
@@ -129,10 +130,11 @@ export function SignaturesClient({ requests: initial }: Props) {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Mes signatures</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Documents en attente de votre signature électronique.</p>
-      </div>
+      <PortailHeader
+        title="Mes signatures"
+        subtitle="Documents en attente de votre signature électronique."
+        icon={Pen}
+      />
 
       {/* Pending */}
       {pending.length > 0 && (
@@ -233,7 +235,7 @@ export function SignaturesClient({ requests: initial }: Props) {
                     href={selected.document_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-teal-600 dark:text-teal-400 hover:underline mt-2"
+                    className="inline-flex items-center gap-1 text-xs text-[#ee7f03] dark:text-[#f6c68a] hover:underline mt-2"
                   >
                     <ExternalLink className="h-3 w-3" />
                     Consulter le document

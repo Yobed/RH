@@ -6,6 +6,7 @@ import { Plus, X, CalendarDays, Check, Clock, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
+import { PortailHeader } from "../PortailHeader";
 
 interface Conge {
   id: string;
@@ -53,21 +54,20 @@ export function CongesClient({ conges, solde }: Props) {
 
   return (
     <div className="space-y-6">
-      <header className="pb-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">Mes congés</h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
-            Demande de congés et suivi des validations.
-          </p>
-        </div>
-        <button
-          onClick={() => setCreating(true)}
-          className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 dark:bg-slate-100 px-4 text-sm font-medium text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 self-start"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Nouvelle demande
-        </button>
-      </header>
+      <PortailHeader
+        title="Mes congés"
+        subtitle="Demande de congés et suivi des validations."
+        icon={CalendarDays}
+        action={
+          <button
+            onClick={() => setCreating(true)}
+            className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-[#ee7f03] px-4 text-sm font-medium text-white transition-colors hover:bg-[#d67002]"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Nouvelle demande
+          </button>
+        }
+      />
 
       {/* Solde */}
       <section className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 sm:p-5">

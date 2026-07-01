@@ -98,7 +98,7 @@ export function CongesApprovalButton({
           <Button
             size="sm"
             variant="outline"
-            className="gap-1 text-teal-600 border-teal-200 hover:bg-teal-50"
+            className="gap-1 text-[#ee7f03] border-[#ee7f03]/30 hover:bg-[#ee7f03]/10"
             onClick={() => handleAction("valider_manager")}
             disabled={loading}
           >
@@ -128,7 +128,7 @@ export function CongesApprovalButton({
         )}
 
         {statut === "valide_manager" && !canRhApprove && (
-          <Badge variant="outline" className="gap-1 text-teal-600 border-teal-200">
+          <Badge variant="outline" className="gap-1 text-[#ee7f03] border-[#ee7f03]/30">
             <Clock className="h-3 w-3" />
             En attente RH
           </Badge>

@@ -5,7 +5,7 @@ export const metadata = { title: "Mobile Money CI — RH Manager CI" };
 
 const STATUS_COLORS: Record<string, string> = {
   initie: "bg-amber-500/10 text-amber-400",
-  en_cours: "bg-teal-500/10 text-teal-400",
+  en_cours: "bg-[#ee7f03]/10 text-[#f6c68a]",
   succès: "bg-emerald-500/10 text-emerald-400",
   echec: "bg-rose-500/10 text-rose-400",
 };

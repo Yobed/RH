@@ -103,7 +103,7 @@ export default async function ParametresPage() {
             <div className="pt-2">
               <a 
                 href="/parametres/audit"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#ee7f03] text-white text-sm font-medium hover:bg-[#d67002] transition-colors"
               >
                 Accéder au journal d'audit
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

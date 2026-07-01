@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { DisciplinaryManager } from "@/components/rh/DisciplinaryManager";
@@ -101,8 +101,8 @@ export default async function DisciplinaryDetailPage({ params }: { params: { id:
                 </div>
                 {procedure.date_notification && (
                    <div className="flex gap-3">
-                      <div className="h-6 w-6 rounded-full bg-teal-500/10 flex items-center justify-center shrink-0">
-                         <div className="h-2 w-2 rounded-full bg-teal-500" />
+                      <div className="h-6 w-6 rounded-full bg-[#ee7f03]/10 flex items-center justify-center shrink-0">
+                         <div className="h-2 w-2 rounded-full bg-[#ee7f03]" />
                       </div>
                       <div className="text-sm">
                          <p className="font-bold">Notification du courrier</p>

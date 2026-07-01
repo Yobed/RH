@@ -79,7 +79,7 @@ export default function ApiPage() {
         <button
           onClick={regenerate}
           disabled={regenerating}
-          className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-medium hover:bg-teal-700 disabled:opacity-60 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 bg-[#ee7f03] text-white rounded-lg text-sm font-medium hover:bg-[#ee7f03] disabled:opacity-60 transition-colors"
         >
           <ArrowCounterClockwise className="h-4 w-4" />
           {apiKey ? "Régénérer la clé" : "Générer une clé"}

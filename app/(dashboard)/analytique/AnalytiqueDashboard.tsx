@@ -526,7 +526,7 @@ export function AnalytiqueDashboard(props: Props) {
                   formatter={(v, name) => [`${Math.abs(Number(v))} pers.`, String(name)]}
                 />
                 <Bar dataKey="Hommes" stackId="x" fill="#475569" radius={[0, 0, 0, 3]} />
-                <Bar dataKey="Femmes" stackId="x" fill="#059669" radius={[0, 3, 3, 0]} />
+                <Bar dataKey="Femmes" stackId="x" fill="#ee7f03" radius={[0, 3, 3, 0]} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} iconType="square" iconSize={10} />
               </BarChart>
             </ResponsiveContainer>

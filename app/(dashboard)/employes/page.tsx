@@ -81,26 +81,23 @@ export default async function EmployesPage({
 
   return (
     <PageShell>
-      <PageHeader
-        eyebrow="Effectif RH"
-        eyebrowIcon={<IdentificationBadge size={14} weight="bold" className="text-[#059669]" />}
-        title="Gestion des Collaborateurs"
-        help="Le registre de votre personnel : chaque fiche regroupe le contrat, les documents, les congés et l'historique du salarié."
-        actions={
-          <>
-            <a
-              href="/api/employees/export?statut=actif"
-              download
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all shadow-2xs active:scale-[0.98]"
-            >
-              <Download size={16} className="text-slate-500" weight="bold" />
-              <span>Exporter</span>
-            </a>
-            <ImportExcelModal />
-            <EmployeeDialog employees={allEmployees ?? []} />
-          </>
-        }
-      />
+      {/* En-tête de page Odoo : titre compact (breadcrumb) + actions secondaires */}
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white">
+          Collaborateurs
+        </h1>
+        <div className="flex items-center gap-2">
+          <a
+            href="/api/employees/export?statut=actif"
+            download
+            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 text-[13px] font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+          >
+            <Download size={15} className="text-slate-500" weight="bold" />
+            Exporter
+          </a>
+          <ImportExcelModal />
+        </div>
+      </div>
 
       {/* Unified Master Workstation Shell */}
       {(!employees || employees.length === 0) && !query && statut === "tous" && contrat === "tous" ? (

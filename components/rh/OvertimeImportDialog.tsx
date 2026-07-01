@@ -230,17 +230,17 @@ export function OvertimeImportDialog({ onImported }: Props) {
                 className={[
                   "relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-10 text-center cursor-pointer transition-all select-none",
                   dragging
-                    ? "border-teal-400 bg-teal-50"
+                    ? "border-[#f6c68a] bg-[#ee7f03]/10"
                     : "border-slate-200 bg-slate-50/50 hover:border-slate-300 hover:bg-slate-50",
                 ].join(" ")}
               >
-                <Upload className={`h-8 w-8 transition-colors ${dragging ? "text-teal-500" : "text-slate-300"}`} />
+                <Upload className={`h-8 w-8 transition-colors ${dragging ? "text-[#ee7f03]" : "text-slate-300"}`} />
                 <div>
                   <p className="text-sm font-medium text-slate-700">
                     {dragging ? "Relâchez pour importer" : "Glissez votre fichier ici"}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    ou <span className="text-teal-600 underline underline-offset-2">parcourir</span>
+                    ou <span className="text-[#ee7f03] underline underline-offset-2">parcourir</span>
                     {" · "}Format <strong>.xlsx</strong> uniquement · Max 5 Mo
                   </p>
                 </div>
@@ -324,9 +324,9 @@ export function OvertimeImportDialog({ onImported }: Props) {
 
           {/* Notice légale */}
           {!result && (
-            <div className="flex items-start gap-2 rounded-md bg-teal-50 border border-teal-100 p-3">
-              <Info className="h-4 w-4 text-teal-500 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-teal-700 leading-snug">
+            <div className="flex items-start gap-2 rounded-md bg-[#ee7f03]/10 border border-[#ee7f03]/20 p-3">
+              <Info className="h-4 w-4 text-[#ee7f03] shrink-0 mt-0.5" />
+              <p className="text-[11px] text-[#ee7f03] leading-snug">
                 Les heures seront imputées selon le barème légal ivoirien
                 (Décret n°96-203) — paliers +15%, +50%, +75%, +100%.
                 Le calcul est effectué côté serveur en utilisant le salaire brut

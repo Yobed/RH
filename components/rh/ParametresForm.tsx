@@ -430,13 +430,13 @@ export function ParametresForm({ profile, company, fiscalParams }: Props) {
       </div>
 
       {/* Droit applicable */}
-      <div className="rounded-lg border bg-teal-50 border-teal-200 p-4 text-sm text-teal-800">
+      <div className="rounded-lg border bg-[#ee7f03]/10 border-[#ee7f03]/30 p-4 text-sm text-[#d67002]">
         <p className="font-medium mb-1">Droit applicable</p>
         <p>
           Code du Travail ivoirien — Loi n°2015-532 du 20 juillet 2015 · Décret n°96-287 du 3
           avril 1996
         </p>
-        <p className="mt-1 text-xs text-teal-600">
+        <p className="mt-1 text-xs text-[#ee7f03]">
           SMIG en vigueur : 75 000 FCFA/mois (Décret n°2023-374)
         </p>
       </div>

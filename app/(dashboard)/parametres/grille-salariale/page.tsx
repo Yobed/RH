@@ -18,7 +18,7 @@ interface SalaryGridRow {
 
 const FAMILLE_META: Record<Famille, { label: string; color: string }> = {
   CAD: { label: "Cadres / Ingénieurs", color: "bg-slate-50 text-slate-700 border-slate-200" },
-  TEC: { label: "Agents techniques",   color: "bg-teal-50 text-teal-700 border-teal-200" },
+  TEC: { label: "Agents techniques",   color: "bg-[#ee7f03]/10 text-[#ee7f03] border-[#ee7f03]/30" },
   EMP: { label: "Employés",            color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
   OUV: { label: "Ouvriers",            color: "bg-amber-50 text-amber-700 border-amber-200" },
   CHA: { label: "Chauffeurs",          color: "bg-rose-50 text-rose-700 border-rose-200" },

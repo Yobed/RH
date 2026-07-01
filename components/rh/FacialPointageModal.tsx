@@ -205,7 +205,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
 
   const pointageOptions = [
     { id: "arrivee", label: "Arrivée Matin", icon: Sun, color: "text-amber-500 bg-amber-50 dark:bg-amber-950/40 border-amber-200" },
-    { id: "pause", label: "Pause Déjeuner", icon: Coffee, color: "text-teal-500 bg-teal-50 dark:bg-teal-950/40 border-teal-200" },
+    { id: "pause", label: "Pause Déjeuner", icon: Coffee, color: "text-[#ee7f03] bg-[#ee7f03]/10 dark:bg-[#b35c00]/40 border-[#ee7f03]/30" },
     { id: "reprise", label: "Reprise Travail", icon: Briefcase, color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200" },
     { id: "depart", label: "Départ Soir", icon: Moon, color: "text-slate-500 bg-slate-50 dark:bg-slate-950/40 border-slate-200" }
   ];
@@ -222,13 +222,13 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
           {/* Top Bar Header */}
           <div className="sticky top-0 z-20 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
             <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-teal-500 to-slate-600 flex items-center justify-center text-white shadow-md shadow-teal-500/20 shrink-0">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#ee7f03] to-slate-600 flex items-center justify-center text-white shadow-md shadow-[#ee7f03]/20 shrink-0">
                 <Camera className="h-5 w-5" />
               </div>
               <div>
                 <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5 flex-wrap">
                   Pointage Faciale Biométrique
-                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-teal-100 text-teal-700 dark:bg-teal-950 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold bg-[#ee7f03]/15 text-[#ee7f03] dark:bg-[#b35c00] dark:text-[#f8d3a3] border border-[#ee7f03]/30 dark:border-[#d67002]">
                     IA 3D v4
                   </span>
                 </h3>
@@ -265,7 +265,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                           : "bg-slate-50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-800 hover:bg-slate-100"
                       }`}
                     >
-                      <IconComp className={`h-4 w-4 mb-1 ${selected ? "text-[#059669]" : "text-slate-400"}`} />
+                      <IconComp className={`h-4 w-4 mb-1 ${selected ? "text-[#ee7f03]" : "text-slate-400"}`} />
                       <span className="text-[11px]">{opt.label}</span>
                     </button>
                   );
@@ -286,10 +286,10 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                 />
               ) : (
                 /* High Tech Simulated Face Wireframe Avatar */
-                <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 via-slate-950 to-teal-950/40">
-                  <div className="relative h-36 w-36 rounded-full border-2 border-dashed border-teal-500/60 flex items-center justify-center">
-                    <div className="h-28 w-28 rounded-full bg-teal-500/10 border border-teal-400/30 flex items-center justify-center animate-pulse">
-                      <Camera className="h-12 w-12 text-teal-400 opacity-80" />
+                <div className="relative w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-slate-900 via-slate-950 to-[#b35c00]/40">
+                  <div className="relative h-36 w-36 rounded-full border-2 border-dashed border-[#ee7f03]/60 flex items-center justify-center">
+                    <div className="h-28 w-28 rounded-full bg-[#ee7f03]/10 border border-[#f6c68a]/30 flex items-center justify-center animate-pulse">
+                      <Camera className="h-12 w-12 text-[#f6c68a] opacity-80" />
                     </div>
                   </div>
                   {cameraError && (
@@ -302,12 +302,12 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
               )}
 
               {/* HUD Target Reticle / Corner Markers */}
-              <div className="absolute inset-8 pointer-events-none border-2 border-teal-400/30 rounded-3xl flex items-center justify-center">
+              <div className="absolute inset-8 pointer-events-none border-2 border-[#f6c68a]/30 rounded-3xl flex items-center justify-center">
                 {/* Corner reticles */}
-                <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-teal-500 rounded-tl-lg" />
-                <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-teal-500 rounded-tr-lg" />
-                <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-teal-500 rounded-bl-lg" />
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-teal-500 rounded-br-lg" />
+                <div className="absolute -top-1 -left-1 w-5 h-5 border-t-4 border-l-4 border-[#ee7f03] rounded-tl-lg" />
+                <div className="absolute -top-1 -right-1 w-5 h-5 border-t-4 border-r-4 border-[#ee7f03] rounded-tr-lg" />
+                <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b-4 border-l-4 border-[#ee7f03] rounded-bl-lg" />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b-4 border-r-4 border-[#ee7f03] rounded-br-lg" />
 
                 {/* Laser Scanning Line */}
                 {scanning && (
@@ -343,7 +343,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
               {/* Top Status Badge over Video */}
               <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
                 <div className="bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-700/60 flex items-center gap-1.5 text-[11px] font-bold text-white">
-                  <span className={`h-2 w-2 rounded-full ${scanning ? "bg-amber-400 animate-ping" : success ? "bg-emerald-400" : "bg-teal-400 animate-pulse"}`} />
+                  <span className={`h-2 w-2 rounded-full ${scanning ? "bg-amber-400 animate-ping" : success ? "bg-emerald-400" : "bg-[#f6c68a] animate-pulse"}`} />
                   {scanning ? scanStep : success ? "Identifié !" : "Prêt pour le scan"}
                 </div>
 
@@ -358,12 +358,12 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
             {scanning && (
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-teal-600 dark:text-teal-400">{scanStep}</span>
+                  <span className="text-[#ee7f03] dark:text-[#f6c68a]">{scanStep}</span>
                   <span className="text-slate-500">{progress}%</span>
                 </div>
                 <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
+                    className="h-full bg-gradient-to-r from-[#ee7f03] to-emerald-400 rounded-full"
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.4 }}
                   />
@@ -374,11 +374,11 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
             {/* Metadata Footer (GPS, Network, Exact Clock) */}
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800 text-[11px] text-slate-500 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-300">
-                <MapPin className="h-3.5 w-3.5 text-[#059669]" />
+                <MapPin className="h-3.5 w-3.5 text-[#ee7f03]" />
                 <span className="font-semibold">{gpsLocation}</span>
               </div>
               <div className="flex items-center gap-2 font-medium">
-                <div className="flex items-center gap-1 font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-md border border-teal-200 dark:border-teal-800">
+                <div className="flex items-center gap-1 font-mono font-bold text-[#ee7f03] dark:text-[#f6c68a] bg-[#ee7f03]/10 dark:bg-[#b35c00]/50 px-2 py-0.5 rounded-md border border-[#ee7f03]/30 dark:border-[#d67002]">
                   <Clock className="h-3 w-3 inline" />
                   <span>{currentTimeStr || "19:23:00"}</span>
                 </div>
@@ -397,7 +397,7 @@ export function FacialPointageModal({ isOpen, onClose, onSuccess }: FacialPointa
                 className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md ${
                   scanning
                     ? "bg-slate-400 text-white cursor-not-allowed"
-                    : "bg-gradient-to-r from-[#059669] to-amber-500 hover:from-amber-600 hover:to-[#059669] text-white shadow-amber-500/20"
+                    : "bg-gradient-to-r from-[#ee7f03] to-amber-500 hover:from-amber-600 hover:to-[#ee7f03] text-white shadow-amber-500/20"
                 }`}
               >
                 {scanning ? (

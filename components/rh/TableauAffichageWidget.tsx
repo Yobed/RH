@@ -375,7 +375,7 @@ export function TableauAffichageWidget() {
                     onClick={() => handleReact(post.id, "likes")}
                     className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all active:scale-95 ${
                       post.userReactions?.likes
-                        ? "bg-teal-50 text-teal-700 border-teal-300 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800"
+                        ? "bg-[#ee7f03]/10 text-[#ee7f03] border-[#f8d3a3] dark:bg-[#b35c00]/60 dark:text-[#f8d3a3] dark:border-[#d67002]"
                         : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200/60 hover:bg-slate-100"
                     }`}
                   >

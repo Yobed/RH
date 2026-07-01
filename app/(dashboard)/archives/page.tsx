@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { DocumentUploadDialog } from "@/components/rh/DocumentUploadDialog";
 import { ArchivesControls } from "@/components/rh/ArchivesControls";
@@ -9,8 +9,8 @@ import Link from "next/link";
 export const metadata = { title: "Archives — RH Manager CI" };
 
 const familleColors: Record<string, string> = {
-  Contrat: "bg-teal-100 text-teal-700",
-  Avenant: "bg-teal-100 text-teal-700",
+  Contrat: "bg-[#ee7f03]/15 text-[#ee7f03]",
+  Avenant: "bg-[#ee7f03]/15 text-[#ee7f03]",
   Diplômes: "bg-slate-100 text-slate-700",
   "CNI / Passeport": "bg-pink-100 text-pink-700",
   "Extrait de naissance": "bg-rose-100 text-rose-700",
@@ -21,7 +21,7 @@ const familleColors: Record<string, string> = {
   Congés: "bg-amber-100 text-amber-700",
   Disciplinaire: "bg-orange-100 text-orange-700",
   "Demande d'explication": "bg-yellow-100 text-yellow-700",
-  Formation: "bg-teal-100 text-teal-700",
+  Formation: "bg-[#ee7f03]/15 text-[#ee7f03]",
   Autre: "bg-gray-100 text-gray-600",
 };
 
@@ -39,7 +39,7 @@ interface PageProps {
 function fileExtColor(fileType: string | null): string {
   if (!fileType) return "bg-slate-100 text-slate-600";
   if (fileType.includes("pdf")) return "bg-rose-50 text-rose-600";
-  if (fileType.includes("word") || fileType.includes("doc")) return "bg-teal-50 text-teal-600";
+  if (fileType.includes("word") || fileType.includes("doc")) return "bg-[#ee7f03]/10 text-[#ee7f03]";
   if (fileType.includes("image") || fileType.includes("png") || fileType.includes("jpg")) return "bg-slate-50 text-slate-600";
   if (fileType.includes("sheet") || fileType.includes("xls") || fileType.includes("csv")) return "bg-emerald-50 text-emerald-600";
   return "bg-slate-50 text-slate-600";

@@ -65,22 +65,33 @@ export default async function PortailHome() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <header>
-        <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-slate-400 dark:text-slate-500 font-medium">
-          Bonjour
-        </p>
-        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 mt-1">
-          {emp?.full_name ?? "Salarié"}
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
-          {emp?.poste ?? "—"}
-          {emp?.departement ? ` · ${emp.departement}` : ""}
-          {emp?.type_contrat ? ` · ${emp.type_contrat}` : ""}
-          {emp?.date_embauche
-            ? ` · embauché le ${format(new Date(emp.date_embauche), "d MMMM yyyy", { locale: fr })}`
-            : ""}
-        </p>
-      </header>
+      {/* Héro salarié — bandeau aubergine + solde de congés en évidence */}
+      <section
+        className="relative overflow-hidden rounded-2xl p-6 text-white shadow-[0_18px_40px_-22px_rgba(238,127,3,0.7)] sm:p-7"
+        style={{ background: "linear-gradient(135deg, #ee7f03 0%, #d67002 55%, #b35c00 100%)" }}
+      >
+        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 left-1/4 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60 capitalize">
+              {format(new Date(), "EEEE d MMMM", { locale: fr })}
+            </p>
+            <h1 className="mt-1.5 font-display text-2xl font-bold tracking-tight sm:text-3xl">
+              Bonjour, {emp?.full_name?.split(" ")[0] ?? "Salarié"} 👋
+            </h1>
+            <p className="mt-1.5 text-sm text-white/70">
+              {emp?.poste ?? "—"}
+              {emp?.departement ? ` · ${emp.departement}` : ""}
+              {emp?.type_contrat ? ` · ${emp.type_contrat}` : ""}
+            </p>
+          </div>
+          <div className="shrink-0 rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-center backdrop-blur-sm">
+            <p className="font-display text-3xl font-bold leading-none tabular-nums">{soldeConges.toFixed(1)}</p>
+            <p className="mt-1 text-[11px] font-medium text-white/70">jours de congés</p>
+          </div>
+        </div>
+      </section>
 
       {/* Pointage */}
       <PointageWidget
@@ -169,14 +180,18 @@ function Card({
   return (
     <Link
       href={href}
-      className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 sm:p-5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors flex flex-col gap-1"
+      className="group flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-[#ee7f03]/40 hover:shadow-[0_12px_28px_-16px_rgba(238,127,3,0.45)] dark:border-slate-800 dark:bg-slate-900"
     >
       <div className="flex items-center justify-between">
-        <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-medium">{title}</p>
-        <Icon className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">{title}</p>
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ee7f03]/10 text-[#ee7f03] transition-colors group-hover:bg-[#ee7f03] group-hover:text-white">
+          <Icon className="h-4 w-4" />
+        </span>
       </div>
-      <p className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100 tabular-nums leading-tight">{value}</p>
-      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">{sub}</p>
+      <div>
+        <p className="font-display text-2xl font-bold leading-none tabular-nums text-slate-900 dark:text-white">{value}</p>
+        <p className="mt-1.5 text-[12px] text-slate-500 dark:text-slate-400">{sub}</p>
+      </div>
     </Link>
   );
 }

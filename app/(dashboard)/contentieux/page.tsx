@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { LegalCaseDialog } from "@/components/rh/LegalCaseDialog";
 import { CloseLegalCaseButton } from "@/components/rh/CloseLegalCaseButton";
@@ -47,7 +47,7 @@ export default async function ContentieuxPage() {
           { label: "Indemnité licenciement", content: "1/12 salaire annuel × ancienneté" },
           { label: "Délais légaux", content: "Inspection du Travail : 15j · Prescription : 2 ans" },
         ].map(({ label, content }) => (
-          <div key={label} className="rounded-xl border border-slate-100 bg-white p-4">
+          <div key={label} className="rounded-md border border-slate-200 bg-white p-4">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1.5">{label}</p>
             <p className="text-sm text-slate-700 font-medium">{content}</p>
           </div>
@@ -61,7 +61,7 @@ export default async function ContentieuxPage() {
           { label: "Dossiers fermés", value: fermes.length, accent: false },
           { label: "Total", value: (cases?.length ?? 0), accent: false },
         ].map(({ label, value, accent }) => (
-          <div key={label} className="rounded-xl border border-slate-100 bg-white p-4">
+          <div key={label} className="rounded-md border border-slate-200 bg-white p-4">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-1">{label}</p>
             <p className={`text-2xl font-bold tabular-nums ${accent && value > 0 ? "text-red-600" : "text-slate-900"}`}>{value}</p>
           </div>
@@ -85,7 +85,7 @@ export default async function ContentieuxPage() {
             {ouverts.map((c) => {
               const employee = Array.isArray(c.employees) ? c.employees[0] : c.employees;
               return (
-                <div key={c.id} className="rounded-xl border border-slate-100 bg-white p-4 hover:border-slate-200 transition-colors">
+                <div key={c.id} className="rounded-md border border-slate-200 bg-white p-4 hover:border-slate-200 transition-colors">
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -127,25 +127,25 @@ export default async function ContentieuxPage() {
           <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600 mb-3">
             Dossiers fermés · {fermes.length}
           </p>
-          <div className="rounded-xl border border-slate-100 bg-white overflow-hidden">
+          <div className="rounded-md border border-slate-200 bg-white overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Référence</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Titre</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Date</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                  <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Référence</th>
+                  <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Titre</th>
+                  <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 hidden md:table-cell">Date</th>
+                  <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Statut</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {fermes.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="px-4 py-3 font-mono text-[11px] text-slate-600">{c.reference}</td>
-                    <td className="px-4 py-3 text-slate-700">{c.titre}</td>
-                    <td className="px-4 py-3 text-slate-600 hidden md:table-cell text-xs">
+                  <tr key={c.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                    <td className="px-3 py-1.5 font-mono text-[11px] text-slate-600">{c.reference}</td>
+                    <td className="px-3 py-1.5 text-slate-700">{c.titre}</td>
+                    <td className="px-3 py-1.5 text-slate-600 hidden md:table-cell text-xs">
                       {new Date(c.date_ouverture).toLocaleDateString("fr-CI")}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-1.5">
                       <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
                         {c.statut}
                       </span>

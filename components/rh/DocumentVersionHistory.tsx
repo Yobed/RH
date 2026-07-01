@@ -63,19 +63,19 @@ export function DocumentVersionHistory({ documentId, currentVersion }: Props) {
           <div
             key={v.id}
             className={`flex items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors ${
-              isCurrent ? "border-teal-500/40 bg-teal-500/5" : "border-border bg-card"
+              isCurrent ? "border-[#ee7f03]/40 bg-[#ee7f03]/5" : "border-border bg-card"
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                isCurrent ? "bg-teal-600 text-white" : "bg-muted text-muted-foreground"
+                isCurrent ? "bg-[#ee7f03] text-white" : "bg-muted text-muted-foreground"
               }`}>
                 v{v.version}
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
                   {v.file_name}
-                  {isCurrent && <span className="ml-2 text-[10px] bg-teal-500/20 text-teal-400 px-1.5 py-0.5 rounded-full">actuelle</span>}
+                  {isCurrent && <span className="ml-2 text-[10px] bg-[#ee7f03]/20 text-[#f6c68a] px-1.5 py-0.5 rounded-full">actuelle</span>}
                 </p>
                 <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-3 w-3" />

@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import { ScoreCvButton } from "@/components/rh/ScoreCvButton";
 import { JobPostingDialog } from "@/components/rh/JobPostingDialog";
@@ -149,7 +150,7 @@ export default async function RecrutementPage() {
                   postes.map((p) => (
                     <div
                       key={p.id}
-                      className="rounded-2xl border border-slate-100 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all"
+                      className="rounded-md border border-slate-200 bg-white p-4 flex flex-col gap-3 shadow-sm hover:shadow-md transition-all"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-bold text-slate-900 leading-tight">{p.titre}</p>
@@ -183,16 +184,16 @@ export default async function RecrutementPage() {
             </TabsContent>
 
             <TabsContent value="liste" className="space-y-4 pt-2">
-              <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-sm">
+              <div className="rounded-md border border-slate-200 bg-white overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-slate-50/60 border-b border-slate-100">
-                        <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Candidat</th>
-                        <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Poste</th>
-                        <th className="px-6 py-4 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Score IA</th>
-                        <th className="px-6 py-4 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Statut</th>
-                        <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Actions</th>
+                      <tr className="bg-slate-50 border-b border-slate-200 dark:bg-slate-800/50 dark:border-slate-800">
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Candidat</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Poste</th>
+                        <th className="px-3 py-2 text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">Score IA</th>
+                        <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Statut</th>
+                        <th className="px-3 py-2 text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -200,31 +201,31 @@ export default async function RecrutementPage() {
                         const rawPoste = c.job_postings;
                         const poste = Array.isArray(rawPoste) ? (rawPoste as { titre?: string }[])[0] : (rawPoste as { titre?: string } | null);
                         return (
-                          <tr key={c.id} className="hover:bg-slate-50/40 transition-colors">
-                            <td className="px-6 py-4">
+                          <tr key={c.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                            <td className="px-3 py-2">
                               <div className="flex flex-col">
                                 <span className="font-bold text-slate-900 leading-tight">{c.full_name}</span>
                                 <span className="text-[11px] text-slate-500">{c.email}</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <span className="text-xs font-medium text-slate-600 bg-slate-100/80 px-2 py-1 rounded-lg">
                                 {poste?.titre ?? "—"}
                               </span>
                             </td>
-                            <td className="px-6 py-4 text-center">
+                            <td className="px-3 py-2 text-center">
                               <ScoreCvButton candidateId={c.id} hasScore={c.score_ia != null} />
                               {c.score_ia != null && (
                                 <span className="ml-2 font-mono font-bold text-xs text-slate-600">{c.score_ia}%</span>
                               )}
                             </td>
-                            <td className="px-6 py-4">
+                            <td className="px-3 py-2">
                               <div className="w-32">
                                 <CandidateStatusSelect candidateId={c.id} currentStatut={c.statut || "nouveau"} />
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-right">
-                              <button className="text-slate-400 hover:text-teal-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
+                            <td className="px-3 py-2 text-right">
+                              <button className="text-slate-400 hover:text-[#ee7f03] p-1.5 rounded-lg hover:bg-slate-100 transition-all">
                                 <Info size={18} weight="bold" />
                               </button>
                             </td>

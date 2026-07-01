@@ -47,7 +47,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const selectClass =
-  "w-full rounded-xl border-slate-200 bg-white/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#059669] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300";
+  "w-full rounded-xl border-slate-200 bg-white/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ee7f03] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 hover:border-slate-300";
 
 const labelClass = "text-sm font-semibold text-slate-700 flex items-center gap-2 mb-1.5";
 
@@ -130,7 +130,7 @@ export function JobPostingDialog() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="inline-flex items-center justify-center rounded-2xl bg-[#059669] px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-[#047857] transition-all duration-200 gap-2"
+          className="inline-flex items-center justify-center rounded-2xl bg-[#ee7f03] px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-[#d67002] transition-all duration-200 gap-2"
         >
           <Plus weight="bold" className="h-4 w-4" />
           <span>Nouvelle offre</span>
@@ -139,11 +139,11 @@ export function JobPostingDialog() {
 
       <DialogContent className="sm:max-w-3xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
         <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh]">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#059669]" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#ee7f03]" />
           
           <DialogHeader className="p-8 pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#059669]/10 text-[#059669]">
+              <div className="p-3 rounded-2xl bg-[#ee7f03]/10 text-[#ee7f03]">
                 <Briefcase size={28} weight="duotone" />
               </div>
               <div>
@@ -161,7 +161,7 @@ export function JobPostingDialog() {
             {/* Informations principales */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ee7f03]" />
                 Informations du Poste
               </div>
 
@@ -174,7 +174,7 @@ export function JobPostingDialog() {
                   <Input 
                     {...register("titre")} 
                     placeholder="ex: Design Lead, Fullstack Dev..." 
-                    className="rounded-xl bg-white/50 border-slate-200 focus:bg-white focus-visible:ring-[#059669] transition-all h-11"
+                    className="rounded-xl bg-white/50 border-slate-200 focus:bg-white focus-visible:ring-[#ee7f03] transition-all h-11"
                   />
                   {errors.titre && (
                     <p className="mt-1.5 text-xs font-medium text-red-500 flex items-center gap-1">
@@ -191,7 +191,7 @@ export function JobPostingDialog() {
                   <Textarea
                     {...register("description")}
                     placeholder="Missions, responsabilités, environnement technique..."
-                    className="rounded-xl bg-white/50 border-slate-200 min-h-[160px] focus:bg-white focus-visible:ring-[#059669] transition-all"
+                    className="rounded-xl bg-white/50 border-slate-200 min-h-[160px] focus:bg-white focus-visible:ring-[#ee7f03] transition-all"
                   />
                   {errors.description && (
                     <p className="mt-1.5 text-xs font-medium text-red-500 flex items-center gap-1">
@@ -224,7 +224,7 @@ export function JobPostingDialog() {
                       min="0"
                       {...register("experience_min")}
                       placeholder="ex: 3"
-                      className="rounded-xl h-11 focus-visible:ring-[#059669]"
+                      className="rounded-xl h-11 focus-visible:ring-[#ee7f03]"
                     />
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export function JobPostingDialog() {
             {/* Compétences */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ee7f03]" />
                 Compétences techniques
               </div>
               
@@ -245,7 +245,7 @@ export function JobPostingDialog() {
                     onChange={(e) => setCompetenceInput(e.target.value)}
                     onKeyDown={handleCompetenceKeyDown}
                     placeholder="ex: React, Tailwind, SQL..."
-                    className="flex-1 bg-white border-none shadow-sm h-10 focus-visible:ring-[#059669]"
+                    className="flex-1 bg-white border-none shadow-sm h-10 focus-visible:ring-[#ee7f03]"
                   />
                   <Button 
                     type="button" 
@@ -271,7 +271,7 @@ export function JobPostingDialog() {
                           initial={{ scale: 0.8 }}
                           animate={{ scale: 1 }}
                           exit={{ scale: 0.8, opacity: 0 }}
-                          className="inline-flex items-center gap-2 rounded-full bg-[#059669] text-white px-3 py-1 text-xs font-semibold"
+                          className="inline-flex items-center gap-2 rounded-full bg-[#ee7f03] text-white px-3 py-1 text-xs font-semibold"
                         >
                           {c}
                           <button
@@ -292,7 +292,7 @@ export function JobPostingDialog() {
             {/* Rémunération & Statut */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ee7f03]" />
                 Détails & Conditions
               </div>
 
@@ -349,7 +349,7 @@ export function JobPostingDialog() {
                   <input
                     type="checkbox"
                     {...register("is_internal")}
-                    className="peer appearance-none h-5 w-5 rounded border-slate-300 bg-white checked:bg-[#059669] checked:border-[#059669] transition-all cursor-pointer"
+                    className="peer appearance-none h-5 w-5 rounded border-slate-300 bg-white checked:bg-[#ee7f03] checked:border-[#ee7f03] transition-all cursor-pointer"
                   />
                   <CheckCircle 
                     weight="bold"
@@ -367,7 +367,7 @@ export function JobPostingDialog() {
               <Button 
                 type="submit" 
                 disabled={isSubmitting} 
-                className="w-full h-12 rounded-2xl bg-[#059669] text-white font-bold hover:bg-[#047857] shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99]"
+                className="w-full h-12 rounded-2xl bg-[#ee7f03] text-white font-bold hover:bg-[#d67002] shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 {isSubmitting ? (
                   <motion.div

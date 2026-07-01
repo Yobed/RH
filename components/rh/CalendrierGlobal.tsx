@@ -42,7 +42,7 @@ export interface CalendarEvent {
 }
 
 const TYPE_CONFIG: Record<EventType, { dot: string; bg: string; text: string; label: string }> = {
-  conge:    { dot: "bg-teal-500",   bg: "bg-teal-500/15 dark:bg-teal-500/20",   text: "text-teal-700 dark:text-teal-300",    label: "Congé" },
+  conge:    { dot: "bg-[#ee7f03]",   bg: "bg-[#ee7f03]/15 dark:bg-[#ee7f03]/20",   text: "text-[#ee7f03] dark:text-[#f8d3a3]",    label: "Congé" },
   formation:{ dot: "bg-green-500",  bg: "bg-green-500/15 dark:bg-green-500/20", text: "text-green-700 dark:text-green-300",  label: "Formation" },
   medical:  { dot: "bg-orange-500", bg: "bg-orange-500/15 dark:bg-orange-500/20",text: "text-orange-700 dark:text-orange-300",label: "Médical" },
   essai:    { dot: "bg-slate-500", bg: "bg-slate-500/15 dark:bg-slate-500/20",text: "text-slate-700 dark:text-slate-300",label: "Période d'essai" },
@@ -203,7 +203,7 @@ export function CalendrierGlobal({ events }: Props) {
                   className={[
                     "inline-flex h-6 w-6 items-center justify-center rounded-full text-[12px] font-semibold",
                     today
-                      ? "bg-teal-600 text-white"
+                      ? "bg-[#ee7f03] text-white"
                       : ferie
                       ? "text-slate-400 dark:text-slate-500"
                       : isCurrentMonth

@@ -38,7 +38,7 @@ export function ChronometreWidget() {
         {/* Widget Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl bg-teal-500 text-white flex items-center justify-center shadow-md shadow-teal-500/20 shrink-0">
+            <div className="h-10 w-10 rounded-2xl bg-[#ee7f03] text-white flex items-center justify-center shadow-md shadow-[#ee7f03]/20 shrink-0">
               <Clock className="h-5 w-5" />
             </div>
             <div>
@@ -57,8 +57,8 @@ export function ChronometreWidget() {
         </div>
 
         {/* Info banner explaining purpose */}
-        <div className="mb-4 p-3 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/60 dark:border-teal-900/50 flex items-start gap-2.5 text-xs text-teal-900 dark:text-teal-200">
-          <Info className="h-4 w-4 text-teal-600 shrink-0 mt-0.5" />
+        <div className="mb-4 p-3 rounded-2xl bg-[#ee7f03]/10 dark:bg-[#b35c00]/30 border border-[#ee7f03]/30 dark:border-[#b35c00]/50 flex items-start gap-2.5 text-xs text-[#b35c00] dark:text-[#ee7f03]">
+          <Info className="h-4 w-4 text-[#ee7f03] shrink-0 mt-0.5" />
           <p className="font-bold leading-relaxed">
             Module de test permettant aux managers de valider la géolocalisation et le pointage par caméra.
           </p>
@@ -70,7 +70,7 @@ export function ChronometreWidget() {
             {formatTime(seconds)}
           </div>
           <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 mt-2">
-            <MapPin className="h-3.5 w-3.5 text-[#059669]" />
+            <MapPin className="h-3.5 w-3.5 text-[#ee7f03]" />
             <span>Poste : Abidjan Plateau (Réseau HQ)</span>
           </div>
           {lastPointage && (
@@ -89,7 +89,7 @@ export function ChronometreWidget() {
           className={`flex items-center justify-center gap-2 py-3 px-3 rounded-2xl text-xs font-extrabold transition-all shadow-md ${
             isRunning
               ? "bg-amber-500 hover:bg-amber-600 text-white"
-              : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-teal-600 dark:hover:bg-teal-700"
+              : "bg-slate-900 hover:bg-slate-800 text-white dark:bg-[#ee7f03] dark:hover:bg-[#ee7f03]"
           }`}
         >
           {isRunning ? (
@@ -107,7 +107,7 @@ export function ChronometreWidget() {
 
         <button
           onClick={() => setShowFacialModal(true)}
-          className="flex items-center justify-center gap-2 py-3 px-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-extrabold shadow-md transition-all cursor-pointer"
+          className="flex items-center justify-center gap-2 py-3 px-3 rounded-2xl bg-[#ee7f03] hover:bg-[#ee7f03] text-white text-xs font-extrabold shadow-md transition-all cursor-pointer"
         >
           <Camera className="h-4 w-4" />
           <span>Pointage Facial</span>

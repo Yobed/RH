@@ -52,8 +52,8 @@ export default async function WorkflowsPage() {
       />
 
       {/* Description */}
-      <div className="max-w-2xl rounded-xl border border-teal-100 dark:border-teal-900/40 bg-teal-50 dark:bg-teal-900/20 px-4 py-3">
-        <p className="text-[12.5px] text-teal-700 dark:text-teal-300 leading-relaxed">
+      <div className="max-w-2xl rounded-xl border border-[#ee7f03]/20 dark:border-[#b35c00]/40 bg-[#ee7f03]/10 dark:bg-[#b35c00]/20 px-4 py-3">
+        <p className="text-[12.5px] text-[#ee7f03] dark:text-[#f8d3a3] leading-relaxed">
           Définissez jusqu&apos;à <strong>3 niveaux</strong> d&apos;approbation par module. L&apos;escalade automatique
           transfère la demande au niveau suivant si le délai expire sans action.
         </p>

@@ -270,7 +270,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
             <Dialog open={isDialogOpen} onOpenChange={(v) => { setIsDialogOpen(v); if (!v) resetForm(); }}>
               <DialogTrigger asChild>
                 <button
-                  className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 w-full sm:w-auto"
+                  className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-[#ee7f03] px-4 text-sm font-medium text-white hover:bg-[#d67002] w-full sm:w-auto"
                 >
                   <Plus className="h-4 w-4" />
                   Nouvelle saisie
@@ -351,7 +351,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
                   onClick={() => setFilterPeriod(p)}
                   className={[
                     "h-7 px-3 rounded text-xs font-medium tabular-nums whitespace-nowrap transition-colors",
-                    active ? "bg-slate-900 text-white" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
+                    active ? "bg-[#ee7f03] text-white" : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
                   ].join(" ")}
                 >
                   {labels[p]}
@@ -439,7 +439,7 @@ export function OvertimeManager({ employees, initialRecords, companyId }: Props)
                     const emp = employees.find(e => e.id === r.employee_id);
                     const montant = emp ? montantImputation(emp.salaire_brut, r.category, r.hours_count) : 0;
                     return (
-                      <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
+                      <tr key={r.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
                         <td className="px-5 py-3 text-slate-700 tabular-nums whitespace-nowrap">
                           {format(parseISO(r.date), "dd MMM yyyy", { locale: fr })}
                         </td>
@@ -564,7 +564,7 @@ function NewRecordDialog({
     <DialogContent className="sm:max-w-lg p-0 bg-white border border-slate-200 shadow-2xl rounded-xl overflow-hidden max-h-[92vh] overflow-y-auto">
       <DialogHeader className="px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-slate-100">
         <DialogTitle className="text-base font-semibold text-slate-900 flex items-center gap-2.5">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-slate-900 text-white">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-[#ee7f03] text-white">
             <Clock className="h-4 w-4" />
           </span>
           Nouvelle heure supplémentaire
@@ -638,7 +638,7 @@ function NewRecordDialog({
                   className={[
                     "h-9 rounded-md text-xs font-medium tabular-nums transition-colors border",
                     active
-                      ? "bg-slate-900 text-white border-slate-900"
+                      ? "bg-[#ee7f03] text-white border-[#ee7f03]"
                       : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50",
                   ].join(" ")}
                 >
@@ -699,7 +699,7 @@ function NewRecordDialog({
         <button
           onClick={onSubmit}
           disabled={loading || !employeeId || !hoursCount}
-          className="flex-1 h-9 px-4 rounded-md bg-slate-900 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 h-9 px-4 rounded-md bg-[#ee7f03] text-sm font-medium text-white hover:bg-[#d67002] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Enregistrement…" : "Enregistrer"}
         </button>

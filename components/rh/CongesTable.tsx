@@ -6,8 +6,10 @@ import { CaretUp, CaretDown, CaretLeft, CaretRight } from "@phosphor-icons/react
 import { CongesApprovalButton } from "@/components/rh/CongesApprovalButton";
 import { Pagination } from "@/components/ui/pagination";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Calendar as CalendarIcon, Paperclip } from "@phosphor-icons/react";
+import { Calendar as CalendarIcon, Paperclip, Clock } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { useAuditTracking } from "@/hooks/use-audit-tracking";
+import { Avatar } from "@/components/ui/avatar";
 
 const TYPE_LABELS: Record<string, string> = {
   annuel: "Congé annuel",
@@ -86,7 +88,7 @@ const ArretBadge = ({ estAt, estJustifie }: { estAt?: boolean; estJustifie?: boo
   if (estAt) {
     return (
       <span className="inline-flex items-center rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
-        <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-[#059669] mr-1.5" />
+        <span className="h-1.5 w-1.5 rounded-full shrink-0 bg-[#ee7f03] mr-1.5" />
         Accident Travail
       </span>
     );
@@ -219,6 +221,8 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
   const [clientCurrentPage, setClientCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
+  const [showAuditLogs, setShowAuditLogs] = useState(false);
+  const { auditMap } = useAuditTracking("conge", showAuditLogs);
 
   const itemsPerPage = 10;
 
@@ -335,19 +339,19 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
   }
 
   return (
-    <div className={`pro-card overflow-hidden ${isPending ? 'opacity-60 pointer-events-none' : ''} transition-opacity duration-200`}>
+    <div className={`overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 ${isPending ? 'opacity-60 pointer-events-none' : ''} transition-opacity duration-200`}>
       {/* Search & Filter Header Bar */}
-      {conges.length > 3 && (
-        <div className="p-3 border-b border-slate-100 bg-slate-50/40 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-            <input
-              type="text"
-              placeholder="Rechercher par employé ou matricule..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
-          </div>
+      <div className="p-3 border-b border-slate-100 bg-slate-50/40 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+          <input
+            type="text"
+            placeholder="Rechercher par employé ou matricule..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full max-w-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+          />
+        </div>
+        <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <span className="text-slate-500 font-medium">Type :</span>
             <select
@@ -361,45 +365,65 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
               ))}
             </select>
           </div>
+
+          <button
+            onClick={() => setShowAuditLogs(prev => !prev)}
+            className={cn(
+              "flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium transition-colors focus:outline-none",
+              showAuditLogs
+                ? "bg-[#ee7f03]/10 border-[#ee7f03] text-[#ee7f03]"
+                : "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-350 dark:hover:bg-slate-800"
+            )}
+            title="Afficher/Masquer les colonnes de suivi d'audit"
+          >
+            <Clock size={15} weight={showAuditLogs ? "fill" : "bold"} />
+            <span className="hidden sm:inline">Suivi d&apos;audit</span>
+          </button>
         </div>
-      )}
+      </div>
 
       <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
       <table className="w-full text-sm">
-        <thead className="bg-slate-50/60 border-b border-slate-100">
+        <thead className="bg-slate-50 border-b border-slate-200 dark:bg-slate-800/50 dark:border-slate-800">
           <tr>
             <th 
-              className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+              className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
               onClick={() => handleSort("full_name")}
             >
-              Collaborateur & Stock Solde <SortIcon column="full_name" />
+              Nom & Prénoms <SortIcon column="full_name" />
             </th>
             <th 
-              className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+              className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
               onClick={() => handleSort("type")}
             >
               Type <SortIcon column="type" />
             </th>
             <th 
-              className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+              className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
               onClick={() => handleSort("date_debut")}
             >
               Date Départ & Période <SortIcon column="date_debut" />
             </th>
             <th 
-              className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600"
+              className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500"
             >
               Approbations (Workflow)
             </th>
             {showActions ? (
-              <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions validation</th>
+              <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Actions validation</th>
             ) : (
               <th 
-                className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("statut")}
               >
                 Statut <SortIcon column="statut" />
               </th>
+            )}
+            {showAuditLogs && (
+              <>
+                <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Création</th>
+                <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Validation</th>
+              </>
             )}
           </tr>
         </thead>
@@ -407,29 +431,39 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
           {paginated.map((c) => {
             const emp = Array.isArray(c.employees) ? c.employees[0] : c.employees;
             return (
-              <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
-                <td className="px-4 py-3 text-sm">
-                  <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
-                  <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-                    {emp?.matricule && <span className="text-xs text-slate-400 font-mono">{emp.matricule}</span>}
-                    {typeof c.solde_employe === "number" && (
-                      <span
-                        className={cn(
-                          "inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-bold border tabular-nums",
-                          c.solde_employe >= 5
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                            : c.solde_employe >= 1
-                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                            : "bg-red-50 text-red-700 border-red-200"
+              <tr key={c.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                <td className="px-3 py-1.5 text-[13px]">
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      src={(emp as any)?.photo_url}
+                      name={emp?.full_name}
+                      size={44}
+                      className="border border-slate-200/80 shrink-0 shadow-sm"
+                    />
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-800 truncate">{emp?.full_name ?? "—"}</p>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                        {emp?.matricule && <span className="text-xs text-slate-400 font-mono">{emp.matricule}</span>}
+                        {typeof c.solde_employe === "number" && (
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-bold border tabular-nums",
+                              c.solde_employe >= 5
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : c.solde_employe >= 1
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                : "bg-red-50 text-red-700 border-red-200"
+                            )}
+                            title="Stock de congés restants pour cet employé"
+                          >
+                            Stock : {c.solde_employe.toFixed(1)}j rest.
+                          </span>
                         )}
-                        title="Stock de congés restants pour cet employé"
-                      >
-                        Stock : {c.solde_employe.toFixed(1)}j rest.
-                      </span>
-                    )}
+                      </div>
+                    </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm">
+                <td className="px-3 py-1.5 text-[13px]">
                   <div className="flex flex-col gap-1">
                     <span className="text-slate-700 font-medium">{TYPE_LABELS[c.type] ?? c.type}</span>
                     {c.type === "arret_maladie" && (
@@ -452,14 +486,14 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
                     )}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm">
+                <td className="px-3 py-1.5 text-[13px]">
                   <DateDepartCell dateDebut={c.date_debut} dateFin={c.date_fin} nbJours={c.nb_jours} />
                 </td>
-                <td className="px-4 py-3 text-sm">
+                <td className="px-3 py-1.5 text-[13px]">
                   <WorkflowStepper statut={c.statut ?? "en_attente"} />
                 </td>
                 {showActions ? (
-                  <td className="px-4 py-3 text-sm">
+                  <td className="px-3 py-1.5 text-[13px]">
                     <CongesApprovalButton
                       congeId={c.id}
                       statut={c.statut ?? "en_attente"}
@@ -468,7 +502,7 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
                     />
                   </td>
                 ) : (
-                  <td className="px-4 py-3 text-sm">
+                  <td className="px-3 py-1.5 text-[13px]">
                     <div className="flex flex-col gap-1">
                       <StatutBadge statut={c.statut ?? "en_attente"} />
                       {c.statut === "refuse" && c.refus_motif && (
@@ -476,6 +510,42 @@ export function CongesTable({ conges, showActions, canManagerApprove, canRhAppro
                       )}
                     </div>
                   </td>
+                )}
+                {showAuditLogs && (
+                  <>
+                    <td className="px-3 py-1.5 text-[12px] text-slate-600 dark:text-slate-300">
+                      {(() => {
+                        const cRecord = auditMap[c.id]?.create;
+                        const userStr = cRecord ? (cRecord.user_name || cRecord.user_email || "N/A") : "Système";
+                        const dateStr = new Date(cRecord?.created_at || c.created_at).toLocaleString("fr-CI", { dateStyle: "short", timeStyle: "short" });
+                        return (
+                          <div className="flex flex-col">
+                            <span className="font-medium text-slate-800 dark:text-slate-200">{userStr}</span>
+                            <span className="text-[11px] text-slate-400 font-mono">{dateStr}</span>
+                          </div>
+                        );
+                      })()}
+                    </td>
+                    <td className="px-3 py-1.5 text-[12px] text-slate-600 dark:text-slate-300">
+                      {(() => {
+                        const appRecord = auditMap[c.id]?.approve;
+                        const rejRecord = auditMap[c.id]?.reject;
+                        const record = appRecord || rejRecord;
+                        if (!record) return <span className="text-slate-400">—</span>;
+                        const userStr = record.user_name || record.user_email || "N/A";
+                        const dateStr = new Date(record.created_at).toLocaleString("fr-CI", { dateStyle: "short", timeStyle: "short" });
+                        const isReject = !!rejRecord;
+                        return (
+                          <div className="flex flex-col">
+                            <span className={cn("font-medium", isReject ? "text-rose-700 dark:text-rose-450" : "text-emerald-700 dark:text-emerald-450")}>
+                              {userStr} ({isReject ? "Refusé" : "Approuvé"})
+                            </span>
+                            <span className="text-[11px] text-slate-400 font-mono">{dateStr}</span>
+                          </div>
+                        );
+                      })()}
+                    </td>
+                  </>
                 )}
               </tr>
             );

@@ -143,6 +143,16 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
   const [selectedLog, setSelectedLog] = useState<BiometricLog | null>(null);
   const [selectedEmployeeForScan, setSelectedEmployeeForScan] = useState<string>("");
 
+  // Horloge live — placeholder stable au rendu serveur, démarrée après montage
+  // (évite l'erreur d'hydratation « Text content does not match »).
+  const [clock, setClock] = useState("--:--:--");
+  useEffect(() => {
+    const tick = () => setClock(format(new Date(), "HH:mm:ss"));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   const fetchRealLogs = useCallback(async () => {
     setLoading(true);
     try {
@@ -225,7 +235,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
   const typeConfig = {
     arrivee: { label: "Arrivée Matin", icon: Sun, badgeClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 ring-1 ring-amber-500/20" },
-    pause: { label: "Pause Déjeuner", icon: Coffee, badgeClass: "bg-teal-500/15 text-teal-700 dark:text-teal-300 border-teal-500/30 ring-1 ring-teal-500/20" },
+    pause: { label: "Pause Déjeuner", icon: Coffee, badgeClass: "bg-[#ee7f03]/15 text-[#ee7f03] dark:text-[#f8d3a3] border-[#ee7f03]/30 ring-1 ring-[#ee7f03]/20" },
     reprise: { label: "Reprise Travail", icon: Briefcase, badgeClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 ring-1 ring-emerald-500/20" },
     depart: { label: "Départ Soir", icon: Moon, badgeClass: "bg-slate-500/15 text-slate-700 dark:text-slate-300 border-slate-500/30 ring-1 ring-slate-500/20" }
   };
@@ -256,7 +266,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               onClick={() => setPresentationMode("split_kiosk")}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 presentationMode === "split_kiosk"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  ? "bg-gradient-to-r from-[#ee7f03] to-[#d67002] text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
                   : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
@@ -268,7 +278,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               onClick={() => setPresentationMode("cards_feed")}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 presentationMode === "cards_feed"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  ? "bg-gradient-to-r from-[#ee7f03] to-[#d67002] text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
                   : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
@@ -280,7 +290,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
               onClick={() => setPresentationMode("audit_table")}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 presentationMode === "audit_table"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
+                  ? "bg-gradient-to-r from-[#ee7f03] to-[#d67002] text-white shadow-lg shadow-emerald-600/30 ring-1 ring-emerald-400"
                   : "bg-white/10 text-white hover:bg-white/20 border border-white/10"
               }`}
             >
@@ -304,7 +314,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                   <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-ping" />
                   <span className="text-xs font-mono font-black text-emerald-400 uppercase tracking-wider">Borne Faciale #01</span>
                 </div>
-                <span className="text-xs font-mono font-bold text-slate-200 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">{format(new Date(), "HH:mm:ss")}</span>
+                <span suppressHydrationWarning className="text-xs font-mono font-bold text-slate-200 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">{clock}</span>
               </div>
 
               {/* Terminal Camera View Simulation */}
@@ -320,7 +330,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
 
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
+                  className="mt-4 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-[#ee7f03] hover:from-emerald-400 hover:to-[#f6c68a] text-slate-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 cursor-pointer"
                 >
                   <Camera className="w-4 h-4" />
                   <span>DÉCLENCHER LE SCAN EN DIRECT</span>
@@ -390,7 +400,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                   <div key={log.id} className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 shadow-2xs hover:border-emerald-500/40 transition-all">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3.5">
-                        <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
+                        <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-emerald-500 to-[#ee7f03] text-white flex items-center justify-center font-black text-base shadow-md shrink-0">
                           {log.employeeName.charAt(0)}
                         </div>
                         <div>
@@ -504,7 +514,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                       <td className="py-3.5 px-4 text-emerald-600 font-bold">{log.matchScore}%</td>
                       <td className="py-3.5 px-4 text-slate-500">{log.location}</td>
                       <td className="py-3.5 px-4 text-right">
-                        <button onClick={() => setSelectedLog(log)} className="text-teal-600 font-bold hover:underline cursor-pointer">Inspecter</button>
+                        <button onClick={() => setSelectedLog(log)} className="text-[#ee7f03] font-bold hover:underline cursor-pointer">Inspecter</button>
                       </td>
                     </tr>
                   );
@@ -560,7 +570,7 @@ export function BiometricPointageSection({ employees }: BiometricPointageSection
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                   <span className="text-slate-500 font-medium">Méthode Cryptographique</span>
-                  <span className="font-mono text-teal-600 dark:text-teal-400">SHA-256 + IA 3D Mesh</span>
+                  <span className="font-mono text-[#ee7f03] dark:text-[#f6c68a]">SHA-256 + IA 3D Mesh</span>
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-between">
                   <span className="text-slate-500 font-medium">Horodatage Infalsifiable</span>

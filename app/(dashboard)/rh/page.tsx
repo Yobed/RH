@@ -1,5 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
-import { ExecutiveRhCockpit } from "@/components/rh/ExecutiveRhCockpit";
+import { DashboardHome } from "@/components/rh/DashboardHome";
 import { type ActionItem } from "@/components/rh/ActionCenter";
 
 export const metadata = { title: "Tableau de bord — RH Manager CI" };
@@ -193,26 +193,19 @@ export default async function RhPage() {
   ];
 
   return (
-    <ExecutiveRhCockpit
+    <DashboardHome
       totalActifs={totalActifs ?? 0}
       totalFemmes={totalFemmes ?? 0}
       cddExpirant={cddExpirant ?? 0}
-      medicalAlertsCount={medicalAlertsCount ?? 0}
       postesOuverts={postesOuverts ?? 0}
-      evalBrouillon={evalBrouillon ?? 0}
-      contentieuxOuverts={contentieuxOuverts ?? 0}
       complianceScore={complianceScore}
       dateLabel={dateLabel}
-      actionItems={actionItems}
       allAlerts={allAlerts}
       chartDeptData={chartDeptData}
       chartGenderData={chartGenderData}
       congesEnAttente={congesEnAttente ?? []}
       recentActivities={recentActivities ?? []}
       derniersEmployes={derniersEmployes ?? []}
-      missingDocsTotal={missingDocsTotal}
-      totalExpectedDocs={totalExpectedDocs}
-      essaiExpirant={essaiExpirant ?? 0}
     />
   );
 }

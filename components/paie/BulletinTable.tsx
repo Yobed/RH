@@ -81,54 +81,54 @@ export function BulletinTable({ bulletins, employees, company, totalCount }: { b
   }
 
   return (
-    <div className={`rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] ${isPending ? 'opacity-60 pointer-events-none' : ''} transition-opacity duration-200`}>
-      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+    <div className={`overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 ${isPending ? 'opacity-60 pointer-events-none' : ''} transition-opacity duration-200`}>
+      <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50/60 border-b border-slate-100">
+          <thead className="bg-slate-50 border-b border-slate-200 dark:bg-slate-800/50 dark:border-slate-800">
             <tr>
               <th 
-                className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("full_name")}
               >
                 Employé <SortIcon column="full_name" />
               </th>
               <th 
-                className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("periode")}
               >
                 Période <SortIcon column="periode" />
               </th>
               <th 
-                className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500 hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("gross_salary")}
               >
                 *** BRUT *** <SortIcon column="gross_salary" />
               </th>
               <th 
-                className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500 hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("withholding_cnps")}
               >
                 Ret. CNPS <SortIcon column="withholding_cnps" />
               </th>
               <th 
-                className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500 hidden lg:table-cell cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("tax_igr")}
               >
                 IGR <SortIcon column="tax_igr" />
               </th>
               <th 
-                className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("net_to_pay")}
               >
                 NET A PAYER <SortIcon column="net_to_pay" />
               </th>
               <th 
-                className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 cursor-pointer hover:text-slate-900 transition-colors"
+                className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("statut")}
               >
                 Statut <SortIcon column="statut" />
               </th>
-              <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 min-w-[130px]"></th>
+              <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500 min-w-[130px]"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -137,22 +137,22 @@ export function BulletinTable({ bulletins, employees, company, totalCount }: { b
               const emp = Array.isArray(empRaw) ? empRaw[0] : empRaw;
               const detailsObj = b.details as { heures_sup?: { h15: number, h50: number, h75: number }; nb_jours_absence?: number } | null;
               return (
-                <tr key={b.id} className="group hover:bg-slate-50/60 transition-colors">
-                  <td className="px-4 py-3 text-sm">
+                <tr key={b.id} className="group transition-colors hover:bg-[#ee7f03]/[0.04]">
+                  <td className="px-3 py-1.5 text-[13px]">
                     <p className="font-semibold text-slate-800">{emp?.full_name ?? "—"}</p>
                     <p className="text-xs text-slate-600 mt-0.5">{emp?.matricule}</p>
                   </td>
-                  <td className="px-4 py-3 text-sm font-mono tabular-nums text-xs uppercase tracking-wider text-slate-600">
+                  <td className="px-3 py-1.5 text-[13px] font-mono tabular-nums text-xs uppercase tracking-wider text-slate-600">
                     {formatPeriode(b.periode)}
                   </td>
-                  <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">{fmt(Number((b as Record<string, unknown>).gross_salary ?? b.salaire_brut))}</td>
-                  <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).withholding_cnps ?? b.cnps_salarie))}</td>
-                  <td className="px-4 py-3 text-sm text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).tax_igr ?? b.its))}</td>
-                  <td className="px-4 py-3 text-sm text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net))}</td>
-                  <td className="px-4 py-3 text-sm">
+                  <td className="px-3 py-1.5 text-[13px] text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">{fmt(Number((b as Record<string, unknown>).gross_salary ?? b.salaire_brut))}</td>
+                  <td className="px-3 py-1.5 text-[13px] text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).withholding_cnps ?? b.cnps_salarie))}</td>
+                  <td className="px-3 py-1.5 text-[13px] text-right font-mono tabular-nums text-rose-500 hidden lg:table-cell">− {fmt(Number((b as Record<string, unknown>).tax_igr ?? b.its))}</td>
+                  <td className="px-3 py-1.5 text-[13px] text-right font-bold font-mono tabular-nums text-emerald-700">{fmt(Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net))}</td>
+                  <td className="px-3 py-1.5 text-[13px]">
                     <StatutBadge statut={b.statut ?? "brouillon"} />
                   </td>
-                  <td className="px-4 py-3 text-sm text-right">
+                  <td className="px-3 py-1.5 text-[13px] text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       {b.statut === "brouillon" && (
                         <PaieDialog

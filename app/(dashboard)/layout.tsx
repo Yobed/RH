@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
-import { TopNav } from "@/components/rh/TopNav";
+import { OdooTopbar } from "@/components/rh/OdooTopbar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { CommandPalette } from "@/components/rh/CommandPalette";
 import { OfflineBanner } from "@/components/rh/OfflineBanner";
@@ -38,12 +38,12 @@ export default async function DashboardLayout({
     <div
       className="flex h-screen flex-col overflow-hidden bg-background"
       style={{
-        "--brand-primary": company?.couleur_primaire ?? "#059669",
-        "--brand-secondary": company?.couleur_secondaire ?? "#047857",
+        "--brand-primary": company?.couleur_primaire ?? "#ee7f03",
+        "--brand-secondary": company?.couleur_secondaire ?? "#d67002",
       } as React.CSSProperties}
     >
-      {/* Barre de navigation horizontale */}
-      <TopNav
+      {/* Barre top Odoo (aubergine) + menu d'apps */}
+      <OdooTopbar
         fullName={profile?.full_name ?? user.email ?? null}
         role={profile?.role ?? null}
         companyName="RH Manager CI"
@@ -52,7 +52,6 @@ export default async function DashboardLayout({
       <CommandPalette />
       <OfflineBanner />
 
-      {/* Contenu principal pleine largeur */}
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-[1600px] px-4 pt-4 sm:px-6 sm:pt-5 md:px-8 md:pt-5">
           <Breadcrumbs />

@@ -72,12 +72,12 @@ export function LegalCounselSidebar({ type, statut }: LegalCounselSidebarProps) 
       </div>
 
       {statut === "OUVERT" && (
-        <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 animate-pulse">
-          <div className="flex items-center gap-2 text-teal-800 font-bold text-sm mb-1">
+        <div className="bg-[#ee7f03]/10 border border-[#ee7f03]/30 rounded-xl p-4 animate-pulse">
+          <div className="flex items-center gap-2 text-[#d67002] font-bold text-sm mb-1">
             <AlertCircle className="h-4 w-4" />
             Étape recommandée
           </div>
-          <p className="text-xs text-teal-700">
+          <p className="text-xs text-[#ee7f03]">
             Veuillez notifier l'employé et enregistrer la date de notification pour le suivi des délais.
           </p>
         </div>

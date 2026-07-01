@@ -6,7 +6,7 @@ import Link from "next/link";
 export function RessourcesInteretWidget() {
   const resources = [
     { title: "Protocole Sanitaire & Sécurité", category: "Conformité", icon: ShieldAlert, color: "text-rose-600 bg-rose-50 border-rose-200" },
-    { title: "Barème d'imposition ITS & CNPS", category: "Paie 2026", icon: TrendingUp, color: "text-teal-600 bg-teal-50 border-teal-200" },
+    { title: "Barème d'imposition ITS & CNPS", category: "Paie 2026", icon: TrendingUp, color: "text-[#ee7f03] bg-[#ee7f03]/10 border-[#ee7f03]/30" },
     { title: "Guide de personnalisation de la signature", category: "Charte HR", icon: Bookmark, color: "text-indigo-600 bg-indigo-50 border-indigo-200" },
   ];
 

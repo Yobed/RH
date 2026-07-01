@@ -59,7 +59,7 @@ export default function RegisterPage() {
         </p>
         <Button
           onClick={() => router.push("/login")}
-          className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+          className="w-full bg-[#ee7f03] hover:bg-[#ee7f03] text-white"
         >
           Aller à la connexion
           <ArrowRight className="ml-2 h-4 w-4" />
@@ -72,7 +72,7 @@ export default function RegisterPage() {
     <div className="w-full max-w-md">
       {/* En-tête */}
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-600 shadow-lg shadow-teal-200">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ee7f03] shadow-lg shadow-[#ee7f03]/30">
           <Building2 className="h-7 w-7 text-white" />
         </div>
         <h1 className="text-2xl font-bold text-slate-900">Créer votre espace RH</h1>
@@ -98,7 +98,7 @@ export default function RegisterPage() {
                 onChange={(e) => setCompanyName(e.target.value)}
                 placeholder="Ex : Gravel Ivoire SARL"
                 required
-                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-teal-200"
+                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-[#ee7f03]/30"
               />
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Ex : Kouassi Jean-Marc"
-                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-teal-200"
+                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-[#ee7f03]/30"
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function RegisterPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="vous@societe.ci"
                 required
-                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-teal-200"
+                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-[#ee7f03]/30"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                 placeholder="Minimum 6 caractères"
                 required
                 minLength={6}
-                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-teal-200"
+                className="pl-10 bg-slate-50/50 border-slate-200 focus-visible:ring-[#ee7f03]/30"
               />
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function RegisterPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white h-11 text-sm font-semibold mt-2"
+            className="w-full bg-[#ee7f03] hover:bg-[#ee7f03] text-white h-11 text-sm font-semibold mt-2"
           >
             {loading ? (
               <span className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export default function RegisterPage() {
       {/* Lien connexion */}
       <p className="mt-5 text-center text-sm text-slate-500">
         Déjà un compte ?{" "}
-        <Link href="/login" className="font-semibold text-teal-600 hover:text-teal-700 transition-colors">
+        <Link href="/login" className="font-semibold text-[#ee7f03] hover:text-[#ee7f03] transition-colors">
           Se connecter
         </Link>
       </p>

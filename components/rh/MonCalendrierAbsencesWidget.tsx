@@ -128,11 +128,11 @@ export function MonCalendrierAbsencesWidget() {
                   onClick={() => setSelectedDay(d)}
                   className={`h-8 w-full rounded-xl flex items-center justify-center transition-all cursor-pointer ${
                     isSelected
-                      ? "ring-2 ring-[#059669] ring-offset-1 font-black text-slate-900 bg-white dark:bg-slate-800 shadow-xs"
+                      ? "ring-2 ring-[#ee7f03] ring-offset-1 font-black text-slate-900 bg-white dark:bg-slate-800 shadow-xs"
                       : ""
                   } ${
                     isToday
-                      ? "bg-[#059669] text-white font-black shadow-md shadow-emerald-600/20"
+                      ? "bg-[#ee7f03] text-white font-black shadow-md shadow-emerald-600/20"
                       : leaveInfo
                       ? `${leaveInfo.bg} font-extrabold border`
                       : "hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200"
@@ -149,7 +149,7 @@ export function MonCalendrierAbsencesWidget() {
         {selectedDay && (
           <div className="mb-4 p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700 flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <Info className="h-4 w-4 text-[#059669]" />
+              <Info className="h-4 w-4 text-[#ee7f03]" />
               <span className="font-bold text-slate-900 dark:text-white">
                 {selectedDay} {formattedMonthName} :
               </span>

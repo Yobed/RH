@@ -22,8 +22,8 @@ interface ChartProps {
 }
 
 // Strict 3-Color Harmonized Palette (Emerald Green, Dark Slate, Muted Slate)
-const DEPT_COLORS = ['#059669', '#0F172A', '#64748B', '#10B981', '#334155', '#94A3B8'];
-const GENDER_COLORS = ['#0F172A', '#059669'];
+const DEPT_COLORS = ['#ee7f03', '#0F172A', '#64748B', '#10B981', '#334155', '#94A3B8'];
+const GENDER_COLORS = ['#0F172A', '#ee7f03'];
 
 // Custom Tooltip Component removing default recharts borders and enforcing strict 3-color typography
 const CustomTooltip = ({ active, payload }: any) => {
@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         </p>
         <div className="flex items-center justify-between gap-4 pt-1 border-t border-slate-800">
           <span className="text-slate-400 font-medium">Effectif :</span>
-          <span className="font-black text-emerald-400 text-sm">{data.value} collaborateur(s)</span>
+          <span className="font-black text-[#ee7f03] text-sm">{data.value} collaborateur(s)</span>
         </div>
       </div>
     );
@@ -73,7 +73,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-[#ee7f03] animate-pulse" />
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Effectif par Département
               </h3>
@@ -89,7 +89,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
               onClick={() => setDeptChartType("donut")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 deptChartType === "donut"
-                  ? "bg-emerald-600 text-white shadow-xs"
+                  ? "bg-[#ee7f03] text-white shadow-xs"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
@@ -100,7 +100,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
               onClick={() => setDeptChartType("bar")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 deptChartType === "bar"
-                  ? "bg-emerald-600 text-white shadow-xs"
+                  ? "bg-[#ee7f03] text-white shadow-xs"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
@@ -172,7 +172,7 @@ export function DashboardCharts({ deptData, genderData }: ChartProps) {
                   ? deptData[activeDeptIndex].value
                   : totalDeptHeadcount}
               </span>
-              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="text-[10px] font-bold text-[#ee7f03] dark:text-orange-400">
                 {activeDeptIndex !== null && deptData[activeDeptIndex]
                   ? `${Math.round((deptData[activeDeptIndex].value / (totalDeptHeadcount || 1)) * 100)}% des effectifs`
                   : "Collaborateurs"}

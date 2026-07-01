@@ -30,7 +30,7 @@ interface DayAbsence {
 }
 
 const COLORS: Record<AbsenceType, { cell: string; legend: string }> = {
-  conge_annuel:       { cell: "bg-teal-400 dark:bg-teal-500",   legend: "Congé annuel" },
+  conge_annuel:       { cell: "bg-[#f6c68a] dark:bg-[#ee7f03]",   legend: "Congé annuel" },
   maladie:            { cell: "bg-orange-400 dark:bg-orange-500", legend: "Maladie" },
   maternite_paternite:{ cell: "bg-pink-400 dark:bg-pink-500",   legend: "Maternité / Paternité" },
   autre:              { cell: "bg-slate-400 dark:bg-slate-500", legend: "Autre" },
@@ -170,7 +170,7 @@ export function HeatmapAbsences({ conges, employees, annee }: Props) {
         <select
           value={departement}
           onChange={(e) => setDepartement(e.target.value)}
-          className="text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#ee7f03]"
         >
           <option value="all">Tous les départements</option>
           {departements.map((d) => (
@@ -285,7 +285,7 @@ export function HeatmapAbsences({ conges, employees, annee }: Props) {
               month: "long",
             })}
           </p>
-          <p className="text-teal-300 dark:text-teal-200 mt-0.5">{tooltip.label}</p>
+          <p className="text-[#f8d3a3] dark:text-[#ee7f03] mt-0.5">{tooltip.label}</p>
         </div>
       )}
     </div>

@@ -158,17 +158,17 @@ const FAQS: Faq[] = [
     a: (
       <>
         <p>Un employé passe en <strong>inactif</strong> lorsqu'il est <strong>archivé</strong>, à la finalisation d'un <strong>solde de tout compte / départ</strong>, via un <strong>import</strong> marqué inactif, ou par <strong>édition manuelle</strong> du statut. (« Suspendu » = suspension temporaire, distincte.)</p>
-        <p className="mt-2">Pour le <strong>réactiver</strong> : <Link href="/employes" className="text-[#047857] underline">Collaborateurs</Link> → onglet <em>Inactifs</em> → ouvrir la fiche → <em>Modifier</em> → champ <strong>Statut = Actif</strong> → Enregistrer.</p>
+        <p className="mt-2">Pour le <strong>réactiver</strong> : <Link href="/employes" className="text-[#d67002] underline">Collaborateurs</Link> → onglet <em>Inactifs</em> → ouvrir la fiche → <em>Modifier</em> → champ <strong>Statut = Actif</strong> → Enregistrer.</p>
       </>
     ),
   },
   {
     q: "Comment fonctionne la validation des congés ?",
-    a: <p>Le salarié (ou le RH) crée la demande dans <Link href="/conges" className="text-[#047857] underline">Absences & Congés</Link>. Elle suit le circuit <strong>demande → validation manager → validation RH</strong>. Les soldes s'acquièrent à 2,2 jours/mois travaillé (Code du Travail ivoirien).</p>,
+    a: <p>Le salarié (ou le RH) crée la demande dans <Link href="/conges" className="text-[#d67002] underline">Absences & Congés</Link>. Elle suit le circuit <strong>demande → validation manager → validation RH</strong>. Les soldes s'acquièrent à 2,2 jours/mois travaillé (Code du Travail ivoirien).</p>,
   },
   {
     q: "Quels sont les rôles et leurs accès ?",
-    a: <p><strong>Administrateur</strong> et <strong>Responsable RH</strong> : accès complet + administration. <strong>Chargé RH</strong> / <strong>Manager</strong> : périmètre opérationnel et validations. <strong>Collaborateur</strong> : uniquement le <Link href="/portail" className="text-[#047857] underline">Portail salarié</Link>. Les accès fins se règlent dans <Link href="/parametres/permissions" className="text-[#047857] underline">Rôles & Permissions</Link>.</p>,
+    a: <p><strong>Administrateur</strong> et <strong>Responsable RH</strong> : accès complet + administration. <strong>Chargé RH</strong> / <strong>Manager</strong> : périmètre opérationnel et validations. <strong>Collaborateur</strong> : uniquement le <Link href="/portail" className="text-[#d67002] underline">Portail salarié</Link>. Les accès fins se règlent dans <Link href="/parametres/permissions" className="text-[#d67002] underline">Rôles & Permissions</Link>.</p>,
   },
   {
     q: "Comment chercher ou aller vite quelque part ?",
@@ -219,7 +219,7 @@ export default function AidePage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Rechercher une page, un module, une fonctionnalité…"
-          className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 shadow-2xs outline-none transition-all focus-visible:border-[#059669] focus-visible:ring-2 focus-visible:ring-[#059669]/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-900 shadow-2xs outline-none transition-all focus-visible:border-[#ee7f03] focus-visible:ring-2 focus-visible:ring-[#ee7f03]/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
         />
       </div>
 
@@ -255,9 +255,9 @@ export default function AidePage() {
         return (
           <section key={m.id} className="space-y-3">
             {/* En-tête de module surligné teal */}
-            <div className="flex items-center gap-2.5 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2">
-              <Icon weight="duotone" className="h-4 w-4 text-[#047857] dark:text-[#2dd4bf]" />
-              <h2 className="text-[13px] font-bold uppercase tracking-[0.06em] text-[#047857] dark:text-[#2dd4bf]">{m.label}</h2>
+            <div className="flex items-center gap-2.5 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2">
+              <Icon weight="duotone" className="h-4 w-4 text-[#d67002] dark:text-[#2dd4bf]" />
+              <h2 className="text-[13px] font-bold uppercase tracking-[0.06em] text-[#d67002] dark:text-[#2dd4bf]">{m.label}</h2>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -265,14 +265,14 @@ export default function AidePage() {
                 <Link
                   key={it.href}
                   href={it.href}
-                  className="group flex flex-col rounded-2xl border border-slate-200/70 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-[#059669]/40 hover:shadow-[0_10px_24px_-14px_rgba(13,148,136,0.45)] dark:border-slate-800 dark:bg-slate-900"
+                  className="group flex flex-col rounded-2xl border border-slate-200/70 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-[#ee7f03]/40 hover:shadow-[0_10px_24px_-14px_rgba(238,127,3,0.45)] dark:border-slate-800 dark:bg-slate-900"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{it.title}</h3>
-                    <CaretRight weight="bold" className="h-3.5 w-3.5 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-[#047857]" />
+                    <CaretRight weight="bold" className="h-3.5 w-3.5 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-[#d67002]" />
                   </div>
                   <p className="mt-1.5 text-[12.5px] leading-relaxed text-slate-500 dark:text-slate-400">{it.desc}</p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#047857] opacity-0 transition-opacity group-hover:opacity-100 dark:text-[#2dd4bf]">
+                  <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#d67002] opacity-0 transition-opacity group-hover:opacity-100 dark:text-[#2dd4bf]">
                     Ouvrir <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>

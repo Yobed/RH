@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Save, Shield } from "lucide-react";
+import { Lock, Save, Shield, UserCircle } from "lucide-react";
 import { toast } from "sonner";
+import { PortailHeader } from "../PortailHeader";
 
 interface Employee {
   full_name: string;
@@ -64,13 +65,11 @@ export function ProfilClient({ employee }: { employee: Employee }) {
 
   return (
     <div className="space-y-6">
-      <header className="pb-4 border-b border-slate-200 dark:border-slate-800">
-        <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-slate-100">Mon profil</h1>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
-          Vos informations personnelles. Toute modification est tracée et
-          partagée avec votre service RH.
-        </p>
-      </header>
+      <PortailHeader
+        title="Mon profil"
+        subtitle="Vos informations personnelles. Toute modification est tracée et partagée avec votre service RH."
+        icon={UserCircle}
+      />
 
       {/* Infos non modifiables */}
       <section className="rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">

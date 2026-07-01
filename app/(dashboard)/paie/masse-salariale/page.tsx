@@ -69,7 +69,7 @@ export default function MasseSalarialePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfcfd]">
+    <div>
       <div className="p-8 space-y-10 max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200/60">

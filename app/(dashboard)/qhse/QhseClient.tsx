@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -50,7 +50,7 @@ const graviteConfig = {
 
 const statutCnpsConfig = {
   non_declare: { label: "Non déclaré", color: "bg-red-50 text-red-600" },
-  declare: { label: "Déclaré", color: "bg-teal-50 text-teal-600" },
+  declare: { label: "Déclaré", color: "bg-[#ee7f03]/10 text-[#ee7f03]" },
   indemnise: { label: "Indemnisé", color: "bg-emerald-50 text-emerald-600" },
   clos: { label: "Clos", color: "bg-slate-100 text-slate-600" },
 };
@@ -71,8 +71,8 @@ function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1], delay: index * 0.06 }}
       className={cn(
-        "rounded-2xl border bg-white p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)]",
-        danger ? "border-red-100" : "border-slate-100/80"
+        "rounded-md border bg-white p-4",
+        danger ? "border-red-200" : "border-slate-200"
       )}
     >
       <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600 mb-3">{label}</p>
@@ -172,7 +172,7 @@ export function QhseClient({
 
       {/* Alerts */}
       {indicateurs.accidents_non_declares > 0 && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 flex items-center gap-2">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-1.5 text-sm text-red-700 flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
           <strong>{indicateurs.accidents_non_declares} accident{indicateurs.accidents_non_declares > 1 ? "s" : ""}</strong>
           &nbsp;non déclaré{indicateurs.accidents_non_declares > 1 ? "s" : ""} à la CNPS — action requise
@@ -207,13 +207,13 @@ export function QhseClient({
 
       {/* Accidents table */}
       {tab === "accidents" && (
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+        <div className="rounded-md border border-slate-200 bg-white overflow-hidden">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/60">
+              <tr className="border-b border-slate-200 bg-slate-50">
                 {["Date", "Employé", "Description", "Gravité", "Jours arrêt", "Statut CNPS", "Action"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">{h}</th>
+                  <th key={h} className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -224,22 +224,22 @@ export function QhseClient({
                 </tr>
               )}
               {accidents.map((a) => (
-                <tr key={a.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="px-4 py-3 font-mono text-xs text-slate-600 whitespace-nowrap">
+                <tr key={a.id} className="hover:bg-[#ee7f03]/[0.04] transition-colors">
+                  <td className="px-3 py-1.5 font-mono text-xs text-slate-600 whitespace-nowrap">
                     {new Date(a.date_accident).toLocaleDateString("fr-CI")}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5">
                     <p className="font-medium text-slate-800 text-xs">{a.employees?.full_name ?? "—"}</p>
                     <p className="text-[10px] text-slate-600">{a.employees?.poste}</p>
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-600 max-w-[200px] truncate">{a.description}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5 text-xs text-slate-600 max-w-[200px] truncate">{a.description}</td>
+                  <td className="px-3 py-1.5">
                     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold", graviteConfig[a.gravite].color)}>
                       {graviteConfig[a.gravite].label}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-slate-600 text-center">{a.jours_arret ?? 0}</td>
-                  <td className="px-4 py-3 space-y-1">
+                  <td className="px-3 py-1.5 font-mono text-xs text-slate-600 text-center">{a.jours_arret ?? 0}</td>
+                  <td className="px-3 py-1.5 space-y-1">
                     <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold", statutCnpsConfig[a.statut_cnps].color)}>
                       {statutCnpsConfig[a.statut_cnps].label}
                     </span>
@@ -255,7 +255,7 @@ export function QhseClient({
                       </p>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5">
                     {a.statut_cnps === "non_declare" && (
                       <button
                         onClick={() => declareCnps(a.id)}
@@ -276,13 +276,13 @@ export function QhseClient({
 
       {/* Visites table */}
       {tab === "visites" && (
-        <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+        <div className="rounded-md border border-slate-200 bg-white overflow-hidden">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/60">
+              <tr className="border-b border-slate-200 bg-slate-50">
                 {["Employé", "Type", "Dernière visite", "Prochaine visite", "Résultat", "Médecin"].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">{h}</th>
+                  <th key={h} className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -293,20 +293,20 @@ export function QhseClient({
                 </tr>
               )}
               {visites.map((v) => (
-                <tr key={v.id} className={cn("transition-colors", v.en_retard ? "bg-red-50/40 hover:bg-red-50/60" : "hover:bg-slate-50/60")}>
-                  <td className="px-4 py-3">
+                <tr key={v.id} className={cn("transition-colors", v.en_retard ? "bg-red-50/40 hover:bg-red-50/60" : "hover:bg-[#ee7f03]/[0.04]")}>
+                  <td className="px-3 py-1.5">
                     <p className="font-medium text-slate-800 text-xs">{v.employees?.full_name ?? "—"}</p>
                     <p className="text-[10px] text-slate-600">{v.employees?.poste}</p>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5">
                     <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
                       {typeVisiteLabel[v.type_visite]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-slate-600">
+                  <td className="px-3 py-1.5 font-mono text-xs text-slate-600">
                     {new Date(v.date_visite).toLocaleDateString("fr-CI")}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5">
                     {v.date_prochaine ? (
                       <span className={cn("font-mono text-xs", v.en_retard ? "font-semibold text-red-600" : "text-slate-600")}>
                         {v.en_retard && "⚠ "}{new Date(v.date_prochaine).toLocaleDateString("fr-CI")}
@@ -315,7 +315,7 @@ export function QhseClient({
                       <span className="text-xs text-slate-600">—</span>
                     )}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-1.5">
                     {v.resultat && (
                       <span className={cn(
                         "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold",
@@ -327,7 +327,7 @@ export function QhseClient({
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-600">{v.medecin ?? "—"}</td>
+                  <td className="px-3 py-1.5 text-xs text-slate-600">{v.medecin ?? "—"}</td>
                 </tr>
               ))}
             </tbody>

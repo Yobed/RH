@@ -270,47 +270,70 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
         Retour à la liste
       </Link>
 
-      {/* Hero Header */}
-      <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-center gap-4">
-            <Avatar
-              src={(emp as { photo_url?: string | null }).photo_url}
-              name={emp.full_name}
-              size={56}
-              rounded="xl"
-              className="shadow-sm"
-            />
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{emp.full_name}</h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <span className="text-sm text-slate-600 font-medium">{emp.poste}</span>
-                {emp.departement && (
-                  <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                    {emp.departement}
-                  </span>
-                )}
-                <StatutBadge statut={emp.statut} />
+      {/* Hero Header — bandeau aubergine + identité chevauchante + faits clés */}
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="relative h-24 bg-gradient-to-r from-[#ee7f03] via-[#d67002] to-[#b35c00]">
+          <div className="pointer-events-none absolute -right-8 -top-10 h-36 w-36 rounded-full bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute bottom-0 left-1/4 h-24 w-24 rounded-full bg-white/5 blur-2xl" />
+        </div>
+        <div className="px-6 pb-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="-mt-12 flex items-end gap-4">
+              <Avatar
+                src={(emp as { photo_url?: string | null }).photo_url}
+                name={emp.full_name}
+                size={88}
+                rounded="xl"
+                className="shadow-md ring-4 ring-white dark:ring-slate-900"
+              />
+              <div className="pb-1">
+                <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{emp.full_name}</h1>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{emp.poste}</span>
+                  {emp.departement && (
+                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                      {emp.departement}
+                    </span>
+                  )}
+                  <StatutBadge statut={emp.statut} />
+                </div>
               </div>
-              <p className="text-xs text-slate-600 mt-1.5 font-mono tabular-nums">
-                {emp.matricule} · {anciennete}
-              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/employes/${emp.id}/onboarding`}
+                className="h-9 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              >
+                Onboarding
+              </Link>
+              <InviterPortailButton
+                employeeId={emp.id}
+                employeeName={emp.full_name}
+                employeeEmail={emp.email}
+              />
+              <DocumentDropdown employee={emp} company={company} />
+              <EmployeeDialog employee={emp} employees={allEmployees ?? []} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3 shrink-0">
-            <Link
-              href={`/employes/${emp.id}/onboarding`}
-              className="h-9 inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              Onboarding
-            </Link>
-            <InviterPortailButton
-              employeeId={emp.id}
-              employeeName={emp.full_name}
-              employeeEmail={emp.email}
-            />
-            <DocumentDropdown employee={emp} company={company} />
-            <EmployeeDialog employee={emp} employees={allEmployees ?? []} />
+
+          {/* Faits clés */}
+          <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-slate-100 pt-4 dark:border-slate-800 sm:grid-cols-4">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Matricule</p>
+              <p className="mt-0.5 font-mono text-[13px] font-semibold tabular-nums text-slate-800 dark:text-slate-200">{emp.matricule}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Ancienneté</p>
+              <p className="mt-0.5 text-[13px] font-semibold text-slate-800 dark:text-slate-200">{anciennete}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Embauché le</p>
+              <p className="mt-0.5 text-[13px] font-semibold text-slate-800 dark:text-slate-200">{safeFormatDate(emp.date_embauche)}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Téléphone</p>
+              <p className="mt-0.5 text-[13px] font-semibold text-slate-800 dark:text-slate-200">{emp.phone || "—"}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -349,7 +372,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
               {/* Identité */}
-              <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5 space-y-4">
+              <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 space-y-4">
                 <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 border-b border-slate-100 pb-3">
                   <User className="h-3.5 w-3.5" weight="bold" />
                   Identité & Contacts
@@ -388,7 +411,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               </div>
 
               {/* Parcours professionnel */}
-              <div id="parcours" className="scroll-mt-20 rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+              <div id="parcours" className="scroll-mt-20 rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                   <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                     <TrendUp className="h-3.5 w-3.5" weight="bold" />
@@ -403,7 +426,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             {/* Colonne droite */}
             <div className="space-y-6">
               {/* Évaluations */}
-              <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5">
+              <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5">
                 <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 border-b border-slate-100 pb-3 mb-4">
                   <ChartBar className="h-3.5 w-3.5" weight="bold" />
                   Performance
@@ -419,7 +442,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                     {evaluations.map((ev) => (
                       <div
                         key={ev.id}
-                        className="rounded-xl border border-slate-100 p-3 hover:bg-slate-50/60 transition-colors"
+                        className="rounded-xl border border-slate-100 p-3 transition-colors hover:bg-[#ee7f03]/[0.04]"
                       >
                         <div className="flex justify-between items-start">
                           <p className="font-semibold text-sm text-slate-800">{ev.periode}</p>
@@ -443,7 +466,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
         <TabsContent value="contracts" className="space-y-6 pt-2">
           <ContractPrimesManager employeeId={emp.id} />
 
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+          <div className="rounded-xl border border-slate-200 bg-white overflow-hidden dark:border-slate-800 dark:bg-slate-900">
             <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60">
               <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                 <FileText className="h-3.5 w-3.5" weight="bold" />
@@ -460,17 +483,17 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Salaire brut</th>
-                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Type</th>
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Période</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Salaire brut</th>
+                    <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {contracts.map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3">
+                    <tr key={c.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                      <td className="px-3 py-2">
                         <div className="flex flex-col">
                           <span className="font-semibold text-slate-800">{c.type_contrat}</span>
                           {(c.renouvellement_count ?? 0) > 0 && (
@@ -478,16 +501,16 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-slate-600 font-mono tabular-nums text-xs">
+                      <td className="px-3 py-2 text-slate-600 font-mono tabular-nums text-xs">
                         {safeFormatDate(c.date_debut)} → {c.date_fin ? safeFormatDate(c.date_fin) : "Indét."}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono tabular-nums font-medium text-slate-800">
+                      <td className="px-3 py-2 text-right font-mono tabular-nums font-medium text-slate-800">
                         {fmtXOF(c.salaire_brut)}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-2 text-center">
                         <StatutBadge statut={c.statut} />
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-3 py-2 text-right">
                         <ContractPrintButton employee={emp} contract={c} company={company} />
                       </td>
                     </tr>
@@ -499,8 +522,8 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
 
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Historique Salaire */}
-            <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
-              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/60">
+            <div className="rounded-xl border border-slate-200 bg-white overflow-hidden dark:border-slate-800 dark:bg-slate-900">
+              <div className="px-3 py-2 border-b border-slate-100 bg-slate-50/60">
                 <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-600">
                   Historique éléments salaire
                 </h3>
@@ -516,7 +539,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {salaryHistory?.map((h) => (
-                      <tr key={h.id} className="hover:bg-slate-50/60 transition-colors">
+                      <tr key={h.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
                         <td className="px-4 py-2 text-slate-600">
                           {safeFormatDate(h.date_effet)}
                         </td>
@@ -558,7 +581,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
           <div className="grid gap-6 md:grid-cols-4">
             {/* Solde */}
             <div className="md:col-span-1">
-              <div className="rounded-2xl border border-slate-100/80 bg-white shadow-[0_2px_12px_-2px_rgba(0,0,0,0.05)] p-5 text-center space-y-4">
+              <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 text-center space-y-4">
                 <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-600">
                   Solde annuel {anneeEnCours} <span className="text-slate-400 font-normal ml-2"> (2,2 j/mois)</span>
                 </p>
@@ -582,28 +605,28 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
             </div>
 
             {/* Congés récents */}
-            <div className="md:col-span-3 rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
-              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/60">
+            <div className="md:col-span-3 rounded-xl border border-slate-200 bg-white overflow-hidden dark:border-slate-800 dark:bg-slate-900">
+              <div className="px-3 py-2 border-b border-slate-100 bg-slate-50/60">
                 <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-600">Congés récents</h3>
               </div>
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Jours</th>
-                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Type</th>
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Période</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Jours</th>
+                    <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {conges?.map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3 text-slate-700 capitalize">{c.type}</td>
-                      <td className="px-4 py-3 text-slate-600 font-mono tabular-nums text-xs">
+                    <tr key={c.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                      <td className="px-3 py-2 text-slate-700 capitalize">{c.type}</td>
+                      <td className="px-3 py-2 text-slate-600 font-mono tabular-nums text-xs">
                         {safeFormatDate(c.date_debut)} → {safeFormatDate(c.date_fin)}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold font-mono tabular-nums text-slate-800">{c.nb_jours}j</td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-2 text-right font-bold font-mono tabular-nums text-slate-800">{c.nb_jours}j</td>
+                      <td className="px-3 py-2 text-center">
                         <StatutBadge statut={c.statut} />
                       </td>
                     </tr>
@@ -616,7 +639,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
 
         {/* Tab: Paie */}
         <TabsContent value="payroll" className="space-y-6 pt-2">
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+          <div className="rounded-xl border border-slate-200 bg-white overflow-hidden dark:border-slate-800 dark:bg-slate-900">
             <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
               <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600">
                 <Money className="h-3.5 w-3.5 text-emerald-600" weight="bold" />
@@ -633,27 +656,27 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
               <table className="w-full text-sm">
                 <thead className="bg-slate-50/60 border-b border-slate-100">
                   <tr>
-                    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Période</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Brut</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Cotisations (CNPS + ITS)</th>
-                    <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">NET A PAYER</th>
-                    <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
+                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Période</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Brut</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Cotisations (CNPS + ITS)</th>
+                    <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">NET A PAYER</th>
+                    <th className="px-3 py-2 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {bulletins.map((b) => (
-                    <tr key={b.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3 font-mono tabular-nums font-medium text-slate-700">{b.periode}</td>
-                      <td className="px-4 py-3 text-right font-mono tabular-nums text-slate-600">
+                    <tr key={b.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                      <td className="px-3 py-2 font-mono tabular-nums font-medium text-slate-700">{b.periode}</td>
+                      <td className="px-3 py-2 text-right font-mono tabular-nums text-slate-600">
                         {new Intl.NumberFormat("fr-CI").format(b.salaire_brut)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono tabular-nums text-red-500">
+                      <td className="px-3 py-2 text-right font-mono tabular-nums text-red-500">
                         −{new Intl.NumberFormat("fr-CI").format(Number((b as Record<string, unknown>).total_contributions ?? ((b.cnps_salarie ?? 0) + (b.its ?? 0))))}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold font-mono tabular-nums text-emerald-700">
+                      <td className="px-3 py-2 text-right font-bold font-mono tabular-nums text-emerald-700">
                         {new Intl.NumberFormat("fr-CI").format(Number((b as Record<string, unknown>).net_to_pay ?? b.salaire_net))}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-2 text-center">
                         <StatutBadge statut={b.statut} />
                       </td>
                     </tr>
@@ -708,7 +731,7 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                 </h3>
                 <DocumentUploadDialog employeeId={emp.id} companyId={emp.company_id} />
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+              <div className="rounded-xl border border-slate-200 bg-white overflow-hidden dark:border-slate-800 dark:bg-slate-900">
                 {!documents || documents.length === 0 ? (
                   <EmptyState 
                     icon={<FolderOpen className="h-12 w-12 text-slate-300" />} 
@@ -719,25 +742,25 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                   <table className="w-full text-sm">
                     <thead className="bg-slate-50/60 border-b border-slate-100">
                       <tr>
-                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Nom du document</th>
-                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Catégorie</th>
-                        <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Date</th>
-                        <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Action</th>
+                        <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Nom du document</th>
+                        <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Catégorie</th>
+                        <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Date</th>
+                        <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
                       {documents.map((doc) => (
-                        <tr key={doc.id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="px-4 py-3 font-medium text-slate-800 max-w-[200px] truncate">{doc.name}</td>
-                          <td className="px-4 py-3">
+                        <tr key={doc.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                          <td className="px-3 py-2 font-medium text-slate-800 max-w-[200px] truncate">{doc.name}</td>
+                          <td className="px-3 py-2">
                             <span className="rounded-lg bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                               {doc.famille ?? "GED"}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-slate-600 text-xs">
+                          <td className="px-3 py-2 text-slate-600 text-xs">
                             {safeFormatDate(doc.created_at)}
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-3 py-2 text-right">
                             <a
                               href={doc.file_url}
                               target="_blank"
@@ -754,6 +777,17 @@ export default async function EmployeeDetailPage({ params }: { params: { id: str
                 )}
               </div>
             </div>
+          </div>
+        </TabsContent>
+
+        {/* Tab: Timeline (chronologie consolidée — corrige l'onglet jusque-là vide) */}
+        <TabsContent value="timeline" className="space-y-6 pt-2">
+          <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5">
+            <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-600 border-b border-slate-100 pb-3 mb-4">
+              <Calendar className="h-3.5 w-3.5" weight="bold" />
+              Chronologie complète
+            </h3>
+            <EmployeeTimeline events={timelineEvents} />
           </div>
         </TabsContent>
       </Tabs>

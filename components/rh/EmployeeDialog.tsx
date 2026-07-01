@@ -43,7 +43,7 @@ const FAMILLE_LABELS: Record<SalaryGridRow["famille"], string> = {
 };
 
 const selectClass =
-  "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-2xs outline-none transition-all focus-visible:border-[#059669] focus-visible:ring-2 focus-visible:ring-[#059669]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white";
+  "h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-2xs outline-none transition-all focus-visible:border-[#ee7f03] focus-visible:ring-2 focus-visible:ring-[#ee7f03]/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-white";
 
 const schema = z
   .object({
@@ -367,7 +367,7 @@ export function EmployeeDialog({
             employee ? (
               <Button variant="ghost" size="sm" aria-label="Modifier" />
             ) : (
-              <Button className="bg-[#059669] hover:bg-[#047857] text-white border-0" />
+              <Button className="bg-[#ee7f03] hover:bg-[#d67002] text-white border-0" />
             )
           }
         >
@@ -384,7 +384,7 @@ export function EmployeeDialog({
 
       <DialogContent className="sm:max-w-3xl max-h-[92vh] overflow-y-auto rounded-2xl border-slate-200 bg-white p-0 dark:border-slate-800 dark:bg-slate-900">
         <DialogHeader className="sticky top-0 z-10 flex-row items-center gap-3 border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ee7f03]/10 text-[#d67002] dark:text-[#2dd4bf]">
             <Plus className="h-5 w-5" weight="bold" />
           </span>
           <div className="min-w-0">
@@ -401,7 +401,7 @@ export function EmployeeDialog({
 
           {/* ── IDENTITÉ ─────────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#d67002] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Identité
             </p>
 
@@ -511,7 +511,7 @@ export function EmployeeDialog({
 
           {/* ── PIÈCE D'IDENTITÉ & CNPS ──────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#d67002] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Pièce d&apos;identité & Sécurité sociale
             </p>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -532,7 +532,7 @@ export function EmployeeDialog({
 
           {/* ── COORDONNÉES ──────────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#d67002] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Coordonnées
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -587,7 +587,7 @@ export function EmployeeDialog({
 
           {/* ── POSTE & CONTRAT ──────────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#d67002] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Poste & Contrat
             </p>
 
@@ -618,7 +618,7 @@ export function EmployeeDialog({
               <div>
                 <label className="mb-1 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                   Catégorie professionnelle
-                  <span className="ml-1 text-[10px] text-teal-600 font-normal">
+                  <span className="ml-1 text-[10px] text-[#ee7f03] font-normal">
                     (auto-remplit le salaire de base)
                   </span>
                 </label>
@@ -733,7 +733,7 @@ export function EmployeeDialog({
 
           {/* ── PRIMES & INDEMNITÉS ──────────────────────────────── */}
           <section className="space-y-3">
-            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+            <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#d67002] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
               Primes & Indemnités habituelles
               <span className="ml-2 font-normal normal-case text-slate-400/70">
                 (reprises automatiquement à chaque bulletin)
@@ -749,7 +749,7 @@ export function EmployeeDialog({
               <div>
                 <label className="text-xs font-medium text-slate-700">
                   <span className="font-mono text-muted-foreground mr-1">03</span> Prime d&apos;ancienneté
-                  <span className="ml-1 text-[10px] text-teal-500 font-normal">(auto — 1%/an)</span>
+                  <span className="ml-1 text-[10px] text-[#ee7f03] font-normal">(auto — 1%/an)</span>
                 </label>
                 <Input disabled value="Calculée automatiquement" className="mt-1 bg-muted text-muted-foreground text-xs" />
               </div>
@@ -797,7 +797,7 @@ export function EmployeeDialog({
                 <input
                   type="checkbox"
                   {...register("consent_donnees_personnelles")}
-                  className="h-4 w-4 mt-0.5 rounded border-slate-300 accent-[#059669] text-[#059669] focus:ring-[#059669]"
+                  className="h-4 w-4 mt-0.5 rounded border-slate-300 accent-[#ee7f03] text-[#ee7f03] focus:ring-[#ee7f03]"
                 />
                 <span className="text-xs text-slate-700 leading-relaxed">
                   Le salarié consent au traitement de ses données personnelles
@@ -811,7 +811,7 @@ export function EmployeeDialog({
           {/* ── MOTIF MODIFICATION (édition uniquement) ──────────── */}
           {employee && (
             <section className="space-y-2">
-              <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#059669]/15 bg-[#059669]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#047857] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
+              <p className="mb-2 flex items-center gap-2 rounded-lg border border-[#ee7f03]/15 bg-[#ee7f03]/10 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#d67002] dark:border-[#2dd4bf]/15 dark:bg-[#2dd4bf]/10 dark:text-[#2dd4bf]">
                 Motif de modification
               </p>
               <div>
@@ -835,7 +835,7 @@ export function EmployeeDialog({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#059669] hover:bg-[#047857] text-white border-0 shadow-sm"
+              className="bg-[#ee7f03] hover:bg-[#d67002] text-white border-0 shadow-sm"
             >
               {isSubmitting
                 ? "Enregistrement..."

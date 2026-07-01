@@ -127,7 +127,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="inline-flex items-center justify-center rounded-2xl bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-[#059669]/20 transition-all duration-200 gap-2"
+          className="inline-flex items-center justify-center rounded-2xl bg-[#ee7f03] hover:bg-[#d67002] text-white px-4 py-2 text-sm font-semibold shadow-lg shadow-[#ee7f03]/20 transition-all duration-200 gap-2"
         >
           <Plus weight="bold" className="h-4 w-4" />
           <span>Nouvelle procédure</span>
@@ -136,11 +136,11 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
 
       <DialogContent className="sm:max-w-xl overflow-hidden rounded-[2rem] border-none p-0 !bg-transparent shadow-none">
         <div className="bg-white border border-slate-200 shadow-2xl rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] relative">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#059669]" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-[#ee7f03]" />
 
           <DialogHeader className="p-8 pb-4 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#059669]/10 text-[#059669]">
+              <div className="p-3 rounded-2xl bg-[#ee7f03]/10 text-[#ee7f03]">
                 <WarningOctagon size={28} weight="duotone" />
               </div>
               <div>
@@ -158,7 +158,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
             {/* ── CONCERNE ─────────────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ee7f03]" />
                 Salarié &amp; Nature des faits
               </div>
 
@@ -169,7 +169,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
                     Salarié *
                   </label>
                   <Select name="employee_id" required>
-                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#059669] focus:border-[#059669] focus:ring-2">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#ee7f03] focus:border-[#ee7f03] focus:ring-2">
                       <SelectValue placeholder="Sélectionner un salarié" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
@@ -188,7 +188,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
                     Type de procédure *
                   </label>
                   <Select name="type" required value={type} onValueChange={(v) => setType(v ?? "")}>
-                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#059669] focus:border-[#059669] focus:ring-2">
+                    <SelectTrigger className="w-full h-11 rounded-xl border-slate-200 bg-white px-3 py-2 text-sm focus:ring-[#ee7f03] focus:border-[#ee7f03] focus:ring-2">
                       <SelectValue placeholder="Choisir un type de sanction ou demande" />
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-slate-200 shadow-xl rounded-xl z-[9999]">
@@ -212,7 +212,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
             {/* ── CHRONOLOGIE ──────────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ee7f03]" />
                 Chronologie &amp; Délais Légaux
               </div>
 
@@ -230,7 +230,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
                     value={dateIncident}
                     onChange={(e) => setDateIncident(e.target.value)}
                     max={new Date().toISOString().split("T")[0]}
-                    className="rounded-xl h-11 focus-visible:ring-[#059669]"
+                    className="rounded-xl h-11 focus-visible:ring-[#ee7f03]"
                   />
                   {deadline && (
                     <div
@@ -242,7 +242,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
                       ].filter(Boolean).join(" ")}
                     >
                       <WarningCircle weight="fill" className={`h-4 w-4 shrink-0 mt-0.5 ${
-                        deadline.level === "danger" ? "text-rose-600" : deadline.level === "warn" ? "text-amber-600" : "text-[#059669]"
+                        deadline.level === "danger" ? "text-rose-600" : deadline.level === "warn" ? "text-amber-600" : "text-[#ee7f03]"
                       }`} />
                       <span className="leading-relaxed">{deadline.message}</span>
                     </div>
@@ -255,14 +255,14 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
                       <Calendar weight="duotone" />
                       Date de convocation
                     </label>
-                    <Input type="date" id="date_convocation" name="date_convocation" className="rounded-xl h-11 focus-visible:ring-[#059669]" />
+                    <Input type="date" id="date_convocation" name="date_convocation" className="rounded-xl h-11 focus-visible:ring-[#ee7f03]" />
                   </div>
                   <div>
                     <label className={labelClass}>
                       <Calendar weight="duotone" />
                       Date d'audition
                     </label>
-                    <Input type="date" id="date_audition" name="date_audition" className="rounded-xl h-11 focus-visible:ring-[#059669]" />
+                    <Input type="date" id="date_audition" name="date_audition" className="rounded-xl h-11 focus-visible:ring-[#ee7f03]" />
                   </div>
                 </div>
               </div>
@@ -271,7 +271,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
             {/* ── MOTIF ────────────────────────────── */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 text-slate-900 font-bold text-sm uppercase tracking-wider mb-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#059669]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ee7f03]" />
                 Motif &amp; Description
               </div>
 
@@ -287,7 +287,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
                   minLength={10}
                   rows={4}
                   placeholder="Détaillez les faits reprochés (lieu, témoins, conséquences)…"
-                  className="rounded-xl bg-white border-slate-200 min-h-[100px] focus-visible:ring-[#059669]"
+                  className="rounded-xl bg-white border-slate-200 min-h-[100px] focus-visible:ring-[#ee7f03]"
                 />
                 <p className="mt-1.5 text-[11px] text-slate-500 leading-snug">
                   Le motif doit être précis et factuel. Une description vague rendrait la sanction attaquable pour défaut de cause réelle et sérieuse.
@@ -302,7 +302,7 @@ export function DisciplinaryDialog({ employees }: { employees: EmployeeOption[] 
               <Button
                 type="submit"
                 disabled={loading}
-                className="h-12 px-6 rounded-2xl bg-[#059669] hover:bg-[#047857] text-white font-bold shadow-lg shadow-[#059669]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                className="h-12 px-6 rounded-2xl bg-[#ee7f03] hover:bg-[#d67002] text-white font-bold shadow-lg shadow-[#ee7f03]/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 {loading ? "Création…" : "Initier la procédure"}
               </Button>

@@ -247,7 +247,7 @@ function EmployeeDetail({
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => onOpenAction(row)}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-4 py-2.5 text-xs font-black text-white shadow-md shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-[#ee7f03] hover:from-emerald-400 hover:to-[#ee7f03] px-4 py-2.5 text-xs font-black text-white shadow-md shadow-emerald-500/20 transition-all active:scale-95 cursor-pointer"
           >
             <PaperPlaneRight weight="bold" className="h-4 w-4" />
             Lancer un plan de rétention
@@ -484,7 +484,7 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
 
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-5 py-3.5 text-xs font-black text-white shadow-lg shadow-emerald-500/25 transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-[#ee7f03] hover:from-emerald-400 hover:to-[#ee7f03] px-5 py-3.5 text-xs font-black text-white shadow-lg shadow-emerald-500/25 transition-all active:scale-95 cursor-pointer"
             >
               <DownloadSimple weight="bold" className="h-4 w-4" />
               Exporter l'Analyse (CSV)
@@ -578,8 +578,8 @@ export function RisqueDepartTable({ data }: { data: RisqueDepartRow[] }) {
       {/* SECTION 3: Titre avec Fond en Surbrillance - Registre & Filtrage */}
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 border border-teal-500/30 text-teal-700 dark:text-teal-300 font-black text-lg shadow-xs flex items-center gap-2">
-            <Briefcase weight="bold" className="w-5 h-5 text-teal-600" />
+          <div className="px-4 py-2 rounded-2xl bg-[#ee7f03]/10 dark:bg-[#ee7f03]/20 border border-[#ee7f03]/30 text-[#ee7f03] dark:text-[#f8d3a3] font-black text-lg shadow-xs flex items-center gap-2">
+            <Briefcase weight="bold" className="w-5 h-5 text-[#ee7f03]" />
             03. Registre Général d'Audit des Collaborateurs
           </div>
           <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent dark:from-slate-800" />

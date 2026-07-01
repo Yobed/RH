@@ -25,7 +25,7 @@ const MODULES: ModuleCard[] = [
     label: "Collaborateurs",
     description: "Fiches employés, contrats, historique de carrière, organigramme dynamique.",
     icon: Users,
-    color: "from-sky-500 to-teal-600",
+    color: "from-sky-500 to-[#ee7f03]",
     ringColor: "ring-sky-100",
   },
   {
@@ -33,8 +33,8 @@ const MODULES: ModuleCard[] = [
     label: "Contrats & Avenants",
     description: "CDI, CDD, stages, conventions — édition assistée + signature électronique.",
     icon: FileText,
-    color: "from-teal-500 to-slate-600",
-    ringColor: "ring-teal-100",
+    color: "from-[#ee7f03] to-slate-600",
+    ringColor: "ring-[#ee7f03]/15",
   },
   {
     href: "/paie",
@@ -65,7 +65,7 @@ const MODULES: ModuleCard[] = [
     label: "Recrutement",
     description: "Postes, candidats, scoring CV par Claude, suivi pipeline.",
     icon: ClipboardText,
-    color: "from-cyan-500 to-teal-600",
+    color: "from-cyan-500 to-[#ee7f03]",
     ringColor: "ring-cyan-100",
   },
   {
@@ -73,7 +73,7 @@ const MODULES: ModuleCard[] = [
     label: "Formation & FDFP",
     description: "Plan annuel, déclarations FDFP, suivi présences et évaluations.",
     icon: GraduationCap,
-    color: "from-slate-500 to-teal-600",
+    color: "from-slate-500 to-[#ee7f03]",
     ringColor: "ring-slate-100",
   },
   {
@@ -97,16 +97,16 @@ const MODULES: ModuleCard[] = [
     label: "Déclarations sociales",
     description: "DISA, CNPS, CMU, ITS — export conforme + suivi des dépôts.",
     icon: Scales,
-    color: "from-teal-600 to-teal-700",
-    ringColor: "ring-teal-100",
+    color: "from-[#ee7f03] to-[#ee7f03]",
+    ringColor: "ring-[#ee7f03]/15",
   },
   {
     href: "/analytique",
     label: "Analytique RH",
     description: "Turnover, masse salariale, risque de départ, prévision N+1.",
     icon: ChartPieSlice,
-    color: "from-teal-500 to-emerald-600",
-    ringColor: "ring-teal-100",
+    color: "from-[#ee7f03] to-emerald-600",
+    ringColor: "ring-[#ee7f03]/15",
   },
   {
     href: "/agent-juridique",
@@ -212,7 +212,7 @@ export default async function BienvenuePage() {
           Bonjour {greeting},
         </h1>
         <p className="text-base text-slate-600 max-w-2xl leading-relaxed">
-          Bienvenue sur <span className="font-semibold text-teal-700">RH Manager CI</span> —
+          Bienvenue sur <span className="font-semibold text-[#ee7f03]">RH Manager CI</span> —
           la plateforme RH conçue pour les entreprises ivoiriennes. Centralisez vos collaborateurs,
           paies, congés et déclarations, en conformité avec le{" "}
           <span className="font-semibold">Code du Travail (Loi 2015-532)</span> et la{" "}
@@ -221,10 +221,10 @@ export default async function BienvenuePage() {
       </header>
 
       {/* Démarrage rapide */}
-      <section className="rounded-2xl border border-slate-100 bg-gradient-to-br from-teal-50/60 to-slate-50/40 p-6 shadow-sm">
+      <section className="rounded-2xl border border-slate-100 bg-gradient-to-br from-[#ee7f03]/10 to-slate-50/40 p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4 mb-5">
           <div className="flex items-start gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-slate-600 to-teal-600 flex items-center justify-center shadow-sm shrink-0">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-slate-600 to-[#ee7f03] flex items-center justify-center shadow-sm shrink-0">
               <Lightning className="h-5 w-5 text-white" weight="fill" />
             </div>
             <div>
@@ -235,7 +235,7 @@ export default async function BienvenuePage() {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-3xl font-bold text-teal-600 leading-none">{progressPct}%</p>
+            <p className="text-3xl font-bold text-[#ee7f03] leading-none">{progressPct}%</p>
             <p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wide mt-1">
               configuré
             </p>
@@ -244,7 +244,7 @@ export default async function BienvenuePage() {
 
         <div className="h-1.5 w-full rounded-full bg-white/70 overflow-hidden mb-5">
           <div
-            className="h-full bg-gradient-to-r from-slate-500 to-teal-600 transition-all duration-500"
+            className="h-full bg-gradient-to-r from-slate-500 to-[#ee7f03] transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -254,7 +254,7 @@ export default async function BienvenuePage() {
             <li key={step.title}>
               <Link
                 href={step.href}
-                className="group flex items-center gap-3 rounded-xl bg-white px-4 py-3 border border-slate-100 hover:border-teal-200 hover:shadow-sm transition-all"
+                className="group flex items-center gap-3 rounded-xl bg-white px-4 py-3 border border-slate-100 hover:border-[#ee7f03]/30 hover:shadow-sm transition-all"
               >
                 <div
                   className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 ${
@@ -270,14 +270,14 @@ export default async function BienvenuePage() {
                     className={`text-sm font-semibold leading-tight ${
                       step.done
                         ? "text-slate-400 line-through decoration-1"
-                        : "text-slate-800 group-hover:text-teal-700"
+                        : "text-slate-800 group-hover:text-[#ee7f03]"
                     }`}
                   >
                     {step.title}
                   </p>
                   <p className="text-[11px] text-slate-500 mt-0.5">{step.hint}</p>
                 </div>
-                <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-0.5 transition-all shrink-0" />
+                <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-[#ee7f03] group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
             </li>
           ))}
@@ -287,7 +287,7 @@ export default async function BienvenuePage() {
       {/* État du SaaS */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatPill label="Collaborateurs" value={nbEmployes ?? 0} icon={Users} accent="text-sky-600 bg-sky-50" />
-        <StatPill label="Contrats actifs" value={nbContrats ?? 0} icon={FileText} accent="text-teal-600 bg-teal-50" />
+        <StatPill label="Contrats actifs" value={nbContrats ?? 0} icon={FileText} accent="text-[#ee7f03] bg-[#ee7f03]/10" />
         <StatPill label="Documents GED" value={nbDocuments ?? 0} icon={FolderOpen} accent="text-fuchsia-600 bg-fuchsia-50" />
         <StatPill
           label="Congés à valider"
@@ -315,19 +315,19 @@ export default async function BienvenuePage() {
               <Link
                 key={m.href}
                 href={m.href}
-                className={`group relative rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-4px_rgba(99,102,241,0.18)] hover:border-teal-200 transition-all duration-200 hover:-translate-y-0.5`}
+                className={`group relative rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_28px_-4px_rgba(99,102,241,0.18)] hover:border-[#ee7f03]/30 transition-all duration-200 hover:-translate-y-0.5`}
               >
                 <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center shadow-sm mb-3 ring-4 ${m.ringColor}`}>
                   <Icon className="h-5 w-5 text-white" weight="fill" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 group-hover:text-teal-700 transition-colors leading-tight">
+                <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#ee7f03] transition-colors leading-tight">
                   {m.label}
                 </h3>
                 <p className="text-[12px] text-slate-500 mt-1.5 leading-relaxed">
                   {m.description}
                 </p>
                 <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ArrowRight className="h-4 w-4 text-teal-500" />
+                  <ArrowRight className="h-4 w-4 text-[#ee7f03]" />
                 </div>
               </Link>
             );
@@ -345,23 +345,23 @@ export default async function BienvenuePage() {
             <h3 className="text-sm font-bold text-slate-900">Astuces IA</h3>
           </div>
           <ul className="space-y-2 text-[13px] text-slate-600 leading-relaxed">
-            <li className="flex gap-2"><span className="text-teal-500 shrink-0">▸</span><span>Dans la <strong>GED</strong>, cliquez sur « Aperçu » d'un document puis « Analyser avec l'IA » — Claude extrait automatiquement les champs (dates, numéros, salaire).</span></li>
-            <li className="flex gap-2"><span className="text-teal-500 shrink-0">▸</span><span>Le <strong>scoring CV</strong> du recrutement utilise Claude Sonnet pour classer les candidats.</span></li>
-            <li className="flex gap-2"><span className="text-teal-500 shrink-0">▸</span><span>L'<strong>agent juridique</strong> répond en citant le Code du Travail CI grâce au RAG pgvector.</span></li>
+            <li className="flex gap-2"><span className="text-[#ee7f03] shrink-0">▸</span><span>Dans la <strong>GED</strong>, cliquez sur « Aperçu » d'un document puis « Analyser avec l'IA » — Claude extrait automatiquement les champs (dates, numéros, salaire).</span></li>
+            <li className="flex gap-2"><span className="text-[#ee7f03] shrink-0">▸</span><span>Le <strong>scoring CV</strong> du recrutement utilise Claude Sonnet pour classer les candidats.</span></li>
+            <li className="flex gap-2"><span className="text-[#ee7f03] shrink-0">▸</span><span>L'<strong>agent juridique</strong> répond en citant le Code du Travail CI grâce au RAG pgvector.</span></li>
           </ul>
         </div>
 
         <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <div className="h-8 w-8 rounded-lg bg-teal-50 flex items-center justify-center">
-              <BookOpen className="h-4 w-4 text-teal-600" weight="fill" />
+            <div className="h-8 w-8 rounded-lg bg-[#ee7f03]/10 flex items-center justify-center">
+              <BookOpen className="h-4 w-4 text-[#ee7f03]" weight="fill" />
             </div>
             <h3 className="text-sm font-bold text-slate-900">Raccourcis utiles</h3>
           </div>
           <ul className="space-y-2 text-[13px] text-slate-600 leading-relaxed">
             <li className="flex items-center gap-2"><kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-600">Ctrl K</kbd><span>Ouvrir la palette de commandes.</span></li>
-            <li className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-slate-400" /><span>Les <Link href="/rappels" className="text-teal-600 font-semibold hover:underline">rappels & échéances</Link> centralisent contrats, visites, congés.</span></li>
-            <li className="flex items-center gap-2"><ChartPieSlice className="h-3.5 w-3.5 text-slate-400" /><span><Link href="/analytique" className="text-teal-600 font-semibold hover:underline">L'analytique RH</Link> calcule turnover, masse salariale, risque de départ.</span></li>
+            <li className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-slate-400" /><span>Les <Link href="/rappels" className="text-[#ee7f03] font-semibold hover:underline">rappels & échéances</Link> centralisent contrats, visites, congés.</span></li>
+            <li className="flex items-center gap-2"><ChartPieSlice className="h-3.5 w-3.5 text-slate-400" /><span><Link href="/analytique" className="text-[#ee7f03] font-semibold hover:underline">L'analytique RH</Link> calcule turnover, masse salariale, risque de départ.</span></li>
           </ul>
         </div>
       </section>

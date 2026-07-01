@@ -275,11 +275,11 @@ export function CalcSursalaireForm() {
       {computed && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="rounded-xl border border-teal-200/60 dark:border-teal-900/40 bg-teal-50/50 dark:bg-teal-950/20 p-4">
-              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 text-teal-600 dark:text-teal-400">
+            <div className="rounded-xl border border-[#ee7f03]/30 dark:border-[#b35c00]/40 bg-[#ee7f03]/10 dark:bg-[#b35c00]/20 p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 text-[#ee7f03] dark:text-[#f6c68a]">
                 Sursalaire à fixer
               </p>
-              <p className="text-base font-bold tabular-nums leading-none text-teal-900 dark:text-teal-100">
+              <p className="text-base font-bold tabular-nums leading-none text-[#b35c00] dark:text-[#ee7f03]">
                 {fcfa(computed.sursalaire)}
               </p>
             </div>

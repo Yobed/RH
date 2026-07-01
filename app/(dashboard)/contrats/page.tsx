@@ -13,7 +13,7 @@ const TypeBadge = ({ type }: { type: string }) => {
   const isCdi = type?.toUpperCase() === "CDI";
   if (isCdi) {
     return (
-      <span className="inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-teal-700">
+      <span className="inline-flex items-center rounded-full bg-[#ee7f03]/10 px-2.5 py-0.5 text-xs font-medium text-[#ee7f03]">
         {type}
       </span>
     );
@@ -118,12 +118,11 @@ export default async function ContratsPage() {
 
   return (
     <PageShell>
-      <PageHeader
-        title="Contrats"
-        description="Gestion des contrats de travail — CDD, CDI, Stage, Apprentissage"
-        help="Tous les contrats de travail (CDI, CDD, avenants) de vos salariés. L'écrit est obligatoire pour un CDD et fortement recommandé pour un CDI (Code du Travail ivoirien)."
-        actions={<ContractDialog employees={employees ?? []} />}
-      />
+      {/* En-tête de page Odoo : titre compact + action primaire */}
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white">Contrats</h1>
+        <ContractDialog employees={employees ?? []} />
+      </div>
 
       {/* KPI row */}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -203,22 +202,22 @@ export default async function ContratsPage() {
             </p>
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50/60 border-b border-slate-100">
-                <tr>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Début</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Fin</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Fin essai</th>
-                  <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden lg:table-cell">Salaire brut</th>
-                  <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
-                  <th className="px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
+          <div className="overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-left">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-800 dark:bg-slate-800/50">
+                  <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide">Employé</th>
+                  <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide">Type</th>
+                  <th className="hidden px-3 py-2 text-[11px] font-semibold uppercase tracking-wide md:table-cell">Début</th>
+                  <th className="hidden px-3 py-2 text-[11px] font-semibold uppercase tracking-wide md:table-cell">Fin</th>
+                  <th className="hidden px-3 py-2 text-[11px] font-semibold uppercase tracking-wide lg:table-cell">Fin essai</th>
+                  <th className="hidden px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide lg:table-cell">Salaire brut</th>
+                  <th className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide">Statut</th>
+                  <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {tousContrats.map((c) => {
                   const employee = Array.isArray(c.employees) ? c.employees[0] : c.employees;
                   if (!employee) return null;
@@ -235,41 +234,41 @@ export default async function ContratsPage() {
                     renouvellement_count: c.renouvellement_count,
                   };
                   return (
-                    <tr key={c.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3 text-sm">
-                        <p className="font-semibold text-slate-800">{employee.full_name}</p>
-                        <p className="text-xs text-slate-600 mt-0.5">{employee.poste}</p>
+                    <tr key={c.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                      <td className="px-3 py-1.5">
+                        <p className="text-[13px] font-medium text-slate-800 dark:text-slate-100">{employee.full_name}</p>
+                        <p className="text-[12px] text-slate-500">{employee.poste}</p>
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-3 py-1.5">
                         <TypeBadge type={c.type_contrat} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">
+                      <td className="hidden px-3 py-1.5 text-[13px] text-slate-600 md:table-cell dark:text-slate-300">
                         {new Date(c.date_debut).toLocaleDateString("fr-CI")}
                       </td>
-                      <td className="px-4 py-3 text-sm hidden md:table-cell">
+                      <td className="hidden px-3 py-1.5 text-[13px] md:table-cell">
                         {c.date_fin ? (
                           <div className="flex items-center gap-2">
-                            <span className={isExpiringSoon ? "text-red-600 font-medium" : "text-slate-600"}>
+                            <span className={isExpiringSoon ? "font-medium text-red-600" : "text-slate-600 dark:text-slate-300"}>
                               {new Date(c.date_fin).toLocaleDateString("fr-CI")}
                             </span>
                             {isExpiringSoon && jours !== null && <JoursBadge jours={jours} />}
                           </div>
                         ) : (
-                          <span className="text-slate-600">Indéterminé</span>
+                          <span className="text-slate-500">Indéterminé</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-600 hidden lg:table-cell">
+                      <td className="hidden px-3 py-1.5 text-[13px] text-slate-600 lg:table-cell dark:text-slate-300">
                         {c.date_fin_essai
                           ? new Date(c.date_fin_essai).toLocaleDateString("fr-CI")
                           : "—"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-right hidden lg:table-cell font-mono tabular-nums text-slate-600">
+                      <td className="hidden px-3 py-1.5 text-right font-mono tabular-nums text-[13px] text-slate-700 lg:table-cell dark:text-slate-200">
                         {fmt(c.salaire_brut)}
                       </td>
-                      <td className="px-4 py-3 text-sm">
+                      <td className="px-3 py-1.5">
                         <StatutBadge statut={c.statut} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-center">
+                      <td className="px-3 py-1.5 text-right">
                         <ContractDialog employees={[]} contract={editContract} />
                       </td>
                     </tr>

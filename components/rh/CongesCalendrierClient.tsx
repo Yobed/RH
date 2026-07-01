@@ -45,7 +45,7 @@ const TYPE_COLORS: Record<string, string> = {
   paternite:    "bg-sky-500/15 text-sky-800 dark:text-sky-300 border-sky-500/30 shadow-2xs ring-1 ring-sky-500/20",
   arret_maladie:"bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30 shadow-2xs ring-1 ring-rose-500/20",
   sans_solde:   "bg-slate-500/15 text-slate-800 dark:text-slate-300 border-slate-500/30 shadow-2xs ring-1 ring-slate-500/20",
-  exceptionnel: "bg-teal-500/15 text-teal-800 dark:text-teal-300 border-teal-500/30 shadow-2xs ring-1 ring-teal-500/20",
+  exceptionnel: "bg-[#ee7f03]/15 text-[#d67002] dark:text-[#f8d3a3] border-[#ee7f03]/30 shadow-2xs ring-1 ring-[#ee7f03]/20",
 };
 
 const TYPE_LABELS: Record<string, string> = {

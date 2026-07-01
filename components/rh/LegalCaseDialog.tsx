@@ -120,7 +120,7 @@ export function LegalCaseDialog({ employees }: Props) {
 
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-0">
         <DialogHeader className="sticky top-0 z-10 flex-row items-center gap-3 border-b border-slate-100 bg-white/95 px-5 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#ee7f03]/10 text-[#d67002] dark:text-[#2dd4bf]">
             <Scale className="h-5 w-5" />
           </span>
           <div className="min-w-0">

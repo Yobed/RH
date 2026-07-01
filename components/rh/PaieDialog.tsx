@@ -546,7 +546,7 @@ export function PaieDialog({
 
           {/* ── HEURES SUPPLÉMENTAIRES ───────────────────────────────── */}
           <div className="space-y-4">
-            <div className="px-3.5 py-1.5 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-800 dark:text-teal-300 font-black text-xs inline-flex items-center gap-2">
+            <div className="px-3.5 py-1.5 rounded-xl bg-[#ee7f03]/10 border border-[#ee7f03]/30 text-[#d67002] dark:text-[#f8d3a3] font-black text-xs inline-flex items-center gap-2">
               02. Majorations &amp; Heures Supplémentaires
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -739,7 +739,7 @@ export function PaieDialog({
               </div>
 
               {/* NET À PAYER */}
-              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#059669] text-base">
+              <div className="border-t border-slate-200 pt-3 mt-2 flex justify-between font-bold text-[#ee7f03] text-base">
                 <span>NET À PAYER</span>
                 <span>{fmt(preview.net_to_pay)}</span>
               </div>
@@ -750,7 +750,7 @@ export function PaieDialog({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto bg-[#059669] hover:bg-[#047857] text-white border-0"
+              className="w-full sm:w-auto bg-[#ee7f03] hover:bg-[#d67002] text-white border-0"
             >
               {isSubmitting ? (isEdit ? "Enregistrement..." : "Création...") : (isEdit ? "Enregistrer" : "Créer le bulletin")}
             </Button>

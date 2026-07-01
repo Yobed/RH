@@ -71,7 +71,7 @@ export default async function EvaluationsPage() {
   ).length;
 
   return (
-    <div className="p-4 sm:p-8 md:p-12 space-y-12 max-w-[1700px] mx-auto min-h-screen bg-[#fafbfc]">
+    <div className="p-4 sm:p-8 md:p-12 space-y-12 max-w-[1700px] mx-auto">
       {/* Premium Hero Section - Refined Glassmorphism */}
       <div className="relative">
          {/* Decorative elements */}

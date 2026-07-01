@@ -1,4 +1,4 @@
-﻿export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 import { createServerClient } from "@/lib/supabase/server";
 import { DisciplinaryDialog } from "@/components/rh/DisciplinaryDialog";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -69,7 +69,7 @@ export default async function DisciplinairePage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-2xl border border-slate-100 bg-white overflow-hidden shadow-[0_2px_12px_-2px_rgba(0,0,0,0.04)]">
+      <div className="overflow-hidden rounded-md border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         {!procedures || procedures.length === 0 ? (
           <div className="p-6">
             <EmptyState
@@ -81,13 +81,13 @@ export default async function DisciplinairePage() {
         ) : (
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50/60 border-b border-slate-100">
+            <thead className="bg-slate-50 border-b border-slate-200 dark:bg-slate-800/50 dark:border-slate-800">
               <tr>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Employé</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Type de sanction</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600 hidden md:table-cell">Date incident</th>
-                <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-widest text-slate-600">Statut</th>
-                <th className="px-4 py-3 text-right text-[10px] font-semibold uppercase tracking-widest text-slate-600">Actions</th>
+                <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Employé</th>
+                <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Type de sanction</th>
+                <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500 hidden md:table-cell">Date incident</th>
+                <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-500">Statut</th>
+                <th className="px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wide text-slate-500">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -97,28 +97,28 @@ export default async function DisciplinairePage() {
                 const statutCfg = getStatutCfg(proc.statut);
                 const typeCfg = getTypeCfg(proc.type);
                 return (
-                  <tr key={proc.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="px-4 py-3">
+                  <tr key={proc.id} className="transition-colors hover:bg-[#ee7f03]/[0.04]">
+                    <td className="px-3 py-1.5">
                       <p className="font-semibold text-slate-900">{employee.full_name}</p>
                       <p className="text-xs text-slate-600">{employee.poste}</p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-1.5">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${typeCfg.bg} ${typeCfg.text}`}>
                         {proc.type.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td className="px-4 py-3 hidden md:table-cell text-slate-600 tabular-nums">
+                    <td className="px-3 py-1.5 hidden md:table-cell text-slate-600 tabular-nums">
                       {proc.date_incident
                         ? new Date(proc.date_incident).toLocaleDateString('fr-FR')
                         : <span className="text-slate-300">—</span>}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-1.5">
                       <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${statutCfg.bg} ${statutCfg.text}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${statutCfg.dot}`} />
                         {statutCfg.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 py-1.5 text-right">
                       <Link
                         href={`/disciplinaire/${proc.id}`}
                         className="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"

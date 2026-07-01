@@ -181,7 +181,6 @@ export function ExecutiveRhCockpit({
   const [activeFilter, setActiveFilter] = useState<string | null>("all");
   
   // Customization & Drawers
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
   
   // AI State
@@ -219,7 +218,7 @@ export function ExecutiveRhCockpit({
       const cdiCount = filteredEmployes.filter(e => e.type_contrat === "CDI").length;
       const cddCount = filteredEmployes.filter(e => e.type_contrat === "CDD").length;
       return [
-        { id: "embauche", title: "Recrutement & Sourcing", count: postesOuverts, color: "bg-teal-500", badgeBg: "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-300" },
+        { id: "embauche", title: "Recrutement & Sourcing", count: postesOuverts, color: "bg-[#ee7f03]", badgeBg: "bg-[#ee7f03]/10 text-[#ee7f03] dark:bg-[#b35c00] dark:text-[#f8d3a3]" },
         { id: "essai", title: "Période d'Essai", count: essaiCount, color: "bg-amber-500", badgeBg: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300" },
         { id: "en_poste", title: "Collaborateurs En Poste", count: cdiCount, color: "bg-emerald-500", badgeBg: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" },
         { id: "echeance", title: "Échéances CDD & Risques", count: cddCount, color: "bg-rose-500", badgeBg: "bg-rose-50 text-rose-700 dark:bg-rose-950 dark:text-rose-300" },
@@ -239,7 +238,7 @@ export function ExecutiveRhCockpit({
       deptMap[d] = (deptMap[d] || 0) + 1;
     });
 
-    const colors = ["bg-teal-600", "bg-[#059669]", "bg-emerald-600", "bg-amber-500", "bg-slate-600"];
+    const colors = ["bg-[#ee7f03]", "bg-[#ee7f03]", "bg-emerald-600", "bg-amber-500", "bg-slate-600"];
     return Object.entries(deptMap).map(([name, count], idx) => ({
       id: name,
       title: name,
@@ -364,10 +363,10 @@ export function ExecutiveRhCockpit({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 font-sans antialiased text-slate-900 dark:text-slate-100 pb-24 selection:bg-primary selection:text-white">
-      
+    <div className="font-sans antialiased text-slate-900 dark:text-slate-100 pb-12 selection:bg-primary selection:text-white">
+
       {/* ── Barre d'outils du cockpit (titre + recherche + actions) ── */}
-      {/* Non sticky : la barre de navigation globale (TopNav) reste la seule barre fixe. */}
+      {/* Compose dans le shell global : le canvas et la barre fixe viennent du layout. */}
       <header className="relative bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
 
         {/* Titre de page & contrôles */}
@@ -409,12 +408,9 @@ export function ExecutiveRhCockpit({
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
-              <button
-                onClick={() => setIsCommandPaletteOpen(true)}
-                className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[10px] font-semibold text-slate-600 dark:text-slate-300 shrink-0"
-              >
+              <kbd className="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-[10px] font-semibold text-slate-600 dark:text-slate-300 shrink-0">
                 ⌘K
-              </button>
+              </kbd>
             </div>
 
             {/* Main Primary CTA Button */}
@@ -565,16 +561,8 @@ export function ExecutiveRhCockpit({
               exit={{ opacity: 0, y: -10 }}
               className="space-y-10"
             >
-              {/* Hero Banner Executive with 3D Illustration & Telemetry */}
-              <DashboardHeroClient
-                totalActifs={filteredEmployes.length}
-                complianceScore={complianceScore}
-                congesEnAttente={congesEnAttente?.length ?? 0}
-                dateLabel={dateLabel}
-              />
-
               {/* ────────────────────────────────────────────────────────────── */}
-              {/* SECTION 1: PILOTAGE & ALERTES PRIORITAIRES                      */}
+              {/* SECTION 1 (AUJOURD'HUI) : PILOTAGE & ALERTES — en tête de page  */}
               {/* ────────────────────────────────────────────────────────────── */}
               <section className="space-y-6">
                 <DashboardSectionHeader
@@ -603,6 +591,14 @@ export function ExecutiveRhCockpit({
                   </div>
                 </div>
               </section>
+
+              {/* Bandeau de contexte — déplacé sous les priorités (hiérarchie « Aujourd'hui » d'abord) */}
+              <DashboardHeroClient
+                totalActifs={filteredEmployes.length}
+                complianceScore={complianceScore}
+                congesEnAttente={congesEnAttente?.length ?? 0}
+                dateLabel={dateLabel}
+              />
 
               <SectionSeparator label="Opérations & Agenda" />
 
@@ -709,7 +705,7 @@ export function ExecutiveRhCockpit({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs gap-3">
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-                    <Sliders className="h-4 w-4 text-[#059669]" /> Regroupement :
+                    <Sliders className="h-4 w-4 text-[#ee7f03]" /> Regroupement :
                   </span>
                   <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
                     <button
@@ -732,7 +728,7 @@ export function ExecutiveRhCockpit({
                 </div>
 
                 <div className="text-xs font-bold text-slate-500">
-                  Affichage de <span className="text-[#059669] font-bold">{filteredEmployes.length}</span> cartes
+                  Affichage de <span className="text-[#ee7f03] font-bold">{filteredEmployes.length}</span> cartes
                 </div>
               </div>
 
@@ -783,7 +779,7 @@ export function ExecutiveRhCockpit({
                                 <div className="flex items-center gap-3">
                                   <Avatar src={emp.photo_url} name={emp.full_name} size={36} />
                                   <div>
-                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight hover:text-[#059669] transition-colors">
+                                    <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-tight hover:text-[#ee7f03] transition-colors">
                                       {emp.full_name}
                                     </h4>
                                     <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">{emp.poste}</p>
@@ -792,7 +788,7 @@ export function ExecutiveRhCockpit({
                               </div>
 
                               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/60 text-[10px] font-extrabold">
-                                <span className="px-2 py-0.5 rounded bg-[#059669]/15 text-[#059669]">
+                                <span className="px-2 py-0.5 rounded bg-[#ee7f03]/15 text-[#ee7f03]">
                                   {emp.type_contrat || "CDI"}
                                 </span>
                                 <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
@@ -824,7 +820,7 @@ export function ExecutiveRhCockpit({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs gap-4">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <ListIcon className="h-4 w-4 text-[#059669]" /> Registre des Collaborateurs
+                    <ListIcon className="h-4 w-4 text-[#ee7f03]" /> Registre des Collaborateurs
                   </h3>
                   <p className="text-xs text-slate-500 font-semibold mt-0.5">Vue synthétique pour consultation et extraction des dossiers personnels</p>
                 </div>
@@ -857,13 +853,13 @@ export function ExecutiveRhCockpit({
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3 cursor-pointer" onClick={() => setSelectedEmployee(emp)}>
                               <Avatar src={emp.photo_url} name={emp.full_name} size={32} />
-                              <span className="font-bold text-slate-900 dark:text-white hover:text-[#059669] transition-colors">{emp.full_name}</span>
+                              <span className="font-bold text-slate-900 dark:text-white hover:text-[#ee7f03] transition-colors">{emp.full_name}</span>
                             </div>
                           </td>
                           <td className="py-3 px-4 text-slate-700 dark:text-slate-300">{emp.poste}</td>
                           <td className="py-3 px-4 text-slate-500 uppercase tracking-wide text-[11px] font-bold">{emp.departement || "Général"}</td>
                           <td className="py-3 px-4">
-                            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#059669]/15 text-[#059669]">
+                            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#ee7f03]/15 text-[#ee7f03]">
                               {emp.type_contrat || "CDI"}
                             </span>
                           </td>
@@ -875,7 +871,7 @@ export function ExecutiveRhCockpit({
                           <td className="py-3 px-4 text-right">
                             <button
                               onClick={() => setSelectedEmployee(emp)}
-                              className="text-[#059669] hover:underline font-bold text-xs inline-flex items-center gap-1"
+                              className="text-[#ee7f03] hover:underline font-bold text-xs inline-flex items-center gap-1"
                             >
                               Inspecter <Eye className="h-3.5 w-3.5" />
                             </button>
@@ -903,7 +899,7 @@ export function ExecutiveRhCockpit({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs gap-4">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Table className="h-4 w-4 text-[#059669]" /> Matrice Pivot BI
+                    <Table className="h-4 w-4 text-[#ee7f03]" /> Matrice Pivot BI
                   </h3>
                   <p className="text-xs text-slate-500 font-semibold mt-0.5">Ventilation analytique de l'effectif et des contrats par pôle d'activité</p>
                 </div>
@@ -945,7 +941,7 @@ export function ExecutiveRhCockpit({
                             }}
                           >
                             <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-                              <span className="h-2.5 w-2.5 rounded-full bg-[#059669]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-[#ee7f03]" />
                               {dept.name}
                             </td>
                             <td className="py-3.5 px-4 text-center tabular-nums text-sm font-bold text-slate-900 dark:text-white">
@@ -953,7 +949,7 @@ export function ExecutiveRhCockpit({
                             </td>
                             <td className="py-3.5 px-4 text-center text-emerald-600 font-extrabold">{Math.round(dept.value * 0.8)} pers.</td>
                             <td className="py-3.5 px-4 text-center text-rose-500 font-extrabold">{Math.round(dept.value * 0.2)} pers.</td>
-                            <td className="py-3.5 px-4 text-center text-[#059669]">{idx === 0 ? congesEnAttente.length : 0} en attente</td>
+                            <td className="py-3.5 px-4 text-center text-[#ee7f03]">{idx === 0 ? congesEnAttente.length : 0} en attente</td>
                             <td className="py-3.5 px-4 text-right">
                               <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-[10px]">
                                 100% Conforme
@@ -982,7 +978,7 @@ export function ExecutiveRhCockpit({
             >
               <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-6">
                 <div className="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
-                  <div className="h-12 w-12 rounded-xl bg-[#059669]/10 text-[#059669] flex items-center justify-center shrink-0 border border-[#059669]/20">
+                  <div className="h-12 w-12 rounded-xl bg-[#ee7f03]/10 text-[#ee7f03] flex items-center justify-center shrink-0 border border-[#ee7f03]/20">
                     <Cpu className="h-6 w-6" />
                   </div>
                   <div>
@@ -1011,16 +1007,16 @@ export function ExecutiveRhCockpit({
                           setAiPromptInput(prompt);
                           handleRunAiPrompt(prompt);
                         }}
-                        className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-[#059669]/10 hover:text-[#059669] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-[#ee7f03]/10 hover:text-[#ee7f03] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                       >
-                        <Sparkle className="h-3.5 w-3.5 text-[#059669]" /> {prompt}
+                        <Sparkle className="h-3.5 w-3.5 text-[#ee7f03]" /> {prompt}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Multi-line Input Bar */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#059669] focus-within:ring-2 focus-within:ring-[#059669]/20 transition-all">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:border-[#ee7f03] focus-within:ring-2 focus-within:ring-[#ee7f03]/20 transition-all">
                   <textarea
                     rows={3}
                     value={aiPromptInput}
@@ -1037,7 +1033,7 @@ export function ExecutiveRhCockpit({
                   <button
                     onClick={() => handleRunAiPrompt()}
                     disabled={isAiLoading}
-                    className="px-5 py-3 rounded-lg bg-[#059669] text-white font-bold text-xs hover:bg-[#047857] transition-colors shrink-0 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                    className="px-5 py-3 rounded-lg bg-[#ee7f03] text-white font-bold text-xs hover:bg-[#d67002] transition-colors shrink-0 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                   >
                     {isAiLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 fill-current" />}
                     <span>Générer</span>
@@ -1049,18 +1045,18 @@ export function ExecutiveRhCockpit({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-6 rounded-xl bg-[#059669]/5 border border-[#059669]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-medium space-y-4"
+                    className="p-6 rounded-xl bg-[#ee7f03]/5 border border-[#ee7f03]/20 text-slate-800 dark:text-slate-200 text-xs leading-relaxed font-medium space-y-4"
                   >
                     <div className="flex items-start gap-3.5">
-                      <Sparkle className="h-5 w-5 text-[#059669] shrink-0 mt-0.5" />
+                      <Sparkle className="h-5 w-5 text-[#ee7f03] shrink-0 mt-0.5" />
                       <div className="flex-1 whitespace-pre-wrap font-sans text-xs leading-relaxed space-y-1.5">
                         {aiSimulatedResponse}
                       </div>
                     </div>
-                    <div className="pt-3 border-t border-[#059669]/10 flex items-center justify-end">
+                    <div className="pt-3 border-t border-[#ee7f03]/10 flex items-center justify-end">
                       <button
                         onClick={() => toast.success("Recommandation transmise au système RH")}
-                        className="px-4 py-2 rounded-xl bg-[#059669] text-white font-bold text-xs hover:bg-[#047857] transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-[#ee7f03] text-white font-bold text-xs hover:bg-[#d67002] transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer"
                       >
                         <Check className="h-4 w-4" /> Valider la recommandation
                       </button>
@@ -1097,7 +1093,7 @@ export function ExecutiveRhCockpit({
                   <Avatar src={selectedEmployee.photo_url} name={selectedEmployee.full_name} size={44} rounded="xl" className="shadow-sm" />
                   <div>
                     <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">{selectedEmployee.full_name}</h3>
-                    <p className="text-xs font-bold text-[#059669]">{selectedEmployee.poste}</p>
+                    <p className="text-xs font-bold text-[#ee7f03]">{selectedEmployee.poste}</p>
                   </div>
                 </div>
                 <button
@@ -1132,60 +1128,6 @@ export function ExecutiveRhCockpit({
                 >
                   Fermer
                 </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── COMMAND PALETTE OVERLAY (CTRL+K) ── */}
-      <AnimatePresence>
-        {isCommandPaletteOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-start justify-center pt-24 px-4"
-            onClick={() => setIsCommandPaletteOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: -10 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: -10 }}
-              className="bg-white dark:bg-slate-900 rounded-xl overflow-hidden max-w-xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
-                <Search className="h-5 w-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Tapez une commande ou recherchez..."
-                  className="w-full bg-transparent text-sm font-bold outline-none text-slate-900 dark:text-white"
-                  autoFocus
-                />
-                <button onClick={() => setIsCommandPaletteOpen(false)} className="text-xs font-bold px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">ESC</button>
-              </div>
-              <div className="p-3 max-h-80 overflow-y-auto space-y-1">
-                <div className="text-[10px] font-bold uppercase text-slate-400 px-3 py-1">Vues Disponibles</div>
-                {[
-                  { label: "Ouvrir Vue Cockpit Aperçu", mode: "overview" },
-                  { label: "Ouvrir Vue Kanban Workflow", mode: "kanban" },
-                  { label: "Ouvrir Registre Sheet", mode: "list" },
-                  { label: "Ouvrir Matrice Pivot BI", mode: "pivot" },
-                  { label: "Lancer IA Studio Terminal", mode: "ai_copilot" },
-                ].map((item) => (
-                  <button
-                    key={item.mode}
-                    onClick={() => {
-                      setViewMode(item.mode as any);
-                      setIsCommandPaletteOpen(false);
-                    }}
-                    className="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between text-slate-800 dark:text-slate-200"
-                  >
-                    <span>{item.label}</span>
-                    <ArrowRight className="h-4 w-4 text-slate-400" />
-                  </button>
-                ))}
               </div>
             </motion.div>
           </motion.div>

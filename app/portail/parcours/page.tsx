@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import { CareerTimeline, type CareerEvent } from "@/components/rh/CareerTimeline";
-import { Briefcase, Trophy, GraduationCap, MapPin } from "lucide-react";
+import { Briefcase, Trophy, GraduationCap, MapPin, TrendingUp } from "lucide-react";
+import { PortailHeader } from "../PortailHeader";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Mon parcours — Portail salarié" };
@@ -49,15 +50,11 @@ export default async function PortailParcoursPage() {
 
   return (
     <div className="space-y-6">
-      {/* En-tête */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
-          Mon parcours
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Historique complet de votre carrière au sein de l'entreprise.
-        </p>
-      </div>
+      <PortailHeader
+        title="Mon parcours"
+        subtitle="Historique complet de votre carrière au sein de l'entreprise."
+        icon={TrendingUp}
+      />
 
       {/* Bandeau profil */}
       {employee && (
@@ -104,7 +101,7 @@ export default async function PortailParcoursPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <Stat label="Promotions" value={counts.promotion ?? 0} icon={<Trophy className="h-4 w-4 text-emerald-600" />} />
         <Stat label="Formations" value={counts.formation ?? 0} icon={<GraduationCap className="h-4 w-4 text-slate-600" />} />
-        <Stat label="Mutations" value={counts.mutation ?? 0} icon={<MapPin className="h-4 w-4 text-teal-600" />} />
+        <Stat label="Mutations" value={counts.mutation ?? 0} icon={<MapPin className="h-4 w-4 text-[#ee7f03]" />} />
         <Stat label="Total événements" value={allEvents.length} icon={<Briefcase className="h-4 w-4 text-slate-600" />} />
       </div>
 

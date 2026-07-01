@@ -104,8 +104,8 @@ export function BrandingForm({
     <div className="pro-card p-6 space-y-6">
       {/* En-tête section */}
       <div className="flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 border border-teal-100 dark:bg-teal-900/30 dark:border-teal-800">
-          <svg className="h-5 w-5 text-teal-600 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ee7f03]/10 border border-[#ee7f03]/20 dark:bg-[#b35c00]/30 dark:border-[#d67002]">
+          <svg className="h-5 w-5 text-[#ee7f03] dark:text-[#f6c68a]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
@@ -141,7 +141,7 @@ export function BrandingForm({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
+                  className="text-sm font-medium text-[#ee7f03] hover:text-[#ee7f03] dark:text-[#f6c68a] dark:hover:text-[#f8d3a3]"
                 >
                   {previewLogo ? "Changer le logo" : "Choisir un logo"}
                 </button>
@@ -173,7 +173,7 @@ export function BrandingForm({
                 type="text"
                 value={primary}
                 onChange={(e) => setPrimary(e.target.value)}
-                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#ee7f03] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                 maxLength={7}
                 pattern="#[0-9a-fA-F]{6}"
               />
@@ -196,7 +196,7 @@ export function BrandingForm({
                 type="text"
                 value={secondary}
                 onChange={(e) => setSecondary(e.target.value)}
-                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#ee7f03] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                 maxLength={7}
                 pattern="#[0-9a-fA-F]{6}"
               />
@@ -256,7 +256,7 @@ export function BrandingForm({
           type="button"
           onClick={handleSave}
           disabled={isPending}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-teal-600 dark:hover:bg-teal-500"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#ee7f03] text-white text-sm font-medium hover:bg-[#d67002] transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-[#ee7f03] dark:hover:bg-[#ee7f03]"
         >
           {isPending ? (
             <>

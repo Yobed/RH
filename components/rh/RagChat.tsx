@@ -139,7 +139,7 @@ export function RagChat() {
       {/* Dynamic Background Accents */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-teal-400/20 rounded-full blur-[100px] animate-pulse [animation-delay:2s]" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#f6c68a]/20 rounded-full blur-[100px] animate-pulse [animation-delay:2s]" />
       </div>
 
       {/* Header */}
@@ -178,7 +178,7 @@ export function RagChat() {
             </TooltipProvider>
           )}
           <Badge variant="outline" className="bg-white/50 border-slate-200 text-slate-600 font-medium py-1 px-2.5">
-            <ShieldCheck className="h-3 w-3 mr-1.5 text-teal-500" />
+            <ShieldCheck className="h-3 w-3 mr-1.5 text-[#ee7f03]" />
             Conformité IA
           </Badge>
         </div>
@@ -198,7 +198,7 @@ export function RagChat() {
             >
               <div className="relative">
                 <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-                <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-primary to-teal-600 flex items-center justify-center shadow-2xl">
+                <div className="relative h-20 w-20 rounded-2xl bg-gradient-to-br from-primary to-[#ee7f03] flex items-center justify-center shadow-2xl">
                   <Bot className="h-10 w-10 text-white" />
                 </div>
               </div>
@@ -337,7 +337,7 @@ export function RagChat() {
       {/* Input Area */}
       <div className="p-6 pt-0 relative z-10">
         <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-teal-500/50 rounded-[24px] blur opacity-0 group-focus-within:opacity-30 transition duration-500" />
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-[#ee7f03]/50 rounded-[24px] blur opacity-0 group-focus-within:opacity-30 transition duration-500" />
           <div className="relative bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden focus-within:border-primary transition-all">
             <div className="flex items-end p-2 gap-2">
               <Textarea

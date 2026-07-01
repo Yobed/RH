@@ -77,7 +77,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
                   <Icon weight="duotone" className="h-5 w-5" />
                 </span>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-[#047857] dark:text-white">
+                  <p className="truncate text-sm font-semibold text-slate-900 transition-colors group-hover:text-[#d67002] dark:text-white">
                     {alert.employeeName}
                   </p>
                   <div className="mt-0.5 flex items-center gap-2">
@@ -94,7 +94,7 @@ export function ComplianceAlertList({ alerts }: ComplianceAlertListProps) {
                 <span className={`hidden rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide sm:inline ${u.tag}`}>
                   {u.label}
                 </span>
-                <CaretRight weight="bold" className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-[#047857]" />
+                <CaretRight weight="bold" className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-[#d67002]" />
               </div>
             </Link>
           );

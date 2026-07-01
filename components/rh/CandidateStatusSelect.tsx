@@ -60,7 +60,7 @@ export function CandidateStatusSelect({ candidateId, currentStatut }: Props) {
         onChange={(e) => handleChange(e.target.value)}
         disabled={loading}
         className={cn(
-          "w-full appearance-none rounded-xl border border-slate-200 bg-white/50 backdrop-blur-sm px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 outline-none transition-all hover:border-slate-300 focus:border-teal-300 focus:ring-4 focus:ring-teal-50/50 disabled:opacity-50 cursor-pointer",
+          "w-full appearance-none rounded-xl border border-slate-200 bg-white/50 backdrop-blur-sm px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-600 outline-none transition-all hover:border-slate-300 focus:border-[#f8d3a3] focus:ring-4 focus:ring-[#ee7f03]/10 disabled:opacity-50 cursor-pointer",
           loading && "pr-8"
         )}
       >

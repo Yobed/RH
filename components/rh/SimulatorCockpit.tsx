@@ -124,7 +124,7 @@ function NumInput({
 
 const KPI_CONFIG = {
   green:  { border: "border-emerald-200/60 dark:border-emerald-900/40", bg: "bg-emerald-50/50 dark:bg-emerald-950/20", label: "text-emerald-600 dark:text-emerald-400", value: "text-emerald-900 dark:text-emerald-100" },
-  indigo: { border: "border-teal-200/60 dark:border-teal-900/40",  bg: "bg-teal-50/50 dark:bg-teal-950/20",  label: "text-teal-600 dark:text-teal-400",  value: "text-teal-900 dark:text-teal-100"  },
+  indigo: { border: "border-[#ee7f03]/30 dark:border-[#b35c00]/40",  bg: "bg-[#ee7f03]/10 dark:bg-[#b35c00]/20",  label: "text-[#ee7f03] dark:text-[#f6c68a]",  value: "text-[#b35c00] dark:text-[#ee7f03]"  },
   amber:  { border: "border-amber-200/60 dark:border-amber-900/40",    bg: "bg-amber-50/50 dark:bg-amber-950/20",    label: "text-amber-600 dark:text-amber-400",    value: "text-amber-900 dark:text-amber-100"    },
 } as const;
 
@@ -180,7 +180,7 @@ function DetailCotisations({ sim }: { sim: ReturnType<typeof compute> }) {
           <tr className="bg-muted font-semibold">
             <td className="py-2.5 px-4 text-xs uppercase text-foreground/70">Total</td>
             <td className="py-2.5 px-4 text-right text-foreground tabular-nums">{fcfa(sim.cnps_salarie + sim.its)}</td>
-            <td className="py-2.5 px-4 text-right text-teal-500 dark:text-teal-400 tabular-nums">{fcfa(sim.charges.total)}</td>
+            <td className="py-2.5 px-4 text-right text-[#ee7f03] dark:text-[#f6c68a] tabular-nums">{fcfa(sim.charges.total)}</td>
           </tr>
         </tbody>
       </table>
@@ -294,7 +294,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
             step={5_000}
             value={inputs.brut}
             onChange={(e) => set({ brut: Number(e.target.value) })}
-            className="flex-1 accent-teal-500 h-1.5 rounded-full cursor-pointer"
+            className="flex-1 accent-[#ee7f03] h-1.5 rounded-full cursor-pointer"
           />
           <div className="flex items-center gap-1.5 shrink-0">
             <input
@@ -357,7 +357,7 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
             <div className="col-span-1 sm:col-span-2 flex justify-end">
               <button
                 onClick={() => setInputs(DEFAULT)}
-                className="text-xs text-muted-foreground hover:text-teal-500 transition-colors"
+                className="text-xs text-muted-foreground hover:text-[#ee7f03] transition-colors"
               >
                 Réinitialiser
               </button>
@@ -386,12 +386,12 @@ export function SimulatorCockpit({ employees = [] }: { employees?: EmpRow[] }) {
         <div className="border-t border-border pt-4">
           <button
             onClick={() => setShowComparison((v) => !v)}
-            className="flex items-center gap-2 text-sm font-semibold text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300 transition-colors"
+            className="flex items-center gap-2 text-sm font-semibold text-[#ee7f03] hover:text-[#ee7f03] dark:text-[#f6c68a] dark:hover:text-[#f8d3a3] transition-colors"
             aria-expanded={showComparison}
           >
             <Users className="h-4 w-4 shrink-0" />
             <span>{showComparison ? "Masquer la comparaison" : "Simuler l'impact d'une augmentation"}</span>
-            <span className="rounded-full bg-teal-100 dark:bg-teal-900/40 px-2 py-0.5 text-[10px] font-bold text-teal-600 dark:text-teal-400 shrink-0">
+            <span className="rounded-full bg-[#ee7f03]/15 dark:bg-[#b35c00]/40 px-2 py-0.5 text-[10px] font-bold text-[#ee7f03] dark:text-[#f6c68a] shrink-0">
               {employees.length}
             </span>
           </button>

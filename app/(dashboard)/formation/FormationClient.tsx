@@ -89,7 +89,7 @@ export function FormationClient({ actions, employees, kpi }: Props) {
         </div>
         <button
           onClick={() => setCreating(true)}
-          className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 self-start sm:self-auto"
+          className="h-9 inline-flex items-center justify-center gap-2 rounded-md bg-[#ee7f03] px-4 text-sm font-medium text-white hover:bg-[#d67002] self-start sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5" />
           Nouvelle action
@@ -183,7 +183,7 @@ export function FormationClient({ actions, employees, kpi }: Props) {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {actions.map((a) => (
-                  <tr key={a.id} className="hover:bg-slate-50/60">
+                  <tr key={a.id} className="hover:bg-[#ee7f03]/[0.04]">
                     <td className="px-5 py-3">
                       <p className="font-medium text-slate-900">{a.intitule}</p>
                       <p className="text-xs text-slate-500">
@@ -249,7 +249,7 @@ function KpiCard({
 }) {
   const bar = {
     neutral: "bg-slate-200",
-    primary: "bg-slate-900",
+    primary: "bg-[#ee7f03]",
     positive: "bg-emerald-500",
     warn: "bg-amber-500",
   }[accent];
@@ -387,7 +387,7 @@ function CreateDialog({
                   onClick={() => setModality(m)}
                   className={[
                     "flex-1 h-7 rounded text-xs font-medium",
-                    modality === m ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-50",
+                    modality === m ? "bg-[#ee7f03] text-white" : "text-slate-600 hover:bg-slate-50",
                   ].join(" ")}
                 >
                   {MODALITY_LABELS[m]}
@@ -487,7 +487,7 @@ function CreateDialog({
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="flex-1 h-9 px-4 rounded-md bg-slate-900 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+            className="flex-1 h-9 px-4 rounded-md bg-[#ee7f03] text-sm font-medium text-white hover:bg-[#d67002] disabled:opacity-50"
           >
             {submitting ? "Création…" : "Créer l'action"}
           </button>

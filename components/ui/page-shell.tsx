@@ -36,30 +36,27 @@ interface PageHeaderProps {
   actions?: React.ReactNode;
 }
 
-// En-tête éditorial : le TITRE est le point focal de la page. Eyebrow discret
-// (accent réservé), description calme, filet de séparation. Une hiérarchie nette.
+// En-tête de page compact (style Odoo) : titre discret type breadcrumb, actions
+// alignées à droite, filet fin. Partagé : redessine l'en-tête de ~50 pages.
 export function PageHeader({ eyebrow, eyebrowIcon, title, description, help, actions }: PageHeaderProps) {
   return (
-    <header className="flex flex-col gap-4 border-b border-slate-200 pb-6 dark:border-slate-800 sm:flex-row sm:items-end sm:justify-between">
+    <header className="flex flex-col gap-2 border-b border-slate-200 pb-3 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        {(eyebrow || help) && (
-          <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">
-            {eyebrowIcon}
-            {eyebrow && <span>{eyebrow}</span>}
-            {help && <PageHelp text={help} />}
-          </div>
-        )}
-        <h1 className="font-display text-[1.8rem] font-bold leading-[1.04] tracking-[-0.025em] text-slate-900 dark:text-white sm:text-[2.25rem]">
-          {title}
-        </h1>
+        <div className="flex items-center gap-2">
+          {eyebrowIcon}
+          <h1 className="font-display text-lg font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-xl">
+            {title}
+          </h1>
+          {help && <PageHelp text={help} />}
+        </div>
         {description && (
-          <p className="mt-2.5 max-w-2xl text-[15px] leading-relaxed text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 max-w-2xl text-[13px] leading-snug text-slate-500 dark:text-slate-400">
             {description}
           </p>
         )}
       </div>
 
-      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2.5">{actions}</div>}
+      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </header>
   );
 }
@@ -113,7 +110,7 @@ type StatTone = "default" | "brand" | "success" | "warning" | "danger";
 
 const STAT_TONES: Record<StatTone, { value: string; chip: string }> = {
   default: { value: "text-slate-900 dark:text-white", chip: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400" },
-  brand: { value: "text-[#047857] dark:text-[#2dd4bf]", chip: "bg-[#059669]/10 text-[#047857] dark:text-[#2dd4bf]" },
+  brand: { value: "text-[#ee7f03] dark:text-[#f8d3a3]", chip: "bg-[#ee7f03]/10 text-[#ee7f03] dark:text-[#f8d3a3]" },
   success: { value: "text-emerald-600 dark:text-emerald-400", chip: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400" },
   warning: { value: "text-amber-600 dark:text-amber-400", chip: "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400" },
   danger: { value: "text-rose-600 dark:text-rose-400", chip: "bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400" },
@@ -153,7 +150,7 @@ export function StatCard({ label, value, sub, icon, tone = "default", href, onCl
 
   const base = cn(
     "rounded-2xl border border-slate-200/70 bg-white p-5 text-left dark:border-slate-800 dark:bg-slate-900",
-    interactive && "transition-all hover:border-[#059669]/40 hover:shadow-[0_8px_24px_-12px_rgba(13,148,136,0.35)] active:scale-[0.99]"
+    interactive && "transition-all hover:border-[#ee7f03]/40 hover:shadow-[0_8px_24px_-12px_rgba(238,127,3,0.35)] active:scale-[0.99]"
   );
 
   if (href) return <Link href={href} className={base}>{inner}</Link>;

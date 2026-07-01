@@ -162,15 +162,15 @@ function CalcPreavis() {
         </div>
       </div>
 
-      <div className="rounded-lg bg-teal-50 border border-teal-200 p-4 space-y-2">
+      <div className="rounded-lg bg-[#ee7f03]/10 border border-[#ee7f03]/30 p-4 space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-teal-700">Durée du préavis</span>
-          <span className="font-bold text-teal-800">{duree.description}</span>
+          <span className="text-[#ee7f03]">Durée du préavis</span>
+          <span className="font-bold text-[#d67002]">{duree.description}</span>
         </div>
         {montantMin !== null && montantMax !== null && (
           <div className="flex justify-between text-sm">
-            <span className="text-teal-700">Indemnité compensatrice</span>
-            <span className="font-bold text-teal-800">
+            <span className="text-[#ee7f03]">Indemnité compensatrice</span>
+            <span className="font-bold text-[#d67002]">
               {fcfa(montantMin)} — {fcfa(montantMax)}
             </span>
           </div>
@@ -499,7 +499,7 @@ function CalcSoldeDeCompte() {
 export function CalculateurRH() {
   return (
     <div className="space-y-5">
-      <div className="rounded-lg border bg-teal-50 border-teal-200 p-3 text-xs text-teal-800">
+      <div className="rounded-lg border bg-[#ee7f03]/10 border-[#ee7f03]/30 p-3 text-xs text-[#d67002]">
         Calculs basés sur le <strong>Code du Travail CI 2025</strong>, la <strong>Convention Collective Interprofessionnelle AICI-UGTCI</strong>
         et les décrets d&apos;application (Décrets n°96-200, 96-201, 96-203 / Décret n°2022-986).
         Les taux CNPS et barème ITS sont indicatifs — vérifier auprès de la CNPS CI et la Loi de Finances en vigueur.

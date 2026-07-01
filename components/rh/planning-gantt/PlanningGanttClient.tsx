@@ -383,9 +383,9 @@ export function PlanningGanttClient({
                 <button
                   onClick={copyToNextPeriod}
                   disabled={copying || slots.length === 0}
-                  className="w-full text-left px-3 py-2 text-[12px] font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-start gap-2"
+                  className="w-full text-left px-3 py-2 text-[12px] font-semibold text-slate-700 hover:bg-[#ee7f03]/10 hover:text-[#ee7f03] disabled:opacity-50 disabled:cursor-not-allowed flex items-start gap-2"
                 >
-                  <span className="text-teal-500 mt-0.5">→</span>
+                  <span className="text-[#ee7f03] mt-0.5">→</span>
                   <span>
                     Copier vers la période suivante
                     <span className="block text-[10px] font-normal text-slate-500 mt-0.5">
@@ -395,7 +395,7 @@ export function PlanningGanttClient({
                 </button>
                 <button
                   onClick={() => { setActionsOpen(false); setRolesDialog(true); }}
-                  className="w-full text-left px-3 py-2 text-[12px] font-semibold text-slate-700 hover:bg-teal-50 hover:text-teal-700 flex items-start gap-2 border-t border-slate-100"
+                  className="w-full text-left px-3 py-2 text-[12px] font-semibold text-slate-700 hover:bg-[#ee7f03]/10 hover:text-[#ee7f03] flex items-start gap-2 border-t border-slate-100"
                 >
                   <Settings className="h-3 w-3 mt-1 text-slate-400" />
                   <span>
@@ -424,7 +424,7 @@ export function PlanningGanttClient({
           <div className="flex-1 flex justify-center">
             <div className="flex items-center gap-2 w-full max-w-2xl rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5">
               <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-              <span className="inline-flex items-center gap-1 rounded bg-teal-100 text-teal-700 px-1.5 py-0.5 text-[10px] font-semibold shrink-0">
+              <span className="inline-flex items-center gap-1 rounded bg-[#ee7f03]/15 text-[#ee7f03] px-1.5 py-0.5 text-[10px] font-semibold shrink-0">
                 <Tag className="h-2.5 w-2.5" weight="fill" />
                 Ressource
               </span>
@@ -531,7 +531,7 @@ export function PlanningGanttClient({
       {roles.length === 0 ? (
         <div className="flex-1 flex items-center justify-center p-12">
           <div className="text-center max-w-md">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-slate-500 to-teal-600 flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-slate-500 to-[#ee7f03] flex items-center justify-center mx-auto mb-4 shadow-sm">
               <ChartBar className="h-7 w-7 text-white" weight="fill" />
             </div>
             <h2 className="text-lg font-bold text-slate-900">Aucun rôle configuré</h2>
@@ -725,7 +725,7 @@ function ViewIcon({
       title={title}
       onClick={onClick}
       className={`p-1.5 rounded-md transition-colors ${
-        active ? "bg-teal-100 text-teal-700" : "text-slate-500 hover:bg-slate-100"
+        active ? "bg-[#ee7f03]/15 text-[#ee7f03]" : "text-slate-500 hover:bg-slate-100"
       }`}
     >
       <Icon className="h-3.5 w-3.5" weight={active ? "fill" : undefined} />
@@ -741,7 +741,7 @@ function RangeSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as "week" | "twoweeks" | "month")}
-        className="appearance-none rounded-md border border-slate-200 bg-white pl-3 pr-7 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer outline-none focus:ring-2 focus:ring-teal-300"
+        className="appearance-none rounded-md border border-slate-200 bg-white pl-3 pr-7 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer outline-none focus:ring-2 focus:ring-[#f8d3a3]"
       >
         <option value="week">Semaine</option>
         <option value="twoweeks">2 semaines</option>
@@ -814,7 +814,7 @@ function ResourceRow({
             className={`h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0 ${
               isOpenRow
                 ? "bg-amber-200 text-amber-800"
-                : "bg-gradient-to-br from-teal-500 to-slate-600 text-white"
+                : "bg-gradient-to-br from-[#ee7f03] to-slate-600 text-white"
             }`}
           >
             {isOpenRow ? "⚠" : initials}
@@ -848,7 +848,7 @@ function ResourceRow({
             onDrop={(e) => handleDrop(e, dateKey)}
             className={`border-b border-r border-slate-100 px-1 py-1 align-top cursor-pointer transition-colors ${
               isToday(d) ? "bg-amber-50/30" : ""
-            } ${isDragOver ? "bg-teal-100/60 ring-2 ring-teal-400 ring-inset" : "hover:bg-teal-50/30"}`}
+            } ${isDragOver ? "bg-[#ee7f03]/15 ring-2 ring-[#f6c68a] ring-inset" : "hover:bg-[#ee7f03]/[0.06]"}`}
             style={{ minWidth: cellMinWidth }}
           >
             <div className="flex flex-col gap-1 min-h-[48px]">
@@ -1191,7 +1191,7 @@ function SlotsListView({
               <tr
                 key={s.id}
                 onClick={() => onEdit(s)}
-                className="border-b border-slate-100 hover:bg-teal-50/30 cursor-pointer transition-colors"
+                className="border-b border-slate-100 hover:bg-[#ee7f03]/[0.06] cursor-pointer transition-colors"
               >
                 <td className="px-4 py-2.5 font-semibold text-slate-800">
                   {format(sd, "EEE d MMM", { locale: fr })}
@@ -1304,7 +1304,7 @@ function StatsView({
 
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Kpi label="Heures totales" value={fmtHours(totalMinutes)} accent="bg-teal-50 text-teal-700" />
+        <Kpi label="Heures totales" value={fmtHours(totalMinutes)} accent="bg-[#ee7f03]/10 text-[#ee7f03]" />
         <Kpi label="Ressources actives" value={employeeRows.length} accent="bg-sky-50 text-sky-700" />
         <Kpi label="Rôles couverts" value={roleRows.length} accent="bg-slate-50 text-slate-700" />
         <Kpi
@@ -1326,7 +1326,7 @@ function StatsView({
                 <p className="text-[12px] font-semibold text-slate-700 w-40 truncate shrink-0">{emp!.full_name}</p>
                 <div className="flex-1 h-5 rounded bg-slate-100 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-teal-500 to-slate-500 flex items-center justify-end pr-2 text-[10px] font-bold text-white transition-all"
+                    className="h-full bg-gradient-to-r from-[#ee7f03] to-slate-500 flex items-center justify-end pr-2 text-[10px] font-bold text-white transition-all"
                     style={{ width: `${Math.max(8, (minutes / maxEmpMin) * 100)}%` }}
                   >
                     {fmtHours(minutes)}
@@ -1457,7 +1457,7 @@ function RolesDialog({ roles, onClose }: { roles: Role[]; onClose: () => void })
               <button
                 onClick={create}
                 disabled={creating || !name.trim()}
-                className="inline-flex items-center gap-1 rounded-md bg-teal-600 hover:bg-teal-700 disabled:opacity-50 px-3 h-9 text-[12px] font-semibold text-white"
+                className="inline-flex items-center gap-1 rounded-md bg-[#ee7f03] hover:bg-[#ee7f03] disabled:opacity-50 px-3 h-9 text-[12px] font-semibold text-white"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Ajouter

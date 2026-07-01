@@ -360,7 +360,7 @@ export function CalcEnversForm({ employees = [] }: Props) {
           {/* KPI rapides */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: "Brut à fixer", value: fcfa(computed.brut), icon: TrendingUp, color: "text-teal-600 bg-teal-50" },
+              { label: "Brut à fixer", value: fcfa(computed.brut), icon: TrendingUp, color: "text-[#ee7f03] bg-[#ee7f03]/10" },
               { label: "Net garanti", value: fcfa(computed.details.salaire_net), icon: Wallet, color: "text-emerald-600 bg-emerald-50" },
               { label: "Coût total employeur", value: coutTotal ? fcfa(coutTotal) : "—", icon: Calculator, color: "text-orange-600 bg-orange-50" },
             ].map(({ label, value, icon: Icon, color }) => (

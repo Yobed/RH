@@ -146,7 +146,7 @@ export default async function OnboardingPage() {
                     {emp.date_embauche ? ` · Embauché le ${new Date(emp.date_embauche).toLocaleDateString("fr-CI")}` : ""}
                   </p>
                   {nextItem && (
-                    <p className="mt-1 truncate text-xs font-medium text-teal-600 dark:text-teal-400">
+                    <p className="mt-1 truncate text-xs font-medium text-[#ee7f03] dark:text-[#f6c68a]">
                       → Prochaine étape : {nextItem.title}
                     </p>
                   )}

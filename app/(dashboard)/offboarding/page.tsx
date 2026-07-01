@@ -112,7 +112,7 @@ export default async function OffboardingPage() {
         actions={
           <Link
             href="/paie/fin-de-contrat"
-            className="rounded-lg bg-slate-900 text-white px-3.5 py-2 text-sm font-semibold hover:bg-slate-800 transition-colors inline-flex items-center gap-1.5"
+            className="rounded-lg bg-[#ee7f03] text-white px-3.5 py-2 text-sm font-semibold hover:bg-[#d67002] transition-colors inline-flex items-center gap-1.5"
           >
             Préparer un Solde de Tout Compte
             <ArrowRight className="h-3.5 w-3.5" weight="bold" />
@@ -199,7 +199,7 @@ export default async function OffboardingPage() {
                         </div>
                         <ProgressBar pct={r.progress.pct} />
                         {nextItem && (
-                          <p className="mt-1 truncate text-[11px] font-medium text-teal-600 dark:text-teal-400">
+                          <p className="mt-1 truncate text-[11px] font-medium text-[#ee7f03] dark:text-[#f6c68a]">
                             → {nextItem.title}
                           </p>
                         )}
